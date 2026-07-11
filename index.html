@@ -33,55 +33,20 @@
         <button class="chip active" data-view="overview">Overview</button>
       </nav>
 
-      <details class="quick-menu">
-        <summary aria-label="Open trip menu">Menu</summary>
-        <nav class="quick-sidebar" aria-label="Quick jumps">
-          <button type="button" data-mode="trip" data-jump="#calendarView">Calendar</button>
-          <button type="button" data-mode="city" data-jump="#ongoingQuests">Discovery Deck</button>
-          <button type="button" data-mode="trip" data-jump="#photoAlbum">Album</button>
-          <button type="button" data-mode="city" data-jump="#cityWrapUp">City Wrap</button>
-          <button type="button" data-mode="trip" data-jump="#planeRideReview">Plane Ride</button>
-        </nav>
-      </details>
-
       <main>
         <section class="panel overview-panel" id="overviewPanel">
-          <div class="progress-card">
-            <div>
-              <p class="label">Overall Progress</p>
-              <h2 id="progressTitle">0 of 0 cleared</h2>
-            </div>
-            <div class="meter" aria-hidden="true">
-              <span id="progressBar"></span>
-            </div>
-          </div>
-
-          <div class="stats-grid">
-            <div class="stat">
-              <span id="mainCount">0</span>
-              <small>Main goals</small>
-            </div>
-            <div class="stat">
-              <span id="sideCount">0</span>
-              <small>Discoveries</small>
-            </div>
-            <div class="stat">
-              <span id="eggCount">0</span>
-              <small>Must-do paths</small>
-            </div>
-            <div class="stat">
-              <span id="maiCount">0</span>
-              <small>Main goals left</small>
-            </div>
-          </div>
-
-          <div class="overview-switch" role="tablist" aria-label="Overview type">
-            <button class="active" type="button" data-overview-mode="trip">Trip Overview</button>
-            <button type="button" data-overview-mode="city">City Overview</button>
-          </div>
-
-          <section class="overview-mode" id="tripOverview">
-            <section class="quest-group" id="calendarView">
+          <section id="overviewCarouselHost">
+            <section class="overview-window" id="calendarView">
+              <div class="progress-card">
+                <div><p class="label">Overall Progress</p><h2 id="progressTitle">0 of 0 cleared</h2></div>
+                <div class="meter" aria-hidden="true"><span id="progressBar"></span></div>
+              </div>
+              <div class="stats-grid">
+                <div class="stat"><span id="mainCount">0</span><small>Main goals</small></div>
+                <div class="stat"><span id="sideCount">0</span><small>Discoveries</small></div>
+                <div class="stat"><span id="eggCount">0</span><small>Must-do paths</small></div>
+                <div class="stat"><span id="maiCount">0</span><small>Main goals left</small></div>
+              </div>
               <div class="section-heading">
                 <p class="label">Trip flow and daily focus</p>
                 <h2>Calendar &amp; Capstones</h2>
@@ -89,7 +54,18 @@
               <div class="calendar-grid" id="calendarGrid"></div>
             </section>
 
-            <section class="quest-group" id="melonPassport">
+            <section class="overview-window" id="discoverView">
+              <section class="hotel-card">
+                <label for="hotelField">Future hotel</label>
+                <input id="hotelField" type="text" placeholder="Paste hotel name or address later">
+                <p>Day maps use this as their route starting point.</p>
+              </section>
+              <section class="quest-group" id="ongoingQuests">
+                <div class="section-heading"><p class="label">Optional discoveries</p><h2>Discovery Deck</h2></div>
+              </section>
+            </section>
+
+            <section class="overview-window" id="melonPassport">
               <div class="section-heading">
                 <p class="label">Mai's tasting challenge</p>
                 <h2>Six-Bread Melon Passport</h2>
@@ -99,7 +75,7 @@
               <div id="melonLeaderboard"></div>
             </section>
 
-            <section class="quest-group" id="photoAlbum">
+            <section class="overview-window" id="photoAlbum">
               <div class="section-heading">
                 <p class="label">Memory Loot</p>
                 <h2>Trip Photo Album</h2>
@@ -107,31 +83,7 @@
               <div class="album-grid" id="albumGrid"></div>
             </section>
 
-            <section class="quest-group" id="planeRideReview"></section>
-          </section>
-
-          <section class="overview-mode hidden" id="cityOverview">
-            <section class="hotel-card">
-              <label for="hotelField">Future Tokyo hotel</label>
-              <input id="hotelField" type="text" placeholder="Paste hotel name or address later">
-              <p>Day maps use this for Google Maps route links. You can leave it blank until the hotel is real.</p>
-            </section>
-
-            <section class="quest-group" id="ongoingQuests">
-              <div class="section-heading">
-                <p class="label">Optional discoveries</p>
-                <h2>Discovery Deck</h2>
-              </div>
-            </section>
-
-            <section class="quest-group" id="emergencyCards">
-              <div class="section-heading">
-                <p class="label">When Plans Wobble</p>
-                <h2>Emergency Cards</h2>
-              </div>
-            </section>
-
-            <section class="quest-group" id="cityWrapUp"></section>
+            <section class="overview-window" id="planeRideReview"></section>
           </section>
         </section>
 
