@@ -710,6 +710,10 @@ h3 {
   gap: 14px;
 }
 
+.day-panel > .capstone-hero {
+  margin-bottom: 12px;
+}
+
 .capstone-hero {
   position: relative;
   overflow: hidden;

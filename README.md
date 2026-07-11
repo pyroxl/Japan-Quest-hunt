@@ -24,9 +24,9 @@ Then open `http://localhost:8001`.
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v30`, checks for updates on every launch, and falls back to saved files when offline. If an already-open tab still shows the old route:
+The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v31`, checks for updates on every launch, and falls back to saved files when offline. If an already-open tab still shows the old route:
 
-1. Close all Japan Trip Hunt tabs.
+1. Open `https://pyroxl.github.io/Japan-Quest-hunt/reset.html` once, or close all Japan Trip Hunt tabs.
 2. Start the server again.
 3. Open `http://localhost:8000` and refresh once.
 4. If it is still stale, do a hard refresh (`Ctrl+Shift+R`).

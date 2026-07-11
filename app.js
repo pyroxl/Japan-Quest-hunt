@@ -1,4 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
+const APP_VERSION = "japan-quest-v31";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -1103,7 +1104,10 @@ function mainGoalPhotoTaskId(dayId) {
 }
 
 function bundledCapstoneUrl(dayId) {
-  return defaultCapstonePhotos[dayId] || null;
+  const relative = defaultCapstonePhotos[dayId];
+  if (!relative) return null;
+  const base = location.pathname.endsWith("/") ? location.pathname : `${location.pathname.replace(/\/[^/]*$/, "/")}`;
+  return `${base}${relative}`;
 }
 
 async function capstoneImageUrl(dayId) {
@@ -1649,17 +1653,6 @@ function makeMainGoalCard(day) {
   return card;
 }
 
-function makeDayFrontPage(day) {
-  const section = document.createElement("section");
-  section.className = "day-front-page";
-  const hero = document.createElement("div");
-  hero.className = "capstone-hero";
-  section.appendChild(hero);
-  populateCapstoneHero(day, hero);
-  section.appendChild(dailyGuide(day));
-  return section;
-}
-
 function makeQuestPage(day) {
   const section = document.createElement("section");
   section.className = "quest-page";
@@ -2128,8 +2121,10 @@ function makeDailyPhotoCard(day) {
 
 function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWindows") {
   const carousel = document.createElement("section");
+  const toolbar = document.createElement("div");
   const viewport = document.createElement("div");
   carousel.className = "day-carousel";
+  toolbar.className = "day-window-toolbar";
   viewport.className = "day-window-strip";
   viewport.setAttribute("aria-label", "Swipe or drag between windows");
 
@@ -2143,6 +2138,35 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   const maxIndex = windows.length - 1;
   let currentIndex = Math.min(Number(state[storageGroup]?.[carouselId]) || 0, maxIndex);
   let scrollTimer;
+  const prev = document.createElement("button");
+  const next = document.createElement("button");
+  const dots = document.createElement("div");
+  const dotButtons = labels.map((label, index) => {
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "day-window-dot";
+    dot.textContent = label;
+    dot.addEventListener("click", () => goTo(index));
+    return dot;
+  });
+
+  prev.type = "button";
+  prev.className = "window-arrow";
+  prev.textContent = "‹";
+  prev.setAttribute("aria-label", "Previous window");
+  next.type = "button";
+  next.className = "window-arrow";
+  next.textContent = "›";
+  next.setAttribute("aria-label", "Next window");
+  dots.className = "day-window-dots";
+  dots.append(...dotButtons);
+
+  function updateToolbar() {
+    dotButtons.forEach((dot, index) => dot.classList.toggle("active", index === currentIndex));
+    prev.disabled = currentIndex === 0;
+    next.disabled = currentIndex === maxIndex;
+  }
+
   function windowLeft(index) {
     return windows[index]?.offsetLeft || 0;
   }
@@ -2155,7 +2179,11 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
     state[storageGroup] = state[storageGroup] || {};
     state[storageGroup][carouselId] = currentIndex;
     saveState();
+    updateToolbar();
   }
+
+  prev.addEventListener("click", () => goTo(currentIndex - 1));
+  next.addEventListener("click", () => goTo(currentIndex + 1));
   viewport.addEventListener("scroll", () => {
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(() => {
@@ -2165,6 +2193,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
         state[storageGroup] = state[storageGroup] || {};
         state[storageGroup][carouselId] = currentIndex;
         saveState();
+        updateToolbar();
       }
     }, 90);
   }, { passive: true });
@@ -2190,8 +2219,12 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   viewport.addEventListener("pointerup", endDrag);
   viewport.addEventListener("pointercancel", endDrag);
 
-  carousel.append(viewport);
-  requestAnimationFrame(() => goTo(currentIndex, "auto"));
+  toolbar.append(prev, dots, next);
+  carousel.append(toolbar, viewport);
+  requestAnimationFrame(() => {
+    goTo(currentIndex, "auto");
+    updateToolbar();
+  });
   return carousel;
 }
 
@@ -2203,7 +2236,11 @@ function renderDay(day) {
       <p>${day.theme}</p>
     </div>
   `;
-  const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
+  const hero = document.createElement("div");
+  hero.className = "capstone-hero";
+  dayPanel.appendChild(hero);
+  populateCapstoneHero(day, hero);
+  const windows = [dailyGuide(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
   dayPanel.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Photos"]));
 }
 
@@ -2295,8 +2332,17 @@ document.querySelector("#hotelField").addEventListener("input", (event) => {
 });
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
-  navigator.serviceWorker.register("sw.js")
-    .then((registration) => registration.update())
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
+  navigator.serviceWorker.register(`sw.js?${APP_VERSION}`)
+    .then((registration) => {
+      registration.update();
+      setInterval(() => registration.update(), 60 * 60 * 1000);
+    })
     .catch(() => {});
 }
 
