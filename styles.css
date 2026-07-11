@@ -996,6 +996,30 @@ h3 {
   cursor: pointer;
 }
 
+.calendar-photo {
+  display: block;
+  width: 100%;
+  min-height: 92px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--green) 18%, white), color-mix(in srgb, var(--gold) 18%, white));
+  background-position: center;
+  background-size: cover;
+}
+
+.calendar-photo:not(.has-photo)::after {
+  content: "Add the day's capstone photo";
+  display: grid;
+  min-height: 92px;
+  place-items: center;
+  padding: 10px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: center;
+}
+
 .calendar-day strong {
   font-size: 0.9rem;
   letter-spacing: 0;

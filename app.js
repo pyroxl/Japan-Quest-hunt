@@ -466,7 +466,8 @@ const regionalQuestPools = {
     ["kyoto-noodles", "food", "Choose soba or udon for an easy meal."],
     ["kyoto-noren", "find", "Find a beautiful noren, lantern, or tiny garden."],
     ["kyoto-river", "photo", "Catch a quiet river routine."],
-    ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto."]
+    ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto."],
+    ["kyoto-hiei", "culture", "Make Mount Hiei and Enryaku-ji a full-day replacement only if the forecast and everyone's energy are excellent.", ["day10"]]
   ],
   nara: [
     ["nara-kakinoha", "food", "Try kakinoha-zushi in Nara."],
@@ -593,7 +594,7 @@ const tripData = {
       questDay("day07", "2026-10-29", "First Full Kyoto Quest", "One historic anchor, then food and river atmosphere.", ["Nijo Castle", "Nishiki Market", "Pontocho Alley", "Sanjo Ohashi Bridge Kyoto"], "Visit Nijo Castle, then make Kamo River dusk and a Pontocho-area dinner the day's emotional finish.", ["Notice the nightingale floors", "Try one Nishiki snack", "Sit or walk by the Kamo River", "Find an atmospheric but manageable dinner"], ["A castle gate detail", "A jewel-like food display", "A riverbank routine"], "Kyoto feels like history plus living food, not a temple checklist.", "Taxi or rest between castle and evening."),
       questDay("day08", "2026-10-30", "Old Kyoto Quest", "The big preserved-street, temple-on-the-hill day.", ["Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Protect Kiyomizu and the old streets, then let lantern-lit Yasaka/Gion be the atmospheric end.", ["Use a taxi uphill if it saves the day", "Find one matcha or wagashi stop", "Take Mai's dream-trip Kyoto photo", "Move respectfully through Gion without chasing geiko or maiko"], ["A sloping-street detail", "The Kiyomizu panorama", "A lantern-lit corner"], "Mai gets the old-Japan feeling without an overstuffed day.", "Cafe/base-point strategy beats heroic walking."),
       questDay("day09", "2026-10-31", "Arashiyama Scenery Quest", "One garden or bamboo reveal, then a shared riverside regroup.", ["Arashiyama Station Kyoto", "Togetsukyo Bridge", "Arashiyama Bamboo Forest", "Okochi Sanso Garden", "Tenryu-ji Temple"], "Choose Okochi Sanso, Tenryu-ji garden, or a manageable bamboo section, then rejoin the family at a riverside cafe; the rowboat is off the list.", ["See Togetsukyo and the river", "Choose one walking payoff rather than collecting all three", "Find the scenic cafe/rest base", "Try one excellent Arashiyama sweet"], ["A mountain-and-river frame", "A bamboo sound or shadow", "A garden detail worth remembering"], "Mai gets a beautiful open-air Kyoto day.", "Return before scenery becomes stamina debt."),
-      questDay("day10", "2026-11-01", "Soft Kyoto Quest", "Early torii for Mai and us, then river, bakery, supermarket, and recovery.", ["Fushimi Inari Taisha", "Demachiyanagi Station", "Kamo River Delta"], "Walk through Fushimi Inari's torii early and turn back when the experience feels complete, then rejoin for ordinary Kyoto.", ["Find a bakery breakfast", "Sit near the Kamo River Delta", "Shop a supermarket or depachika for a hotel picnic", "Write or mail a postcard", "Look for matcha, hojicha, or tea-flavored melon bread"], ["A fox detail", "A quiet torii section", "A stepping-stone or local river routine"], "Kyoto becomes somewhere to exist, not only sightsee.", "Let this day repair the trip battery.")
+      questDay("day10", "2026-11-01", "Mount Inari Overlook and Soft Kyoto", "An early torii climb to the Yotsutsuji city overlook, then river, bakery, supermarket, and recovery.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Demachiyanagi Station", "Kamo River Delta"], "Climb through Fushimi Inari's torii to the Yotsutsuji overlook, enjoy the view across southern Kyoto, then turn back and rejoin for an ordinary Kyoto afternoon.", ["Reach Yotsutsuji and take the city-overlook photo", "Find a bakery breakfast", "Sit near the Kamo River Delta", "Shop a supermarket or depachika for a hotel picnic", "Write or mail a postcard", "Look for matcha, hojicha, or tea-flavored melon bread"], ["A fox detail", "A quiet upper torii section", "Kyoto spreading out below the hillside"], "Mai gets a real hill walk and city view without needing to complete the summit loop.", "Turn back before Yotsutsuji if the climb stops being fun.")
     ]
   },
   hiroshima: {
@@ -765,9 +766,9 @@ const dayContext = {
     history: ["Arashiyama became a retreat for Heian-period aristocrats who traveled from the capital to compose poetry, admire blossoms and autumn leaves, and turn scenery into cultivated experience. Later temples and villas continued that dialogue between designed garden and borrowed mountain view.", "The name Togetsukyo—Moon Crossing Bridge—comes from an emperor's poetic impression of the moon moving across the bridge. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes."]
   },
   day10: {
-    summary: "A quiet torii walk for Mai and the user gives way to ordinary Kyoto: bakery breakfast, river life, supermarket browsing, and deliberate recovery.",
-    timeline: [["07:00–09:30", "Optional split: Mai and the user visit Fushimi Inari early and turn back when the experience feels complete."], ["10:30–13:00", "Rejoin for bakery food and a slow Demachiyanagi or Kamo River Delta visit."], ["13:00–16:30", "Choose a cafe, postcard stop, supermarket, or hotel rest."], ["Evening", "Build a depachika or supermarket picnic and prepare calmly for tomorrow's transfer."]],
-    history: ["Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Inari's identity expanded from rice and agricultural abundance to encompass commerce and prosperity; foxes serve as messengers, while donated torii record hopes, gratitude, and business success.", "The Kamo River offers a counter-story to monumental Kyoto. At the delta, students, musicians, children, cyclists, and birds occupy space informally. That everyday use is part of the city's continuity: Kyoto survives not only by preserving monuments but by living around them."]
+    summary: "A purposeful early climb reaches Yotsutsuji's view over southern Kyoto, then gives way to bakery food, river life, supermarket browsing, and recovery.",
+    timeline: [["06:45–10:15", "Climb Fushimi Inari's torii route to Yotsutsuji, pause for the city view, and return without adding the summit loop."], ["10:30–13:00", "Rejoin for bakery food and a slow Demachiyanagi or Kamo River Delta visit."], ["13:00–16:30", "Choose a cafe, postcard stop, supermarket, or hotel rest."], ["Evening", "Build a depachika or supermarket picnic and prepare calmly for tomorrow's transfer. Mount Hiei is a full-day replacement, never an add-on."]],
+    history: ["Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Inari's identity expanded from rice and agricultural abundance to encompass commerce and prosperity; foxes serve as messengers, while donated torii record hopes, gratitude, and business success.", "Yotsutsuji sits partway up Mount Inari where the path opens toward southern Kyoto—the rewarding view comes before the summit, not at it. The Kamo River afternoon then supplies the counter-story: students, families, musicians, and birds making the old capital an ordinary living city."]
   },
   day11: {
     summary: "The westward chapter opens with Himeji's white keep, then uses garden, lunch, and train time to reach Hiroshima without turning a transfer into an endurance test.",
@@ -1062,6 +1063,7 @@ function isPhotoQuest(title, text) {
 }
 
 const dailyPhotoSlots = [
+  ["capstone", "Capstone Photo", "The single image that best captures today's main experience."],
   ["food", "Food Photo", "A snack, meal, dessert, drink, or food hall treasure."],
   ["scene", "Scene Photo", "A street, shrine, station, river, shopfront, skyline, or tiny atmosphere proof."],
   ["us", "Us Photo", "A non-perfect couple photo from the day."],
@@ -1605,6 +1607,7 @@ function renderCalendar() {
       button.dataset.day = day.id;
       const capstone = day.groups.find((group) => group[1] === "main")?.[2]?.[0];
       button.innerHTML = `
+        <span class="calendar-photo" aria-hidden="true"></span>
         <small>${city.name}</small>
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
@@ -1618,8 +1621,18 @@ function renderCalendar() {
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
       grid.appendChild(button);
+      renderCalendarPhoto(day, button.querySelector(".calendar-photo"));
     });
   });
+}
+
+async function renderCalendarPhoto(day, target) {
+  if (!target) return;
+  const photos = await getPhotosForTask(`${day.id}.photo.capstone`).catch(() => []);
+  const latest = photos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
+  if (!latest) return;
+  target.style.backgroundImage = `url("${latest.dataUrl}")`;
+  target.classList.add("has-photo");
 }
 
 async function renderAlbum() {
@@ -1895,7 +1908,7 @@ function makeDailyPhotoCard(day) {
     className: "daily-photo-card",
     label: "Daily Album",
     title: "Photos to catch today",
-    badge: "3 core",
+    badge: "4 core",
     open: true
   });
   const grid = document.createElement("div");
