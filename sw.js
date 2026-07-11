@@ -1,4 +1,4 @@
-const CACHE_NAME = "japan-quest-v28";
+const CACHE_NAME = "japan-quest-v29";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -10,10 +10,10 @@ const APP_FILES = [
   "./capstones/day03.jpg",
   "./capstones/day04.jpg",
   "./capstones/day05.jpg",
-  "./capstones/day06.jpg",
-  "./capstones/day07.jpg",
+  "./capstones/day06.webp",
+  "./capstones/day07.webp",
   "./capstones/day08.jpg",
-  "./capstones/day09.jpg",
+  "./capstones/day09.webp",
   "./capstones/day10.jpg",
   "./capstones/day11.jpg",
   "./capstones/day12.jpg",
@@ -22,8 +22,8 @@ const APP_FILES = [
   "./capstones/day15.jpg",
   "./capstones/day16.jpg",
   "./capstones/day17.jpg",
-  "./capstones/day18.jpg",
-  "./capstones/day19.jpg",
+  "./capstones/day18.webp",
+  "./capstones/day19.webp",
   "./capstones/day20.jpg",
   "./capstones/day21.jpg"
 ];
