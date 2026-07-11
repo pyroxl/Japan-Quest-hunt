@@ -668,6 +668,18 @@ h3 {
   color: #6d28d9;
 }
 
+.calendar-capstone {
+  align-self: end;
+  margin-top: 6px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+}
+
+.calendar-capstone b {
+  color: var(--green);
+}
+
 .daily-guide,
 .daily-deck {
   display: grid;
@@ -964,14 +976,14 @@ h3 {
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 8px;
 }
 
 .calendar-day {
   display: grid;
   gap: 6px;
-  min-height: 96px;
+  min-height: 180px;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;

@@ -438,7 +438,6 @@ const roadmapGoals = [
   { id: "friends", goal: "Time with Akko and Yoshi", days: ["day16"], status: "Needs Confirmation", why: "Local friend time delivers the intimate Japan feeling the family wants.", blocker: "Confirm their neighborhood, health, availability, and preferred plan.", fallback: "Explore their suggested residential neighborhood and send a warm invitation to join any part." },
   { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day17"], status: "Conditional", why: "A participatory creative-neighborhood experience keeps pop culture personal.", blocker: "Mai should choose karaoke, live music, arcade, event, or another active format.", fallback: "Pair one focused Nakano browse with an arcade, cafe, or neighborhood activity." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day19"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Use a modern-art museum plus one polished Tokyo food hall." },
-  { id: "mobility", goal: "Humane pace and mobility backup every day", days: Array.from({ length: 20 }, (_, index) => `day${String(index + 2).padStart(2, "0")}`), status: "Ready", persistent: true, why: "Dad's sciatica and group energy are part of the plan, not an exception.", blocker: "", fallback: "Every day retains its Soft landing card, cafe pause, taxi, or early-return route." }
 ];
 
 const planningConstraints = [
@@ -1477,7 +1476,6 @@ function renderQuestDeck(day) {
 
 function dailyGuide(day) {
   const main = day.groups.find((group) => group[1] === "main")?.[2]?.[0] || day.theme;
-  const soft = day.groups.find((group) => group[1] === "soft")?.[2]?.[0] || "Pause early and keep the next day protected.";
   const context = dayContext[day.id] || { summary: day.theme, timeline: [], history: ["Background notes can be added here later."] };
   const goals = roadmapGoals.filter((goal) => goal.days.includes(day.id));
   const statuses = goals.map(roadmapStatus);
@@ -1514,10 +1512,7 @@ function dailyGuide(day) {
     saveState();
     showDay(day);
   });
-  const lowEnergy = document.createElement("details");
-  lowEnergy.className = "low-energy-drawer";
-  lowEnergy.innerHTML = `<summary>Show the low-energy option</summary><p>${soft}</p>`;
-  card.append(checkbox, lowEnergy);
+  card.appendChild(checkbox);
   return card;
 }
 
@@ -1603,7 +1598,6 @@ function renderOverview() {
   document.querySelector(".hotel-card p").textContent = `${city.name} map routes use this as the starting point. You can leave it blank until the hotel is real.`;
   document.querySelector("#ongoingQuests h2").textContent = `${city.name} Discovery Deck`;
 
-  renderRoadmap();
   renderCalendar();
   renderMelonPassport();
   const cityDay = city.days.find((day) => day.date === todayIso()) || city.days[0];
@@ -1632,14 +1626,12 @@ function renderCalendar() {
       button.className = `calendar-day ${day.date === today ? "is-today" : ""}`;
       button.dataset.city = cityId;
       button.dataset.day = day.id;
-      const goals = roadmapGoals.filter((goal) => goal.days.includes(day.id));
-      const statuses = goals.map(roadmapStatus);
-      const readiness = ["Needs Confirmation", "Needs Booking", "Conditional", "Ready", "Completed"].find((status) => statuses.includes(status)) || "Ready";
+      const capstone = day.groups.find((group) => group[1] === "main")?.[2]?.[0];
       button.innerHTML = `
         <small>${city.name}</small>
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
-        <span class="calendar-status status-${readiness.toLowerCase().replaceAll(" ", "-")}">${readiness}</span>
+        <span class="calendar-capstone"><b>Capstone:</b> ${capstone || "Not yet defined"}</span>
       `;
       button.addEventListener("click", () => {
         state.activeCity = cityId;
