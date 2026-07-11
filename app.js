@@ -1,4 +1,5 @@
-const STORAGE_KEY = "tokyoQuestHunt.v3";
+const STORAGE_KEY = "tokyoQuestHunt.v4";
+const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
 const PHOTO_STORE = "photos";
@@ -351,20 +352,15 @@ const legacyTripData = {
 const coreExperienceQuests = [
   {
     title: "Mai's Melon Bread Passport",
-    description: "Share genuinely different versions across the route. One bun can count for both of us.",
+    description: "Collect six distinct versions. Each passport stamp needs Mai's photo and 1–10 score.",
     type: "side",
     items: [
       "Konbini baseline melon bread",
       "Fresh neighborhood-bakery classic",
-      "Jumbo fresh-baked version",
-      "Actual melon-flavored or melon-cream version",
-      "Cream, custard, or ice-cream-filled version",
-      "Chocolate or chocolate-chip version",
-      "Matcha, hojicha, or tea-flavored version",
-      "Strawberry or another fruit variation",
-      "Caramel or cinnamon variation",
-      "Wildcard version neither of us has seen before",
-      "Crown the Mai Champion: best classic, flavored, value, and overall"
+      "Jumbo or extra-crispy version",
+      "Melon-flavored, cream-filled, or custard-filled version",
+      "Matcha, hojicha, or another Japanese-flavored version",
+      "Mai's wildcard version"
     ]
   },
   {
@@ -427,12 +423,117 @@ const coreExperienceQuests = [
   }
 ];
 
+const roadmapGoals = [
+  { id: "osaka-food", goal: "Osaka food and okonomiyaki", days: ["day03"], status: "Ready", why: "Food is one of Mai's clearest dream-trip priorities.", blocker: "", fallback: "Keep Kuromon short and eat okonomiyaki near the hotel." },
+  { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "A relaxed neighborhood meal gives Osaka an ordinary-life feeling.", blocker: "", fallback: "Choose a casual early dinner close to the hotel." },
+  { id: "konbini", goal: "7-Eleven and konbini food experience", days: ["day02"], status: "Ready", why: "The first small everyday-Japan ritual begins immediately.", blocker: "", fallback: "Build breakfast from the nearest station or hotel konbini." },
+  { id: "nara", goal: "Nara Park", days: ["day06"], status: "Ready", why: "Nara bridges Osaka and Kyoto with one iconic first-trip experience.", blocker: "", fallback: "Use taxis and keep the visit to the park and Todai-ji approach." },
+  { id: "nijo", goal: "Nijo Castle", days: ["day07"], status: "Ready", why: "It is Kyoto's strongest non-temple historic anchor.", blocker: "", fallback: "Taxi to the castle and shorten Nishiki or the evening walk." },
+  { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day08"], status: "Ready", why: "This is Mai's protected old-Kyoto atmosphere day.", blocker: "", fallback: "Taxi uphill, visit Kiyomizu, then descend only as far as energy allows." },
+  { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
+  { id: "nature", goal: "At least two strong nature or scenery days", days: ["day09", "day13"], status: "Ready", why: "Arashiyama and Miyajima balance the city and history chapters.", blocker: "", fallback: "Use the riverside Arashiyama loop and Miyajima waterfront without climbs." },
+  { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
+  { id: "tokyo-story", goal: "Tokyo through food, cute neighborhoods, museums, friends, and pop culture", days: ["day14", "day15", "day16", "day17", "day18", "day19", "day20", "day21"], status: "Ready", why: "The Tokyo chapter is intentionally personal rather than a generic big-city checklist.", blocker: "", fallback: "Choose the day's one strongest neighborhood, meal, or social anchor and release the rest." },
+  { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
+  { id: "friends", goal: "Time with Akko and Yoshi", days: ["day16"], status: "Needs Confirmation", why: "Local friend time delivers the intimate Japan feeling the family wants.", blocker: "Confirm their neighborhood, health, availability, and preferred plan.", fallback: "Explore their suggested residential neighborhood and send a warm invitation to join any part." },
+  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day17"], status: "Conditional", why: "A participatory creative-neighborhood experience keeps pop culture personal.", blocker: "Mai should choose karaoke, live music, arcade, event, or another active format.", fallback: "Pair one focused Nakano browse with an arcade, cafe, or neighborhood activity." },
+  { id: "teamlab", goal: "teamLab Borderless", days: ["day19"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Use a modern-art museum plus one polished Tokyo food hall." },
+  { id: "mobility", goal: "Humane pace and mobility backup every day", days: Array.from({ length: 20 }, (_, index) => `day${String(index + 2).padStart(2, "0")}`), status: "Ready", persistent: true, why: "Dad's sciatica and group energy are part of the plan, not an exception.", blocker: "", fallback: "Every day retains its Soft landing card, cafe pause, taxi, or early-return route." }
+];
+
+const planningConstraints = [
+  { title: "Private-only onsen rule", text: "Use only an in-room private bath, reservable private/family bath, clothed footbath, or skip bathing." },
+  { title: "Friend day confirmation", text: "Confirm Akko and Yoshi's neighborhood and whether Saturday, November 7 works." },
+  { title: "Ticket watch", text: "Ghibli Museum and teamLab remain protected roadmap goals with booking fallbacks." },
+  { title: "Nice-to-have: Miyajima stay", text: "Consider an island splurge only if budget and luggage logistics support it; Hiroshima base remains a complete trip." },
+  { title: "Nice-to-have: parents' extension", text: "A Tokyo extension after Mai and the user leave remains separate from the core trip." }
+];
+
+const regionalQuestPools = {
+  osaka: [
+    ["osaka-takoyaki", "food", "Try takoyaki from a busy specialist."],
+    ["osaka-okonomiyaki", "food", "Share Osaka-style okonomiyaki."],
+    ["osaka-kushikatsu", "food", "Try kushikatsu in Osaka."],
+    ["osaka-negiyaki", "food", "Find negiyaki or another Osaka griddle specialty."],
+    ["osaka-konbini", "food", "Build a konbini breakfast or dessert haul."],
+    ["osaka-sign", "find", "Spot the loudest oversized food sign."],
+    ["osaka-street", "photo", "Photograph an ordinary street with no landmark."],
+    ["osaka-kissaten", "culture", "Pause in a kissaten or neighborhood cafe."]
+  ],
+  kyoto: [
+    ["kyoto-obanzai", "food", "Try obanzai or a Kyoto home-style plate."],
+    ["kyoto-yudofu", "food", "Try yudofu, tofu, or a gentle Kyoto set meal."],
+    ["kyoto-matcha", "food", "Pair matcha with wagashi."],
+    ["kyoto-tea", "food", "Find a matcha, hojicha, or tea-flavored treat."],
+    ["kyoto-noodles", "food", "Choose soba or udon for an easy meal."],
+    ["kyoto-noren", "find", "Find a beautiful noren, lantern, or tiny garden."],
+    ["kyoto-river", "photo", "Catch a quiet river routine."],
+    ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto."]
+  ],
+  nara: [
+    ["nara-kakinoha", "food", "Try kakinoha-zushi in Nara."],
+    ["nara-yomogi", "food", "Try fresh yomogi mochi."],
+    ["nara-cafe", "food", "Take a calm cafe break near Naramachi."],
+    ["nara-deer", "find", "Catch a deer bow or memorable side-eye."],
+    ["nara-scale", "photo", "Photograph a detail that shows Todai-ji's scale."]
+  ],
+  himeji: [
+    ["himeji-ekiben", "food", "Choose a regional ekiben for the ride west."],
+    ["himeji-snack", "food", "Pick one compact Himeji station snack."],
+    ["himeji-reveal", "photo", "Photograph the first full white-castle reveal."],
+    ["himeji-defense", "find", "Spot one castle-defense detail."],
+    ["himeji-garden", "photo", "Frame the keep from Koko-en if the garden route wins."]
+  ],
+  hiroshima: [
+    ["hiroshima-okonomiyaki", "food", "Try layered Hiroshima-style okonomiyaki."],
+    ["hiroshima-oyster", "food", "Try an oyster if it appeals."],
+    ["hiroshima-momiji", "food", "Compare warm and packaged momiji manju."],
+    ["hiroshima-tsukemen", "food", "Try Hiroshima spicy tsukemen."],
+    ["hiroshima-river", "photo", "Photograph how the river changes the mood."]
+  ],
+  miyajima: [
+    ["miyajima-anago", "food", "Try anago-meshi on Miyajima."],
+    ["miyajima-oyster", "food", "Try a grilled oyster if it appeals."],
+    ["miyajima-warm-momiji", "food", "Taste warm momiji manju."],
+    ["miyajima-torii", "photo", "Catch the torii reflected or revealed by the tide."],
+    ["miyajima-quiet", "find", "Find an island detail away from the busiest street."]
+  ],
+  rail: [
+    ["rail-ekiben", "food", "Choose a different regional ekiben for the long ride to Tokyo."],
+    ["rail-wrapper", "photo", "Photograph the closed package and open tray."],
+    ["rail-tastes", "food", "Trade tastes after departure."],
+    ["rail-window", "find", "Pause lunch for one train-window scene."],
+    ["rail-score", "culture", "Score packaging, regional character, variety, flavor, and train happiness."]
+  ],
+  tokyo: [
+    ["tokyo-sushi", "food", "Choose a sushi meal that fits today's neighborhood."],
+    ["tokyo-ramen", "food", "Try a neighborhood ramen shop."],
+    ["tokyo-curry", "food", "Try Japanese curry."],
+    ["tokyo-yakitori", "food", "Share yakitori at a casual dinner."],
+    ["tokyo-teishoku", "food", "Order a teishoku set meal."],
+    ["tokyo-taiyaki", "food", "Find taiyaki or ningyo-yaki."],
+    ["tokyo-kissaten", "food", "Try a kissaten breakfast or toast set."],
+    ["tokyo-bakery", "food", "Check a neighborhood bakery for a new melon bread."],
+    ["tokyo-reflection", "photo", "Photograph the two of us reflected in the city."],
+    ["tokyo-routine", "culture", "Repeat one cafe, bakery, konbini, or supermarket."]
+  ]
+};
+
+const melonSlots = [
+  ["konbini", "Konbini baseline", "The packaged reference point."],
+  ["bakery", "Fresh bakery classic", "A crisp-topped neighborhood bakery version."],
+  ["jumbo", "Jumbo or extra-crispy", "A dramatic size or texture round."],
+  ["filled", "Melon or cream-filled", "Melon flavor, melon cream, custard, or another filling."],
+  ["japanese", "Japanese flavor", "Matcha, hojicha, or another Japan-specific variation."],
+  ["wildcard", "Mai's wildcard", "Any surprising version Mai wants in the final six."]
+];
+
 function questDay(id, date, title, theme, places, main, side, eggs, mai, soft) {
   return {
     id,
     date,
     short: new Date(`${date}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-    title: `Day ${Number(id.replace("day", ""))} - ${title}`,
+    title: `Day ${Number(id.replace("day", ""))} - ${title.replace(/\s+Quest$/, "")}`,
     theme,
     places,
     groups: [
@@ -472,7 +573,7 @@ const tripData = {
       questDay("day02", "2026-10-24", "Osaka Arrival Quest", "Land, recover, and let Japan arrive through food and lights.", ["Kansai International Airport", "Namba Station Osaka", "Dotonbori Osaka"], "Reach Osaka, rest properly, then cross Ebisu Bridge for one neon photo and one hot snack if the body agrees.", ["Find the nearest useful konbini", "Take the we-made-it photo", "Choose tomorrow's breakfast candidate", "Start the melon passport with a packaged baseline if hunger agrees"], ["A canal reflection", "A food sign bigger than expected", "A dessert too cute for jet lag"], "Mai gets one real first-night Japan moment without pressure.", "Stop while Dotonbori still feels magical."),
       questDay("day03", "2026-10-25", "Food-First Osaka Quest", "Japan feels edible from morning to night.", ["Namba Osaka", "Kuromon Ichiba Market", "Shinsekai Osaka", "Nipponbashi Denden Town"], "Build the day around snacks, Namba/Kuromon, and either Shinsekai or Den Den Town—not two equal anchors.", ["Try a market bite", "Eat something fried, grilled, or noodly", "Find one snack nobody knew existed this morning", "Hunt a fresh-bakery classic melon bread"], ["A retro Shinsekai sign", "A Den Den Town character detail", "A plastic food display"], "Mai gets the food-is-everywhere feeling without overwhelm.", "Drop the second neighborhood if the first already won."),
       questDay("day04", "2026-10-26", "Normal-Life Osaka Quest", "Cafes, small shops, lived-in food streets, and an optional participatory night.", ["Tenma Osaka", "Fukushima Osaka", "Nakazakicho Osaka"], "Choose one local-feeling neighborhood cluster and let the day breathe.", ["Find a kissaten, cafe, or bakery", "Eat a casual izakaya dinner", "Try a 60–90 minute private karaoke box only if tonight feels right", "Take a street photo with no landmark", "Choose a neighborhood worth returning to"], ["A charming tiny restaurant sign", "A tucked-away shop", "A houseplant, noren, lantern, or doorway detail"], "Mai gets the imagine-living-here-for-an-afternoon feeling.", "Pick one neighborhood, not all three by default."),
-      questDay("day05", "2026-10-27", "Open Osaka Quest", "No Umeda Sky Building and no forced replacement.", ["Namba Osaka", "Tenma Osaka", "Fukushima Osaka", "Osaka Aquarium Kaiyukan"], "Choose the day by actual energy: local Osaka, food quest, recovery, or Kaiyukan only if Mai wants the aquarium.", ["Sleep without an alarm", "Do laundry or one useful admin task", "Browse a depachika or supermarket for dinner", "Find a different melon-bread style", "If Kobe wins, let it replace Osaka rather than adding both"], ["A supermarket hotel-picnic find", "A bakery tray worth photographing", "The moment choosing less improves the trip"], "Mai chooses the shape of the day instead of inheriting a substitute attraction.", "A recovery day is a successful day."),
+      questDay("day05", "2026-10-27", "Open Osaka", "No Umeda Sky Building and no forced replacement.", ["Namba Osaka", "Tenma Osaka", "Fukushima Osaka", "Osaka Aquarium Kaiyukan"], "Choose the day by actual energy: local Osaka, a food hunt, recovery, or Kaiyukan only if Mai wants the aquarium.", ["Sleep without an alarm", "Do laundry or one useful admin task", "Browse a depachika or supermarket for dinner", "Find a different melon-bread style", "If Kobe wins, let it replace Osaka rather than adding both"], ["A supermarket hotel-picnic find", "A bakery tray worth photographing", "The moment choosing less improves the trip"], "Mai chooses the shape of the day instead of inheriting a substitute attraction.", "A recovery day is a successful day."),
       questDay("day06", "2026-10-28", "Nara Bridge Quest", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Observe or feed deer without making them the entire day", "Try yomogi mochi or kakinoha-zushi", "Find a cafe near Naramachi", "Make the luggage strategy feel competent"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
     ]
   },
@@ -557,10 +658,10 @@ const emergencyCards = [
   ["Us Card", "side", ["Split a dessert", "Pick tomorrow's first stop together", "Take one non-perfect couple photo", "Buy one small shared souvenir", "Sit without researching anything for 15 minutes"]]
 ];
 
-const awards = ["Best Japan day", "Best snack", "Best meal", "Cutest thing Mai found", "Best unplanned moment", 'Best "we live here now" moment', "Funniest small failure", "Place that felt most like ours", "The quest we accidentally completed", "One sentence we should remember"];
+const awards = ["Best Japan day", "Best snack", "Best meal", "Cutest thing Mai found", "Best unplanned moment", 'Best "we live here now" moment', "Funniest small failure", "Place that felt most like ours", "The discovery we completed by accident", "One sentence we should remember"];
 
 const hiddenDayGroupTypes = new Set(["mai", "soft"]);
-const sharedDayGroupTypes = new Set(["side"]);
+const sharedDayGroupTypes = new Set(["side", "egg"]);
 
 const legacyDayContext = {
   day02: {
@@ -633,18 +734,108 @@ const legacyDayContext = {
   }
 };
 
-const chapterBackground = {
-  osaka: "Osaka's merchant-city identity comes through food streets, markets, neighborhood rail life, and a willingness to enjoy the city loudly.",
-  kyoto: "Kyoto layers imperial, shogunal, religious, craft, market, and ordinary river life; the plan works best when those layers are experienced slowly.",
-  hiroshima: "This chapter connects a surviving feudal castle, Hiroshima's modern history and peace work, Miyajima's sacred island landscape, and the long rail journey east.",
-  tokyo: "Tokyo is a network of neighborhoods rather than one center: creative districts, old downtown streets, suburban parks, local shopping streets, and intensely modern art all coexist."
+const dayContext = {
+  day02: {
+    summary: "Arrival day stays deliberately small: reach Namba, rest for real, then let one neon-and-food walk be the first chapter of Japan.",
+    timeline: [["Afternoon", "Land at KIX, clear the airport, and travel directly to the Osaka hotel."], ["17:00–19:00", "Check in, shower, unpack only what is needed, and rest."], ["19:00–21:00", "If energy agrees, cross Ebisu Bridge, share one hot Osaka snack, and find the nearest useful konbini."], ["By 21:30", "Return while the lights still feel magical; tomorrow matters more than squeezing in another stop."]],
+    history: ["Osaka became Japan's great merchant city because water routes and warehouses connected the country's rice, goods, and money here. The phrase often translated as “the nation's kitchen” originally described this commercial role before it became shorthand for Osaka's appetite.", "Dotonbori began as a 17th-century canal project and grew into a theater district. Restaurants followed the crowds, and the extravagant signs outside are descendants of that competitive entertainment culture: Osaka announcing, loudly and cheerfully, that pleasure is serious business."]
+  },
+  day03: {
+    summary: "Mai's food-is-everywhere day moves from market grazing to one playful southern Osaka neighborhood, with blue hour as the visual payoff.",
+    timeline: [["09:00", "Start with a konbini or bakery breakfast and an unhurried Namba walk."], ["10:30–13:00", "Graze through Kuromon and nearby lanes; share portions instead of ordering a full meal at every stop."], ["13:00–16:00", "Rest, browse Namba, or choose Den Den Town if Mai wants games and pop culture."], ["16:30–19:30", "Choose Shinsekai for blue-hour signs and kushikatsu, then return without adding a second major district."]],
+    history: ["Kuromon Ichiba developed from fish trading near Enmyoji Temple and became a pantry for Osaka's households and professional cooks. Its modern visitor-facing stalls sit on top of a much older market habit: judging freshness, season, and value at close range.", "Shinsekai was unveiled in 1912 as a vision of the “new world,” borrowing visual ideas from Paris and New York. After wartime decline it reinvented itself as a proudly retro district. Den Den Town tells a later version of the same story, shifting from postwar electronics into games, anime, and collector culture."]
+  },
+  day04: {
+    summary: "The anti-checklist Osaka day chooses one lived-in neighborhood, then finishes with shared plates and an optional short karaoke session.",
+    timeline: [["No-alarm morning", "Sleep, do laundry if useful, and begin with a kissaten, bakery, or simple lunch."], ["12:00–16:00", "Choose Tenma, Fukushima, or Nakazakicho and explore it slowly."], ["16:00–18:00", "Take a hotel or cafe reset before the evening."], ["18:00–21:00", "Have an early izakaya meal; add 60–90 minutes of private-room karaoke only if everyone still wants it."]],
+    history: ["These neighborhoods reveal Osaka as a city of rail stations, shopping streets, tiny restaurants, and repeated local routines. Tenma grew around one of Japan's great shrines and its long shopping arcade; Fukushima mixed working infrastructure with an unusually dense restaurant scene.", "Nakazakicho survived with a pocket of narrow lanes and older wooden buildings that later attracted cafes, studios, and small shops. The appeal is not a single monument. It is seeing how old urban fabric acquires new lives without becoming a museum set."]
+  },
+  day05: {
+    summary: "This open day protects the trip's stamina. Recovery is the default success; Kaiyukan, another Osaka neighborhood, or Kobe must replace that plan rather than pile onto it.",
+    timeline: [["No-alarm morning", "Sleep, eat near the hotel, and decide the day only after checking everyone's energy."], ["Late morning–15:00", "Choose one: recovery/admin, a favorite Osaka neighborhood, Kaiyukan, or a Kobe outing."], ["15:00–17:30", "Return or pause before energy debt starts accumulating."], ["Evening", "Use a depachika or supermarket for an easy hotel picnic, or repeat a favorite Osaka meal."]],
+    history: ["A flexible day has its own historical logic in Osaka. The city was built around exchange—goods, people, entertainment, and food—rather than a single ceremonial center, so ordinary markets and neighborhoods are often more revealing than another landmark.", "If Kaiyukan wins, its spiral route tells a Pacific story rather than presenting unrelated tanks. Visitors descend around the central ocean habitat, moving through environments linked by the Pacific Rim and seeing Osaka's modern identity as a port city from another angle."]
+  },
+  day06: {
+    summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and luggage never gets to become the main character.",
+    timeline: [["08:00–09:00", "Check out and send or store luggage; travel toward Kintetsu Nara."], ["10:00–12:30", "Walk or taxi through Nara Park toward Todai-ji, keeping deer encounters playful but brief."], ["12:30–15:00", "Eat kakinoha-zushi or mochi, then choose a short Naramachi or cafe pause."], ["15:00–18:00", "Continue to Kyoto, check in, and keep dinner close to the hotel."]],
+    history: ["Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.", "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling."]
+  },
+  day07: {
+    summary: "Kyoto's first full day moves from shogunal power at Nijo to market life, then ends with the democratic evening ritual of the Kamo River.",
+    timeline: [["09:00–11:30", "Visit Nijo Castle before the day becomes crowded; notice rooms, gardens, and the nightingale floors."], ["12:00–14:00", "Lunch and graze through Nishiki without trying to sample every stall."], ["14:00–17:00", "Rest at the hotel or choose one compact central-Kyoto browse."], ["17:00–20:00", "Watch dusk along the Kamo River and finish with a manageable Pontocho-area dinner."]],
+    history: ["Tokugawa Ieyasu built Nijo Castle after winning control of Japan, placing a shogunal residence almost in the shadow of the imperial palace. Its painted rooms and carefully staged approach turned architecture into political theater: every visitor could read rank and power in the spaces they were allowed to enter.", "Centuries later, the castle hosted the announcement that political authority would return to the emperor. Nishiki's food trade and the Kamo's riverbanks tell a less official Kyoto story—merchants, students, couples, and families continually making the old capital their everyday city."]
+  },
+  day08: {
+    summary: "The protected old-Kyoto day begins uphill at Kiyomizu, descends through historic slopes, and lets lantern light—not another checklist item—provide the ending.",
+    timeline: [["08:00–09:00", "Taxi uphill and enter Kiyomizu-dera before the lanes become busiest."], ["09:00–12:30", "Explore the temple and descend through Sannenzaka and Ninenzaka at an unhurried pace."], ["12:30–16:30", "Choose lunch, matcha, and a substantial cafe or hotel break."], ["17:00–19:30", "Return only if desired for Yasaka and Gion atmosphere after the light changes."]],
+    history: ["Kiyomizu-dera's story begins around a sacred spring in the wooded hills east of Kyoto. Its famous stage projects over the slope without nails, transforming pilgrimage into a carefully framed encounter with the city, seasons, and the possibility of divine assistance.", "The roads below carried worshippers, crafts, food, and lodging toward the temple. Farther down, Gion grew beside Yasaka Shrine into an entertainment quarter governed by highly trained arts and social customs. It remains a living neighborhood, which is why restraint around residents and performers matters."]
+  },
+  day09: {
+    summary: "Arashiyama is about one beautiful reveal and a shared return to the river—not collecting bamboo, gardens, temples, bridge, and mountain as separate obligations.",
+    timeline: [["08:00–09:00", "Travel west early enough to experience a quieter river or bamboo approach."], ["09:00–12:00", "Choose one main walking payoff: bamboo, Okochi Sanso, or a garden."], ["12:00–14:30", "Rejoin at Togetsukyo and settle into lunch or a scenic cafe."], ["14:30–17:00", "Take a gentle riverside finish and return before the area becomes stamina debt."]],
+    history: ["Arashiyama became a retreat for Heian-period aristocrats who traveled from the capital to compose poetry, admire blossoms and autumn leaves, and turn scenery into cultivated experience. Later temples and villas continued that dialogue between designed garden and borrowed mountain view.", "The name Togetsukyo—Moon Crossing Bridge—comes from an emperor's poetic impression of the moon moving across the bridge. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes."]
+  },
+  day10: {
+    summary: "A quiet torii walk for Mai and the user gives way to ordinary Kyoto: bakery breakfast, river life, supermarket browsing, and deliberate recovery.",
+    timeline: [["07:00–09:30", "Optional split: Mai and the user visit Fushimi Inari early and turn back when the experience feels complete."], ["10:30–13:00", "Rejoin for bakery food and a slow Demachiyanagi or Kamo River Delta visit."], ["13:00–16:30", "Choose a cafe, postcard stop, supermarket, or hotel rest."], ["Evening", "Build a depachika or supermarket picnic and prepare calmly for tomorrow's transfer."]],
+    history: ["Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Inari's identity expanded from rice and agricultural abundance to encompass commerce and prosperity; foxes serve as messengers, while donated torii record hopes, gratitude, and business success.", "The Kamo River offers a counter-story to monumental Kyoto. At the delta, students, musicians, children, cyclists, and birds occupy space informally. That everyday use is part of the city's continuity: Kyoto survives not only by preserving monuments but by living around them."]
+  },
+  day11: {
+    summary: "The westward chapter opens with Himeji's white keep, then uses garden, lunch, and train time to reach Hiroshima without turning a transfer into an endurance test.",
+    timeline: [["07:30–09:30", "Leave Kyoto with day bags; large luggage should already be forwarded or simplified."], ["09:30–12:30", "Approach Himeji Castle and choose the full interior or exterior-focused route."], ["12:30–15:00", "Visit Koko-en or rest over lunch, then collect an ekiben."], ["15:00–18:00", "Continue to Hiroshima, check in, and eat okonomiyaki only if energy remains."]],
+    history: ["Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.", "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex."]
+  },
+  day12: {
+    summary: "Hiroshima receives a full, emotionally uncluttered day: museum first, quiet space afterward, then the memorial axis and Dome as daylight softens.",
+    timeline: [["08:30–11:30", "Visit the Peace Memorial Museum while attention and emotional energy are strongest."], ["11:30–13:30", "Take a real quiet break and a gentle lunch; do not rush directly into another attraction."], ["13:30–17:00", "Move through the Memorial Hall, Cenotaph, park, river, and Atomic Bomb Dome."], ["17:00 onward", "Let dusk close the memorial sequence, then choose a calm okonomiyaki dinner."]],
+    history: ["Hiroshima began as a castle town in the late 16th century and grew into a regional military and industrial center. At 8:15 on August 6, 1945, the first atomic bomb used in war exploded above the city, killing tens of thousands immediately and many more through injury and radiation.", "The Peace Memorial Park does not preserve a frozen ruin alone. Its design creates an axis among the museum, Cenotaph, and Dome, asking visitors to move from evidence to mourning to public commitment. Hiroshima's larger story is also one of survivors rebuilding a living city and insisting that memory serve peace."]
+  },
+  day13: {
+    summary: "Miyajima is the scenic and romantic payoff of the western chapter: shrine and tide first, island food and forest second, with altitude entirely optional.",
+    timeline: [["08:00–09:30", "Travel to Miyajimaguchi and take the ferry; check the tide plan before setting out."], ["09:30–12:30", "Visit Itsukushima Shrine and the waterfront, then eat anago-meshi or island snacks."], ["12:30–16:00", "Choose Omotesando and cafe time, Daisho-in, or the ropeway according to energy."], ["16:00–18:30", "Stay for softer late light if practical, then ferry back without rushing."]],
+    history: ["Itsukushima was treated as a sacred island long before its current buildings appeared. To avoid violating that sanctity, worship took place over the water; the shrine's corridors and great torii still use the tide to blur the boundary between architecture, sea, and mountain.", "The 12th-century warrior-statesman Taira no Kiyomori expanded the shrine while cultivating power at the imperial court. Yet Miyajima is not one frozen era: Buddhist halls, pilgrimage paths, merchant food streets, deer, ferries, and tourism have accumulated around the sacred landscape for centuries."]
+  },
+  day14: {
+    summary: "The long train is the experience: browse Hiroshima's ekiben, reveal and score them after departure, then arrive in Tokyo as temporary neighborhood residents rather than sightseers.",
+    timeline: [["08:30–10:00", "Check out and reach Hiroshima Station early enough to browse regional ekiben calmly."], ["10:00–14:30", "Ride east, photograph closed and open boxes, trade tastes, score them, and watch the country change."], ["15:00–17:30", "Reach the Tokyo hotel, learn the correct station exit, and fully settle in."], ["Evening", "Choose a depachika, supermarket, ramen, or curry dinner near the hotel; add no sightseeing campaign."]],
+    history: ["Japan's first railway opened in 1872, and station boxed meals soon turned travel into a way of tasting place. Ekiben packaging, ingredients, and presentation became miniature regional advertisements, allowing a train journey to carry local identity across the country.", "The Tokaido corridor linking Kyoto, Osaka, and Tokyo has organized movement for centuries, first as a famed highway and now as the country's busiest high-speed rail axis. Arriving by Shinkansen compresses landscapes once measured in days of walking into a single seated chapter."]
+  },
+  day15: {
+    summary: "Ghibli is the scarce-ticket anchor, but Inokashira Park and Kichijoji make the day feel like a neighborhood story rather than a museum extraction.",
+    timeline: [["Morning", "Travel to Mitaka or Kichijoji with generous ticket-time margin."], ["Timed window", "Give the Ghibli Museum its full visit without scheduling another central-Tokyo attraction."], ["Afterward–17:00", "Walk through Inokashira Park and pause at a cafe."], ["17:00–20:00", "Browse one Kichijoji shopping street and eat nearby; if tickets failed, let this become the full day."]],
+    history: ["Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. Rail connections transformed nearby Kichijoji into a western neighborhood where green space, small commerce, music, cafes, and dense residential life meet.", "The Ghibli Museum deliberately avoids a prescribed route. Hayao Miyazaki designed it around curiosity, hand-drawn motion, architecture at a child's scale, and discovery without a checklist. That philosophy is the ideal rhythm for the whole day."]
+  },
+  day16: {
+    summary: "Friends define the day. Their station, favorite meal, residential routines, and conversation matter more than importing a famous Tokyo attraction.",
+    timeline: [["Morning", "Keep the start slow, prepare small gifts, and confirm the exact meeting point."], ["Late morning–14:00", "Travel to the friends' neighborhood and let them choose lunch or the first local stop."], ["14:00–18:00", "Follow their rhythm: home visit, Jindaiji, shopping street, cafe, park, or ordinary errands."], ["By 20:00", "Finish with a meal or warm goodbye without overstaying; send a specific thank-you later."]],
+    history: ["Tokyo's immense growth happened along private railway lines that linked central employment with western suburbs. Stations became neighborhood centers surrounded by shopping streets, schools, temples, parks, and the small businesses that support daily life.", "If the neighborhood is Chofu, Jindaiji adds a much older layer. The temple traces its origins to the 8th century, while the surrounding soba shops developed around local water and pilgrimage traffic. Experiencing it through friends changes history from background information into lived inheritance."]
+  },
+  day17: {
+    summary: "Choose one creative neighborhood and participate in it—music, karaoke, games, manga, records, or a specific event—instead of completing a shopping circuit.",
+    timeline: [["10:30–12:00", "Choose Shimokitazawa, Koenji, or Nakano based on the activity Mai actually wants."], ["12:00–15:30", "Anchor lunch around curry, ramen, or a cafe and browse selectively."], ["15:30–18:00", "Take a rest and commit to one participatory activity."], ["18:00–21:00", "Try karaoke, a small live show, an arcade, or another time-specific experience; stop before the neighborhood becomes retail fatigue."]],
+    history: ["Shimokitazawa and Koenji became refuges for small theaters, live houses, record shops, vintage clothing, and youth subcultures partly because their fine-grained streets and small buildings supported independent tenants. Their creativity is infrastructural, not decorative.", "Nakano Broadway began in 1966 as an ambitious shopping-and-residential complex. As conventional retail weakened, specialist dealers filled its compact floors, building communities around manga, animation, toys, watches, and extremely specific forms of collecting."]
+  },
+  day18: {
+    summary: "Kawagoe supplies an Edo-period merchant-town chapter without a hotel move: warehouse street, bell tower, candy alley, and sweet-potato grazing at a weekday pace.",
+    timeline: [["08:30–10:00", "Travel from Tokyo and use a bus or taxi from the station if it saves legs."], ["10:00–13:00", "Walk the kurazukuri street, pause for lunch, and snack gradually."], ["13:00–16:30", "Visit Toki no Kane and Kashiya Yokocho; add Kita-in only if the day still feels spacious."], ["16:30–18:30", "Catch warmer light around the old town, then return before the commute peak if practical."]],
+    history: ["Kawagoe prospered as a castle and merchant town supplying Edo by road and river, earning the nickname “Little Edo.” Its merchants stored wealth in massive clay-walled warehouses designed to resist the fires that repeatedly devastated dense wooden cities.", "After an 1893 fire destroyed much of the town, merchants rebuilt in the costly kurazukuri style, turning disaster resistance into today's streetscape. Toki no Kane, the bell tower, gave civic time a sound long before wristwatches and phone screens organized the day."]
+  },
+  day19: {
+    summary: "teamLab provides the modern visual anchor; its tea house is the pause, and one excellent food hall supplies the finish rather than launching a second sightseeing day.",
+    timeline: [["Morning", "Start slowly and travel with generous margin for the timed admission."], ["Timed entry–3 hours", "Wander teamLab Borderless without trying to find every room; use EN TEA HOUSE as a reset."], ["Mid-afternoon", "Rest at Azabudai or return to the hotel if sensory or walking energy is spent."], ["17:00–20:00", "Choose one Ginza or Nihonbashi food hall and a polished but easy dinner."]],
+    history: ["Nihonbashi was the point from which distances on Edo-period highways were measured, making it a symbolic center of national movement and commerce. Ginza later became a showcase of brick architecture, department stores, advertising, and modern consumer culture.", "teamLab belongs to another Tokyo tradition: using new technology to reorganize how bodies experience space. Its borderless rooms allow images to migrate and react, replacing the framed artwork with an unstable environment in which visitors become part of the composition."]
+  },
+  day20: {
+    summary: "Yanesen reveals an older, softer Tokyo through shrine approaches, small shops, temple and cemetery lanes, street snacks, and sunset from Yuyake Dandan.",
+    timeline: [["09:30–11:30", "Begin at Nezu Shrine or Sendagi and follow a short, low-pressure route."], ["11:30–14:30", "Eat soba, udon, taiyaki, or cafe lunch and browse ordinary shops."], ["14:30–17:00", "Continue toward Yanaka Ginza and finish around the Yuyake Dandan steps."], ["After 17:00", "Return after sunset; add Asakusa only if everyone actively wants another district."]],
+    history: ["Yanaka, Nezu, and Sendagi retained more low-rise texture than many central districts, partly because patterns of earthquake damage, wartime bombing, cemeteries, and later redevelopment unfolded differently here. The result is not untouched Edo, but an unusually legible mixture of eras.", "Nezu Shrine's vermilion gates and festival traditions connect the area to older sacred geography. Yanaka's temples and vast cemetery sit beside a lively shopping street, showing how Tokyo routinely places remembrance, domestic life, food, and commerce within the same walk."]
+  },
+  day21: {
+    summary: "The final day stays open long enough to reveal what the trip actually needs: a missed anchor, favorite return, food celebration, modest spectacle, or simply a graceful ending.",
+    timeline: [["No-alarm morning", "Review missed goals, weather, luggage, and energy before choosing the day."], ["11:00–16:00", "Return to a favorite neighborhood, handle souvenirs, or use the buffer for one genuinely wanted experience."], ["16:00–19:30", "Choose a celebratory final meal or sunset spectacle; name the champion melon bread and ekiben."], ["By 21:00", "Pack completely, protect airport-transfer margin, and take one small goodbye walk or konbini run."]],
+    history: ["Tokyo has repeatedly rebuilt itself after fire, earthquake, war, and waves of redevelopment. Its identity is therefore less a single preserved center than an accumulation of chosen centers—each station and neighborhood offering a different version of the city.", "Returning somewhere on the last day is historically appropriate in its own small way. Edo and Tokyo have always been cities of routes and routines. Repetition turns a place from an attraction into part of personal memory: the moment a giant metropolis briefly feels like yours."]
+  }
 };
-
-const dayContext = Object.fromEntries(
-  Object.entries(tripData).flatMap(([cityId, city]) =>
-    city.days.map((day) => [day.id, { summary: day.theme, history: chapterBackground[cityId] }])
-  )
-);
 
 const cityWrapQuestions = [
   "Best food moment in this city?",
@@ -681,6 +872,12 @@ function defaultState() {
     cityWrap: {},
     planeRide: {},
     lodging: { osaka: "", kyoto: "", hiroshima: "", tokyo: "" },
+    deckHands: {},
+    deckDone: {},
+    deckSkipped: {},
+    melon: {},
+    roadmapReady: {},
+    dayWindows: {},
     activeCity: "osaka",
     overviewMode: "trip"
   };
@@ -691,6 +888,20 @@ function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (saved) return { ...fresh, ...saved, lodging: { ...fresh.lodging, ...(saved.lodging || {}) } };
+
+    const previous = JSON.parse(localStorage.getItem(PREVIOUS_STORAGE_KEY));
+    if (previous) {
+      return {
+        ...fresh,
+        ...previous,
+        lodging: { ...fresh.lodging, ...(previous.lodging || {}) },
+        deckHands: previous.deckHands || {},
+        deckDone: previous.deckDone || {},
+        deckSkipped: previous.deckSkipped || {},
+        melon: previous.melon || {},
+        dayWindows: previous.dayWindows || {}
+      };
+    }
 
     const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY));
     if (old) {
@@ -775,7 +986,7 @@ function visibleGroupEntries(day) {
 function countableDayGroupEntries(day) {
   return day.groups
     .map((group, groupIndex) => ({ group, groupIndex }))
-    .filter(({ group }) => !hiddenDayGroupTypes.has(group[1]));
+    .filter(({ group }) => group[1] === "main");
 }
 
 function sharedSideGroups(city) {
@@ -819,23 +1030,12 @@ function sharedSideGroups(city) {
 
 function allTasks() {
   const tasks = [];
-  coreExperienceQuests.forEach((group, groupIndex) => {
-    group.items.forEach((text, itemIndex) => tasks.push({ id: itemId("core", groupIndex, itemIndex), type: group.type, text }));
-  });
   Object.entries(tripData).forEach(([cityId, city]) => {
-    city.ongoing.forEach((group, groupIndex) => {
-      if (group.type !== "side") return;
-      const scope = cityId === "tokyo" ? "ongoing" : `${cityId}.ongoing`;
-      group.items.forEach((text, itemIndex) => tasks.push({ id: itemId(scope, groupIndex, itemIndex), type: group.type, text }));
-    });
     city.days.forEach((day) => {
       countableDayGroupEntries(day).forEach(({ group, groupIndex }) => {
         group[2].forEach((text, itemIndex) => tasks.push({ id: itemId(day.id, groupIndex, itemIndex), type: group[1], text }));
       });
     });
-  });
-  emergencyCards.forEach((group, groupIndex) => {
-    group[2].forEach((text, itemIndex) => tasks.push({ id: itemId("emergency", groupIndex, itemIndex), type: group[1], text }));
   });
   return tasks;
 }
@@ -891,7 +1091,7 @@ function updateRemainingBadges() {
   });
   document.querySelectorAll("[data-day-count]").forEach((badge) => {
     const day = Object.values(tripData).flatMap((city) => city.days).find((candidate) => candidate.id === badge.dataset.dayCount);
-    if (day) badge.textContent = remainingForDay(day);
+    if (day) badge.textContent = state.done[mainTaskId(day)] ? "✓" : "Main";
   });
 }
 
@@ -1095,7 +1295,298 @@ function makeCard({ title, description, type, items }, scope, groupIndex, meta =
 
 function clearGroup(selector) {
   const section = document.querySelector(selector);
-  section.querySelectorAll(".quest-card, .award-card").forEach((node) => node.remove());
+  section.querySelectorAll(".quest-card, .award-card, .daily-deck").forEach((node) => node.remove());
+}
+
+function findDay(dayId) {
+  for (const [cityId, city] of Object.entries(tripData)) {
+    const day = city.days.find((candidate) => candidate.id === dayId);
+    if (day) return { cityId, city, day };
+  }
+  return null;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function mainTaskId(day) {
+  const mainIndex = day.groups.findIndex((group) => group[1] === "main");
+  return itemId(day.id, mainIndex, 0);
+}
+
+function roadmapGoalCompleted(goal) {
+  if (goal.persistent) return false;
+  return goal.days.every((dayId) => {
+    const match = findDay(dayId);
+    return match && state.done[mainTaskId(match.day)];
+  });
+}
+
+function roadmapStatus(goal) {
+  if (roadmapGoalCompleted(goal)) return "Completed";
+  if (state.roadmapReady[goal.id]) return "Ready";
+  return goal.status;
+}
+
+function renderRoadmap() {
+  const grid = document.querySelector("#roadmapGrid");
+  const summary = document.querySelector("#roadmapSummary");
+  const alerts = document.querySelector("#planningAlerts");
+  if (!grid || !summary || !alerts) return;
+  grid.innerHTML = "";
+  const uncovered = roadmapGoals.filter((goal) => !goal.days.length);
+  const trackable = roadmapGoals.filter((goal) => !goal.persistent);
+  const completed = trackable.filter(roadmapGoalCompleted).length;
+  summary.className = `coverage-summary ${uncovered.length ? "has-gap" : "complete"}`;
+  summary.innerHTML = `<strong>${uncovered.length ? `${uncovered.length} must-dos uncovered` : "All must-dos have a path"}</strong><span>${completed} of ${trackable.length} experience goals completed · persistent safeguards stay active</span>`;
+
+  roadmapGoals.forEach((goal) => {
+    const card = document.createElement("article");
+    const status = roadmapStatus(goal);
+    const dayLabels = goal.days.map((dayId) => findDay(dayId)?.day.short).filter(Boolean).join(" · ");
+    card.className = "roadmap-card";
+    card.innerHTML = `
+      <div class="roadmap-card-heading"><span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${status}</span><small>${dayLabels || "Unassigned"}</small></div>
+      <h3>${goal.goal}</h3>
+      <p>${goal.why}</p>
+      ${goal.blocker ? `<p class="roadmap-blocker"><strong>Before the trip:</strong> ${goal.blocker}</p>` : ""}
+      <p class="roadmap-fallback"><strong>Lower-energy path:</strong> ${goal.fallback}</p>
+    `;
+    if (goal.days.length) {
+      if (["Needs Booking", "Needs Confirmation", "Conditional"].includes(goal.status)) {
+        const readinessButton = document.createElement("button");
+        readinessButton.type = "button";
+        readinessButton.className = "text-button roadmap-ready";
+        readinessButton.textContent = state.roadmapReady[goal.id] ? "Set back to pending" : "Mark ready";
+        readinessButton.addEventListener("click", () => {
+          state.roadmapReady[goal.id] = !state.roadmapReady[goal.id];
+          saveState();
+          renderOverview();
+          renderStats();
+        });
+        card.appendChild(readinessButton);
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "text-button roadmap-open";
+      button.textContent = "Open assigned day";
+      button.addEventListener("click", () => {
+        const match = findDay(goal.days[0]);
+        if (!match) return;
+        state.activeCity = match.cityId;
+        saveState();
+        renderNav();
+        showDay(match.day);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      card.appendChild(button);
+    }
+    grid.appendChild(card);
+  });
+
+  alerts.innerHTML = `<details class="planning-alerts"><summary>Planning alerts and conditional ideas <span>${planningConstraints.length}</span></summary><div>${planningConstraints.map((item) => `<article><strong>${item.title}</strong><p>${item.text}</p></article>`).join("")}</div></details>`;
+}
+
+function deckPoolForDay(day) {
+  const cityId = findDay(day.id)?.cityId || state.activeCity;
+  const regionId = ({ day06: "nara", day11: "himeji", day12: "hiroshima", day13: "miyajima", day14: "rail" })[day.id] || cityId;
+  const regionName = ({ nara: "Nara", himeji: "Himeji", miyajima: "Miyajima", rail: "Shinkansen" })[regionId] || tripData[cityId].name;
+  const regional = (regionalQuestPools[regionId] || [])
+    .filter((entry) => !entry[3] || entry[3].includes(day.id))
+    .map(([id, type, text]) => ({ id, type, text, source: regionName }));
+  const daily = day.groups.flatMap(([title, type, items], groupIndex) => {
+    if (type !== "side" && type !== "egg") return [];
+    return items.map((text, itemIndex) => ({
+      id: `${day.id}-${type}-${groupIndex}-${itemIndex}`,
+      type: type === "egg" ? "find" : "day",
+      text,
+      source: type === "egg" ? "Hidden find" : "Today's neighborhood"
+    }));
+  });
+  return [...regional, ...daily].filter((quest, index, all) => all.findIndex((candidate) => candidate.id === quest.id) === index);
+}
+
+function shuffled(items) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[swap]] = [copy[swap], copy[index]];
+  }
+  return copy;
+}
+
+function dealQuestHand(day, force = false) {
+  const pool = deckPoolForDay(day);
+  const saved = state.deckHands[day.id] || [];
+  if (!force && saved.length === 3 && saved.every((id) => pool.some((quest) => quest.id === id))) return saved;
+  const available = pool.filter((quest) => !state.deckDone[quest.id] && !state.deckSkipped[quest.id]);
+  const fallback = pool.filter((quest) => !state.deckDone[quest.id]);
+  const candidates = available.length >= 3 ? available : fallback.length >= 3 ? fallback : pool;
+  const food = shuffled(candidates.filter((quest) => quest.type === "food"))[0];
+  const rest = shuffled(candidates.filter((quest) => !food || quest.id !== food.id));
+  const hand = [food, ...rest].filter(Boolean).slice(0, 3).map((quest) => quest.id);
+  state.deckHands[day.id] = hand;
+  saveState();
+  return hand;
+}
+
+function renderQuestDeck(day) {
+  const section = document.createElement("section");
+  section.className = "daily-deck";
+  const pool = deckPoolForDay(day);
+  const handIds = dealQuestHand(day);
+  const hand = handIds.map((id) => pool.find((quest) => quest.id === id)).filter(Boolean);
+  section.innerHTML = `<div class="deck-heading"><div><p class="label">Optional discoveries</p><h3>Today's discovery deck</h3><p>Pick any, skip any, or deal again. These never count against the trip.</p></div><button type="button" class="deal-button">Deal Three More</button></div>`;
+  const grid = document.createElement("div");
+  grid.className = "deck-grid";
+  hand.forEach((quest) => {
+    const card = document.createElement("article");
+    const done = Boolean(state.deckDone[quest.id]);
+    card.className = `deck-card deck-${quest.type} ${done ? "is-found" : ""}`;
+    card.innerHTML = `<span class="deck-type">${quest.type === "food" ? "Regional food" : quest.source}</span><p>${quest.text}</p><div class="deck-actions"><button type="button" data-action="found">${done ? "Found ✓" : "Found It"}</button><button type="button" data-action="skip">Skip</button></div>`;
+    card.querySelector('[data-action="found"]').addEventListener("click", () => {
+      state.deckDone[quest.id] = !state.deckDone[quest.id];
+      delete state.deckSkipped[quest.id];
+      saveState();
+      showDay(day);
+    });
+    card.querySelector('[data-action="skip"]').addEventListener("click", () => {
+      state.deckSkipped[quest.id] = true;
+      state.deckHands[day.id] = state.deckHands[day.id].filter((id) => id !== quest.id);
+      dealQuestHand(day, true);
+      showDay(day);
+    });
+    grid.appendChild(card);
+  });
+  section.appendChild(grid);
+  section.querySelector(".deal-button").addEventListener("click", () => {
+    dealQuestHand(day, true);
+    showDay(day);
+  });
+  const library = document.createElement("details");
+  library.className = "quest-library";
+  library.innerHTML = `<summary>Browse all optional ideas <span>${pool.length}</span></summary><div>${pool.map((quest) => `<p class="${state.deckDone[quest.id] ? "is-found" : ""}"><strong>${quest.type === "food" ? "Regional food" : quest.source}:</strong> ${quest.text}${state.deckDone[quest.id] ? " ✓" : ""}</p>`).join("")}</div>`;
+  section.appendChild(library);
+  return section;
+}
+
+function dailyGuide(day) {
+  const main = day.groups.find((group) => group[1] === "main")?.[2]?.[0] || day.theme;
+  const soft = day.groups.find((group) => group[1] === "soft")?.[2]?.[0] || "Pause early and keep the next day protected.";
+  const context = dayContext[day.id] || { summary: day.theme, timeline: [], history: ["Background notes can be added here later."] };
+  const goals = roadmapGoals.filter((goal) => goal.days.includes(day.id));
+  const statuses = goals.map(roadmapStatus);
+  const priority = ["Needs Confirmation", "Needs Booking", "Conditional", "Ready", "Completed"];
+  const status = priority.find((candidate) => statuses.includes(candidate)) || "Ready";
+  const card = document.createElement("section");
+  card.className = "daily-guide";
+  card.innerHTML = `
+    <div class="daily-guide-heading"><p class="label">Today's clear path</p><span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${status}</span></div>
+    <h3>${main}</h3>
+    <p><strong>Why today matters:</strong> ${goals.length ? goals.map((goal) => goal.goal).join(" · ") : day.theme}</p>
+    ${goals.some((goal) => goal.blocker) ? `<p class="roadmap-blocker"><strong>Before the trip:</strong> ${goals.filter((goal) => goal.blocker).map((goal) => goal.blocker).join(" ")}</p>` : ""}
+    <section class="context-block merged-summary">
+      <h4>Quick Summary</h4>
+      <p>${context.summary}</p>
+    </section>
+    <section class="context-block timeline-block">
+      <h4>Recommended Timeline</h4>
+      <ol class="day-timeline">${context.timeline.map(([time, activity]) => `<li><time>${time}</time><span>${activity}</span></li>`).join("")}</ol>
+      <p class="timeline-note">These are pacing windows, not reservations. Shift them around confirmed tickets, transport, weather, and energy.</p>
+    </section>
+    <section class="context-block">
+      <h4>The Story Behind Today</h4>
+      <div class="history-story">${context.history.map((paragraph) => `<p>${paragraph}</p>`).join("")}</div>
+    </section>
+  `;
+  const checkbox = document.createElement("button");
+  const taskId = mainTaskId(day);
+  checkbox.type = "button";
+  checkbox.className = `main-complete ${state.done[taskId] ? "is-complete" : ""}`;
+  checkbox.textContent = state.done[taskId] ? "Main goal completed ✓" : "Mark main goal complete";
+  checkbox.addEventListener("click", () => {
+    state.done[taskId] = !state.done[taskId];
+    saveState();
+    showDay(day);
+  });
+  const lowEnergy = document.createElement("details");
+  lowEnergy.className = "low-energy-drawer";
+  lowEnergy.innerHTML = `<summary>Show the low-energy option</summary><p>${soft}</p>`;
+  card.append(checkbox, lowEnergy);
+  return card;
+}
+
+async function renderMelonPassport() {
+  const grid = document.querySelector("#melonGrid");
+  const progress = document.querySelector("#melonProgress");
+  const leaderboard = document.querySelector("#melonLeaderboard");
+  if (!grid || !progress || !leaderboard) return;
+  grid.innerHTML = "";
+  const entries = [];
+  for (const [index, [id, title, description]] of melonSlots.entries()) {
+    const saved = state.melon[id] || {};
+    const photos = await getPhotosForTask(`melon.${id}`).catch(() => []);
+    const complete = photos.length > 0 && Number(saved.score) >= 1 && Number(saved.score) <= 10;
+    entries.push({ id, title, index, score: Number(saved.score) || 0, complete });
+    const card = document.createElement("article");
+    card.className = `melon-card ${complete ? "is-complete" : ""}`;
+    card.innerHTML = `<div class="melon-stamp"><span>${complete ? "✓" : index + 1}</span></div><h3>${title}</h3><p>${description}</p>`;
+    const photoWrap = document.createElement("div");
+    photoWrap.className = "melon-photo";
+    if (photos[0]) {
+      photoWrap.innerHTML = `<img src="${photos[0].dataUrl}" alt="${title}"><button type="button">Replace photo</button>`;
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "melon-remove";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", async () => {
+        await Promise.all(photos.map((photo) => removePhoto(photo.id)));
+        renderMelonPassport();
+        renderAlbum();
+      });
+      photoWrap.appendChild(remove);
+    } else {
+      photoWrap.innerHTML = `<button type="button">Add required photo</button>`;
+    }
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.hidden = true;
+    photoWrap.querySelector("button").addEventListener("click", () => input.click());
+    input.addEventListener("change", async () => {
+      if (!input.files?.[0]) return;
+      await Promise.all(photos.map((photo) => removePhoto(photo.id)));
+      await handlePhotoFiles(input.files, { id: `melon.${id}`, text: title, slot: "melon", dayTitle: "Melon Bread Passport" }, document.createElement("div"));
+      renderMelonPassport();
+      renderAlbum();
+    });
+    photoWrap.appendChild(input);
+    const fields = document.createElement("div");
+    fields.className = "melon-fields";
+    fields.innerHTML = `<label>Mai's score <select><option value="">Choose 1–10</option>${Array.from({ length: 10 }, (_, scoreIndex) => `<option value="${scoreIndex + 1}" ${Number(saved.score) === scoreIndex + 1 ? "selected" : ""}>${scoreIndex + 1}</option>`).join("")}</select></label><label>Verdict <input type="text" maxlength="80" value="${escapeHtml(saved.verdict)}" placeholder="Crispy, fluffy, worth a repeat…"></label>`;
+    fields.querySelector("select").addEventListener("change", (event) => {
+      state.melon[id] = { ...state.melon[id], score: event.target.value };
+      saveState();
+      renderMelonPassport();
+    });
+    fields.querySelector('input[type="text"]').addEventListener("change", (event) => {
+      state.melon[id] = { ...state.melon[id], verdict: event.target.value.trim() };
+      saveState();
+    });
+    card.append(photoWrap, fields);
+    grid.appendChild(card);
+  }
+  const completed = entries.filter((entry) => entry.complete);
+  progress.className = "melon-progress";
+  progress.innerHTML = `<strong>${completed.length} of 6 tasted</strong><span>Each passport stamp needs one photo and Mai's score.</span>`;
+  const ranked = [...completed].sort((a, b) => b.score - a.score || a.index - b.index);
+  leaderboard.className = "melon-leaderboard";
+  leaderboard.innerHTML = ranked.length ? `<h3>${completed.length === 6 ? `👑 Mai's Melon Bread Champion: ${ranked[0].title}` : "Current leaderboard"}</h3><ol>${ranked.map((entry) => `<li><strong>${entry.title}</strong><span>${entry.score}/10${state.melon[entry.id]?.verdict ? ` · ${escapeHtml(state.melon[entry.id].verdict)}` : ""}</span></li>`).join("")}</ol>` : `<p>No rankings yet. Add a photo and score to stamp the first bread.</p>`;
 }
 
 function renderOverview() {
@@ -1110,12 +1601,13 @@ function renderOverview() {
   document.querySelector("#hotelField").value = state.lodging[state.activeCity] || "";
   document.querySelector(".hotel-card label").textContent = city.baseLabel;
   document.querySelector(".hotel-card p").textContent = `${city.name} map routes use this as the starting point. You can leave it blank until the hotel is real.`;
-  document.querySelector("#ongoingQuests h2").textContent = `${city.name} Side Quests`;
+  document.querySelector("#ongoingQuests h2").textContent = `${city.name} Discovery Deck`;
 
+  renderRoadmap();
   renderCalendar();
-  sharedSideGroups(city).forEach((group) => {
-    document.querySelector("#ongoingQuests").appendChild(makeCard(group, group.scope, group.groupIndex, group.meta || {}));
-  });
+  renderMelonPassport();
+  const cityDay = city.days.find((day) => day.date === todayIso()) || city.days[0];
+  if (cityDay) document.querySelector("#ongoingQuests").appendChild(renderQuestDeck(cityDay));
   emergencyCards.forEach(([title, type, items], index) => {
     document.querySelector("#emergencyCards").appendChild(makeCard({ title, type, items }, "emergency", index));
   });
@@ -1140,10 +1632,14 @@ function renderCalendar() {
       button.className = `calendar-day ${day.date === today ? "is-today" : ""}`;
       button.dataset.city = cityId;
       button.dataset.day = day.id;
+      const goals = roadmapGoals.filter((goal) => goal.days.includes(day.id));
+      const statuses = goals.map(roadmapStatus);
+      const readiness = ["Needs Confirmation", "Needs Booking", "Conditional", "Ready", "Completed"].find((status) => statuses.includes(status)) || "Ready";
       button.innerHTML = `
         <small>${city.name}</small>
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
+        <span class="calendar-status status-${readiness.toLowerCase().replaceAll(" ", "-")}">${readiness}</span>
       `;
       button.addEventListener("click", () => {
         state.activeCity = cityId;
@@ -1165,7 +1661,7 @@ async function renderAlbum() {
   if (!photos.length) {
     const empty = document.createElement("p");
     empty.className = "album-empty";
-    empty.textContent = "Add photos from photo quests and they will collect here for the whole trip.";
+    empty.textContent = "Add photos from daily prompts and they will collect here for the whole trip.";
     album.appendChild(empty);
     return;
   }
@@ -1293,7 +1789,7 @@ async function compileTripReview() {
   Object.entries(tripData).forEach(([cityId, city]) => {
     const tasks = cityTasks(cityId);
     const completed = tasks.filter((task) => state.done[task.id]).length;
-    lines.push(`${city.name}: ${completed}/${tasks.length} quests cleared`);
+    lines.push(`${city.name}: ${completed}/${tasks.length} main goals completed`);
     const answers = state.cityWrap[cityId] || {};
     cityWrapQuestions.forEach((question, index) => {
       if (answers[index]) lines.push(`- ${question} ${answers[index]}`);
@@ -1327,7 +1823,7 @@ function makePlaneRideReviewCard() {
   });
   const intro = document.createElement("p");
   intro.className = "helper-copy";
-  intro.textContent = "Use this on the flight home to turn the quests, city notes, photos, and awards into one final review.";
+  intro.textContent = "Use this on the flight home to turn the discoveries, city notes, photos, and awards into one final review.";
   const awardsSection = makeFinalAwardsSection();
   const form = document.createElement("div");
   form.className = "review-form";
@@ -1455,26 +1951,103 @@ function makeDailyPhotoCard(day) {
   return card;
 }
 
-function makeContextCard(day) {
-  const context = dayContext[day.id] || { summary: day.theme, history: "Background notes can be added here later." };
-  const { card, content } = makeCollapsibleCard({
-    className: "context-card",
-    label: "Context",
-    title: "Summary and background",
-    badge: "Read",
-    open: true
+function makeDayCarousel(day, windows) {
+  const carousel = document.createElement("section");
+  const toolbar = document.createElement("div");
+  const viewport = document.createElement("div");
+  const dots = document.createElement("div");
+  const previous = document.createElement("button");
+  const next = document.createElement("button");
+  const labels = ["Plan", "Discover", "Map", "Photos"];
+  carousel.className = "day-carousel";
+  toolbar.className = "day-window-toolbar";
+  viewport.className = "day-window-strip";
+  dots.className = "day-window-dots";
+  previous.type = "button";
+  next.type = "button";
+  previous.className = "window-arrow";
+  next.className = "window-arrow";
+  previous.setAttribute("aria-label", "Previous day window");
+  next.setAttribute("aria-label", "Next day window");
+  previous.textContent = "←";
+  next.textContent = "→";
+
+  windows.forEach((window, index) => {
+    window.classList.add("day-window");
+    window.dataset.windowIndex = String(index);
+    window.setAttribute("aria-label", `${labels[index]} window`);
+    viewport.appendChild(window);
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "day-window-dot";
+    dot.setAttribute("aria-label", `Show ${labels[index]} window`);
+    dot.innerHTML = `<span>${labels[index]}</span>`;
+    dot.addEventListener("click", () => goTo(index));
+    dots.appendChild(dot);
   });
-  content.innerHTML = `
-    <section class="context-block">
-      <h4>Quick Summary</h4>
-      <p>${context.summary}</p>
-    </section>
-    <section class="context-block">
-      <h4>Historical Background</h4>
-      <p>${context.history}</p>
-    </section>
-  `;
-  return card;
+
+  const maxIndex = windows.length - 1;
+  let currentIndex = Math.min(Number(state.dayWindows[day.id]) || 0, maxIndex);
+  let scrollTimer;
+  function updateControls() {
+    previous.disabled = currentIndex === 0;
+    next.disabled = currentIndex === maxIndex;
+    dots.querySelectorAll("button").forEach((dot, index) => dot.classList.toggle("active", index === currentIndex));
+  }
+  function windowLeft(index) {
+    return windows[index]?.offsetLeft || 0;
+  }
+  function closestWindowIndex() {
+    return windows.reduce((closest, window, index) => Math.abs(window.offsetLeft - viewport.scrollLeft) < Math.abs(windows[closest].offsetLeft - viewport.scrollLeft) ? index : closest, 0);
+  }
+  function goTo(index, behavior = "smooth") {
+    currentIndex = Math.max(0, Math.min(index, maxIndex));
+    viewport.scrollTo({ left: windowLeft(currentIndex), behavior });
+    state.dayWindows[day.id] = currentIndex;
+    saveState();
+    updateControls();
+  }
+  previous.addEventListener("click", () => goTo(currentIndex - 1));
+  next.addEventListener("click", () => goTo(currentIndex + 1));
+  viewport.addEventListener("scroll", () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const nextIndex = closestWindowIndex();
+      if (nextIndex !== currentIndex) {
+        currentIndex = Math.max(0, Math.min(nextIndex, maxIndex));
+        state.dayWindows[day.id] = currentIndex;
+        saveState();
+        updateControls();
+      }
+    }, 90);
+  }, { passive: true });
+
+  let dragStart = null;
+  viewport.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "mouse" || event.target.closest("button, input, select, textarea, a, summary, iframe, label")) return;
+    dragStart = { x: event.clientX, left: viewport.scrollLeft };
+    viewport.classList.add("is-dragging");
+    viewport.setPointerCapture(event.pointerId);
+  });
+  viewport.addEventListener("pointermove", (event) => {
+    if (!dragStart) return;
+    viewport.scrollLeft = dragStart.left - (event.clientX - dragStart.x);
+  });
+  const endDrag = (event) => {
+    if (!dragStart) return;
+    dragStart = null;
+    viewport.classList.remove("is-dragging");
+    if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+    goTo(closestWindowIndex());
+  };
+  viewport.addEventListener("pointerup", endDrag);
+  viewport.addEventListener("pointercancel", endDrag);
+
+  toolbar.append(previous, dots, next);
+  carousel.append(toolbar, viewport);
+  updateControls();
+  requestAnimationFrame(() => goTo(currentIndex, "auto"));
+  return carousel;
 }
 
 function renderDay(day) {
@@ -1485,13 +2058,8 @@ function renderDay(day) {
       <p>${day.theme}</p>
     </div>
   `;
-  dayPanel.appendChild(makeContextCard(day));
-  dayPanel.appendChild(makeMapCard(day));
-  dayPanel.appendChild(makeDailyPhotoCard(day));
-  visibleGroupEntries(day).forEach(({ group, groupIndex }) => {
-    const [title, type, items] = group;
-    dayPanel.appendChild(makeCard({ title, type, items }, day.id, groupIndex, { dayId: day.id, dayTitle: day.title }));
-  });
+  const windows = [dailyGuide(day), renderQuestDeck(day), makeMapCard(day), makeDailyPhotoCard(day)];
+  dayPanel.appendChild(makeDayCarousel(day, windows));
 }
 
 function renderNav() {
@@ -1507,7 +2075,6 @@ function renderNav() {
     button.dataset.view = day.id;
     button.innerHTML = `
       <span>${day.date === todayIso() ? `${day.short} Today` : day.short}</span>
-      <span class="nav-count" data-day-count="${day.id}">${remainingForDay(day)}</span>
     `;
     dayRail.appendChild(button);
   });
@@ -1538,7 +2105,8 @@ function renderStats() {
   const completed = tasks.filter((task) => state.done[task.id]);
   const visible = overviewPanel.classList.contains("hidden") || overviewMode() === "city" ? cityTasks(state.activeCity) : tasks;
   const visibleDone = visible.filter((task) => state.done[task.id]);
-  const totalScore = completed.reduce((sum, task) => sum + pointsFor(task.type), 0);
+  const discoveries = Object.values(state.deckDone).filter(Boolean).length;
+  const totalScore = completed.length + discoveries;
   const mainTotal = visible.filter((task) => task.type === "main").length;
   const mainDone = visibleDone.filter((task) => task.type === "main").length;
   const percent = visible.length ? Math.round((visibleDone.length / visible.length) * 100) : 0;
@@ -1549,9 +2117,9 @@ function renderStats() {
     : `Whole trip: ${visibleDone.length} of ${visible.length} cleared`;
   document.querySelector("#progressBar").style.width = `${percent}%`;
   document.querySelector("#mainCount").textContent = `${mainDone}/${mainTotal}`;
-  document.querySelector("#sideCount").textContent = visibleDone.filter((task) => task.type === "side").length;
-  document.querySelector("#eggCount").textContent = visibleDone.filter((task) => task.type === "egg").length;
-  document.querySelector("#maiCount").textContent = visible.length - visibleDone.length;
+  document.querySelector("#sideCount").textContent = discoveries;
+  document.querySelector("#eggCount").textContent = roadmapGoals.length;
+  document.querySelector("#maiCount").textContent = mainTotal - mainDone;
 }
 
 cityRail.addEventListener("click", (event) => {
