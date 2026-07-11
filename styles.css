@@ -704,14 +704,18 @@ h3 {
   letter-spacing: 0.02em;
 }
 
-.day-front-page,
+.day-front-page {
+  display: grid;
+  gap: 14px;
+}
+
 .quest-page {
   display: grid;
   gap: 14px;
 }
 
-.day-panel > .capstone-hero {
-  margin-bottom: 12px;
+.day-front-page .capstone-hero {
+  margin: 0;
 }
 
 .capstone-hero {
