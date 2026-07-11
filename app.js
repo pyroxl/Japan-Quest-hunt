@@ -861,6 +861,7 @@ function defaultState() {
     deckDone: {},
     deckSkipped: {},
     melon: {},
+    mainNotes: {},
     roadmapReady: {},
     dayWindows: {},
     overviewWindows: {},
@@ -1097,8 +1098,42 @@ function capstoneTaskId(dayId) {
   return `${dayId}.photo.capstone`;
 }
 
+function mainGoalPhotoTaskId(dayId) {
+  return `${dayId}.photo.main`;
+}
+
 function bundledCapstoneUrl(dayId) {
   return defaultCapstonePhotos[dayId] || null;
+}
+
+async function capstoneImageUrl(dayId) {
+  const photos = await getPhotosForTask(capstoneTaskId(dayId)).catch(() => []);
+  const latest = photos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
+  if (latest) return { url: latest.dataUrl, bundled: false };
+  const bundled = bundledCapstoneUrl(dayId);
+  return bundled ? { url: bundled, bundled: true } : null;
+}
+
+async function populateCapstoneHero(day, container) {
+  if (!container) return;
+  const image = await capstoneImageUrl(day.id);
+  container.innerHTML = "";
+  if (!image) {
+    container.className = "capstone-hero is-empty";
+    container.innerHTML = "<p>Capstone photo will appear here.</p>";
+    return;
+  }
+  container.className = `capstone-hero${image.bundled ? " is-bundled" : ""}`;
+  const img = document.createElement("img");
+  img.alt = `${day.title} capstone`;
+  img.src = image.url;
+  container.appendChild(img);
+  if (image.bundled) {
+    const label = document.createElement("span");
+    label.className = "capstone-hero-label";
+    label.textContent = "Pre-trip capstone";
+    container.appendChild(label);
+  }
 }
 
 function openPhotoDb() {
@@ -1169,7 +1204,7 @@ function fileToDataUrl(file) {
   });
 }
 
-async function renderPhotosForTask(taskId, container) {
+async function renderPhotosForTask(taskId, container, onPhotosChange) {
   if (!container) return;
   const photos = await getPhotosForTask(taskId).catch(() => []);
   container.innerHTML = "";
@@ -1183,9 +1218,10 @@ async function renderPhotosForTask(taskId, container) {
     deleteButton.textContent = "Remove";
     deleteButton.addEventListener("click", async () => {
       await removePhoto(photo.id);
-      await renderPhotosForTask(taskId, container);
+      await renderPhotosForTask(taskId, container, onPhotosChange);
       await renderAlbum();
       if (taskId.endsWith(".photo.capstone")) renderCalendar();
+      if (onPhotosChange) await onPhotosChange();
     });
     wrapper.appendChild(deleteButton);
     container.appendChild(wrapper);
@@ -1193,13 +1229,14 @@ async function renderPhotosForTask(taskId, container) {
   if (!photos.length) {
     const dayId = taskId.split(".")[0];
     const bundled = bundledCapstoneUrl(dayId);
-    if (bundled) {
+    if (bundled && taskId.endsWith(".photo.capstone")) {
       const wrapper = document.createElement("div");
       wrapper.className = "quest-photo is-bundled";
       wrapper.innerHTML = `<img alt="Default capstone preview" src="${bundled}"><span class="bundled-label">Default preview</span>`;
       container.appendChild(wrapper);
     }
   }
+  if (onPhotosChange) await onPhotosChange();
 }
 
 async function handlePhotoFiles(files, task, container) {
@@ -1219,10 +1256,16 @@ async function handlePhotoFiles(files, task, container) {
   }
   await renderPhotosForTask(task.id, container);
   await renderAlbum();
-  if (task.id.endsWith(".photo.capstone")) renderCalendar();
+  if (task.id.endsWith(".photo.capstone")) {
+    renderCalendar();
+    const hero = dayPanel.querySelector(".capstone-hero");
+    const dayId = task.id.split(".")[0];
+    const match = findDay(dayId);
+    if (hero && match) populateCapstoneHero(match.day, hero);
+  }
 }
 
-function makePhotoControls(task, buttonText = "Add Photo") {
+function makePhotoControls(task, buttonText = "Add Photo", onPhotosChange) {
   const controls = document.createElement("div");
   const button = document.createElement("label");
   const fileInput = document.createElement("input");
@@ -1240,9 +1283,10 @@ function makePhotoControls(task, buttonText = "Add Photo") {
   fileInput.addEventListener("change", async (event) => {
     await handlePhotoFiles(event.target.files, task, photos);
     event.target.value = "";
+    if (onPhotosChange) await onPhotosChange();
   });
   controls.append(button, fileInput);
-  renderPhotosForTask(task.id, photos);
+  renderPhotosForTask(task.id, photos, onPhotosChange);
   return { controls, photos };
 }
 
@@ -1510,18 +1554,118 @@ function dailyGuide(day) {
       <div class="history-story">${context.history.map((paragraph) => `<p>${paragraph}</p>`).join("")}</div>
     </section>
   `;
-  const checkbox = document.createElement("button");
+  return card;
+}
+
+async function mainGoalReady(day) {
+  const note = (state.mainNotes[day.id] || "").trim();
+  const photos = await getPhotosForTask(mainGoalPhotoTaskId(day.id)).catch(() => []);
+  return Boolean(note) && photos.length > 0;
+}
+
+function makeMainGoalCard(day) {
+  const main = day.groups.find((group) => group[1] === "main")?.[2]?.[0] || day.theme;
   const taskId = mainTaskId(day);
+  const photoTask = {
+    id: mainGoalPhotoTaskId(day.id),
+    text: "Main goal proof",
+    slot: "main",
+    dayId: day.id,
+    dayTitle: day.title,
+    cityId: findDay(day.id)?.cityId || state.activeCity
+  };
+  const card = document.createElement("section");
+  card.className = "main-goal-card";
+  card.innerHTML = `
+    <div class="main-goal-heading"><p class="label">Today's main goal</p></div>
+    <h3>${main}</h3>
+    <p class="main-goal-note">Write what you actually did, then add one photo that proves the main goal happened.</p>
+  `;
+
+  const writing = document.createElement("label");
+  writing.className = "main-goal-writing";
+  writing.innerHTML = `<span>What did you do for today's main goal?</span>`;
+  const textarea = document.createElement("textarea");
+  textarea.rows = 4;
+  textarea.placeholder = "A few sentences about how you completed today's main goal…";
+  textarea.value = state.mainNotes[day.id] || "";
+  textarea.addEventListener("input", () => {
+    state.mainNotes[day.id] = textarea.value;
+    saveState();
+    updateMainGoalButton();
+  });
+  writing.appendChild(textarea);
+  card.appendChild(writing);
+
+  const photoSection = document.createElement("div");
+  photoSection.className = "main-goal-photo";
+  photoSection.innerHTML = `<span>Photo proof of the main goal</span>`;
+
+  const checkbox = document.createElement("button");
   checkbox.type = "button";
   checkbox.className = `main-complete ${state.done[taskId] ? "is-complete" : ""}`;
   checkbox.textContent = state.done[taskId] ? "Main goal completed ✓" : "Mark main goal complete";
-  checkbox.addEventListener("click", () => {
-    state.done[taskId] = !state.done[taskId];
+
+  async function updateMainGoalButton() {
+    if (state.done[taskId]) {
+      checkbox.disabled = false;
+      checkbox.textContent = "Main goal completed ✓";
+      return;
+    }
+    const ready = await mainGoalReady(day);
+    checkbox.disabled = !ready;
+    const note = (state.mainNotes[day.id] || "").trim();
+    const photoCount = (await getPhotosForTask(mainGoalPhotoTaskId(day.id)).catch(() => [])).length;
+    if (!note && !photoCount) {
+      checkbox.textContent = "Add writing and a photo to complete";
+    } else if (!note) {
+      checkbox.textContent = "Add writing to complete";
+    } else if (!photoCount) {
+      checkbox.textContent = "Add a photo to complete";
+    } else {
+      checkbox.textContent = "Mark main goal complete";
+    }
+  }
+
+  const { controls, photos } = makePhotoControls(photoTask, "Upload main goal photo", updateMainGoalButton);
+  photoSection.append(controls, photos);
+  card.appendChild(photoSection);
+
+  checkbox.addEventListener("click", async () => {
+    if (state.done[taskId]) {
+      state.done[taskId] = false;
+      saveState();
+      showDay(day);
+      return;
+    }
+    const ready = await mainGoalReady(day);
+    if (!ready) return;
+    state.done[taskId] = true;
     saveState();
     showDay(day);
   });
   card.appendChild(checkbox);
+  updateMainGoalButton();
   return card;
+}
+
+function makeDayFrontPage(day) {
+  const section = document.createElement("section");
+  section.className = "day-front-page";
+  const hero = document.createElement("div");
+  hero.className = "capstone-hero";
+  section.appendChild(hero);
+  populateCapstoneHero(day, hero);
+  section.appendChild(dailyGuide(day));
+  return section;
+}
+
+function makeQuestPage(day) {
+  const section = document.createElement("section");
+  section.className = "quest-page";
+  section.appendChild(makeMainGoalCard(day));
+  section.appendChild(renderQuestDeck(day));
+  return section;
 }
 
 async function renderMelonPassport() {
@@ -2059,8 +2203,8 @@ function renderDay(day) {
       <p>${day.theme}</p>
     </div>
   `;
-  const windows = [dailyGuide(day), renderQuestDeck(day), makeMapCard(day), makeDailyPhotoCard(day)];
-  dayPanel.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Discover", "Map", "Photos"]));
+  const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
+  dayPanel.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Photos"]));
 }
 
 function renderNav() {
