@@ -1608,7 +1608,7 @@ function renderCalendar() {
         <small>${city.name}</small>
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
-        <span class="calendar-capstone"><b>Capstone:</b> ${capstone || "Not yet defined"}</span>
+        <span class="calendar-capstone">${capstone || "Not yet defined"}</span>
       `;
       button.addEventListener("click", () => {
         state.activeCity = cityId;
@@ -1922,46 +1922,21 @@ function makeDailyPhotoCard(day) {
 
 function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWindows") {
   const carousel = document.createElement("section");
-  const toolbar = document.createElement("div");
   const viewport = document.createElement("div");
-  const dots = document.createElement("div");
-  const previous = document.createElement("button");
-  const next = document.createElement("button");
   carousel.className = "day-carousel";
-  toolbar.className = "day-window-toolbar";
   viewport.className = "day-window-strip";
-  dots.className = "day-window-dots";
-  previous.type = "button";
-  next.type = "button";
-  previous.className = "window-arrow";
-  next.className = "window-arrow";
-  previous.setAttribute("aria-label", "Previous window");
-  next.setAttribute("aria-label", "Next window");
-  previous.textContent = "←";
-  next.textContent = "→";
+  viewport.setAttribute("aria-label", "Swipe or drag between windows");
 
   windows.forEach((window, index) => {
     window.classList.add("day-window");
     window.dataset.windowIndex = String(index);
     window.setAttribute("aria-label", `${labels[index]} window`);
     viewport.appendChild(window);
-    const dot = document.createElement("button");
-    dot.type = "button";
-    dot.className = "day-window-dot";
-    dot.setAttribute("aria-label", `Show ${labels[index]} window`);
-    dot.innerHTML = `<span>${labels[index]}</span>`;
-    dot.addEventListener("click", () => goTo(index));
-    dots.appendChild(dot);
   });
 
   const maxIndex = windows.length - 1;
   let currentIndex = Math.min(Number(state[storageGroup]?.[carouselId]) || 0, maxIndex);
   let scrollTimer;
-  function updateControls() {
-    previous.disabled = currentIndex === 0;
-    next.disabled = currentIndex === maxIndex;
-    dots.querySelectorAll("button").forEach((dot, index) => dot.classList.toggle("active", index === currentIndex));
-  }
   function windowLeft(index) {
     return windows[index]?.offsetLeft || 0;
   }
@@ -1974,10 +1949,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
     state[storageGroup] = state[storageGroup] || {};
     state[storageGroup][carouselId] = currentIndex;
     saveState();
-    updateControls();
   }
-  previous.addEventListener("click", () => goTo(currentIndex - 1));
-  next.addEventListener("click", () => goTo(currentIndex + 1));
   viewport.addEventListener("scroll", () => {
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(() => {
@@ -1987,7 +1959,6 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
         state[storageGroup] = state[storageGroup] || {};
         state[storageGroup][carouselId] = currentIndex;
         saveState();
-        updateControls();
       }
     }, 90);
   }, { passive: true });
@@ -2013,9 +1984,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   viewport.addEventListener("pointerup", endDrag);
   viewport.addEventListener("pointercancel", endDrag);
 
-  toolbar.append(previous, dots, next);
-  carousel.append(toolbar, viewport);
-  updateControls();
+  carousel.append(viewport);
   requestAnimationFrame(() => goTo(currentIndex, "auto"));
   return carousel;
 }

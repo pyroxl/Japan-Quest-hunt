@@ -1,4 +1,4 @@
-const CACHE_NAME = "japan-quest-v23";
+const CACHE_NAME = "japan-quest-v24";
 const APP_FILES = [
   "./",
   "./index.html",
