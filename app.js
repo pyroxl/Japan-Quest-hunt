@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v32";
+const APP_VERSION = "japan-quest-v44";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -450,14 +450,14 @@ const planningConstraints = [
 
 const regionalQuestPools = {
   osaka: [
-    ["osaka-takoyaki", "food", "Try takoyaki from a busy specialist."],
-    ["osaka-okonomiyaki", "food", "Share Osaka-style okonomiyaki."],
-    ["osaka-kushikatsu", "food", "Try kushikatsu in Osaka."],
-    ["osaka-negiyaki", "food", "Find negiyaki or another Osaka griddle specialty."],
-    ["osaka-konbini", "food", "Build a konbini breakfast or dessert haul."],
-    ["osaka-sign", "find", "Spot the loudest oversized food sign."],
-    ["osaka-street", "photo", "Photograph an ordinary street with no landmark."],
-    ["osaka-kissaten", "culture", "Pause in a kissaten or neighborhood cafe."]
+    ["osaka-takoyaki", "food", "Try takoyaki from a busy specialist.", ["day03"]],
+    ["osaka-okonomiyaki", "food", "Share Osaka-style okonomiyaki.", ["day04"]],
+    ["osaka-kushikatsu", "food", "Try kushikatsu in Osaka.", ["day05"]],
+    ["osaka-negiyaki", "food", "Find negiyaki or another Osaka griddle specialty.", ["day04"]],
+    ["osaka-konbini", "food", "Build a konbini breakfast or dessert haul.", ["day02"]],
+    ["osaka-sign", "find", "Spot the loudest oversized food sign.", ["day02"]],
+    ["osaka-street", "photo", "Photograph an ordinary street with no landmark.", ["day04"]],
+    ["osaka-kissaten", "culture", "Pause in a kissaten or neighborhood cafe.", ["day04"]]
   ],
   kyoto: [
     ["kyoto-obanzai", "food", "Try obanzai or a Kyoto home-style plate."],
@@ -1065,14 +1065,16 @@ function isPhotoQuest(title, text) {
 }
 
 const dailyPhotoSlots = [
-  ["capstone", "Capstone Photo", "The single image that best captures today's main experience."],
+  ["thumbnail", "Day Thumbnail", "Optional image for the calendar and daily focus card. Does not appear in the album."],
   ["food", "Food Photo", "A snack, meal, dessert, drink, or food hall treasure."],
   ["scene", "Scene Photo", "A street, shrine, station, river, shopfront, skyline, or tiny atmosphere proof."],
   ["us", "Us Photo", "A non-perfect couple photo from the day."],
   ["extra", "Extra Photos", "Anything else that belongs in the album for this day."]
 ];
 
-const defaultCapstonePhotos = {
+const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"]);
+
+const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
   day03: "capstones/day03.jpg",
   day04: "capstones/day04.jpg",
@@ -1095,49 +1097,55 @@ const defaultCapstonePhotos = {
   day21: "capstones/day21.jpg"
 };
 
-function capstoneTaskId(dayId) {
-  return `${dayId}.photo.capstone`;
+function thumbnailTaskId(dayId) {
+  return `${dayId}.photo.thumbnail`;
 }
 
 function mainGoalPhotoTaskId(dayId) {
   return `${dayId}.photo.main`;
 }
 
-function bundledCapstoneUrl(dayId) {
-  const relative = defaultCapstonePhotos[dayId];
+function bundledPlanPhotoUrl(dayId) {
+  const relative = defaultPlanPhotos[dayId];
   if (!relative) return null;
   const base = location.pathname.endsWith("/") ? location.pathname : `${location.pathname.replace(/\/[^/]*$/, "/")}`;
   return `${base}${relative}`;
 }
 
-async function capstoneImageUrl(dayId) {
-  const photos = await getPhotosForTask(capstoneTaskId(dayId)).catch(() => []);
-  const latest = photos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
-  if (latest) return { url: latest.dataUrl, bundled: false };
-  const bundled = bundledCapstoneUrl(dayId);
-  return bundled ? { url: bundled, bundled: true } : null;
-}
-
-async function populateCapstoneHero(day, container) {
+function populatePlanPhoto(day, container) {
   if (!container) return;
-  const image = await capstoneImageUrl(day.id);
+  const url = bundledPlanPhotoUrl(day.id);
   container.innerHTML = "";
-  if (!image) {
-    container.className = "capstone-hero is-empty";
-    container.innerHTML = "<p>Capstone photo will appear here.</p>";
+  if (!url) {
+    container.className = "plan-photo is-empty";
+    container.innerHTML = "<p>Plan photo will appear here.</p>";
     return;
   }
-  container.className = `capstone-hero${image.bundled ? " is-bundled" : ""}`;
+  container.className = "plan-photo";
   const img = document.createElement("img");
-  img.alt = `${day.title} capstone`;
-  img.src = image.url;
+  img.alt = `${day.title} plan photo`;
+  img.src = url;
   container.appendChild(img);
-  if (image.bundled) {
-    const label = document.createElement("span");
-    label.className = "capstone-hero-label";
-    label.textContent = "Pre-trip capstone";
-    container.appendChild(label);
-  }
+}
+
+function isAlbumPhoto(photo) {
+  return albumPhotoSlots.has(photo.slot);
+}
+
+function legacyThumbnailTaskId(dayId) {
+  return `${dayId}.photo.capstone`;
+}
+
+async function calendarThumbnailImage(dayId) {
+  const thumbnailPhotos = await getPhotosForTask(thumbnailTaskId(dayId)).catch(() => []);
+  const latestThumbnail = thumbnailPhotos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
+  if (latestThumbnail) return latestThumbnail.dataUrl;
+
+  const legacyPhotos = await getPhotosForTask(legacyThumbnailTaskId(dayId)).catch(() => []);
+  const latestLegacy = legacyPhotos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
+  if (latestLegacy) return latestLegacy.dataUrl;
+
+  return bundledPlanPhotoUrl(dayId);
 }
 
 function openPhotoDb() {
@@ -1224,22 +1232,12 @@ async function renderPhotosForTask(taskId, container, onPhotosChange) {
       await removePhoto(photo.id);
       await renderPhotosForTask(taskId, container, onPhotosChange);
       await renderAlbum();
-      if (taskId.endsWith(".photo.capstone")) renderCalendar();
+      if (taskId.endsWith(".photo.thumbnail") || taskId.endsWith(".photo.capstone")) renderCalendar();
       if (onPhotosChange) await onPhotosChange();
     });
     wrapper.appendChild(deleteButton);
     container.appendChild(wrapper);
   });
-  if (!photos.length) {
-    const dayId = taskId.split(".")[0];
-    const bundled = bundledCapstoneUrl(dayId);
-    if (bundled && taskId.endsWith(".photo.capstone")) {
-      const wrapper = document.createElement("div");
-      wrapper.className = "quest-photo is-bundled";
-      wrapper.innerHTML = `<img alt="Default capstone preview" src="${bundled}"><span class="bundled-label">Default preview</span>`;
-      container.appendChild(wrapper);
-    }
-  }
   if (onPhotosChange) await onPhotosChange();
 }
 
@@ -1260,13 +1258,7 @@ async function handlePhotoFiles(files, task, container) {
   }
   await renderPhotosForTask(task.id, container);
   await renderAlbum();
-  if (task.id.endsWith(".photo.capstone")) {
-    renderCalendar();
-    const hero = dayPanel.querySelector(".day-front-page .capstone-hero");
-    const dayId = task.id.split(".")[0];
-    const match = findDay(dayId);
-    if (hero && match) populateCapstoneHero(match.day, hero);
-  }
+  if (task.id.endsWith(".photo.thumbnail") || task.id.endsWith(".photo.capstone")) renderCalendar();
 }
 
 function makePhotoControls(task, buttonText = "Add Photo", onPhotosChange) {
@@ -1453,14 +1445,27 @@ function deckPoolForDay(day) {
   const regionName = ({ nara: "Nara", himeji: "Himeji", miyajima: "Miyajima", rail: "Shinkansen" })[regionId] || tripData[cityId].name;
   const regional = (regionalQuestPools[regionId] || [])
     .filter((entry) => !entry[3] || entry[3].includes(day.id))
-    .map(([id, type, text]) => ({ id, type, text, source: regionName }));
+    .map(([id, type, text]) => ({
+      id,
+      type,
+      text,
+      source: regionName,
+      groupTitle: "Regional food",
+      dayId: day.id,
+      dayShort: day.short,
+      dayDate: day.date
+    }));
   const daily = day.groups.flatMap(([title, type, items], groupIndex) => {
     if (type !== "side" && type !== "egg") return [];
     return items.map((text, itemIndex) => ({
       id: `${day.id}-${type}-${groupIndex}-${itemIndex}`,
       type: type === "egg" ? "find" : "day",
       text,
-      source: type === "egg" ? "Hidden find" : "Today's neighborhood"
+      source: title,
+      groupTitle: type === "egg" ? "Lookout" : title,
+      dayId: day.id,
+      dayShort: day.short,
+      dayDate: day.date
     }));
   });
   return [...regional, ...daily].filter((quest, index, all) => all.findIndex((candidate) => candidate.id === quest.id) === index);
@@ -1503,7 +1508,7 @@ function renderQuestDeck(day) {
     const card = document.createElement("article");
     const done = Boolean(state.deckDone[quest.id]);
     card.className = `deck-card deck-${quest.type} ${done ? "is-found" : ""}`;
-    card.innerHTML = `<span class="deck-type">${quest.type === "food" ? "Regional food" : quest.source}</span><p>${quest.text}</p><div class="deck-actions"><button type="button" data-action="found">${done ? "Found ✓" : "Found It"}</button><button type="button" data-action="skip">Skip</button></div>`;
+    card.innerHTML = `<p>${quest.text}</p><div class="deck-actions"><button type="button" data-action="found">${done ? "Found ✓" : "Found It"}</button><button type="button" data-action="skip">Skip</button></div>`;
     card.querySelector('[data-action="found"]').addEventListener("click", () => {
       state.deckDone[quest.id] = !state.deckDone[quest.id];
       delete state.deckSkipped[quest.id];
@@ -1525,7 +1530,7 @@ function renderQuestDeck(day) {
   });
   const library = document.createElement("details");
   library.className = "quest-library";
-  library.innerHTML = `<summary>Browse all optional ideas <span>${pool.length}</span></summary><div>${pool.map((quest) => `<p class="${state.deckDone[quest.id] ? "is-found" : ""}"><strong>${quest.type === "food" ? "Regional food" : quest.source}:</strong> ${quest.text}${state.deckDone[quest.id] ? " ✓" : ""}</p>`).join("")}</div>`;
+  library.innerHTML = `<summary>Browse all optional ideas <span>${pool.length}</span></summary><div>${pool.map((quest) => `<p class="${state.deckDone[quest.id] ? "is-found" : ""}">${quest.text}${state.deckDone[quest.id] ? " ✓" : ""}</p>`).join("")}</div>`;
   section.appendChild(library);
   return section;
 }
@@ -1657,9 +1662,9 @@ function makeDayFrontPage(day) {
   const section = document.createElement("section");
   section.className = "day-front-page";
   const hero = document.createElement("div");
-  hero.className = "capstone-hero";
+  hero.className = "plan-photo";
   section.appendChild(hero);
-  populateCapstoneHero(day, hero);
+  populatePlanPhoto(day, hero);
   section.appendChild(dailyGuide(day));
   return section;
 }
@@ -1740,23 +1745,189 @@ async function renderMelonPassport() {
   leaderboard.innerHTML = ranked.length ? `<h3>${completed.length === 6 ? `👑 Mai's Melon Bread Champion: ${ranked[0].title}` : "Current leaderboard"}</h3><ol>${ranked.map((entry) => `<li><strong>${entry.title}</strong><span>${entry.score}/10${state.melon[entry.id]?.verdict ? ` · ${escapeHtml(state.melon[entry.id].verdict)}` : ""}</span></li>`).join("")}</ol>` : `<p>No rankings yet. Add a photo and score to stamp the first bread.</p>`;
 }
 
-function renderOverview() {
+const cityDiscoveryPresentation = {
+  osaka: {
+    categories: ["Taste Osaka", "See & Capture", "Everyday Osaka"],
+    help: "Choose a category when it fits the day. The timing notes are suggestions, not a schedule."
+  },
+  kyoto: {
+    categories: ["Taste Kyoto", "Soft Beauty", "Everyday Kyoto"],
+    help: "Use these as gentle additions to the day's main route, not a second itinerary."
+  },
+  hiroshima: {
+    categories: ["Westward Food", "History & Reflection", "Island & Transit"],
+    help: "Let the food, meaningful places, and travel rituals belong to the chapter they fit best."
+  },
+  tokyo: {
+    categories: ["Tokyo Food", "See & Capture", "Our Tokyo Routine"],
+    help: "Build a Tokyo rhythm: one good bite, one memorable detail, and one ordinary-life moment at a time."
+  }
+};
+
+function cityDiscoverySections(cityId) {
+  const city = tripData[cityId];
+  const sections = [];
+  const seen = new Set();
+
+  city.days.forEach((day) => {
+    const quests = deckPoolForDay(day).filter((quest) => {
+      if (seen.has(quest.id)) return false;
+      seen.add(quest.id);
+      return true;
+    });
+    if (!quests.length) return;
+    sections.push({
+      id: day.id,
+      title: `${day.short} · ${formatCalendarDate(day.date)}`,
+      subtitle: day.title.replace(/^Day \d+ - /, ""),
+      quests
+    });
+  });
+
+  const firstDay = city.days[0]?.short;
+  const lastDay = city.days.at(-1)?.short;
+  city.ongoing.forEach((group, groupIndex) => {
+    const quests = group.items.map((text, itemIndex) => ({
+      id: `${cityId}.ongoing.${groupIndex}.${itemIndex}`,
+      type: group.type === "egg" ? "find" : "day",
+      text,
+      source: group.title,
+      groupTitle: group.type === "egg" ? "Lookout" : group.title,
+      dayId: cityId,
+      dayShort: firstDay && lastDay ? `${firstDay}–${lastDay}` : city.name,
+      dayDate: ""
+    }));
+    if (!quests.length) return;
+    sections.push({
+      id: `${cityId}-ongoing-${groupIndex}`,
+      title: group.title,
+      subtitle: `Best anytime during ${city.name}`,
+      quests
+    });
+  });
+
+  return sections;
+}
+
+function cityDiscoveryCategories(cityId) {
+  const labels = cityDiscoveryPresentation[cityId]?.categories || ["Food & Drink", "See & Capture", "Everyday Life"];
+  const categories = [
+    { id: "taste", title: labels[0], note: "Regional foods, snacks, and food rituals that belong to this chapter." },
+    { id: "capture", title: labels[1], note: "Views, signs, photos, and small details worth noticing." },
+    { id: "everyday", title: labels[2], note: "Cafes, routines, and ordinary-life moments that make the city feel lived in." }
+  ].map((category) => ({ ...category, quests: [] }));
+
+  cityDiscoverySections(cityId).flatMap((section) => section.quests).forEach((quest) => {
+    const category = quest.type === "food" ? "taste" : quest.type === "find" || quest.type === "photo" ? "capture" : "everyday";
+    categories.find((entry) => entry.id === category).quests.push(quest);
+  });
+
+  return categories.filter((category) => category.quests.length);
+}
+
+function makeDiscoveryCheckRow(quest) {
+  const row = document.createElement("label");
+  const found = Boolean(state.deckDone[quest.id]);
+  row.className = `discovery-check-row ${found ? "is-found" : ""}`;
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = found;
+  const copy = document.createElement("span");
+  copy.className = "discovery-check-copy";
+  const isRecommendedToday = quest.dayDate === todayIso();
+  copy.innerHTML = `
+    <small>${isRecommendedToday ? '<i class="discovery-pulse" aria-label="Recommended for today"></i>' : ""}${quest.text}</small>
+    <em>Recommended: ${quest.dayDate ? formatCalendarDate(quest.dayDate) : quest.dayShort}</em>
+  `;
+  checkbox.addEventListener("change", (event) => {
+    state.deckDone[quest.id] = event.target.checked;
+    if (event.target.checked) delete state.deckSkipped[quest.id];
+    saveState();
+    renderCityDiscoveryChecklist();
+    renderStats();
+  });
+  row.append(checkbox, copy);
+  return row;
+}
+
+function renderCityDiscoveryChecklist() {
+  const body = document.querySelector("#discoveryHubBody");
+  if (!body) return;
+
+  const cityId = state.activeCity;
   const city = activeCity();
-  clearGroup("#ongoingQuests");
+  const presentation = cityDiscoveryPresentation[cityId];
+  const title = document.querySelector("#cityDiscoveryTitle");
+  const help = document.querySelector("#cityDiscoveryHelp");
+  if (title) title.textContent = `${city.name} Discoveries`;
+  if (help) help.textContent = presentation?.help || "Choose a category when it fits the day. The timing notes are suggestions, not a schedule.";
+  const categories = cityDiscoveryCategories(cityId);
+
+  body.innerHTML = "";
+  categories.forEach((category, index) => {
+    const group = document.createElement("details");
+    group.className = "discovery-group";
+    if (index === 0) group.open = true;
+    const sectionFound = category.quests.filter((quest) => state.deckDone[quest.id]).length;
+    group.innerHTML = `
+      <summary>
+        <span>${category.title}</span>
+        <span class="discovery-group-count">${sectionFound}/${category.quests.length}</span>
+      </summary>
+      <p class="discovery-group-note">${category.note}</p>
+    `;
+    const list = document.createElement("div");
+    list.className = "discovery-checklist";
+    category.quests.forEach((quest) => list.appendChild(makeDiscoveryCheckRow(quest)));
+    group.appendChild(list);
+    body.appendChild(group);
+  });
+}
+
+function setProgressRing(element, completed, total) {
+  if (!element) return;
+  const percent = total ? Math.round((completed / total) * 100) : 0;
+  element.style.setProperty("--ring-progress", `${percent * 3.6}deg`);
+  element.querySelector("strong").textContent = `${percent}%`;
+}
+
+function renderTripQuestDashboard() {
+  const tasks = allTasks();
+  const completed = tasks.filter((task) => state.done[task.id]);
+  const allCityQuests = Object.keys(tripData).flatMap((cityId) => cityDiscoveryCategories(cityId).flatMap((category) => category.quests));
+  const cityQuests = cityDiscoveryCategories(state.activeCity).flatMap((category) => category.quests);
+  const cityDone = cityQuests.filter((quest) => state.deckDone[quest.id]).length;
+  const totalCompleted = completed.length + allCityQuests.filter((quest) => state.deckDone[quest.id]).length;
+  const total = tasks.length + allCityQuests.length;
+
+  setProgressRing(document.querySelector("#tripProgressRing"), totalCompleted, total);
+  setProgressRing(document.querySelector("#routeProgressRing"), completed.length, tasks.length);
+  setProgressRing(document.querySelector("#cityProgressRing"), cityDone, cityQuests.length);
+  const cityRingLabel = document.querySelector("#cityProgressRing span");
+  if (cityRingLabel) cityRingLabel.textContent = `${activeCity().name} chapter`;
+}
+
+function renderOverview() {
   const review = document.querySelector("#planeRideReview");
   if (review) review.innerHTML = "";
   document.querySelector("#albumGrid").innerHTML = "";
   document.querySelector("#calendarGrid").innerHTML = "";
 
-  document.querySelector("#hotelField").value = state.lodging[state.activeCity] || "";
-  document.querySelector(".hotel-card label").textContent = city.baseLabel;
-  document.querySelector(".hotel-card p").textContent = `${city.name} map routes use this as the starting point. You can leave it blank until the hotel is real.`;
-  document.querySelector("#ongoingQuests h2").textContent = `${city.name} Discovery Deck`;
+  const city = activeCity();
+  const hotelField = document.querySelector("#hotelField");
+  const hotelLabel = document.querySelector("#hotelLabel");
+  const hotelHelp = document.querySelector("#hotelHelp");
+  if (hotelField) {
+    hotelField.value = state.lodging[state.activeCity] || "";
+    hotelField.placeholder = `Paste ${city.name} hotel name or address later`;
+  }
+  if (hotelLabel) hotelLabel.textContent = city.baseLabel;
+  if (hotelHelp) hotelHelp.textContent = `${city.name} day maps use this as the starting point until the hotel is locked in.`;
 
   renderCalendar();
+  renderTripQuestDashboard();
+  renderCityDiscoveryChecklist();
   renderMelonPassport();
-  const cityDay = city.days.find((day) => day.date === todayIso()) || city.days[0];
-  if (cityDay) document.querySelector("#ongoingQuests").appendChild(renderQuestDeck(cityDay));
   if (review && todayIso() >= "2026-11-10") review.appendChild(makePlaneRideReviewCard());
   renderAlbum();
   setupOverviewCarousel();
@@ -1767,8 +1938,8 @@ function setupOverviewCarousel() {
   if (!host || host.querySelector(".overview-carousel")) return;
   const review = host.querySelector("#planeRideReview");
   const unlocked = todayIso() >= "2026-11-10";
-  const windows = [host.querySelector("#calendarView"), host.querySelector("#discoverView"), host.querySelector("#melonPassport"), host.querySelector("#photoAlbum")].filter(Boolean);
-  const labels = ["Calendar", "Discover", "Melon", "Album"];
+  const windows = [host.querySelector("#calendarView"), host.querySelector("#tripQuestView"), host.querySelector("#cityQuestView"), host.querySelector("#photoAlbum")].filter(Boolean);
+  const labels = ["Calendar", "Trip Quests", `${activeCity().name} Quests`, "Album"];
   if (unlocked && review) {
     windows.push(review);
     labels.push("Review");
@@ -1819,23 +1990,20 @@ function renderCalendar() {
 
 async function renderCalendarPhoto(day, target) {
   if (!target) return;
-  const photos = await getPhotosForTask(capstoneTaskId(day.id)).catch(() => []);
-  const latest = photos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
-  if (latest) {
-    target.style.backgroundImage = `url("${latest.dataUrl}")`;
+  const image = await calendarThumbnailImage(day.id);
+  if (image) {
+    target.style.backgroundImage = `url("${image}")`;
     target.classList.add("has-photo");
     return;
   }
-  const bundled = bundledCapstoneUrl(day.id);
-  if (!bundled) return;
-  target.style.backgroundImage = `url("${bundled}")`;
-  target.classList.add("has-photo");
+  target.style.backgroundImage = "";
+  target.classList.remove("has-photo");
 }
 
 async function renderAlbum() {
   const album = document.querySelector("#albumGrid");
   if (!album) return;
-  const photos = await getAllPhotos().catch(() => []);
+  const photos = (await getAllPhotos().catch(() => [])).filter(isAlbumPhoto);
   album.innerHTML = "";
   if (!photos.length) {
     const empty = document.createElement("p");
@@ -2041,13 +2209,13 @@ function mapsEmbedUrl(day) {
 }
 
 function mapsRouteUrl(day) {
-  const origin = (state.lodging[state.activeCity] || "").trim();
   const places = day.places || [];
-  const routeStops = origin ? places : places.slice(1);
-  const destination = routeStops[routeStops.length - 1] || places[0] || "Japan";
-  const waypoints = routeStops.slice(0, -1).join("|");
+  const hotel = (state.lodging[state.activeCity] || "").trim();
+  const origin = hotel || places[0] || "Japan";
+  const destination = places.at(-1) || origin;
+  const waypoints = (hotel ? places : places.slice(1, -1)).join("|");
   const params = new URLSearchParams({ api: "1", travelmode: "transit", destination });
-  if (origin) params.set("origin", origin);
+  params.set("origin", origin);
   if (waypoints) params.set("waypoints", waypoints);
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
@@ -2083,19 +2251,13 @@ function makeMapCard(day) {
   const actions = document.createElement("div");
   actions.className = "map-actions";
 
-  const pinsLink = document.createElement("a");
-  pinsLink.href = mapsSearchUrl(`${day.places.join(" ")} Japan`);
-  pinsLink.target = "_blank";
-  pinsLink.rel = "noopener";
-  pinsLink.textContent = "Open Pins";
+  const dayMapLink = document.createElement("a");
+  dayMapLink.href = mapsRouteUrl(day);
+  dayMapLink.target = "_blank";
+  dayMapLink.rel = "noopener";
+  dayMapLink.textContent = state.lodging[state.activeCity] ? "Open Day Map from Hotel" : "Open Day Map";
 
-  const routeLink = document.createElement("a");
-  routeLink.href = mapsRouteUrl(day);
-  routeLink.target = "_blank";
-  routeLink.rel = "noopener";
-  routeLink.textContent = state.lodging[state.activeCity] ? "Route From Hotel" : "Route Day Stops";
-
-  actions.append(pinsLink, routeLink);
+  actions.append(dayMapLink);
   content.append(iframe, placeList, actions);
   return card;
 }
@@ -2105,7 +2267,7 @@ function makeDailyPhotoCard(day) {
     className: "daily-photo-card",
     label: "Daily Album",
     title: "Photos to catch today",
-    badge: "4 core",
+    badge: "5 slots",
     open: true
   });
   const grid = document.createElement("div");
@@ -2120,7 +2282,7 @@ function makeDailyPhotoCard(day) {
       dayId: day.id,
       dayTitle: day.title
     };
-    const { controls, photos } = makePhotoControls(task, slot === "extra" ? "Add Extras" : "Add Photo");
+    const { controls, photos } = makePhotoControls(task, slot === "extra" ? "Add Extras" : slot === "thumbnail" ? "Add Thumbnail" : "Add Photo");
     slotCard.className = "daily-photo-slot";
     slotCard.innerHTML = `<h4>${title}</h4><p>${description}</p>`;
     slotCard.append(controls, photos);
@@ -2249,25 +2411,7 @@ function showDay(day) {
 }
 
 function renderStats() {
-  const tasks = allTasks();
-  const completed = tasks.filter((task) => state.done[task.id]);
-  const visible = overviewPanel.classList.contains("hidden") ? cityTasks(state.activeCity) : tasks;
-  const visibleDone = visible.filter((task) => state.done[task.id]);
-  const discoveries = Object.values(state.deckDone).filter(Boolean).length;
-  const totalScore = completed.length + discoveries;
-  const mainTotal = visible.filter((task) => task.type === "main").length;
-  const mainDone = visibleDone.filter((task) => task.type === "main").length;
-  const percent = visible.length ? Math.round((visibleDone.length / visible.length) * 100) : 0;
-
-  document.querySelector("#scoreTotal").textContent = totalScore;
-  document.querySelector("#progressTitle").textContent = overviewPanel.classList.contains("hidden")
-    ? `${activeCity().name}: ${visibleDone.length} of ${visible.length} cleared`
-    : `Whole trip: ${visibleDone.length} of ${visible.length} cleared`;
-  document.querySelector("#progressBar").style.width = `${percent}%`;
-  document.querySelector("#mainCount").textContent = `${mainDone}/${mainTotal}`;
-  document.querySelector("#sideCount").textContent = discoveries;
-  document.querySelector("#eggCount").textContent = roadmapGoals.length;
-  document.querySelector("#maiCount").textContent = mainTotal - mainDone;
+  if (!overviewPanel.classList.contains("hidden")) renderTripQuestDashboard();
 }
 
 cityRail.addEventListener("click", (event) => {

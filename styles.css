@@ -714,11 +714,11 @@ h3 {
   gap: 14px;
 }
 
-.day-front-page .capstone-hero {
+.day-front-page .plan-photo {
   margin: 0;
 }
 
-.capstone-hero {
+.plan-photo {
   position: relative;
   overflow: hidden;
   border-radius: 10px;
@@ -727,31 +727,19 @@ h3 {
   aspect-ratio: 4 / 3;
 }
 
-.capstone-hero img {
+.plan-photo img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.capstone-hero.is-empty {
+.plan-photo.is-empty {
   display: grid;
   place-items: center;
   min-height: 180px;
   color: var(--muted);
   font-size: 0.9rem;
-}
-
-.capstone-hero-label {
-  position: absolute;
-  left: 0.75rem;
-  bottom: 0.75rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(18, 18, 18, 0.72);
-  color: #fff;
-  font-size: 0.68rem;
-  letter-spacing: 0.02em;
 }
 
 .main-goal-card,
@@ -1058,26 +1046,267 @@ h3 {
   font-size: 0.84rem;
 }
 
-.progress-card {
+.quest-progress-overview {
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0 2px;
 }
 
-.meter {
-  height: 12px;
+.progress-ring {
+  --ring-progress: 0deg;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: conic-gradient(var(--green) var(--ring-progress), rgba(135, 58, 86, 0.13) 0);
+  text-align: center;
+}
+
+.progress-ring::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--card);
+}
+
+.progress-ring strong,
+.progress-ring span {
+  position: relative;
+  z-index: 1;
+}
+
+.progress-ring strong {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.progress-ring span {
+  max-width: 76%;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.progress-ring-total {
+  width: min(100%, 104px);
+}
+
+.section-rings {
+  display: contents;
+}
+
+.progress-ring-small {
+  width: min(100%, 84px);
+}
+
+.progress-ring-small strong {
+  font-size: 1rem;
+}
+
+.discovery-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--rose);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--rose) 55%, transparent);
+  animation: discovery-pulse 1.8s ease-out infinite;
+  vertical-align: middle;
+}
+
+@keyframes discovery-pulse {
+  70%, 100% { box-shadow: 0 0 0 7px transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discovery-pulse { animation: none; }
+}
+
+.trip-quest-dashboard,
+.melon-passport-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.discovery-group {
   overflow: hidden;
-  border-radius: 999px;
-  background: rgba(135, 58, 86, 0.12);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
 }
 
-.meter span {
+.discovery-group > summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-weight: 900;
+  list-style: none;
+}
+
+.discovery-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+.discovery-group-count {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.discovery-hub-body {
+  display: grid;
+  gap: 10px;
+  padding: 0 10px 10px;
+}
+
+.discovery-group-note {
+  margin: 0;
+  padding: 0 14px 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.discovery-group .discovery-checklist {
+  padding: 0 10px 10px;
+}
+
+.discovery-check-copy em {
   display: block;
-  width: 0;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--green), var(--rose), var(--gold));
-  transition: width 180ms ease;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.discovery-checklist {
+  display: grid;
+  gap: 8px;
+}
+
+.discovery-check-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+}
+
+.discovery-check-row.is-found {
+  border-color: color-mix(in srgb, var(--green) 40%, transparent);
+  background: color-mix(in srgb, var(--green) 8%, white);
+}
+
+.discovery-check-row input {
+  margin-top: 2px;
+}
+
+.discovery-check-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.discovery-check-copy small {
+  display: block;
+}
+
+.discovery-check-copy small {
+  color: var(--ink);
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.city-discovery-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.city-discovery-list {
+  display: grid;
+  gap: 8px;
+}
+
+.city-discovery-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.city-discovery-row.has-found {
+  border-color: color-mix(in srgb, var(--green) 35%, transparent);
+}
+
+.city-discovery-row.is-complete {
+  border-color: color-mix(in srgb, var(--green) 55%, transparent);
+  background: color-mix(in srgb, var(--green) 8%, white);
+}
+
+.city-discovery-check {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: #146c3a;
+  font-weight: 900;
+}
+
+.city-discovery-row.has-found .city-discovery-check,
+.city-discovery-row.is-complete .city-discovery-check {
+  border-color: color-mix(in srgb, var(--green) 45%, transparent);
+  background: color-mix(in srgb, var(--green) 14%, white);
+}
+
+.city-discovery-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.city-discovery-copy strong,
+.city-discovery-copy small {
+  display: block;
+}
+
+.city-discovery-copy small {
+  color: var(--muted);
+  font-size: 0.82rem;
 }
 
 .stats-grid {
@@ -1141,7 +1370,7 @@ h3 {
 }
 
 .calendar-photo:not(.has-photo)::after {
-  content: "Add the day's capstone photo";
+  content: "Add a day thumbnail";
   display: grid;
   min-height: 92px;
   place-items: center;
