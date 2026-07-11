@@ -199,7 +199,7 @@ const legacyTripData = {
   tokyo: {
     name: "Tokyo",
     baseLabel: "Future Tokyo hotel",
-    description: "Local rhythm, Kawagoe, Ghibli/Kichijoji, teamLab, friends, creative streets, and old Tokyo.",
+    description: "Local rhythm, Kawagoe, Ghibli/Kichijoji, teamLab, creative streets, and old Tokyo.",
     ongoing: [
       {
         title: 'The "Our Tokyo" Quest',
@@ -289,13 +289,13 @@ const legacyTripData = {
         id: "day15",
         date: "2026-11-07",
         short: "Nov 7",
-        title: "Day 15 - Akko / Yoshi Local Japan Quest",
+        title: "Day 15 - Cozy West Tokyo Quest",
         theme: "Let people who live there show us their Japan.",
         places: ["Tokyo Station", "Ueno Park", "Kichijoji"],
         groups: [
-          ["Main quest", "main", ["Spend time in Akko and Yoshi's chosen neighborhood or chosen meeting area, letting them lead."]],
+          ["Main quest", "main", ["Explore Jindaiji's temple lanes, share a soba lunch, and let Mai choose a garden, cafe, or cute neighborhood finish."]],
           ["Side quests", "side", ["Ask them for one place they genuinely like, not the place they think tourists should see.", "Eat something they recommend without over-researching it first.", "Learn one neighborhood fact, memory, or routine from them.", "Take a group photo that does not feel stiff.", "Get one local-life tip we would never have found alone."]],
-          ["Hidden eggs", "egg", ["A residential street detail: small garden, laundry, bicycle line, local noticeboard, tiny shrine.", "A shop where the staff seem to know regulars.", "A moment where the day feels more like visiting friends than sightseeing."]],
+          ["Hidden eggs", "egg", ["A leafy temple approach.", "A hand-painted yokai or shop detail.", "Steam rising from a soba kitchen."]],
           ["Mai-coded moment", "mai", ["Mai gets to feel welcomed into a real corner of Japan."]],
           ["Soft landing", "soft", ["Let the social part be the achievement. Do not add a big extra sightseeing plan unless everyone is clearly energized."]]
         ]
@@ -408,7 +408,7 @@ const coreExperienceQuests = [
       "Miyajima: anago-meshi, grilled oyster, and warm momiji manju",
       "Tokyo: sushi, ramen, curry rice, yakitori, teishoku, and conveyor-belt sushi",
       "Tokyo sweets: taiyaki or ningyo-yaki, kissaten toast, and a beautiful dessert",
-      "Eat one meal recommended by Sayaka or Akko without over-researching it"
+      "Eat one locally recommended meal without over-researching it"
     ]
   },
   {
@@ -418,7 +418,7 @@ const coreExperienceQuests = [
     items: [
       "Buy, write, stamp, and mail a postcard from Japan",
       "Make one compact craft only if we genuinely want the finished object",
-      "Write or choose a thank-you card for Sayaka or Akko"
+      "Write or choose one thoughtful thank-you card"
     ]
   }
 ];
@@ -433,16 +433,15 @@ const roadmapGoals = [
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
   { id: "nature", goal: "At least two strong nature or scenery days", days: ["day09", "day13"], status: "Ready", why: "Arashiyama and Miyajima balance the city and history chapters.", blocker: "", fallback: "Use the riverside Arashiyama loop and Miyajima waterfront without climbs." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
-  { id: "tokyo-story", goal: "Tokyo through food, cute neighborhoods, museums, friends, and pop culture", days: ["day14", "day15", "day16", "day17", "day18", "day19", "day20", "day21"], status: "Ready", why: "The Tokyo chapter is intentionally personal rather than a generic big-city checklist.", blocker: "", fallback: "Choose the day's one strongest neighborhood, meal, or social anchor and release the rest." },
+  { id: "tokyo-story", goal: "Tokyo through food, cute neighborhoods, museums, and pop culture", days: ["day14", "day15", "day16", "day17", "day18", "day19", "day20", "day21"], status: "Ready", why: "The Tokyo chapter is intentionally personal rather than a generic big-city checklist.", blocker: "", fallback: "Choose the day's one strongest neighborhood, meal, or creative anchor and release the rest." },
   { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
-  { id: "friends", goal: "Time with Akko and Yoshi", days: ["day16"], status: "Needs Confirmation", why: "Local friend time delivers the intimate Japan feeling the family wants.", blocker: "Confirm their neighborhood, health, availability, and preferred plan.", fallback: "Explore their suggested residential neighborhood and send a warm invitation to join any part." },
+  { id: "west-tokyo", goal: "Mai's gentle west-Tokyo day", days: ["day16"], status: "Ready", why: "Jindaiji, soba, greenery, and neighborhood atmosphere give Mai a soft local-Tokyo contrast.", blocker: "", fallback: "Keep the day to Jindaiji, lunch, and one cafe or garden pause." },
   { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day17"], status: "Conditional", why: "A participatory creative-neighborhood experience keeps pop culture personal.", blocker: "Mai should choose karaoke, live music, arcade, event, or another active format.", fallback: "Pair one focused Nakano browse with an arcade, cafe, or neighborhood activity." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day19"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Use a modern-art museum plus one polished Tokyo food hall." },
 ];
 
 const planningConstraints = [
   { title: "Private-only onsen rule", text: "Use only an in-room private bath, reservable private/family bath, clothed footbath, or skip bathing." },
-  { title: "Friend day confirmation", text: "Confirm Akko and Yoshi's neighborhood and whether Saturday, November 7 works." },
   { title: "Ticket watch", text: "Ghibli Museum and teamLab remain protected roadmap goals with booking fallbacks." },
   { title: "Nice-to-have: Miyajima stay", text: "Consider an island splurge only if budget and luggage logistics support it; Hiroshima base remains a complete trip." },
   { title: "Nice-to-have: parents' extension", text: "A Tokyo extension after Mai and the user leave remains separate from the core trip." }
@@ -538,9 +537,7 @@ function questDay(id, date, title, theme, places, main, side, eggs, mai, soft) {
     groups: [
       ["Main quest", "main", [main]],
       ["Side quests", "side", side],
-      ["Hidden eggs", "egg", eggs],
-      ["Mai-coded moment", "mai", [mai]],
-      ["Soft landing", "soft", [soft]]
+      ["Hidden eggs", "egg", eggs]
     ]
   };
 }
@@ -619,7 +616,7 @@ const tripData = {
   tokyo: {
     name: "Tokyo",
     baseLabel: "Future Tokyo hotel",
-    description: "Eight Tokyo calendar days: arrival and ekiben settling, Ghibli, friends' local Japan, pop culture, Kawagoe, teamLab, old Tokyo, and favorite returns.",
+    description: "Eight Tokyo calendar days: arrival and ekiben settling, Ghibli, cozy west Tokyo, pop culture, Kawagoe, teamLab, old Tokyo, and favorite returns.",
     ongoing: [
       {
         title: "Our Tokyo Quest",
@@ -640,7 +637,7 @@ const tripData = {
     days: [
       questDay("day14", "2026-11-05", "Tokyo Arrival and Main Ekiben League", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
       questDay("day15", "2026-11-06", "Ghibli / Kichijoji Quest", "Soft imaginative Tokyo.", ["Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
-      questDay("day16", "2026-11-07", "Sayaka / Akko Local Japan Quest", "Let friends define their neighborhood and arrive as thoughtful guests, not tourists.", ["Chofu Station Tokyo", "Jindaiji Temple", "Tokyo"], "Spend time in Sayaka's or Akko's chosen neighborhood, let them lead, and make the social time the achievement.", ["Confirm neighborhood outing, restaurant, or actual home invitation", "Bring comparable modest commercially packaged non-meat gifts for separate hosts", "Wear clean socks and arrive on time, not early", "If entering a home, say ojamashimasu and handle the genkan carefully", "Offer the gift with both hands and follow the host's lead", "Ask before photographing home or family", "Say itadakimasu and gochisousama deshita", "Leave without overstaying; say ojama shimashita and send a specific thank-you", "Ask for one place and meal they genuinely like"], ["A residential garden, bicycle line, or noticeboard", "A shop where staff know regulars", "The moment it feels like visiting friends"], "Mai feels welcomed into a real corner of Japan.", "Do not attach a major sightseeing add-on."),
+      questDay("day16", "2026-11-07", "Mai's Jindaiji and Cozy West Tokyo", "A gentle local-Tokyo day of temple lanes, soba, greenery, and small discoveries chosen for Mai.", ["Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Kichijoji Tokyo"], "Make Jindaiji's old lanes and soba lunch the anchor, then choose gardens, a cafe, or a soft Kichijoji finish based on Mai's mood.", ["Choose a soba shop that feels welcoming", "Find the cutest yokai or GeGeGe no Kitaro detail", "Browse one small ceramics, sweet, or craft shop", "Pause in the botanical gardens if the weather is kind", "Let Mai choose a cafe or dessert for the ending"], ["Steam rising from a soba kitchen", "A leafy temple approach", "A tiny charm, statue, or hand-painted sign"], "Mai gets a calm, cute, locally textured Tokyo day with room to choose what delights her.", "Jindaiji and lunch are already a complete day."),
       questDay("day17", "2026-11-08", "Open Pop-Culture Quest", "Choose one creative neighborhood now; solve the participatory night with Mai later.", ["Shimokitazawa Station", "Koenji Station", "Nakano Broadway"], "Choose Shimokitazawa, Koenji, or Nakano and explore it well; the final pop-culture capstone remains open.", ["Find cafe, curry, ramen, crepe, or bakery", "Browse records, books, vintage, manga, or one odd shop", "Investigate karaoke, a small live show, arcade, or specific event", "Find a flavored melon bread", "Record which night option Mai actually wants"], ["A hand-drawn sign", "A tiny upstairs or basement shop", "A weirdly specific collectible"], "Mai finds something cute, nostalgic, strange, or deeply her.", "Stop before browsing becomes a stamina tax."),
       questDay("day18", "2026-11-09", "Kawagoe Little Edo Quest", "Warehouse streets, bell tower, candy alley, and sweet-potato snacks.", ["Kawagoe Station", "Kurazukuri no Machinami", "Toki no Kane", "Kashiya Yokocho"], "Walk the warehouse street and make Toki no Kane in late-afternoon light the capstone.", ["Try one sweet-potato thing", "Find a storybook shopfront", "Buy one tiny candy-alley sweet", "Find a cafe that slows the day", "Use bus or taxi between station and old town if helpful"], ["Bell sound, view, or snack", "An excessive sweet-potato item", "A quieter side street"], "Mai chooses the cutest Kawagoe detail.", "Return early if the compact old-town loop already won."),
       questDay("day19", "2026-11-10", "teamLab / Modern Tokyo Quest", "Immersive art, tea, and one polished food-hall finish.", ["teamLab Borderless Azabudai Hills", "Azabudai Hills", "Ginza Mitsukoshi", "Nihonbashi Tokyo"], "Visit teamLab Borderless at the booked time and use EN TEA HOUSE as the natural pause.", ["Find the room we most want to remember", "Take one abstract photo", "Try EN TEA HOUSE", "Browse one food hall without buying everything", "Split the fanciest reasonable sweet"], ["A reflection that changes the room", "Food displayed like jewelry", "A tiny modern design detail"], "Mai finds one room, light effect, or dessert that feels magical.", "teamLab plus one food stop is enough."),
@@ -649,13 +646,6 @@ const tripData = {
     ]
   }
 };
-
-const emergencyCards = [
-  ["Rain Card", "soft", ["Department-store food hall", "Station underground shopping", "Cafe plus bookstore/shop browse", "Museum, aquarium, cinema, or indoor character street if convenient", "Hotel-area dinner"]],
-  ["Low-Energy Card", "soft", ["One good meal", "One tiny walk", "One useful errand", "One photo", "Back before anyone starts silently resenting the train system"]],
-  ["Mai Joy Card", "mai", ["Cute cafe", "Character goods or handmade-looking shop", "Park or pond", "Beautiful dessert", "Soft neighborhood wander"]],
-  ["Us Card", "side", ["Split a dessert", "Pick tomorrow's first stop together", "Take one non-perfect couple photo", "Buy one small shared souvenir", "Sit without researching anything for 15 minutes"]]
-];
 
 const awards = ["Best Japan day", "Best snack", "Best meal", "Cutest thing Mai found", "Best unplanned moment", 'Best "we live here now" moment', "Funniest small failure", "Place that felt most like ours", "The discovery we completed by accident", "One sentence we should remember"];
 
@@ -716,7 +706,7 @@ const legacyDayContext = {
     history: "Roppongi, Azabudai, Ginza, and Nihonbashi show different versions of modern Tokyo: international culture, new redevelopment, luxury retail, and old commercial prestige. Nihonbashi was historically the road-distance marker for Edo."
   },
   day15: {
-    summary: "Friends day is for Akko and Yoshi's local Japan, letting people who live there set the rhythm.",
+    summary: "A gentle west-Tokyo day uses Jindaiji, soba, greenery, and cute local details as the rhythm.",
     history: "Tokyo's residential neighborhoods are as important to understanding the city as its famous districts. Visiting locals on their home turf reveals the everyday networks of stations, shopping streets, temples, parks, and favorite restaurants."
   },
   day16: {
@@ -805,9 +795,9 @@ const dayContext = {
     history: ["Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. Rail connections transformed nearby Kichijoji into a western neighborhood where green space, small commerce, music, cafes, and dense residential life meet.", "The Ghibli Museum deliberately avoids a prescribed route. Hayao Miyazaki designed it around curiosity, hand-drawn motion, architecture at a child's scale, and discovery without a checklist. That philosophy is the ideal rhythm for the whole day."]
   },
   day16: {
-    summary: "Friends define the day. Their station, favorite meal, residential routines, and conversation matter more than importing a famous Tokyo attraction.",
-    timeline: [["Morning", "Keep the start slow, prepare small gifts, and confirm the exact meeting point."], ["Late morning–14:00", "Travel to the friends' neighborhood and let them choose lunch or the first local stop."], ["14:00–18:00", "Follow their rhythm: home visit, Jindaiji, shopping street, cafe, park, or ordinary errands."], ["By 20:00", "Finish with a meal or warm goodbye without overstaying; send a specific thank-you later."]],
-    history: ["Tokyo's immense growth happened along private railway lines that linked central employment with western suburbs. Stations became neighborhood centers surrounded by shopping streets, schools, temples, parks, and the small businesses that support daily life.", "If the neighborhood is Chofu, Jindaiji adds a much older layer. The temple traces its origins to the 8th century, while the surrounding soba shops developed around local water and pilgrimage traffic. Experiencing it through friends changes history from background information into lived inheritance."]
+    summary: "A Mai-centered west-Tokyo day pairs Jindaiji's leafy temple lanes and soba tradition with gardens, cute yokai details, and an ending she chooses.",
+    timeline: [["09:30–11:00", "Travel toward Chofu and Jindaiji without turning the morning into a commute race."], ["11:00–14:00", "Explore the temple approach, find Kitaro details, and settle into a soba lunch."], ["14:00–17:00", "Choose the botanical gardens, small shops, or a long cafe pause according to weather and mood."], ["17:00–20:00", "Let Mai choose a cozy Kichijoji dinner, dessert, or an early return."]],
+    history: ["Jindaiji traces its foundation to the 8th century, making it one of the Tokyo region's oldest temples. Its wooded setting preserves the feeling of a pilgrimage edge outside the old city, while abundant spring water encouraged a local soba tradition that still shapes the approach lanes.", "Chofu is also linked to manga artist Shigeru Mizuki, creator of GeGeGe no Kitaro, whose playful yokai characters appear around the area. Ancient Buddhist space, modern folklore, gardens, and neighborhood food overlap here without requiring a major-city spectacle."]
   },
   day17: {
     summary: "Choose one creative neighborhood and participate in it—music, karaoke, games, manga, records, or a specific event—instead of completing a shopping circuit.",
@@ -854,15 +844,10 @@ const planeRideQuestions = [
 
 const cityRail = document.querySelector(".city-rail");
 const dayRail = document.querySelector(".day-rail");
-const quickSidebar = document.querySelector(".quick-sidebar");
-const quickMenu = document.querySelector(".quick-menu");
 const overviewPanel = document.querySelector("#overviewPanel");
 const dayPanel = document.querySelector("#dayPanel");
-const tripOverview = document.querySelector("#tripOverview");
-const cityOverview = document.querySelector("#cityOverview");
 const state = loadState();
 const todayTarget = applyTodayTarget();
-const desktopMenuQuery = window.matchMedia("(min-width: 980px)");
 
 function defaultState() {
   return {
@@ -877,8 +862,8 @@ function defaultState() {
     melon: {},
     roadmapReady: {},
     dayWindows: {},
-    activeCity: "osaka",
-    overviewMode: "trip"
+    overviewWindows: {},
+    activeCity: "osaka"
   };
 }
 
@@ -898,7 +883,8 @@ function loadState() {
         deckDone: previous.deckDone || {},
         deckSkipped: previous.deckSkipped || {},
         melon: previous.melon || {},
-        dayWindows: previous.dayWindows || {}
+        dayWindows: previous.dayWindows || {},
+        overviewWindows: previous.overviewWindows || {}
       };
     }
 
@@ -947,29 +933,6 @@ function applyTodayTarget() {
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   document.querySelector("#saveStatus").textContent = "Saved on this phone";
-}
-
-function overviewMode() {
-  return state.overviewMode === "city" ? "city" : "trip";
-}
-
-function setOverviewMode(mode) {
-  state.overviewMode = mode === "city" ? "city" : "trip";
-  document.querySelectorAll("[data-overview-mode]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.overviewMode === state.overviewMode);
-  });
-  tripOverview?.classList.toggle("hidden", state.overviewMode !== "trip");
-  cityOverview?.classList.toggle("hidden", state.overviewMode !== "city");
-  renderStats();
-}
-
-function syncQuickMenu() {
-  if (!quickMenu) return;
-  if (desktopMenuQuery.matches) {
-    quickMenu.setAttribute("open", "");
-  } else {
-    quickMenu.removeAttribute("open");
-  }
 }
 
 function itemId(scope, groupIndex, itemIndex) {
@@ -1587,9 +1550,8 @@ async function renderMelonPassport() {
 function renderOverview() {
   const city = activeCity();
   clearGroup("#ongoingQuests");
-  clearGroup("#emergencyCards");
-  document.querySelector("#cityWrapUp").innerHTML = "";
-  document.querySelector("#planeRideReview").innerHTML = "";
+  const review = document.querySelector("#planeRideReview");
+  if (review) review.innerHTML = "";
   document.querySelector("#albumGrid").innerHTML = "";
   document.querySelector("#calendarGrid").innerHTML = "";
 
@@ -1602,12 +1564,27 @@ function renderOverview() {
   renderMelonPassport();
   const cityDay = city.days.find((day) => day.date === todayIso()) || city.days[0];
   if (cityDay) document.querySelector("#ongoingQuests").appendChild(renderQuestDeck(cityDay));
-  emergencyCards.forEach(([title, type, items], index) => {
-    document.querySelector("#emergencyCards").appendChild(makeCard({ title, type, items }, "emergency", index));
-  });
-  document.querySelector("#cityWrapUp").appendChild(makeCityWrapUpCard());
-  document.querySelector("#planeRideReview").appendChild(makePlaneRideReviewCard());
+  if (review && todayIso() >= "2026-11-10") review.appendChild(makePlaneRideReviewCard());
   renderAlbum();
+  setupOverviewCarousel();
+}
+
+function setupOverviewCarousel() {
+  const host = document.querySelector("#overviewCarouselHost");
+  if (!host || host.querySelector(".overview-carousel")) return;
+  const review = host.querySelector("#planeRideReview");
+  const unlocked = todayIso() >= "2026-11-10";
+  const windows = [host.querySelector("#calendarView"), host.querySelector("#discoverView"), host.querySelector("#melonPassport"), host.querySelector("#photoAlbum")].filter(Boolean);
+  const labels = ["Calendar", "Discover", "Melon", "Album"];
+  if (unlocked && review) {
+    windows.push(review);
+    labels.push("Review");
+  } else {
+    review?.remove();
+  }
+  const carousel = makeWindowCarousel("overview", windows, labels, "overviewWindows");
+  carousel.classList.add("overview-carousel");
+  host.replaceChildren(carousel);
 }
 
 function formatCalendarDate(dateString) {
@@ -1943,14 +1920,13 @@ function makeDailyPhotoCard(day) {
   return card;
 }
 
-function makeDayCarousel(day, windows) {
+function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWindows") {
   const carousel = document.createElement("section");
   const toolbar = document.createElement("div");
   const viewport = document.createElement("div");
   const dots = document.createElement("div");
   const previous = document.createElement("button");
   const next = document.createElement("button");
-  const labels = ["Plan", "Discover", "Map", "Photos"];
   carousel.className = "day-carousel";
   toolbar.className = "day-window-toolbar";
   viewport.className = "day-window-strip";
@@ -1959,8 +1935,8 @@ function makeDayCarousel(day, windows) {
   next.type = "button";
   previous.className = "window-arrow";
   next.className = "window-arrow";
-  previous.setAttribute("aria-label", "Previous day window");
-  next.setAttribute("aria-label", "Next day window");
+  previous.setAttribute("aria-label", "Previous window");
+  next.setAttribute("aria-label", "Next window");
   previous.textContent = "←";
   next.textContent = "→";
 
@@ -1979,7 +1955,7 @@ function makeDayCarousel(day, windows) {
   });
 
   const maxIndex = windows.length - 1;
-  let currentIndex = Math.min(Number(state.dayWindows[day.id]) || 0, maxIndex);
+  let currentIndex = Math.min(Number(state[storageGroup]?.[carouselId]) || 0, maxIndex);
   let scrollTimer;
   function updateControls() {
     previous.disabled = currentIndex === 0;
@@ -1995,7 +1971,8 @@ function makeDayCarousel(day, windows) {
   function goTo(index, behavior = "smooth") {
     currentIndex = Math.max(0, Math.min(index, maxIndex));
     viewport.scrollTo({ left: windowLeft(currentIndex), behavior });
-    state.dayWindows[day.id] = currentIndex;
+    state[storageGroup] = state[storageGroup] || {};
+    state[storageGroup][carouselId] = currentIndex;
     saveState();
     updateControls();
   }
@@ -2007,7 +1984,8 @@ function makeDayCarousel(day, windows) {
       const nextIndex = closestWindowIndex();
       if (nextIndex !== currentIndex) {
         currentIndex = Math.max(0, Math.min(nextIndex, maxIndex));
-        state.dayWindows[day.id] = currentIndex;
+        state[storageGroup] = state[storageGroup] || {};
+        state[storageGroup][carouselId] = currentIndex;
         saveState();
         updateControls();
       }
@@ -2051,7 +2029,7 @@ function renderDay(day) {
     </div>
   `;
   const windows = [dailyGuide(day), renderQuestDeck(day), makeMapCard(day), makeDailyPhotoCard(day)];
-  dayPanel.appendChild(makeDayCarousel(day, windows));
+  dayPanel.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Discover", "Map", "Photos"]));
 }
 
 function renderNav() {
@@ -2078,7 +2056,6 @@ function showOverview() {
   dayPanel.classList.add("hidden");
   document.querySelectorAll(".chip").forEach((chip) => chip.classList.toggle("active", chip.dataset.view === "overview"));
   renderOverview();
-  setOverviewMode(overviewMode());
   renderStats();
 }
 
@@ -2095,7 +2072,7 @@ function showDay(day) {
 function renderStats() {
   const tasks = allTasks();
   const completed = tasks.filter((task) => state.done[task.id]);
-  const visible = overviewPanel.classList.contains("hidden") || overviewMode() === "city" ? cityTasks(state.activeCity) : tasks;
+  const visible = overviewPanel.classList.contains("hidden") ? cityTasks(state.activeCity) : tasks;
   const visibleDone = visible.filter((task) => state.done[task.id]);
   const discoveries = Object.values(state.deckDone).filter(Boolean).length;
   const totalScore = completed.length + discoveries;
@@ -2104,7 +2081,7 @@ function renderStats() {
   const percent = visible.length ? Math.round((visibleDone.length / visible.length) * 100) : 0;
 
   document.querySelector("#scoreTotal").textContent = totalScore;
-  document.querySelector("#progressTitle").textContent = overviewPanel.classList.contains("hidden") || overviewMode() === "city"
+  document.querySelector("#progressTitle").textContent = overviewPanel.classList.contains("hidden")
     ? `${activeCity().name}: ${visibleDone.length} of ${visible.length} cleared`
     : `Whole trip: ${visibleDone.length} of ${visible.length} cleared`;
   document.querySelector("#progressBar").style.width = `${percent}%`;
@@ -2118,35 +2095,10 @@ cityRail.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-city]");
   if (!button) return;
   state.activeCity = button.dataset.city;
-  state.overviewMode = "city";
   saveState();
   renderNav();
   showOverview();
   window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-quickSidebar.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-jump]");
-  if (!button) return;
-  if (!desktopMenuQuery.matches) quickMenu?.removeAttribute("open");
-  if (overviewPanel.classList.contains("hidden")) {
-    showOverview();
-  }
-  if (button.dataset.mode) {
-    setOverviewMode(button.dataset.mode);
-    saveState();
-  }
-  requestAnimationFrame(() => {
-    const target = document.querySelector(button.dataset.jump);
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-});
-
-document.querySelector(".overview-switch")?.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-overview-mode]");
-  if (!button) return;
-  setOverviewMode(button.dataset.overviewMode);
-  saveState();
 });
 
 dayRail.addEventListener("click", (event) => {
@@ -2167,13 +2119,10 @@ document.querySelector("#hotelField").addEventListener("input", (event) => {
   saveState();
 });
 
-desktopMenuQuery.addEventListener("change", syncQuickMenu);
-
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
-syncQuickMenu();
 renderNav();
 if (todayTarget) {
   showDay(todayTarget.day);

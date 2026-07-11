@@ -420,7 +420,8 @@ h3 {
 
 .day-window-dots {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 6px;
 }
 
@@ -1641,9 +1642,7 @@ h3 {
 
 @media (min-width: 980px) {
   .app-shell {
-    display: grid;
-    grid-template-columns: 150px minmax(0, 1fr);
-    column-gap: 16px;
+    display: block;
   }
 
   .hero,
@@ -1676,7 +1675,6 @@ h3 {
   }
 
   main {
-    grid-column: 2;
     min-width: 0;
   }
 
