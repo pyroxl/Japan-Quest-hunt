@@ -24,7 +24,7 @@ Then open `http://localhost:8001`.
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a service-worker cache. This update uses cache `japan-quest-v21` and asks the new worker to activate immediately. If an already-open tab still shows the old route:
+The app works offline and therefore uses a service-worker cache. This update uses cache `japan-quest-v22` and asks the new worker to activate immediately. If an already-open tab still shows the old route:
 
 1. Close all Japan Trip Hunt tabs.
 2. Start the server again.

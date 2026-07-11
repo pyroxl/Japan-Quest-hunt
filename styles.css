@@ -674,6 +674,8 @@ h3 {
   padding-top: 9px;
   border-top: 1px solid var(--line);
   font-size: 0.8rem;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
 }
 
 .calendar-capstone b {
@@ -976,7 +978,7 @@ h3 {
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: 1fr;
   gap: 8px;
 }
 
@@ -1631,6 +1633,12 @@ h3 {
   }
 }
 
+@media (min-width: 620px) {
+  .calendar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 980px) {
   .app-shell {
     display: grid;
@@ -1670,5 +1678,9 @@ h3 {
   main {
     grid-column: 2;
     min-width: 0;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
