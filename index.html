@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#fff0f6">
-    <title>Japan Quest Hunt</title>
+    <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -13,7 +13,7 @@
       <header class="hero">
         <div>
           <p class="eyebrow">Mai and me | Japan chapter</p>
-          <h1>Japan Quest Hunt</h1>
+          <h1>Japan Trip Hunt</h1>
           <p class="lede">Capstone moments, melon-bread trophies, ekiben rounds, daily-life missions, hidden eggs, maps, and albums across the whole route.</p>
         </div>
         <div class="score-orb" aria-label="Current score">
@@ -22,22 +22,22 @@
         </div>
       </header>
 
-      <nav class="city-rail" aria-label="Quest cities">
+      <nav class="city-rail" aria-label="Trip cities">
         <button class="city-chip active" data-city="osaka">Osaka</button>
         <button class="city-chip" data-city="kyoto">Kyoto</button>
         <button class="city-chip" data-city="hiroshima">Hiroshima</button>
         <button class="city-chip" data-city="tokyo">Tokyo</button>
       </nav>
 
-      <nav class="day-rail" aria-label="Quest days">
+      <nav class="day-rail" aria-label="Trip days">
         <button class="chip active" data-view="overview">Overview</button>
       </nav>
 
       <details class="quick-menu">
-        <summary aria-label="Open quest menu">Menu</summary>
+        <summary aria-label="Open trip menu">Menu</summary>
         <nav class="quick-sidebar" aria-label="Quick jumps">
           <button type="button" data-mode="trip" data-jump="#calendarView">Calendar</button>
-          <button type="button" data-mode="city" data-jump="#ongoingQuests">Side Quests</button>
+          <button type="button" data-mode="city" data-jump="#ongoingQuests">Discovery Deck</button>
           <button type="button" data-mode="trip" data-jump="#photoAlbum">Album</button>
           <button type="button" data-mode="city" data-jump="#cityWrapUp">City Wrap</button>
           <button type="button" data-mode="trip" data-jump="#planeRideReview">Plane Ride</button>
@@ -59,19 +59,19 @@
           <div class="stats-grid">
             <div class="stat">
               <span id="mainCount">0</span>
-              <small>Main quests</small>
+              <small>Main goals</small>
             </div>
             <div class="stat">
               <span id="sideCount">0</span>
-              <small>Side quests</small>
+              <small>Discoveries</small>
             </div>
             <div class="stat">
               <span id="eggCount">0</span>
-              <small>Hidden eggs</small>
+              <small>Must-do paths</small>
             </div>
             <div class="stat">
               <span id="maiCount">0</span>
-              <small>Left</small>
+              <small>Main goals left</small>
             </div>
           </div>
 
@@ -83,10 +83,20 @@
           <section class="overview-mode" id="tripOverview">
             <section class="quest-group" id="calendarView">
               <div class="section-heading">
-                <p class="label">Trip Flow</p>
-                <h2>Calendar</h2>
+                <p class="label">Trip flow and daily focus</p>
+                <h2>Calendar &amp; Capstones</h2>
               </div>
               <div class="calendar-grid" id="calendarGrid"></div>
+            </section>
+
+            <section class="quest-group" id="melonPassport">
+              <div class="section-heading">
+                <p class="label">Mai's tasting challenge</p>
+                <h2>Six-Bread Melon Passport</h2>
+              </div>
+              <div id="melonProgress"></div>
+              <div class="melon-grid" id="melonGrid"></div>
+              <div id="melonLeaderboard"></div>
             </section>
 
             <section class="quest-group" id="photoAlbum">
@@ -109,8 +119,8 @@
 
             <section class="quest-group" id="ongoingQuests">
               <div class="section-heading">
-                <p class="label">Shared City Menu</p>
-                <h2>Side Quests</h2>
+                <p class="label">Optional discoveries</p>
+                <h2>Discovery Deck</h2>
               </div>
             </section>
 

@@ -1,4 +1,4 @@
-# Running Japan Quest Hunt
+# Running Japan Trip Hunt
 
 From the trip-planning folder, run:
 
@@ -24,11 +24,11 @@ Then open `http://localhost:8001`.
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a service-worker cache. This update uses cache `japan-quest-v16` and asks the new worker to activate immediately. If an already-open tab still shows the old route:
+The app works offline and therefore uses a service-worker cache. This update uses cache `japan-quest-v22` and asks the new worker to activate immediately. If an already-open tab still shows the old route:
 
-1. Close all Japan Quest tabs.
+1. Close all Japan Trip Hunt tabs.
 2. Start the server again.
 3. Open `http://localhost:8000` and refresh once.
 4. If it is still stale, do a hard refresh (`Ctrl+Shift+R`).
 
-The quest checklist now uses storage version `tokyoQuestHunt.v3`. Old hotel and review notes are migrated where possible, but old completion marks are intentionally not mapped onto the reorganized quests.
+The guided roadmap, discovery deck, and melon passport use storage version `tokyoQuestHunt.v4`. Existing v3 progress, hotel details, review notes, awards, and photos are preserved.
