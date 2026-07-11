@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fff0f6">
+    <title>Refresh Japan Trip Hunt</title>
+    <style>
+      body { display: grid; min-height: 100svh; margin: 0; place-items: center; background: #fff0f6; color: #34222a; font-family: system-ui, sans-serif; }
+      main { width: min(34rem, calc(100% - 32px)); padding: 24px; border: 1px solid rgba(135, 58, 86, .18); border-radius: 14px; background: white; box-shadow: 0 16px 40px rgba(111, 51, 73, .16); }
+      p { line-height: 1.5; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Refreshing the app…</h1>
+      <p id="status">Removing old offline files. Your progress, photos, ratings, and notes will stay on this device.</p>
+    </main>
+    <script>
+      (async () => {
+        try {
+          const registrations = await navigator.serviceWorker?.getRegistrations?.() || [];
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map((name) => caches.delete(name)));
+          document.querySelector("#status").textContent = "Old files removed. Opening the current version…";
+          location.replace(`./?refreshed=${Date.now()}`);
+        } catch (error) {
+          document.querySelector("#status").textContent = "Automatic refresh failed. Close all app tabs, clear site data for pyroxl.github.io, and reopen the app.";
+        }
+      })();
+    </script>
+  </body>
+</html>
