@@ -1071,25 +1071,26 @@ const dailyPhotoSlots = [
 ];
 
 const defaultCapstonePhotos = {
-  day02: "capstones/day02.jpeg",
+  day02: "capstones/day02.jpg",
   day03: "capstones/day03.jpg",
-  day04: "capstones/day04.jpeg",
-  day05: "capstones/day05.jpeg",
-  day06: "capstones/day06.webp",
-  day07: "capstones/day07.webp",
+  day04: "capstones/day04.jpg",
+  day05: "capstones/day05.jpg",
+  day06: "capstones/day06.jpg",
+  day07: "capstones/day07.jpg",
   day08: "capstones/day08.jpg",
-  day09: "capstones/day09.webp",
-  day10: "capstones/day10.jpeg",
+  day09: "capstones/day09.jpg",
+  day10: "capstones/day10.jpg",
   day11: "capstones/day11.jpg",
   day12: "capstones/day12.jpg",
-  day13: "capstones/day13.jpeg",
-  day15: "capstones/day15.jpeg",
+  day13: "capstones/day13.jpg",
+  day14: "capstones/day14.jpg",
+  day15: "capstones/day15.jpg",
   day16: "capstones/day16.jpg",
   day17: "capstones/day17.jpg",
-  day18: "capstones/day18.webp",
-  day19: "capstones/day19.webp",
+  day18: "capstones/day18.jpg",
+  day19: "capstones/day19.jpg",
   day20: "capstones/day20.jpg",
-  day21: "capstones/day21.jpeg"
+  day21: "capstones/day21.jpg"
 };
 
 function capstoneTaskId(dayId) {
