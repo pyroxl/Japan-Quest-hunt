@@ -680,6 +680,30 @@ h3 {
 }
 
 .calendar-capstone b {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.quest-photo.is-bundled {
+  position: relative;
+}
+
+.quest-photo.is-bundled .bundled-label {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.72);
+  color: #fff;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+}
+
   color: var(--green);
 }
 

@@ -1,11 +1,30 @@
-const CACHE_NAME = "japan-quest-v26";
+const CACHE_NAME = "japan-quest-v27";
 const APP_FILES = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./capstones/day02.jpeg",
+  "./capstones/day03.jpg",
+  "./capstones/day04.jpeg",
+  "./capstones/day05.jpeg",
+  "./capstones/day06.webp",
+  "./capstones/day07.webp",
+  "./capstones/day08.jpg",
+  "./capstones/day09.webp",
+  "./capstones/day10.jpeg",
+  "./capstones/day11.jpg",
+  "./capstones/day12.jpg",
+  "./capstones/day13.jpeg",
+  "./capstones/day15.jpeg",
+  "./capstones/day16.jpg",
+  "./capstones/day17.jpg",
+  "./capstones/day18.webp",
+  "./capstones/day19.webp",
+  "./capstones/day20.jpg",
+  "./capstones/day21.jpeg"
 ];
 
 self.addEventListener("install", (event) => {

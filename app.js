@@ -436,7 +436,7 @@ const roadmapGoals = [
   { id: "tokyo-story", goal: "Tokyo through food, cute neighborhoods, museums, and pop culture", days: ["day14", "day15", "day16", "day17", "day18", "day19", "day20", "day21"], status: "Ready", why: "The Tokyo chapter is intentionally personal rather than a generic big-city checklist.", blocker: "", fallback: "Choose the day's one strongest neighborhood, meal, or creative anchor and release the rest." },
   { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
   { id: "west-tokyo", goal: "Mai's gentle west-Tokyo day", days: ["day16"], status: "Ready", why: "Jindaiji, soba, greenery, and neighborhood atmosphere give Mai a soft local-Tokyo contrast.", blocker: "", fallback: "Keep the day to Jindaiji, lunch, and one cafe or garden pause." },
-  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day17"], status: "Conditional", why: "A participatory creative-neighborhood experience keeps pop culture personal.", blocker: "Mai should choose karaoke, live music, arcade, event, or another active format.", fallback: "Pair one focused Nakano browse with an arcade, cafe, or neighborhood activity." },
+  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day17"], status: "Ready", why: "Shimokitazawa is the default; the participatory evening capstone keeps pop culture personal.", blocker: "", fallback: "Use Nakano for focused anime/manga hunting or Koenji for live-house energy only if Mai asks." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day19"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Use a modern-art museum plus one polished Tokyo food hall." },
 ];
 
@@ -569,8 +569,8 @@ const tripData = {
     days: [
       questDay("day02", "2026-10-24", "Osaka Arrival Quest", "Land, recover, and let Japan arrive through food and lights.", ["Kansai International Airport", "Namba Station Osaka", "Dotonbori Osaka"], "Reach Osaka, rest properly, then cross Ebisu Bridge for one neon photo and one hot snack if the body agrees.", ["Find the nearest useful konbini", "Take the we-made-it photo", "Choose tomorrow's breakfast candidate", "Start the melon passport with a packaged baseline if hunger agrees"], ["A canal reflection", "A food sign bigger than expected", "A dessert too cute for jet lag"], "Mai gets one real first-night Japan moment without pressure.", "Stop while Dotonbori still feels magical."),
       questDay("day03", "2026-10-25", "Food-First Osaka Quest", "Japan feels edible from morning to night.", ["Namba Osaka", "Kuromon Ichiba Market", "Shinsekai Osaka", "Nipponbashi Denden Town"], "Build the day around snacks, Namba/Kuromon, and either Shinsekai or Den Den Town—not two equal anchors.", ["Try a market bite", "Eat something fried, grilled, or noodly", "Find one snack nobody knew existed this morning", "Hunt a fresh-bakery classic melon bread"], ["A retro Shinsekai sign", "A Den Den Town character detail", "A plastic food display"], "Mai gets the food-is-everywhere feeling without overwhelm.", "Drop the second neighborhood if the first already won."),
-      questDay("day04", "2026-10-26", "Normal-Life Osaka Quest", "Cafes, small shops, lived-in food streets, and an optional participatory night.", ["Tenma Osaka", "Fukushima Osaka", "Nakazakicho Osaka"], "Choose one local-feeling neighborhood cluster and let the day breathe.", ["Find a kissaten, cafe, or bakery", "Eat a casual izakaya dinner", "Try a 60–90 minute private karaoke box only if tonight feels right", "Take a street photo with no landmark", "Choose a neighborhood worth returning to"], ["A charming tiny restaurant sign", "A tucked-away shop", "A houseplant, noren, lantern, or doorway detail"], "Mai gets the imagine-living-here-for-an-afternoon feeling.", "Pick one neighborhood, not all three by default."),
-      questDay("day05", "2026-10-27", "Open Osaka", "No Umeda Sky Building and no forced replacement.", ["Namba Osaka", "Tenma Osaka", "Fukushima Osaka", "Osaka Aquarium Kaiyukan"], "Choose the day by actual energy: local Osaka, a food hunt, recovery, or Kaiyukan only if Mai wants the aquarium.", ["Sleep without an alarm", "Do laundry or one useful admin task", "Browse a depachika or supermarket for dinner", "Find a different melon-bread style", "If Kobe wins, let it replace Osaka rather than adding both"], ["A supermarket hotel-picnic find", "A bakery tray worth photographing", "The moment choosing less improves the trip"], "Mai chooses the shape of the day instead of inheriting a substitute attraction.", "A recovery day is a successful day."),
+      questDay("day04", "2026-10-26", "Nakazakicho → Tenma Quest", "Mai-centered Nakazakicho afternoon, Tenma izakaya dinner capstone.", ["Nakazakicho Osaka", "Tenma Osaka"], "Wander Nakazakicho slowly for cafés, little shops, retro lanes, and photos; end with an easy izakaya dinner in Tenma.", ["Find a kissaten, cafe, or bakery in Nakazakicho", "Take slow street photos with no famous landmark", "Browse one or two tiny shops without turning it into a haul", "Eat a casual izakaya dinner in Tenma", "Choose one detail worth remembering from the afternoon"], ["A charming tiny restaurant sign", "A tucked-away shop", "A houseplant, noren, lantern, or doorway detail"], "Mai gets the softer, cuter, aesthetic date-afternoon feeling.", "Tenma dinner is the capstone; skip karaoke unless everyone still wants it."),
+      questDay("day05", "2026-10-27", "Open Osaka / Nunobiki Quest", "Recovery by default; Kobe Nunobiki only if energy is genuinely good.", ["Nunobiki Herb Garden Kobe", "Shin-Kobe Ropeway", "Namba Osaka"], "If energy is good: sleep in, ride to Nunobiki Herb Gardens and the ropeway, café or terrace pause, optional Kobe dinner, then back to Osaka. Otherwise keep this a real recovery day.", ["Sleep without an alarm", "Budget ~60–75 minutes each way from Osaka/Umeda for Nunobiki", "Do Nunobiki only—no Kobe sightseeing pile-on", "Browse a depachika or supermarket if staying in Osaka", "Find a different melon-bread style", "Let Kobe replace Osaka rather than adding both"], ["A garden or ropeway view worth pausing for", "A bakery tray or supermarket picnic find", "The moment choosing less improves the trip"], "Mai gets a romantic soft outing without inheriting a substitute checklist.", "Recovery, laundry, or admin is a successful day."),
       questDay("day06", "2026-10-28", "Nara Bridge Quest", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Observe or feed deer without making them the entire day", "Try yomogi mochi or kakinoha-zushi", "Find a cafe near Naramachi", "Make the luggage strategy feel competent"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
     ]
   },
@@ -639,7 +639,7 @@ const tripData = {
       questDay("day14", "2026-11-05", "Tokyo Arrival and Main Ekiben League", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
       questDay("day15", "2026-11-06", "Ghibli / Kichijoji Quest", "Soft imaginative Tokyo.", ["Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
       questDay("day16", "2026-11-07", "Mai's Jindaiji and Cozy West Tokyo", "A gentle local-Tokyo day of temple lanes, soba, greenery, and small discoveries chosen for Mai.", ["Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Kichijoji Tokyo"], "Make Jindaiji's old lanes and soba lunch the anchor, then choose gardens, a cafe, or a soft Kichijoji finish based on Mai's mood.", ["Choose a soba shop that feels welcoming", "Find the cutest yokai or GeGeGe no Kitaro detail", "Browse one small ceramics, sweet, or craft shop", "Pause in the botanical gardens if the weather is kind", "Let Mai choose a cafe or dessert for the ending"], ["Steam rising from a soba kitchen", "A leafy temple approach", "A tiny charm, statue, or hand-painted sign"], "Mai gets a calm, cute, locally textured Tokyo day with room to choose what delights her.", "Jindaiji and lunch are already a complete day."),
-      questDay("day17", "2026-11-08", "Open Pop-Culture Quest", "Choose one creative neighborhood now; solve the participatory night with Mai later.", ["Shimokitazawa Station", "Koenji Station", "Nakano Broadway"], "Choose Shimokitazawa, Koenji, or Nakano and explore it well; the final pop-culture capstone remains open.", ["Find cafe, curry, ramen, crepe, or bakery", "Browse records, books, vintage, manga, or one odd shop", "Investigate karaoke, a small live show, arcade, or specific event", "Find a flavored melon bread", "Record which night option Mai actually wants"], ["A hand-drawn sign", "A tiny upstairs or basement shop", "A weirdly specific collectible"], "Mai finds something cute, nostalgic, strange, or deeply her.", "Stop before browsing becomes a stamina tax."),
+      questDay("day17", "2026-11-08", "Shimokitazawa Creative Quest", "Default Shimokitazawa day with a participatory evening capstone Mai chooses.", ["Shimokitazawa Station", "Koenji Station", "Nakano Broadway"], "Default to Shimokitazawa for vintage shops, cafés, records/books, and curry/ramen; end with one participatory capstone Mai chooses—karaoke, live show, cozy bar/café, arcade, or event—not more shopping.", ["Find cafe, curry, ramen, crepe, or bakery", "Browse records, books, or vintage selectively", "Use Nakano only if Mai wants anime/manga hunting", "Use Koenji only if Mai wants live-house or scruffier indie nightlife", "Commit to one evening activity before browsing becomes retail fatigue", "Find a flavored melon bread"], ["A hand-drawn sign", "A tiny upstairs or basement shop", "A weirdly specific collectible"], "Mai finds something cute, creative, nostalgic, or deeply her.", "The capstone is an activity, not another shopping loop."),
       questDay("day18", "2026-11-09", "Kawagoe Little Edo Quest", "Warehouse streets, bell tower, candy alley, and sweet-potato snacks.", ["Kawagoe Station", "Kurazukuri no Machinami", "Toki no Kane", "Kashiya Yokocho"], "Walk the warehouse street and make Toki no Kane in late-afternoon light the capstone.", ["Try one sweet-potato thing", "Find a storybook shopfront", "Buy one tiny candy-alley sweet", "Find a cafe that slows the day", "Use bus or taxi between station and old town if helpful"], ["Bell sound, view, or snack", "An excessive sweet-potato item", "A quieter side street"], "Mai chooses the cutest Kawagoe detail.", "Return early if the compact old-town loop already won."),
       questDay("day19", "2026-11-10", "teamLab / Modern Tokyo Quest", "Immersive art, tea, and one polished food-hall finish.", ["teamLab Borderless Azabudai Hills", "Azabudai Hills", "Ginza Mitsukoshi", "Nihonbashi Tokyo"], "Visit teamLab Borderless at the booked time and use EN TEA HOUSE as the natural pause.", ["Find the room we most want to remember", "Take one abstract photo", "Try EN TEA HOUSE", "Browse one food hall without buying everything", "Split the fanciest reasonable sweet"], ["A reflection that changes the room", "Food displayed like jewelry", "A tiny modern design detail"], "Mai finds one room, light effect, or dessert that feels magical.", "teamLab plus one food stop is enough."),
       questDay("day20", "2026-11-11", "Older Tokyo and Melon Bread Quest", "Yanesen's small streets, shops, sweets, and a possible Asakusa jumbo round.", ["Nezu Shrine", "Sendagi Station", "Yanaka Ginza", "Yuyake Dandan", "Asakusa Kagetsudo"], "Move through Nezu/Sendagi and finish at Yanaka Ginza and the sunset steps; add Asakusa only if everyone actively wants it.", ["Visit Nezu Shrine or a small temple", "Try soba, udon, taiyaki, or a cafe", "Browse small ordinary shops", "If Asakusa happens, score the jumbo melon bread", "Buy and mail a postcard if still open"], ["A Showa-feeling storefront", "A cat or cat motif", "A sunset view from Yuyake Dandan"], "Old Tokyo feels softer and cuter than expected.", "Skip Asakusa if Yanesen already gave enough."),
@@ -663,12 +663,12 @@ const legacyDayContext = {
     history: "Kuromon has long served Osaka cooks and shoppers as a market area. Shinsekai was designed in the early 1900s as a modern entertainment district, while Den Den Town reflects postwar electronics culture that later grew into games, anime, and hobby shopping."
   },
   day04: {
-    summary: "A normal-life Osaka day: pick a neighborhood, eat casually, browse small shops, and avoid turning the day into a race.",
-    history: "Tenma, Fukushima, and Nakazakicho show different layers of Osaka beyond postcard sights: local food streets, rail-linked working neighborhoods, and older small-scale streets that have become cafe and creative pockets."
+    summary: "Mai-centered Nakazakicho afternoon, then Tenma izakaya dinner as the food capstone.",
+    history: "Nakazakicho survived with a pocket of narrow lanes and older wooden buildings that later attracted cafes, studios, and small shops. Tenma grew around one of Japan's great shrines and its long shopping arcade, making it a strong lived-in dinner neighborhood."
   },
   day05: {
-    summary: "Nara is the bridge between Osaka and Kyoto: deer, Todai-ji, old streets, then onward to the Kyoto base.",
-    history: "Nara was Japan's first permanent capital in the 8th century. Todai-ji and its Great Buddha were imperial-scale projects meant to express Buddhist protection of the state, which is why the temple still feels monumental today."
+    summary: "Recovery is the default win; Kobe Nunobiki Herb Gardens and the ropeway replace the plan only if energy is genuinely good.",
+    history: "Nunobiki Herb Garden sits above Kobe with ropeway views over city and harbor. The outing works because it is one romantic soft chapter, not a full Kobe checklist."
   },
   day06: {
     summary: "First full Kyoto day: one powerful historic anchor at Nijo Castle, then food and river atmosphere around Nishiki, Pontocho, and the Kamo River.",
@@ -715,8 +715,8 @@ const legacyDayContext = {
     history: "Shimokitazawa and Koenji became known for music, theater, vintage shops, and alternative youth culture. Nakano Broadway is a postwar shopping complex that evolved into a dense collector and pop-culture ecosystem."
   },
   day17: {
-    summary: "Older Tokyo day: Yanaka, Nezu, Sendagi, and optional Ueno or Asakusa if energy remains.",
-    history: "Yanaka and nearby neighborhoods kept more old-town texture than many Tokyo areas after disasters and redevelopment. Nezu Shrine, Ueno, and Asakusa connect this area to temple culture, old shopping streets, museums, and classic shitamachi atmosphere."
+    summary: "Shimokitazawa by default, with a participatory evening capstone Mai chooses.",
+    history: "Shimokitazawa became known for music, theater, vintage shops, and alternative youth culture partly because its fine-grained streets supported independent tenants. Nakano Broadway and Koenji remain swaps only if Mai wants collector hunting or live-house energy."
   },
   day18: {
     summary: "Final Tokyo day is flexible: favorite return, souvenirs, food crawl, packing, or one missed target.",
@@ -736,14 +736,14 @@ const dayContext = {
     history: ["Kuromon Ichiba developed from fish trading near Enmyoji Temple and became a pantry for Osaka's households and professional cooks. Its modern visitor-facing stalls sit on top of a much older market habit: judging freshness, season, and value at close range.", "Shinsekai was unveiled in 1912 as a vision of the “new world,” borrowing visual ideas from Paris and New York. After wartime decline it reinvented itself as a proudly retro district. Den Den Town tells a later version of the same story, shifting from postwar electronics into games, anime, and collector culture."]
   },
   day04: {
-    summary: "The anti-checklist Osaka day chooses one lived-in neighborhood, then finishes with shared plates and an optional short karaoke session.",
-    timeline: [["No-alarm morning", "Sleep, do laundry if useful, and begin with a kissaten, bakery, or simple lunch."], ["12:00–16:00", "Choose Tenma, Fukushima, or Nakazakicho and explore it slowly."], ["16:00–18:00", "Take a hotel or cafe reset before the evening."], ["18:00–21:00", "Have an early izakaya meal; add 60–90 minutes of private-room karaoke only if everyone still wants it."]],
-    history: ["These neighborhoods reveal Osaka as a city of rail stations, shopping streets, tiny restaurants, and repeated local routines. Tenma grew around one of Japan's great shrines and its long shopping arcade; Fukushima mixed working infrastructure with an unusually dense restaurant scene.", "Nakazakicho survived with a pocket of narrow lanes and older wooden buildings that later attracted cafes, studios, and small shops. The appeal is not a single monument. It is seeing how old urban fabric acquires new lives without becoming a museum set."]
+    summary: "Nakazakicho supplies the Mai-centered afternoon; Tenma supplies the izakaya dinner capstone.",
+    timeline: [["No-alarm morning", "Sleep, do laundry if useful, and begin with a kissaten, bakery, or simple lunch."], ["12:00–16:30", "Wander Nakazakicho for cafés, little shops, retro lanes, and slow photos."], ["16:30–18:00", "Take a hotel or cafe reset before dinner."], ["18:00–21:00", "Have an easy izakaya dinner in Tenma; karaoke stays optional, not the capstone."]],
+    history: ["Nakazakicho's narrow lanes and older wooden buildings later attracted cafes, studios, and small shops. The appeal is aesthetic wandering, not a single monument.", "Tenma grew around Temmangu Shrine and its long shopping arcade, making it a strong lived-in dinner neighborhood without needing Dotonbori energy."]
   },
   day05: {
-    summary: "This open day protects the trip's stamina. Recovery is the default success; Kaiyukan, another Osaka neighborhood, or Kobe must replace that plan rather than pile onto it.",
-    timeline: [["No-alarm morning", "Sleep, eat near the hotel, and decide the day only after checking everyone's energy."], ["Late morning–15:00", "Choose one: recovery/admin, a favorite Osaka neighborhood, Kaiyukan, or a Kobe outing."], ["15:00–17:30", "Return or pause before energy debt starts accumulating."], ["Evening", "Use a depachika or supermarket for an easy hotel picnic, or repeat a favorite Osaka meal."]],
-    history: ["A flexible day has its own historical logic in Osaka. The city was built around exchange—goods, people, entertainment, and food—rather than a single ceremonial center, so ordinary markets and neighborhoods are often more revealing than another landmark.", "If Kaiyukan wins, its spiral route tells a Pacific story rather than presenting unrelated tanks. Visitors descend around the central ocean habitat, moving through environments linked by the Pacific Rim and seeing Osaka's modern identity as a port city from another angle."]
+    summary: "Recovery is the default success. If energy is good, Nunobiki Herb Gardens and the ropeway become the day's romantic soft outing.",
+    timeline: [["No-alarm morning", "Sleep, eat near the hotel, and decide only after checking everyone's energy."], ["Late morning–15:00", "If Nunobiki wins: ride from Osaka/Umeda (~60–75 min each way budget), gardens, ropeway, café/terrace pause."], ["15:00–17:30", "Optional Kobe dinner if energy remains high, then return to Osaka."], ["Evening", "If staying in Osaka: depachika picnic, laundry/admin, or a favorite neighborhood loop."]],
+    history: ["A flexible day has its own historical logic in Osaka. Ordinary markets and neighborhoods are often more revealing than another landmark when the trip needs stamina protection.", "Nunobiki Herb Garden above Kobe pairs ropeway views with seasonal planting and terrace pauses. It works because it is one contained outing, not a full Kobe checklist."]
   },
   day06: {
     summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and luggage never gets to become the main character.",
@@ -801,9 +801,9 @@ const dayContext = {
     history: ["Jindaiji traces its foundation to the 8th century, making it one of the Tokyo region's oldest temples. Its wooded setting preserves the feeling of a pilgrimage edge outside the old city, while abundant spring water encouraged a local soba tradition that still shapes the approach lanes.", "Chofu is also linked to manga artist Shigeru Mizuki, creator of GeGeGe no Kitaro, whose playful yokai characters appear around the area. Ancient Buddhist space, modern folklore, gardens, and neighborhood food overlap here without requiring a major-city spectacle."]
   },
   day17: {
-    summary: "Choose one creative neighborhood and participate in it—music, karaoke, games, manga, records, or a specific event—instead of completing a shopping circuit.",
-    timeline: [["10:30–12:00", "Choose Shimokitazawa, Koenji, or Nakano based on the activity Mai actually wants."], ["12:00–15:30", "Anchor lunch around curry, ramen, or a cafe and browse selectively."], ["15:30–18:00", "Take a rest and commit to one participatory activity."], ["18:00–21:00", "Try karaoke, a small live show, an arcade, or another time-specific experience; stop before the neighborhood becomes retail fatigue."]],
-    history: ["Shimokitazawa and Koenji became refuges for small theaters, live houses, record shops, vintage clothing, and youth subcultures partly because their fine-grained streets and small buildings supported independent tenants. Their creativity is infrastructural, not decorative.", "Nakano Broadway began in 1966 as an ambitious shopping-and-residential complex. As conventional retail weakened, specialist dealers filled its compact floors, building communities around manga, animation, toys, watches, and extremely specific forms of collecting."]
+    summary: "Default to Shimokitazawa, then let Mai choose the participatory evening capstone.",
+    timeline: [["10:30–12:00", "Start in Shimokitazawa unless Mai specifically asks for Nakano or Koenji."], ["12:00–15:30", "Anchor lunch around curry, ramen, or a cafe and browse selectively."], ["15:30–18:00", "Take a rest and commit to one participatory activity."], ["18:00–21:00", "Mai chooses karaoke, a small live show, a cozy bar/café, an arcade, or another event; stop before the day becomes retail fatigue."]],
+    history: ["Shimokitazawa became a refuge for small theaters, live houses, record shops, vintage clothing, and youth subcultures partly because its fine-grained streets supported independent tenants.", "Nakano Broadway is the swap for focused collector and manga hunting. Koenji is the swap for scruffier live-house energy. The capstone should be an activity, not more shopping."]
   },
   day18: {
     summary: "Kawagoe supplies an Edo-period merchant-town chapter without a hotel move: warehouse street, bell tower, candy alley, and sweet-potato grazing at a weekday pace.",
@@ -1070,6 +1070,36 @@ const dailyPhotoSlots = [
   ["extra", "Extra Photos", "Anything else that belongs in the album for this day."]
 ];
 
+const defaultCapstonePhotos = {
+  day02: "capstones/day02.jpeg",
+  day03: "capstones/day03.jpg",
+  day04: "capstones/day04.jpeg",
+  day05: "capstones/day05.jpeg",
+  day06: "capstones/day06.webp",
+  day07: "capstones/day07.webp",
+  day08: "capstones/day08.jpg",
+  day09: "capstones/day09.webp",
+  day10: "capstones/day10.jpeg",
+  day11: "capstones/day11.jpg",
+  day12: "capstones/day12.jpg",
+  day13: "capstones/day13.jpeg",
+  day15: "capstones/day15.jpeg",
+  day16: "capstones/day16.jpg",
+  day17: "capstones/day17.jpg",
+  day18: "capstones/day18.webp",
+  day19: "capstones/day19.webp",
+  day20: "capstones/day20.jpg",
+  day21: "capstones/day21.jpeg"
+};
+
+function capstoneTaskId(dayId) {
+  return `${dayId}.photo.capstone`;
+}
+
+function bundledCapstoneUrl(dayId) {
+  return defaultCapstonePhotos[dayId] || null;
+}
+
 function openPhotoDb() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(PHOTO_DB_NAME, 1);
@@ -1154,10 +1184,21 @@ async function renderPhotosForTask(taskId, container) {
       await removePhoto(photo.id);
       await renderPhotosForTask(taskId, container);
       await renderAlbum();
+      if (taskId.endsWith(".photo.capstone")) renderCalendar();
     });
     wrapper.appendChild(deleteButton);
     container.appendChild(wrapper);
   });
+  if (!photos.length) {
+    const dayId = taskId.split(".")[0];
+    const bundled = bundledCapstoneUrl(dayId);
+    if (bundled) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "quest-photo is-bundled";
+      wrapper.innerHTML = `<img alt="Default capstone preview" src="${bundled}"><span class="bundled-label">Default preview</span>`;
+      container.appendChild(wrapper);
+    }
+  }
 }
 
 async function handlePhotoFiles(files, task, container) {
@@ -1177,6 +1218,7 @@ async function handlePhotoFiles(files, task, container) {
   }
   await renderPhotosForTask(task.id, container);
   await renderAlbum();
+  if (task.id.endsWith(".photo.capstone")) renderCalendar();
 }
 
 function makePhotoControls(task, buttonText = "Add Photo") {
@@ -1628,10 +1670,16 @@ function renderCalendar() {
 
 async function renderCalendarPhoto(day, target) {
   if (!target) return;
-  const photos = await getPhotosForTask(`${day.id}.photo.capstone`).catch(() => []);
+  const photos = await getPhotosForTask(capstoneTaskId(day.id)).catch(() => []);
   const latest = photos.sort((a, b) => a.createdAt.localeCompare(b.createdAt)).at(-1);
-  if (!latest) return;
-  target.style.backgroundImage = `url("${latest.dataUrl}")`;
+  if (latest) {
+    target.style.backgroundImage = `url("${latest.dataUrl}")`;
+    target.classList.add("has-photo");
+    return;
+  }
+  const bundled = bundledCapstoneUrl(day.id);
+  if (!bundled) return;
+  target.style.backgroundImage = `url("${bundled}")`;
   target.classList.add("has-photo");
 }
 
