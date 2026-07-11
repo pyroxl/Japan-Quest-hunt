@@ -1,0 +1,17 @@
+{
+  "name": "Japan Quest Hunt",
+  "short_name": "Japan Quest",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff0f6",
+  "theme_color": "#fff0f6",
+  "description": "A phone-friendly Japan quest hunt with capstones, foods, melon bread, ekiben, daily-life missions, and memory albums.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#fff0f6">
+    <title>Japan Quest Hunt</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Mai and me | Japan chapter</p>
+          <h1>Japan Quest Hunt</h1>
+          <p class="lede">Capstone moments, melon-bread trophies, ekiben rounds, daily-life missions, hidden eggs, maps, and albums across the whole route.</p>
+        </div>
+        <div class="score-orb" aria-label="Current score">
+          <span id="scoreTotal">0</span>
+          <small>points</small>
+        </div>
+      </header>
+
+      <nav class="city-rail" aria-label="Quest cities">
+        <button class="city-chip active" data-city="osaka">Osaka</button>
+        <button class="city-chip" data-city="kyoto">Kyoto</button>
+        <button class="city-chip" data-city="hiroshima">Hiroshima</button>
+        <button class="city-chip" data-city="tokyo">Tokyo</button>
+      </nav>
+
+      <nav class="day-rail" aria-label="Quest days">
+        <button class="chip active" data-view="overview">Overview</button>
+      </nav>
+
+      <details class="quick-menu">
+        <summary aria-label="Open quest menu">Menu</summary>
+        <nav class="quick-sidebar" aria-label="Quick jumps">
+          <button type="button" data-mode="trip" data-jump="#calendarView">Calendar</button>
+          <button type="button" data-mode="city" data-jump="#ongoingQuests">Side Quests</button>
+          <button type="button" data-mode="trip" data-jump="#photoAlbum">Album</button>
+          <button type="button" data-mode="city" data-jump="#cityWrapUp">City Wrap</button>
+          <button type="button" data-mode="trip" data-jump="#planeRideReview">Plane Ride</button>
+        </nav>
+      </details>
+
+      <main>
+        <section class="panel overview-panel" id="overviewPanel">
+          <div class="progress-card">
+            <div>
+              <p class="label">Overall Progress</p>
+              <h2 id="progressTitle">0 of 0 cleared</h2>
+            </div>
+            <div class="meter" aria-hidden="true">
+              <span id="progressBar"></span>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat">
+              <span id="mainCount">0</span>
+              <small>Main quests</small>
+            </div>
+            <div class="stat">
+              <span id="sideCount">0</span>
+              <small>Side quests</small>
+            </div>
+            <div class="stat">
+              <span id="eggCount">0</span>
+              <small>Hidden eggs</small>
+            </div>
+            <div class="stat">
+              <span id="maiCount">0</span>
+              <small>Left</small>
+            </div>
+          </div>
+
+          <div class="overview-switch" role="tablist" aria-label="Overview type">
+            <button class="active" type="button" data-overview-mode="trip">Trip Overview</button>
+            <button type="button" data-overview-mode="city">City Overview</button>
+          </div>
+
+          <section class="overview-mode" id="tripOverview">
+            <section class="quest-group" id="calendarView">
+              <div class="section-heading">
+                <p class="label">Trip Flow</p>
+                <h2>Calendar</h2>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </section>
+
+            <section class="quest-group" id="photoAlbum">
+              <div class="section-heading">
+                <p class="label">Memory Loot</p>
+                <h2>Trip Photo Album</h2>
+              </div>
+              <div class="album-grid" id="albumGrid"></div>
+            </section>
+
+            <section class="quest-group" id="planeRideReview"></section>
+          </section>
+
+          <section class="overview-mode hidden" id="cityOverview">
+            <section class="hotel-card">
+              <label for="hotelField">Future Tokyo hotel</label>
+              <input id="hotelField" type="text" placeholder="Paste hotel name or address later">
+              <p>Day maps use this for Google Maps route links. You can leave it blank until the hotel is real.</p>
+            </section>
+
+            <section class="quest-group" id="ongoingQuests">
+              <div class="section-heading">
+                <p class="label">Shared City Menu</p>
+                <h2>Side Quests</h2>
+              </div>
+            </section>
+
+            <section class="quest-group" id="emergencyCards">
+              <div class="section-heading">
+                <p class="label">When Plans Wobble</p>
+                <h2>Emergency Cards</h2>
+              </div>
+            </section>
+
+            <section class="quest-group" id="cityWrapUp"></section>
+          </section>
+        </section>
+
+        <section class="panel day-panel hidden" id="dayPanel" aria-live="polite"></section>
+      </main>
+
+      <footer class="bottom-bar">
+        <span id="saveStatus">Saved on this phone</span>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
