@@ -7,6 +7,7 @@
     <meta name="color-scheme" content="light dark">
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="leaflet.css">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -47,6 +48,7 @@
                 <p class="label">Trip flow and daily focus</p>
                 <h2>Calendar &amp; Daily Focus</h2>
               </div>
+              <section class="trip-route-map" id="tripRouteMap" aria-labelledby="tripRouteTitle"></section>
               <div class="calendar-grid" id="calendarGrid"></div>
             </section>
 
@@ -109,6 +111,8 @@
       </footer>
     </div>
 
+    <script src="leaflet.js"></script>
+    <script src="place-coordinates.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

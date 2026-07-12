@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v75";
+const APP_VERSION = "japan-quest-v83";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2327,6 +2327,7 @@ function renderOverview() {
   if (hotelLabel) hotelLabel.textContent = city.baseLabel;
   if (hotelHelp) hotelHelp.textContent = `${city.name} day maps use this as the starting point until the hotel is locked in.`;
 
+  renderTripRouteMap();
   renderCalendar();
   renderTripQuestDashboard();
   renderCityDiscoveryChecklist();
@@ -2334,6 +2335,67 @@ function renderOverview() {
   if (review && todayIso() >= "2026-11-10") review.appendChild(makePlaneRideReviewCard());
   renderAlbum();
   setupOverviewCarousel();
+}
+
+function renderTripRouteMap() {
+  const host = document.querySelector("#tripRouteMap");
+  if (!host) return;
+  const routeUrl = "https://www.google.com/maps/dir/?api=1&origin=Osaka%2C+Japan&destination=Tokyo%2C+Japan&waypoints=Kyoto%2C+Japan%7CHiroshima%2C+Japan%7CTokyo%2C+Japan%7CLake+Kawaguchiko%2C+Japan&travelmode=transit";
+  host.innerHTML = `
+    <div class="trip-route-heading">
+      <div><p class="label">The whole journey</p><h3 id="tripRouteTitle">City stays &amp; travel legs</h3></div>
+      <a href="${routeUrl}" target="_blank" rel="noopener">Open route in Google Maps</a>
+    </div>
+    <div class="trip-route-map-frame">
+      <svg viewBox="50 30 590 355" role="img" aria-labelledby="tripMapTitle tripMapDesc">
+        <title id="tripMapTitle">Japan trip route</title>
+        <desc id="tripMapDesc">Colored travel legs connect Osaka, Kyoto, Hiroshima, Tokyo and Kawaguchiko. Hover or focus a leg for its travel time.</desc>
+        <g class="japan-outline" aria-hidden="true">
+          <path d="M583.7 98.2L590.5 101.5L598.3 110.2L603.9 113.3L608.6 113.2L625.6 107.4L613.6 119.3L611.4 126L611.9 139.3L615.4 141.6L621.5 140L625.5 141.8L614.4 145.1L610.5 143.4L597.4 144.5L589.3 143.2L578.6 137.9L571.7 138.5L558.2 143.4L552.1 147.5L541.8 158.7L526.6 143.1L514 126.2L502.3 122.7L489 124.8L484.6 115.2L478.9 112.8L474 115.3L471.6 119.5L474.6 126.7L479.7 129.3L486.3 143.4L481.6 143.9L474 138L459.5 145.3L456 145.1L453.8 142.3L454 138.7L461.2 129.3L461.8 123.9L458.9 115L463.4 105.7L465 103.9L471.8 103.5L482.7 99.9L485.2 97.4L484.5 92.8L486.1 88.5L488.9 88.3L495.7 95.9L503.5 100L507.7 101L510.7 99.3L515.9 88.1L527 78.8L530.5 71.3L535.9 65.5L539.4 58.3L540.6 50.6L539.9 42.5L545.2 35.6L553.4 35L566.8 71.1L583.7 98.2ZM128.5 298.7L132.9 301.7L139.5 301.3L141.7 304L140.8 307.3L133.5 312.7L142.4 317L139.4 320.8L141.1 324.1L139.2 326L140.4 329.8L126.4 339.4L113.9 355.7L111.2 362.3L104.7 369.4L98.3 365.7L96.7 367.2L96.7 371.7L83.2 375L89 368.1L90.8 357.5L93.7 357L94.3 354.2L91.3 352.6L86.8 356.4L84.4 361.3L85.3 366.6L82.8 368.9L74.4 361.3L74.5 357.1L78.7 357.3L81.4 352.8L80.1 346.2L84.3 336.1L91.1 334.2L102.4 324.1L99.2 321.5L102 319.8L102.7 316.5L101.8 306.6L99.2 302.4L95.5 303.6L93.5 312L97.4 313.5L95.8 318.4L93.1 318.2L89.4 313.3L79.6 316.7L83 312.4L81.5 306.3L83.5 300.4L85.2 307.2L88.8 310.1L88.6 303.8L83.3 293.8L85.4 290.8L91.1 293.8L92.1 290L108.3 289.4L113.8 284.3L120.9 283.8L126.3 287.9L126.4 295.3L128.5 298.7ZM217.7 310.8L224.5 314.7L220.6 326.9L221.9 328.5L210 331.4L204.4 335.3L200.4 340.8L197.3 332.1L189.8 326.8L179.1 328L172 335.3L167.4 337.1L164.6 341.1L159.1 342.2L155.1 340.2L158.6 336.5L153.3 333.8L154.4 330.9L153.4 328.6L158.5 322.2L156.3 319.9L157.8 316.8L146.9 315.8L166.9 311L174.3 303L179.5 301.3L182.4 308.6L184 309L195 310.4L198 307.3L198.4 303.5L200.9 304.7L208.5 303.8L211.8 304.7L217.7 310.8ZM482.8 157.8L489 159.1L483.7 168.2L479.7 180.2L479.1 184.1L483.5 197.6L482.1 215.3L477.2 226.5L471.2 235.7L463.3 237.5L457.8 243L451.2 253.5L441.2 251.9L435.1 256.3L431.7 262.3L428.3 278.5L423 289.3L420.7 292.5L411.2 298.5L400.9 312.6L399.9 318.5L402.1 331.6L395.3 331.2L388.8 334.1L382 343.4L372.6 344.8L367.3 347.8L365.6 346.5L365 344.7L366.8 343.5L370 334.3L380.5 328L378.8 324.3L374.8 323.1L371 327.5L366.9 329L367.3 334.9L364.3 337.4L361.1 330.7L355.1 329L350.6 331.7L345.4 341.1L340.9 344.5L336.2 345.5L335.3 342.2L339.9 333.9L343.1 333.4L339.7 328.4L335.6 328.1L319.5 339.5L303.9 330.8L290.6 328.4L297.9 326.9L298.5 324.6L292.2 322.3L291.3 319.4L289.4 322.8L287.7 321.7L290.3 313.8L292.2 312.4L290 311L286.3 311.9L278.4 319.9L284.1 331.2L282 334.4L266.9 333.6L248.5 348.7L242 348.8L236.6 344.2L234.1 326.6L237 317.5L244 315.6L249.2 310.4L239.9 306.1L233.9 298.8L220.7 295.3L211.3 298.3L196.8 295.9L187.4 296.9L184.6 294.8L174.3 293.7L169.7 287.9L166.6 287.7L163.4 290L156.2 301.3L148.6 290.4L134.3 288.4L131.2 284.5L126.7 284.3L129.6 275L134.2 272.1L143.3 275.1L174.1 265.2L190.3 257.3L197.2 256.7L206.5 258.8L208 263L224 267.7L257.4 272.4L259.4 274.1L256.9 277.8L258.5 280.9L267.2 285.2L274.2 284.3L281.1 281.2L281.7 273.3L284.8 269.9L308.8 256.8L312.8 250.7L315.1 242.6L320.6 238.1L334.6 238.7L333.9 241.5L318.7 247L320 250.9L318.1 257L322.9 262L325.5 262.5L332.2 258.6L356.1 258.4L367.3 253.7L378.4 244.6L393.8 241.5L402.9 230.4L414.9 221.4L422.1 211.6L427.6 207.2L431 200.7L432.2 192.8L426.6 188.1L432.1 186.6L437.7 180.2L439 170.7L441.8 166.8L452 164.6L455.7 160.2L456.9 155L459.6 153.6L465.3 157.1L462.8 167.2L463.7 169.9L469.9 168.3L473.8 172L477.9 169.8L481.1 163.2L480.5 161.5L469 160.7L470.5 157.1L477.1 150.6L482.8 157.8Z" />
+        </g>
+        ${makeRouteLegSvg("leg-kyoto-hiroshima", "#7b61b9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time · Himeji stop", 294, 201)}
+        ${makeRouteLegSvg("leg-hiroshima-tokyo", "#2b8a78", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 294, 201)}
+        ${makeRouteLegSvg("leg-tokyo-fuji", "#d28732", "M370.3 320.6 Q357 298 345.5 316.4", "4", "Tokyo → Kawaguchiko", "~2 hr", "bus / train", 294, 201)}
+        ${makeRouteLegSvg("leg-fuji-tokyo", "#3a77b8", "M345.5 316.4 Q361 348 370.3 320.6", "5", "Kawaguchiko → Tokyo", "~2 hr", "return to Tokyo", 294, 201)}
+        ${makeRouteLegSvg("leg-osaka-kyoto", "#e06b8f", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara day", 294, 201)}
+        ${makeRouteCitySvg(252.4, 308.9, -9, 25, "end", "Osaka", "Oct 24–28 · 4 nights")}
+        ${makeRouteCitySvg(263.2, 301.6, 9, -13, "start", "Kyoto", "Oct 28–Nov 2 · 5 nights")}
+        ${makeRouteCitySvg(171, 287.2, -9, -13, "end", "Hiroshima", "Nov 2–5 · 3 nights")}
+        ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "Nov 5–8 &amp; 11–13 · 5 nights")}
+        ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights")}
+      </svg>
+      <p class="trip-map-instruction">Hover or tap a colored travel leg to see its details.</p>
+    </div>
+    <p class="trip-route-note">Travel times are planning estimates and exclude the Nara and Himeji sightseeing stops, hotel transfers, and station waiting time.</p>`;
+}
+
+function makeRouteLegSvg(id, color, path, number, title, duration, note, labelX, labelY) {
+  return `<g class="route-map-leg" id="${id}" tabindex="0" style="--leg-color:${color}" aria-label="Leg ${number}: ${title}, ${duration}, ${note}">
+    <path class="route-leg-hit" d="${path}" />
+    <path class="route-leg-path" d="${path}" />
+    <g class="route-leg-callout" transform="translate(${labelX} ${labelY})">
+      <rect x="-71" y="-25" width="142" height="50" rx="8" />
+      <text y="-8" text-anchor="middle">${number}. ${title}</text>
+      <text y="10" text-anchor="middle">${duration} · ${note}</text>
+    </g>
+  </g>`;
+}
+
+function makeRouteCitySvg(pinX, pinY, nameX, nameY, anchor, city, dates) {
+  const nameWidth = city.length * 7 + 14;
+  const nameLeft = anchor === "end" ? pinX + nameX - nameWidth : pinX + nameX - 7;
+  return `<g class="route-city">
+    <circle class="route-city-pin" cx="${pinX}" cy="${pinY}" r="7" />
+    <g class="route-city-trigger" tabindex="0" aria-label="${city}, ${dates}">
+      <rect class="route-city-name-hit" x="${nameLeft}" y="${pinY + nameY - 15}" width="${nameWidth}" height="21" rx="5" />
+      <text class="route-city-name" x="${pinX + nameX}" y="${pinY + nameY}" text-anchor="${anchor}">${city}</text>
+      <g class="route-city-callout" transform="translate(294 201)">
+        <rect x="-88" y="-25" width="176" height="50" rx="8" />
+        <text y="-8" text-anchor="middle">${city}</text>
+        <text y="10" text-anchor="middle">${dates}</text>
+      </g>
+    </g>
+  </g>`;
 }
 
 function setupOverviewCarousel() {
@@ -2617,9 +2679,19 @@ function mapsSearchUrl(query) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
-function mapsEmbedUrl(day) {
-  const query = `${day.places[0] || day.title} Japan`;
-  return `https://maps.google.com/maps?output=embed&q=${encodeURIComponent(query)}`;
+const mapFrameCenters = {
+  osaka: [34.7025, 135.4959],
+  kyoto: [34.9858, 135.7588],
+  hiroshima: [34.3974, 132.4756],
+  tokyo: [35.6812, 139.7671],
+  kobe: [34.6901, 135.1955],
+  fuji: [35.5171, 138.7518]
+};
+
+function dayMapCenter(day) {
+  if (day.id === "day05") return mapFrameCenters.kobe;
+  if (["day17", "day18", "day19"].includes(day.id)) return mapFrameCenters.fuji;
+  return mapFrameCenters[state.activeCity] || [36.2048, 138.2529];
 }
 
 function mapsRouteUrl(day) {
@@ -2634,6 +2706,8 @@ function mapsRouteUrl(day) {
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
+let activeDayLeafletMap = null;
+
 function makeMapCard(day) {
   const { card, content } = makeCollapsibleCard({
     className: "map-card",
@@ -2643,24 +2717,61 @@ function makeMapCard(day) {
     open: true
   });
 
-  const iframe = document.createElement("iframe");
-  iframe.title = `${day.title} map`;
-  iframe.loading = "lazy";
-  iframe.referrerPolicy = "no-referrer-when-downgrade";
-  iframe.src = mapsEmbedUrl(day);
+  const mapElement = document.createElement("div");
+  mapElement.className = "day-leaflet-map";
+  mapElement.setAttribute("role", "application");
+  mapElement.setAttribute("aria-label", `${day.title} interactive map with ${day.places.length} numbered stops`);
 
   const placeList = document.createElement("ul");
   placeList.className = "place-list";
-  day.places.forEach((place) => {
+  const markers = [];
+  const items = [];
+  let focusedIndex = -1;
+
+  const focusPlace = (index) => {
+    focusedIndex = index;
+    items.forEach((item, itemIndex) => item.classList.toggle("is-map-focused", itemIndex === index));
+    markers.forEach((marker, markerIndex) => {
+      const selected = markerIndex === index;
+      marker.setZIndexOffset(selected ? 1000 : 0);
+      marker.getElement()?.classList.toggle("is-highlighted", selected);
+      if (selected) marker.openTooltip();
+      else marker.closeTooltip();
+    });
+  };
+  const resetMap = () => {
+    focusedIndex = -1;
+    items.forEach((item) => item.classList.remove("is-map-focused"));
+    markers.forEach((marker) => {
+      marker.setZIndexOffset(0);
+      marker.getElement()?.classList.remove("is-highlighted");
+      marker.closeTooltip();
+    });
+  };
+
+  day.places.forEach((place, index) => {
     const item = document.createElement("li");
     const link = document.createElement("a");
+    const pinKey = document.createElement("span");
     link.href = mapsSearchUrl(`${place}, Japan`);
     link.target = "_blank";
     link.rel = "noopener";
-    link.textContent = place;
-    item.appendChild(link);
+    link.setAttribute("aria-label", `Focus stop ${index + 1}, ${place}; activate to open in Google Maps`);
+    pinKey.className = "map-pin-key";
+    pinKey.textContent = String(index + 1);
+    link.append(pinKey, document.createTextNode(place));
+    link.addEventListener("pointerenter", () => focusPlace(index));
+    link.addEventListener("pointerleave", resetMap);
+    link.addEventListener("focus", () => focusPlace(index));
+    link.addEventListener("blur", resetMap);
+    item.append(link);
     placeList.appendChild(item);
+    items.push(item);
   });
+
+  const mapHelp = document.createElement("p");
+  mapHelp.className = "map-hover-help";
+  mapHelp.textContent = "Every expected stop has its own pin. Hover a numbered stop or a map pin to highlight both.";
 
   const actions = document.createElement("div");
   actions.className = "map-actions";
@@ -2672,7 +2783,47 @@ function makeMapCard(day) {
   dayMapLink.textContent = state.lodging[state.activeCity] ? "Open Day Map from Hotel" : "Open Day Map";
 
   actions.append(dayMapLink);
-  content.append(iframe, placeList, actions);
+  content.append(mapElement, mapHelp, placeList, actions);
+
+  window.setTimeout(() => {
+    if (!window.L || !window.PLACE_COORDINATES) {
+      mapElement.classList.add("map-unavailable");
+      mapElement.textContent = "The interactive map could not load. Use Open Day Map below instead.";
+      return;
+    }
+    activeDayLeafletMap?.remove();
+    const map = L.map(mapElement, { scrollWheelZoom: false, zoomControl: true });
+    activeDayLeafletMap = map;
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    const points = [];
+    day.places.forEach((place, index) => {
+      const coordinates = window.PLACE_COORDINATES[place];
+      if (!coordinates) return;
+      points.push(coordinates);
+      const icon = L.divIcon({
+        className: "day-map-marker-shell",
+        html: `<span>${index + 1}</span>`,
+        iconSize: [30, 38],
+        iconAnchor: [15, 38],
+        tooltipAnchor: [0, -31]
+      });
+      const marker = L.marker(coordinates, { icon, keyboard: true, title: `${index + 1}. ${place}` }).addTo(map);
+      marker.bindTooltip(`<strong>${index + 1}. ${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
+      marker.on("mouseover focus", () => focusPlace(index));
+      marker.on("mouseout blur", resetMap);
+      markers[index] = marker;
+    });
+    points.push(dayMapCenter(day));
+    const bounds = L.latLngBounds(points);
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [34, 34], maxZoom: 14 });
+    else map.setView(dayMapCenter(day), 11);
+    map.whenReady(() => map.invalidateSize());
+    if (focusedIndex >= 0) focusPlace(focusedIndex);
+  }, 0);
+
   return card;
 }
 
