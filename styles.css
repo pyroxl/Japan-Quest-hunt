@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light only;
   --paper: #fff0f6;
   --ink: #34222a;
   --muted: #80636f;
@@ -87,8 +88,14 @@ body[data-city="hiroshima"] {
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: light only;
+  background-color: var(--paper);
+}
+
 body {
   margin: 0;
+  background-color: var(--paper);
   background:
     radial-gradient(circle at 18% 8%, var(--glow-one), transparent 30%),
     radial-gradient(circle at 88% 18%, var(--glow-two), transparent 24%),
@@ -103,6 +110,14 @@ button,
 input,
 textarea {
   font: inherit;
+  color: var(--ink);
+}
+
+input,
+textarea,
+select {
+  background-color: var(--card);
+  color: var(--ink);
 }
 
 .app-shell {
@@ -1387,7 +1402,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.54);
+  background: var(--card);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
@@ -1770,7 +1785,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.68);
+  background-color: var(--card);
   color: var(--ink);
 }
 
