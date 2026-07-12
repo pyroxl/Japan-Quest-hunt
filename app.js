@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v88";
+const APP_VERSION = "japan-quest-v89";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2992,7 +2992,12 @@ function renderNav() {
 function snapOverviewToActiveCity() {
   requestAnimationFrame(() => {
     const overviewStrip = document.querySelector("#overviewCarouselHost .overview-carousel .day-window-strip");
-    if (overviewStrip) overviewStrip.scrollTo({ left: 0, behavior: "auto" });
+    if (overviewStrip) {
+      // Reset the primary overview directly. Calling scrollIntoView on a card
+      // inside the hidden window can make the browser restore the wrong page.
+      overviewStrip.scrollLeft = 0;
+      overviewStrip.scrollTo({ left: 0, behavior: "auto" });
+    }
     state.overviewWindows = state.overviewWindows || {};
     state.overviewWindows.overview = 0;
     saveState();
@@ -3002,7 +3007,12 @@ function snapOverviewToActiveCity() {
     const firstDayIndex = orderedDays.findIndex((day) => day.id === firstCityDay.dataset.day);
     const snapDay = firstDayIndex > 0 && state.activeCity !== "osaka" ? orderedDays[firstDayIndex - 1] : orderedDays[firstDayIndex];
     const snapTarget = document.querySelector(`#calendarGrid .calendar-day[data-day="${snapDay.id}"]`);
-    (snapTarget || firstCityDay).scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    const verticalTarget = snapTarget || firstCityDay;
+    // Scroll the document by coordinates so the hidden horizontal carousel
+    // window cannot be selected again as a side effect.
+    const targetTop = verticalTarget.getBoundingClientRect().top + window.scrollY - 12;
+    window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+    if (overviewStrip) overviewStrip.scrollLeft = 0;
   });
 }
 
