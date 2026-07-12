@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light only;
+  color-scheme: light dark;
   --paper: #fff0f6;
   --ink: #34222a;
   --muted: #80636f;
@@ -89,7 +89,7 @@ body[data-city="hiroshima"] {
 }
 
 html {
-  color-scheme: light only;
+  color-scheme: light dark;
   background-color: var(--paper);
 }
 
@@ -133,6 +133,26 @@ select {
   gap: 16px;
   align-items: end;
   padding: 16px 4px 14px;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 12px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.theme-toggle > [aria-hidden] {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .eyebrow,
@@ -1431,7 +1451,7 @@ h3 {
 }
 
 .calendar-photo:not(.has-photo)::after {
-  content: "Add a day thumbnail";
+  content: attr(data-empty-label);
   display: grid;
   min-height: 92px;
   place-items: center;
@@ -1698,6 +1718,63 @@ h3 {
   border-top: 1px dashed var(--line);
   font-size: 0.8rem;
   font-style: italic;
+}
+
+.timeline-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.timeline-tabs {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+}
+
+.timeline-tabs button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 9px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.timeline-tabs button[aria-selected="true"] {
+  background: linear-gradient(135deg, var(--green), var(--rose));
+  color: white;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+.slow-day-timeline::before {
+  background: color-mix(in srgb, var(--teal) 34%, transparent);
+}
+
+.slow-day-timeline li::before {
+  border-color: var(--teal);
+}
+
+.slow-day-timeline time {
+  color: var(--teal);
+}
+
+@media (max-width: 540px) {
+  .timeline-heading {
+    display: grid;
+  }
+
+  .timeline-tabs {
+    width: 100%;
+  }
 }
 
 .history-story {
@@ -2051,6 +2128,224 @@ h3 {
 .text-button {
   padding: 10px 12px;
   font-weight: 800;
+}
+
+/* Dark mode uses deeper city accents and opaque surfaces so pastel navigation
+   and calendar cards retain contrast without losing their route colours. */
+body[data-theme="dark"] {
+  --paper: #171418;
+  --ink: #f7edf1;
+  --muted: #c5adb7;
+  --line: rgba(255, 226, 238, 0.17);
+  --card: rgba(39, 32, 37, 0.96);
+  --green: #f28ab4;
+  --teal: #d7a1e5;
+  --rose: #ff9fc7;
+  --gold: #e9bd70;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+  --glow-one: rgba(199, 67, 122, 0.2);
+  --glow-two: rgba(201, 143, 55, 0.12);
+  --wash-one: rgba(199, 67, 122, 0.1);
+  --wash-two: rgba(141, 79, 159, 0.09);
+}
+
+body[data-theme="dark"][data-city="osaka"] {
+  --paper: #1a1511;
+  --card: rgba(45, 35, 27, 0.96);
+  --green: #ff9a5d;
+  --teal: #efaa7d;
+  --rose: #ffad66;
+  --gold: #ebc36d;
+  --glow-one: rgba(215, 95, 22, 0.2);
+  --glow-two: rgba(201, 149, 45, 0.12);
+}
+
+body[data-theme="dark"][data-city="hiroshima"] {
+  --paper: #111821;
+  --card: rgba(28, 39, 53, 0.96);
+  --green: #82b9f3;
+  --teal: #78c2c8;
+  --rose: #f18b96;
+  --gold: #dfbd72;
+  --glow-one: rgba(40, 91, 150, 0.24);
+  --glow-two: rgba(57, 124, 130, 0.12);
+}
+
+body[data-theme="dark"][data-city="tokyo"] {
+  --paper: #181315;
+  --card: rgba(42, 31, 35, 0.96);
+  --green: #ff718f;
+  --teal: #ff91a7;
+  --rose: #ff91a7;
+  --gold: #e6c27e;
+  --glow-one: rgba(188, 0, 45, 0.22);
+  --glow-two: rgba(199, 161, 93, 0.1);
+}
+
+body[data-theme="dark"] .quick-sidebar,
+body[data-theme="dark"] .city-chip,
+body[data-theme="dark"] .chip,
+body[data-theme="dark"] .text-button,
+body[data-theme="dark"] .window-arrow,
+body[data-theme="dark"] .day-window-dot,
+body[data-theme="dark"] .coverage-summary,
+body[data-theme="dark"] .melon-progress,
+body[data-theme="dark"] .discovery-group,
+body[data-theme="dark"] .stat,
+body[data-theme="dark"] .today-pill,
+body[data-theme="dark"] .melon-fields select,
+body[data-theme="dark"] .melon-fields input,
+body[data-theme="dark"] .melon-leaderboard,
+body[data-theme="dark"] .award-card textarea,
+body[data-theme="dark"] .overview-switch button {
+  background: color-mix(in srgb, var(--card) 94%, var(--ink) 6%);
+}
+
+body[data-theme="dark"] .score-orb,
+body[data-theme="dark"] .deck-card {
+  background: linear-gradient(155deg, color-mix(in srgb, var(--card) 88%, var(--ink) 12%), var(--card));
+}
+
+body[data-theme="dark"] .bottom-bar {
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+}
+
+body[data-theme="dark"] .chip.is-outside-city,
+body[data-theme="dark"] .calendar-day.is-outside-city {
+  background: color-mix(in srgb, var(--outside-city-color) 28%, var(--card));
+}
+
+body[data-theme="dark"] .chip.is-transit-day,
+body[data-theme="dark"] .calendar-day.is-transit-day {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--outside-from) 30%, var(--card)) 0%,
+    color-mix(in srgb, var(--outside-from) 30%, var(--card)) 49.5%,
+    color-mix(in srgb, var(--outside-to) 30%, var(--card)) 50.5%,
+    color-mix(in srgb, var(--outside-to) 30%, var(--card)) 100%);
+}
+
+body[data-theme="dark"] .calendar-photo {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--green) 24%, var(--card)),
+    color-mix(in srgb, var(--gold) 20%, var(--card)));
+}
+
+body[data-theme="dark"] .calendar-day.is-outside-city .calendar-photo:not(.has-photo) {
+  background: color-mix(in srgb, var(--outside-city-color) 22%, var(--card));
+}
+
+body[data-theme="dark"] .calendar-day.is-transit-day .calendar-photo:not(.has-photo) {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--outside-from) 24%, var(--card)) 0%,
+    color-mix(in srgb, var(--outside-from) 24%, var(--card)) 49.5%,
+    color-mix(in srgb, var(--outside-to) 24%, var(--card)) 50.5%,
+    color-mix(in srgb, var(--outside-to) 24%, var(--card)) 100%);
+}
+
+body[data-theme="dark"] .coverage-summary.has-gap {
+  background: #3a201f;
+}
+
+body[data-theme="dark"] .daily-guide {
+  background: var(--card);
+  color: var(--ink);
+}
+
+body[data-theme="dark"] .daily-guide .context-block,
+body[data-theme="dark"] .timeline-tabs,
+body[data-theme="dark"] .plan-photo,
+body[data-theme="dark"] .low-energy-drawer,
+body[data-theme="dark"] .roadmap-blocker,
+body[data-theme="dark"] .roadmap-fallback {
+  background: color-mix(in srgb, var(--card) 88%, var(--ink) 12%);
+}
+
+body[data-theme="dark"] .daily-guide h3,
+body[data-theme="dark"] .daily-guide h4,
+body[data-theme="dark"] .daily-guide strong,
+body[data-theme="dark"] .day-timeline span,
+body[data-theme="dark"] .history-story p {
+  color: var(--ink);
+}
+
+body[data-theme="dark"] .day-timeline li::before {
+  background: var(--card);
+}
+
+body[data-theme="dark"] .photo-button,
+body[data-theme="dark"] .photo-delete,
+body[data-theme="dark"] .melon-photo button,
+body[data-theme="dark"] .deck-actions button,
+body[data-theme="dark"] .roadmap-open,
+body[data-theme="dark"] .quest-library summary,
+body[data-theme="dark"] .planning-alerts summary,
+body[data-theme="dark"] .collapsible-summary,
+body[data-theme="dark"] .discovery-group > summary {
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--card) 82%, var(--ink) 18%);
+  color: var(--ink);
+}
+
+body[data-theme="dark"] .quest-library,
+body[data-theme="dark"] .planning-alerts,
+body[data-theme="dark"] .quest-library p,
+body[data-theme="dark"] .planning-alerts article,
+body[data-theme="dark"] .daily-photo-slot,
+body[data-theme="dark"] .city-review-block {
+  background: color-mix(in srgb, var(--card) 92%, var(--ink) 8%);
+  color: var(--ink);
+}
+
+body[data-theme="dark"] input,
+body[data-theme="dark"] textarea,
+body[data-theme="dark"] select,
+body[data-theme="dark"] .main-goal-writing textarea,
+body[data-theme="dark"] .review-output {
+  border-color: var(--line);
+  background-color: color-mix(in srgb, var(--card) 84%, var(--ink) 16%);
+  color: var(--ink);
+  caret-color: var(--rose);
+}
+
+body[data-theme="dark"] input::placeholder,
+body[data-theme="dark"] textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+body[data-theme="dark"] select option {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body[data-theme="dark"] .deck-actions [data-action="found"],
+body[data-theme="dark"] .melon-photo button:first-of-type {
+  background: color-mix(in srgb, var(--green) 22%, var(--card));
+  color: var(--ink);
+}
+
+body[data-theme="dark"] .main-complete.is-complete {
+  background: color-mix(in srgb, #22c55e 20%, var(--card));
+  color: #9aefb8;
+}
+
+body[data-theme="dark"] .status-ready,
+body[data-theme="dark"] .status-completed,
+body[data-theme="dark"] .calendar-status.status-ready,
+body[data-theme="dark"] .calendar-status.status-completed {
+  color: #83dda8;
+}
+
+body[data-theme="dark"] .status-needs-booking,
+body[data-theme="dark"] .calendar-status.status-needs-booking {
+  color: #f5c574;
+}
+
+body[data-theme="dark"] .status-needs-confirmation,
+body[data-theme="dark"] .status-conditional,
+body[data-theme="dark"] .calendar-status.status-needs-confirmation,
+body[data-theme="dark"] .calendar-status.status-conditional {
+  color: #c7a7ff;
 }
 
 @media (max-width: 540px) {
