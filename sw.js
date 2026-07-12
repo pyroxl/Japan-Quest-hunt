@@ -1,4 +1,4 @@
-const CACHE_NAME = "japan-quest-v44";
+const CACHE_NAME = "japan-quest-v66";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -7,24 +7,24 @@ const APP_FILES = [
   "./manifest.webmanifest",
   "./icon.svg",
   "./capstones/day02.jpg",
-  "./capstones/day03.jpg",
+  "./capstones/day03.webp",
   "./capstones/day04.jpg",
-  "./capstones/day05.jpg",
-  "./capstones/day06.webp",
+  "./capstones/day05.jpeg",
+  "./capstones/day06.jpeg",
   "./capstones/day07.webp",
   "./capstones/day08.jpg",
-  "./capstones/day09.webp",
-  "./capstones/day10.jpg",
+  "./capstones/day09.jpg",
+  "./capstones/day10.jpeg",
   "./capstones/day11.jpg",
-  "./capstones/day12.jpg",
+  "./capstones/day12.webp",
   "./capstones/day13.jpg",
   "./capstones/day14.jpg",
-  "./capstones/day15.jpg",
-  "./capstones/day16.jpg",
+  "./capstones/day15.jpeg",
+  "./capstones/day16.jpeg",
   "./capstones/day17.jpg",
   "./capstones/day18.webp",
   "./capstones/day19.webp",
-  "./capstones/day20.jpg",
+  "./capstones/day20.jpeg",
   "./capstones/day21.jpg"
 ];
 
