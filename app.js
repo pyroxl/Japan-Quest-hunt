@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v83";
+const APP_VERSION = "japan-quest-v84";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2367,6 +2367,18 @@ function renderTripRouteMap() {
       <p class="trip-map-instruction">Hover or tap a colored travel leg to see its details.</p>
     </div>
     <p class="trip-route-note">Travel times are planning estimates and exclude the Nara and Himeji sightseeing stops, hotel transfers, and station waiting time.</p>`;
+
+  const routeSvg = host.querySelector(".trip-route-map-frame svg");
+  const resizeMap = () => {
+    const mobile = host.getBoundingClientRect().width <= 620;
+    routeSvg?.setAttribute("viewBox", mobile ? "70 175 500 210" : "50 30 590 355");
+  };
+  host._tripMapResizeObserver?.disconnect();
+  if (window.ResizeObserver) {
+    host._tripMapResizeObserver = new ResizeObserver(resizeMap);
+    host._tripMapResizeObserver.observe(host);
+  }
+  resizeMap();
 }
 
 function makeRouteLegSvg(id, color, path, number, title, duration, note, labelX, labelY) {
@@ -2727,6 +2739,7 @@ function makeMapCard(day) {
   const markers = [];
   const items = [];
   let focusedIndex = -1;
+  let armedLinkIndex = -1;
 
   const focusPlace = (index) => {
     focusedIndex = index;
@@ -2756,14 +2769,32 @@ function makeMapCard(day) {
     link.href = mapsSearchUrl(`${place}, Japan`);
     link.target = "_blank";
     link.rel = "noopener";
-    link.setAttribute("aria-label", `Focus stop ${index + 1}, ${place}; activate to open in Google Maps`);
+    link.setAttribute("aria-label", `Stop ${index + 1}, ${place}. On touch screens, tap once to highlight and again to open Google Maps.`);
     pinKey.className = "map-pin-key";
     pinKey.textContent = String(index + 1);
     link.append(pinKey, document.createTextNode(place));
-    link.addEventListener("pointerenter", () => focusPlace(index));
-    link.addEventListener("pointerleave", resetMap);
+    link.addEventListener("pointerenter", (event) => {
+      if (event.pointerType === "mouse") focusPlace(index);
+    });
+    link.addEventListener("pointerleave", (event) => {
+      if (event.pointerType === "mouse") resetMap();
+    });
     link.addEventListener("focus", () => focusPlace(index));
-    link.addEventListener("blur", resetMap);
+    link.addEventListener("blur", () => {
+      if (!window.matchMedia("(hover: none), (pointer: coarse)").matches) resetMap();
+    });
+    link.addEventListener("click", (event) => {
+      const touchStyleInput = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      if (!touchStyleInput) return;
+      if (armedLinkIndex !== index) {
+        event.preventDefault();
+        armedLinkIndex = index;
+        focusPlace(index);
+        link.setAttribute("aria-label", `Stop ${index + 1}, ${place}, highlighted. Tap again to open Google Maps.`);
+      } else {
+        armedLinkIndex = -1;
+      }
+    });
     item.append(link);
     placeList.appendChild(item);
     items.push(item);

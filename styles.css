@@ -1945,10 +1945,15 @@ h3 {
 
 @media (max-width: 620px) {
   .trip-route-heading { align-items: start; flex-direction: column; }
-  .trip-route-map-frame { overflow-x: auto; }
-  .trip-route-map-frame svg { width: 680px; max-width: none; }
-  .trip-map-instruction { position: sticky; left: 8px; width: max-content; }
+  .trip-route-map-frame { overflow: hidden; }
+  .trip-route-map-frame svg { width: 100%; min-height: 0; aspect-ratio: 500 / 210; }
+  .trip-map-instruction { right: 6px; bottom: 5px; max-width: calc(100% - 12px); }
 }
+
+body[data-theme="dark"] .trip-route-map-frame { background: linear-gradient(160deg, #101b1c, #172827); }
+body[data-theme="dark"] .japan-outline { fill: rgba(98, 151, 124, .18); stroke: #d9ece3; }
+body[data-theme="dark"] .route-city-name { fill: #f4fbf7; stroke: #101b1c; }
+body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,227,.2); background: rgba(16,27,28,.9); color: #d9ece3; }
 
 .map-card iframe {
   width: 100%;
