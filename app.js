@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v84";
+const APP_VERSION = "japan-quest-v87";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2340,12 +2340,7 @@ function renderOverview() {
 function renderTripRouteMap() {
   const host = document.querySelector("#tripRouteMap");
   if (!host) return;
-  const routeUrl = "https://www.google.com/maps/dir/?api=1&origin=Osaka%2C+Japan&destination=Tokyo%2C+Japan&waypoints=Kyoto%2C+Japan%7CHiroshima%2C+Japan%7CTokyo%2C+Japan%7CLake+Kawaguchiko%2C+Japan&travelmode=transit";
   host.innerHTML = `
-    <div class="trip-route-heading">
-      <div><p class="label">The whole journey</p><h3 id="tripRouteTitle">City stays &amp; travel legs</h3></div>
-      <a href="${routeUrl}" target="_blank" rel="noopener">Open route in Google Maps</a>
-    </div>
     <div class="trip-route-map-frame">
       <svg viewBox="50 30 590 355" role="img" aria-labelledby="tripMapTitle tripMapDesc">
         <title id="tripMapTitle">Japan trip route</title>
@@ -2365,13 +2360,12 @@ function renderTripRouteMap() {
         ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights")}
       </svg>
       <p class="trip-map-instruction">Hover or tap a colored travel leg to see its details.</p>
-    </div>
-    <p class="trip-route-note">Travel times are planning estimates and exclude the Nara and Himeji sightseeing stops, hotel transfers, and station waiting time.</p>`;
+    </div>`;
 
   const routeSvg = host.querySelector(".trip-route-map-frame svg");
   const resizeMap = () => {
     const mobile = host.getBoundingClientRect().width <= 620;
-    routeSvg?.setAttribute("viewBox", mobile ? "70 175 500 210" : "50 30 590 355");
+    routeSvg?.setAttribute("viewBox", mobile ? "90 155 330 250" : "50 30 590 355");
   };
   host._tripMapResizeObserver?.disconnect();
   if (window.ResizeObserver) {
@@ -2996,7 +2990,12 @@ function snapOverviewToActiveCity() {
     state.overviewWindows.overview = 0;
     saveState();
     const firstCityDay = document.querySelector(`#calendarGrid .calendar-day[data-city="${state.activeCity}"]`);
-    if (firstCityDay) firstCityDay.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    if (!firstCityDay) return;
+    const orderedDays = Object.values(tripData).flatMap((city) => city.days);
+    const firstDayIndex = orderedDays.findIndex((day) => day.id === firstCityDay.dataset.day);
+    const snapDay = firstDayIndex > 0 && state.activeCity !== "osaka" ? orderedDays[firstDayIndex - 1] : orderedDays[firstDayIndex];
+    const snapTarget = document.querySelector(`#calendarGrid .calendar-day[data-day="${snapDay.id}"]`);
+    (snapTarget || firstCityDay).scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
   });
 }
 
@@ -3007,7 +3006,6 @@ function showOverview() {
   document.querySelectorAll(".chip").forEach((chip) => chip.classList.toggle("active", chip.dataset.view === "overview"));
   renderOverview();
   renderStats();
-  snapOverviewToActiveCity();
 }
 
 function showDay(day) {
@@ -3024,18 +3022,31 @@ function renderStats() {
   if (!overviewPanel.classList.contains("hidden")) renderTripQuestDashboard();
 }
 
+let citySnapArmedFor = null;
+
 cityRail.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-city]");
   if (!button) return;
-  state.activeCity = button.dataset.city;
+  const selectedCity = button.dataset.city;
+  const shouldSnap = citySnapArmedFor === selectedCity;
+  citySnapArmedFor = shouldSnap ? null : selectedCity;
+  state.activeCity = selectedCity;
   saveState();
   renderNav();
   showOverview();
+  if (shouldSnap) snapOverviewToActiveCity();
+  document.querySelectorAll(".city-chip").forEach((chip) => {
+    const armed = !shouldSnap && chip.dataset.city === selectedCity;
+    chip.classList.toggle("snap-armed", armed);
+    chip.setAttribute("aria-label", armed ? `${activeCity().name} selected. Press again to jump to its calendar days.` : chip.textContent.trim());
+  });
 });
 
 dayRail.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-view]");
   if (!button) return;
+  citySnapArmedFor = null;
+  document.querySelectorAll(".city-chip").forEach((chip) => chip.classList.remove("snap-armed"));
   const view = button.dataset.view;
   document.querySelectorAll(".chip").forEach((chip) => chip.classList.toggle("active", chip === button));
   if (view === "overview") {
