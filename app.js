@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v87";
+const APP_VERSION = "japan-quest-v88";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2905,12 +2905,18 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   function closestWindowIndex() {
     return windows.reduce((closest, window, index) => Math.abs(window.offsetLeft - viewport.scrollLeft) < Math.abs(windows[closest].offsetLeft - viewport.scrollLeft) ? index : closest, 0);
   }
+  function bringWindowToTop(index) {
+    if (index <= 0) return;
+    requestAnimationFrame(() => carousel.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }));
+  }
   function goTo(index, behavior = "smooth") {
+    const previousIndex = currentIndex;
     currentIndex = Math.max(0, Math.min(index, maxIndex));
     viewport.scrollTo({ left: windowLeft(currentIndex), behavior });
     state[storageGroup] = state[storageGroup] || {};
     state[storageGroup][carouselId] = currentIndex;
     saveState();
+    if (previousIndex !== currentIndex) bringWindowToTop(currentIndex);
   }
   viewport.addEventListener("scroll", () => {
     clearTimeout(scrollTimer);
@@ -2921,6 +2927,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
         state[storageGroup] = state[storageGroup] || {};
         state[storageGroup][carouselId] = currentIndex;
         saveState();
+        bringWindowToTop(currentIndex);
       }
     }, 90);
   }, { passive: true });
