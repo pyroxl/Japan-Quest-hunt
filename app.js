@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v108";
+const APP_VERSION = "japan-quest-v109";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2067,6 +2067,8 @@ function renderOverview() {
 function renderTripRouteMap() {
   const host = document.querySelector("#tripRouteMap");
   if (!host) return;
+  host._chapterMapCleanup?.();
+  host._tripMapResizeObserver?.disconnect();
   host.innerHTML = `
     <div class="trip-route-map-frame">
       <div class="chapter-map-tabs" role="tablist" aria-label="Trip chapters"></div>
@@ -2110,6 +2112,7 @@ function renderTripRouteMap() {
 }
 
 let activeOverviewLeafletMap = null;
+const mobileOverviewMapQuery = window.matchMedia("(max-width: 620px)");
 
 function overviewChapterForDay(dayId) {
   return overviewMapChapters.find((chapter) => chapter.dayIds.includes(dayId));
@@ -2134,8 +2137,66 @@ function renderOverviewChapterMap(host) {
   let armedDayId = null;
   let markersByDay = new Map();
   let dayButtons = new Map();
+  let mobileMapOpen = false;
+  let mobileHistoryEntryActive = false;
+  let mobileFramePlaceholder = null;
+  let lockedScrollY = 0;
+  let resizeFrame = 0;
 
-  const showRoute = () => {
+  const invalidateMap = () => {
+    cancelAnimationFrame(resizeFrame);
+    resizeFrame = requestAnimationFrame(() => activeOverviewLeafletMap?.invalidateSize());
+  };
+
+  const lockPageScroll = () => {
+    lockedScrollY = window.scrollY;
+    document.body.classList.add("chapter-map-fullscreen-open");
+    document.body.style.top = `-${lockedScrollY}px`;
+  };
+
+  const unlockPageScroll = () => {
+    document.body.classList.remove("chapter-map-fullscreen-open");
+    document.body.style.removeProperty("top");
+    window.scrollTo({ top: lockedScrollY, behavior: "auto" });
+  };
+
+  const exitMobileMap = ({ consumeHistory = false } = {}) => {
+    if (!mobileMapOpen) return;
+    mobileMapOpen = false;
+    frame?.classList.remove("is-mobile-fullscreen");
+    frame?.querySelector(".chapter-map")?.removeAttribute("aria-modal");
+    frame?.querySelector(".chapter-map")?.removeAttribute("role");
+    if (mobileFramePlaceholder?.isConnected) mobileFramePlaceholder.replaceWith(frame);
+    mobileFramePlaceholder = null;
+    unlockPageScroll();
+    if (mobileHistoryEntryActive) {
+      mobileHistoryEntryActive = false;
+      if (consumeHistory) history.back();
+    }
+    invalidateMap();
+  };
+
+  const enterMobileMap = () => {
+    if (!mobileOverviewMapQuery.matches || mobileMapOpen || !frame) return;
+    mobileMapOpen = true;
+    mobileFramePlaceholder = document.createComment("chapter map position");
+    frame.replaceWith(mobileFramePlaceholder);
+    document.body.appendChild(frame);
+    frame.classList.add("is-mobile-fullscreen");
+    frame.querySelector(".chapter-map")?.setAttribute("role", "dialog");
+    frame.querySelector(".chapter-map")?.setAttribute("aria-modal", "true");
+    lockPageScroll();
+    try {
+      history.pushState({ ...(history.state || {}), overviewChapterMap: true }, "", window.location.href);
+      mobileHistoryEntryActive = true;
+    } catch (_error) {
+      mobileHistoryEntryActive = false;
+    }
+    invalidateMap();
+  };
+
+  const showRoute = ({ fromHistory = false } = {}) => {
+    exitMobileMap({ consumeHistory: !fromHistory });
     frame?.classList.remove("is-chapter-open");
     activeOverviewLeafletMap?.remove();
     activeOverviewLeafletMap = null;
@@ -2146,11 +2207,12 @@ function renderOverviewChapterMap(host) {
     tabs.replaceChildren();
     const routeButton = document.createElement("button");
     routeButton.type = "button";
-    routeButton.textContent = "Route";
+    routeButton.textContent = mobileMapOpen ? "Close" : "Route";
+    routeButton.setAttribute("aria-label", mobileMapOpen ? "Close chapter map and return to route overview" : "Show route overview");
     routeButton.setAttribute("role", "tab");
     routeButton.setAttribute("aria-selected", String(routeActive));
     routeButton.classList.toggle("active", routeActive);
-    routeButton.addEventListener("click", showRoute);
+    routeButton.addEventListener("click", () => showRoute());
     tabs.appendChild(routeButton);
     overviewMapChapters.forEach((candidate) => {
       const button = document.createElement("button");
@@ -2162,9 +2224,17 @@ function renderOverviewChapterMap(host) {
       button.addEventListener("click", () => renderChapter(candidate));
       tabs.appendChild(button);
     });
+    if (mobileMapOpen) {
+      const activeButton = tabs.querySelector("button.active");
+      requestAnimationFrame(() => {
+        if (!activeButton) return;
+        tabs.scrollTo({ left: Math.max(0, activeButton.offsetLeft - (tabs.clientWidth - activeButton.offsetWidth) / 2), behavior: "smooth" });
+      });
+    }
   };
 
   const openDay = (day) => {
+    exitMobileMap({ consumeHistory: true });
     const chapter = overviewChapterForDay(day.id);
     state.activeCity = chapter?.cityId || state.activeCity;
     saveState();
@@ -2185,7 +2255,7 @@ function renderOverviewChapterMap(host) {
     markersByDay.forEach((markers, candidateId) => {
       markers.forEach((marker) => {
         const selected = candidateId === dayId;
-        marker.setZIndexOffset(selected ? 1000 : 0);
+        marker.setZIndexOffset((marker._overviewBaseZ || 0) + (selected ? 1000 : 0));
         marker.getElement()?.classList.toggle("is-highlighted", selected);
         if (selected) marker.openTooltip(); else marker.closeTooltip();
       });
@@ -2212,6 +2282,7 @@ function renderOverviewChapterMap(host) {
     state.overviewMapChapter = chapter.id;
     saveState();
     frame?.classList.add("is-chapter-open");
+    enterMobileMap();
     highlightedDayId = null;
     armedDayId = null;
     renderTabs(chapter);
@@ -2228,7 +2299,7 @@ function renderOverviewChapterMap(host) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "chapter-map-day";
-      button.innerHTML = `<span class="chapter-map-day-dot" style="--day-color:${overviewDayColors[dayIndex % overviewDayColors.length]}"></span><strong>${day.short}</strong><span>${escapeHtml(day.title.replace(/^Day \d+ - /, ""))}</span>`;
+      button.innerHTML = `<span class="chapter-map-day-dot" style="--day-color:${overviewDayColors[dayIndex % overviewDayColors.length]}"></span><span class="chapter-map-day-mobile">D${day.id.replace("day", "")} · ${day.short}</span><strong>${day.short}</strong><span class="chapter-map-day-title">${escapeHtml(day.title.replace(/^Day \d+ - /, ""))}</span>`;
       button.setAttribute("aria-pressed", "false");
       button.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") updateHighlight(day.id); });
       button.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse") clearHighlight(); });
@@ -2261,6 +2332,7 @@ function renderOverviewChapterMap(host) {
         });
         const markerLabel = isHotelPlace(place) ? `Hotel: ${place}` : place;
         const marker = L.marker(coordinates, { icon, keyboard: true, title: `${day.title}: ${markerLabel}`, zIndexOffset: isHotelPlace(place) ? 500 : 0 }).addTo(map);
+        marker._overviewBaseZ = isHotelPlace(place) ? 500 : 0;
         marker.bindTooltip(`<strong>${escapeHtml(day.title)}</strong><br>${isHotelPlace(place) ? "Hotel base · " : ""}${escapeHtml(place)}`, { direction: "top", offset: [0, -4] });
         marker.on("mouseover focus", () => updateHighlight(day.id));
         marker.on("mouseout blur", clearHighlight);
@@ -2276,7 +2348,42 @@ function renderOverviewChapterMap(host) {
       if (bounds.isValid()) map.fitBounds(bounds, { padding: [34, 34], maxZoom: 13 });
       else map.setView(mapFrameCenters[chapter.cityId], 11);
     }
-    map.whenReady(() => map.invalidateSize());
+    map.whenReady(invalidateMap);
+  };
+
+  const handleHistoryNavigation = () => {
+    if (mobileMapOpen) showRoute({ fromHistory: true });
+  };
+  const handleKeydown = (event) => {
+    if (event.key === "Escape" && mobileMapOpen) {
+      event.preventDefault();
+      showRoute();
+    }
+  };
+  const handleViewportChange = () => {
+    if (!mobileOverviewMapQuery.matches && mobileMapOpen) {
+      exitMobileMap({ consumeHistory: true });
+      renderTabs(selectedChapter);
+    } else if (mobileOverviewMapQuery.matches && frame?.classList.contains("is-chapter-open") && !mobileMapOpen) {
+      enterMobileMap();
+      renderTabs(selectedChapter);
+    }
+    invalidateMap();
+  };
+
+  window.addEventListener("popstate", handleHistoryNavigation);
+  window.addEventListener("keydown", handleKeydown);
+  window.addEventListener("resize", handleViewportChange, { passive: true });
+  window.addEventListener("orientationchange", invalidateMap, { passive: true });
+  host._chapterMapCleanup = () => {
+    window.removeEventListener("popstate", handleHistoryNavigation);
+    window.removeEventListener("keydown", handleKeydown);
+    window.removeEventListener("resize", handleViewportChange);
+    window.removeEventListener("orientationchange", invalidateMap);
+    cancelAnimationFrame(resizeFrame);
+    exitMobileMap({ consumeHistory: false });
+    activeOverviewLeafletMap?.remove();
+    activeOverviewLeafletMap = null;
   };
 
   frame?.querySelectorAll(".route-city-trigger[data-chapter]").forEach((trigger) => {

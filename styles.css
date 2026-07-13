@@ -2075,7 +2075,8 @@ body[data-theme="dark"] .place-list .is-hotel-stop {
 }
 .chapter-map-days { position: absolute; z-index: 5; right: 9px; bottom: 9px; left: 9px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 6px; pointer-events: auto; }
 .chapter-map-day { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 8px; min-height: 38px; padding: 6px 8px; border-radius: 8px; text-align: left; box-shadow: 0 2px 6px rgba(0,0,0,.14); }
-.chapter-map-day > span:last-child { color: var(--muted); font-size: .76rem; line-height: 1.2; }
+.chapter-map-day-title { color: var(--muted); font-size: .76rem; line-height: 1.2; }
+.chapter-map-day-mobile { display: none; }
 .chapter-map-day-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--day-color); }
 .chapter-map-day.is-highlighted { border-color: var(--rose); box-shadow: 0 0 0 2px color-mix(in srgb, var(--rose), transparent 76%); }
 .chapter-map-day.is-armed { background: color-mix(in srgb, var(--rose), var(--card) 90%); }
@@ -2087,6 +2088,79 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 @media (max-width: 620px) {
   .chapter-map-tabs { left: 20%; right: 7px; padding-inline: 0; }
   .chapter-map-days { grid-template-columns: 1fr; max-height: 116px; overflow-y: auto; }
+
+  body.chapter-map-fullscreen-open {
+    position: fixed;
+    right: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .trip-route-map-frame.is-mobile-fullscreen {
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: #dfecef;
+  }
+
+  .trip-route-map-frame.is-mobile-fullscreen .route-map-layer,
+  .trip-route-map-frame.is-mobile-fullscreen .trip-map-instruction { display: none; }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map { display: block; }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-tabs {
+    top: calc(env(safe-area-inset-top) + 7px);
+    right: 7px;
+    left: 7px;
+    gap: 5px;
+    padding: 0 0 6px;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+  }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-tabs button {
+    min-height: 36px;
+    padding: 6px 9px;
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+    backdrop-filter: blur(8px);
+  }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-tabs button:first-child { position: sticky; left: 0; z-index: 1; }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-days {
+    right: 7px;
+    bottom: calc(env(safe-area-inset-bottom) + 7px);
+    left: 7px;
+    display: flex;
+    gap: 6px;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 1px;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+  }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-days::-webkit-scrollbar { display: none; }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day {
+    flex: 0 0 auto;
+    grid-template-columns: auto auto;
+    gap: 6px;
+    min-height: 38px;
+    padding: 6px 9px;
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+    backdrop-filter: blur(8px);
+  }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day > strong,
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day-title { display: none; }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day-mobile { display: inline; font-size: .76rem; font-weight: 900; }
+  .trip-route-map-frame.is-mobile-fullscreen .leaflet-top { top: calc(env(safe-area-inset-top) + 48px); }
+  .trip-route-map-frame.is-mobile-fullscreen .leaflet-bottom { bottom: calc(env(safe-area-inset-bottom) + 48px); }
+  .trip-route-map-frame.is-mobile-fullscreen .leaflet-control-attribution { max-width: calc(100vw - 16px); font-size: 8px; }
 }
 
 .map-card iframe {
