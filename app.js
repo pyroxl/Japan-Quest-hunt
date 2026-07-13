@@ -2054,17 +2054,6 @@ function renderOverview() {
   document.querySelector("#albumGrid").innerHTML = "";
   document.querySelector("#calendarGrid").innerHTML = "";
 
-  const city = activeCity();
-  const hotelField = document.querySelector("#hotelField");
-  const hotelLabel = document.querySelector("#hotelLabel");
-  const hotelHelp = document.querySelector("#hotelHelp");
-  if (hotelField) {
-    hotelField.value = state.lodging[state.activeCity] || "";
-    hotelField.placeholder = `Paste ${city.name} hotel name or address later`;
-  }
-  if (hotelLabel) hotelLabel.textContent = city.baseLabel;
-  if (hotelHelp) hotelHelp.textContent = `${city.name} day maps use this as the starting point until the hotel is locked in.`;
-
   renderTripRouteMap();
   renderCalendar();
   renderTripQuestDashboard();
@@ -2865,7 +2854,7 @@ function makeMapCard(day) {
   dayMapLink.href = mapsRouteUrl(day);
   dayMapLink.target = "_blank";
   dayMapLink.rel = "noopener";
-  dayMapLink.textContent = state.lodging[state.activeCity] ? "Open Day Map from Hotel" : "Open Day Map";
+  dayMapLink.textContent = "Open Day Map";
 
   actions.append(dayMapLink);
   content.append(mapElement, mapHelp, placeList, actions);
@@ -3145,11 +3134,6 @@ dayRail.addEventListener("click", (event) => {
     showDay(activeCity().days.find((day) => day.id === view));
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-document.querySelector("#hotelField").addEventListener("input", (event) => {
-  state.lodging[state.activeCity] = event.target.value;
-  saveState();
 });
 
 document.querySelector("#themeToggle")?.addEventListener("click", () => {
