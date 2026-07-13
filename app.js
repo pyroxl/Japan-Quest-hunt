@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v109";
+const APP_VERSION = "japan-quest-v110";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -2089,7 +2089,7 @@ function renderTripRouteMap() {
         ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "Nov 5–8 &amp; 11–13 · 5 nights", "tokyo-1")}
         ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights", "kawaguchiko")}
       </svg>
-      <p class="trip-map-instruction">Double-click a city label or use the rainbow tabs for its chapter.</p>
+      <p class="trip-map-instruction">Double-click a city label or use the chapter buttons.</p>
     <section class="chapter-map" aria-labelledby="chapterMapTitle">
       <h3 class="sr-only" id="chapterMapTitle">Chapter overview map</h3>
       <div class="overview-leaflet-map" role="application" aria-label="Interactive chapter overview map"></div>
@@ -2207,6 +2207,7 @@ function renderOverviewChapterMap(host) {
     tabs.replaceChildren();
     const routeButton = document.createElement("button");
     routeButton.type = "button";
+    routeButton.className = "chapter-map-route-button";
     routeButton.textContent = mobileMapOpen ? "Close" : "Route";
     routeButton.setAttribute("aria-label", mobileMapOpen ? "Close chapter map and return to route overview" : "Show route overview");
     routeButton.setAttribute("role", "tab");
@@ -2224,13 +2225,6 @@ function renderOverviewChapterMap(host) {
       button.addEventListener("click", () => renderChapter(candidate));
       tabs.appendChild(button);
     });
-    if (mobileMapOpen) {
-      const activeButton = tabs.querySelector("button.active");
-      requestAnimationFrame(() => {
-        if (!activeButton) return;
-        tabs.scrollTo({ left: Math.max(0, activeButton.offsetLeft - (tabs.clientWidth - activeButton.offsetWidth) / 2), behavior: "smooth" });
-      });
-    }
   };
 
   const openDay = (day) => {
@@ -2257,7 +2251,8 @@ function renderOverviewChapterMap(host) {
         const selected = candidateId === dayId;
         marker.setZIndexOffset((marker._overviewBaseZ || 0) + (selected ? 1000 : 0));
         marker.getElement()?.classList.toggle("is-highlighted", selected);
-        if (selected) marker.openTooltip(); else marker.closeTooltip();
+        if (selected && marker.getTooltip()) marker.openTooltip();
+        else marker.closeTooltip();
       });
     });
   };
@@ -2330,10 +2325,13 @@ function renderOverviewChapterMap(host) {
           label: day.id.replace("day", ""),
           dayColor: color
         });
-        const markerLabel = isHotelPlace(place) ? `Hotel: ${place}` : place;
-        const marker = L.marker(coordinates, { icon, keyboard: true, title: `${day.title}: ${markerLabel}`, zIndexOffset: isHotelPlace(place) ? 500 : 0 }).addTo(map);
-        marker._overviewBaseZ = isHotelPlace(place) ? 500 : 0;
-        marker.bindTooltip(`<strong>${escapeHtml(day.title)}</strong><br>${isHotelPlace(place) ? "Hotel base · " : ""}${escapeHtml(place)}`, { direction: "top", offset: [0, -4] });
+        const hotel = isHotelPlace(place);
+        const marker = L.marker(coordinates, { icon, keyboard: true, title: hotel ? "" : place, zIndexOffset: hotel ? 500 : 0 }).addTo(map);
+        marker._overviewBaseZ = hotel ? 500 : 0;
+        if (hotel) {
+          marker.getElement()?.removeAttribute("title");
+          marker.getElement()?.setAttribute("aria-label", `Hotel: ${place}`);
+        } else marker.bindTooltip(`<strong>${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
         marker.on("mouseover focus", () => updateHighlight(day.id));
         marker.on("mouseout blur", clearHighlight);
         marker.on("click", () => activateDay(day));

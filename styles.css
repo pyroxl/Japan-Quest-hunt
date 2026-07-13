@@ -2086,7 +2086,24 @@ body[data-theme="dark"] .chapter-map-tabs button.active { background: var(--rose
 body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-map { background: #172827; }
 
 @media (max-width: 620px) {
-  .chapter-map-tabs { left: 20%; right: 7px; padding-inline: 0; }
+  .trip-route-map-frame:not(.is-mobile-fullscreen) { padding-top: 86px; }
+  .chapter-map-tabs {
+    top: 7px;
+    right: 7px;
+    left: 7px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    overflow: visible;
+    padding: 0;
+  }
+  .chapter-map-tabs button {
+    min-width: 0;
+    min-height: 36px;
+    padding: 5px 3px;
+    font-size: .68rem;
+  }
+  .chapter-map-tabs .chapter-map-route-button { display: none; }
   .chapter-map-days { grid-template-columns: 1fr; max-height: 116px; overflow-y: auto; }
 
   body.chapter-map-fullscreen-open {
@@ -2108,6 +2125,7 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
     overflow: hidden;
     border: 0;
     border-radius: 0;
+    padding-top: 0;
     background: #dfecef;
   }
 
@@ -2118,10 +2136,10 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
     top: calc(env(safe-area-inset-top) + 7px);
     right: 7px;
     left: 7px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 5px;
-    padding: 0 0 6px;
-    overscroll-behavior-x: contain;
-    touch-action: pan-x;
+    padding: 0;
   }
   .trip-route-map-frame.is-mobile-fullscreen .chapter-map-tabs button {
     min-height: 36px;
@@ -2129,7 +2147,13 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
     background: color-mix(in srgb, var(--card) 94%, transparent);
     backdrop-filter: blur(8px);
   }
-  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-tabs button:first-child { position: sticky; left: 0; z-index: 1; }
+  .trip-route-map-frame.is-mobile-fullscreen .chapter-map-tabs .chapter-map-route-button {
+    display: block;
+    grid-column: 1 / -1;
+    justify-self: start;
+    min-width: 74px;
+    padding-inline: 10px;
+  }
   .trip-route-map-frame.is-mobile-fullscreen .chapter-map-days {
     right: 7px;
     bottom: calc(env(safe-area-inset-bottom) + 7px);
@@ -2158,7 +2182,7 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
   .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day > strong,
   .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day-title { display: none; }
   .trip-route-map-frame.is-mobile-fullscreen .chapter-map-day-mobile { display: inline; font-size: .76rem; font-weight: 900; }
-  .trip-route-map-frame.is-mobile-fullscreen .leaflet-top { top: calc(env(safe-area-inset-top) + 48px); }
+  .trip-route-map-frame.is-mobile-fullscreen .leaflet-top { top: calc(env(safe-area-inset-top) + 124px); }
   .trip-route-map-frame.is-mobile-fullscreen .leaflet-bottom { bottom: calc(env(safe-area-inset-bottom) + 48px); }
   .trip-route-map-frame.is-mobile-fullscreen .leaflet-control-attribution { max-width: calc(100vw - 16px); font-size: 8px; }
 }
