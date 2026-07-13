@@ -92,13 +92,29 @@ window.PLACE_COORDINATES = {
     34.9691,
     135.7794
   ],
+  "Tofuku-ji Temple": [
+    34.9761,
+    135.7744
+  ],
   "Nijo Castle": [
     35.0140076,
     135.7485369
   ],
+  "Kyoto Imperial Palace": [
+    35.0254,
+    135.7621
+  ],
+  "Kyoto International Manga Museum": [
+    35.0118,
+    135.7595
+  ],
+  "Nishiki Market": [
+    35.0050,
+    135.7649
+  ],
   "Kamo River Kyoto": [
-    35.047393,
-    135.760253
+    35.0091,
+    135.7714
   ],
   "Pontocho Alley": [
     35.0059797,
@@ -136,6 +152,22 @@ window.PLACE_COORDINATES = {
     35.0168123,
     135.6712621
   ],
+  "Ryoan-ji Temple": [
+    35.0345,
+    135.7183
+  ],
+  "Kinkaku-ji Temple": [
+    35.0394,
+    135.7292
+  ],
+  "Kamishichiken Kyoto": [
+    35.0297,
+    135.7394
+  ],
+  "To-ji Temple": [
+    34.9806,
+    135.7477
+  ],
   "Tenryu-ji Temple": [
     35.0162243,
     135.6729408
@@ -149,8 +181,8 @@ window.PLACE_COORDINATES = {
     135.7726791
   ],
   "Eizan Cable Hiei Station": [
-    35.081,
-    135.806
+    35.064265,
+    135.822165
   ],
   "Enryaku-ji Temple": [
     35.0703687,

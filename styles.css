@@ -2000,12 +2000,19 @@ body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,2
 .leaflet-control-attribution { font-size: 9px; }
 
 .place-list {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
   gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.place-list li {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .place-list a,
@@ -2020,6 +2027,10 @@ body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,2
 }
 
 .place-list a {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
   gap: 7px;
   padding: 8px 10px;
   background: rgba(255, 255, 255, 0.52);
@@ -2027,6 +2038,9 @@ body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,2
   font-weight: 700;
   transition: border-color .15s ease, background .15s ease, transform .15s ease;
 }
+
+.map-place-background { margin: 0; padding: 9px 11px 11px; color: var(--muted); font-size: .78rem; line-height: 1.45; }
+.leaflet-popup-content p { margin: 7px 0 0; line-height: 1.4; }
 
 .place-list .is-map-focused a { border-color: var(--rose); background: var(--card); transform: translateY(-2px); }
 .map-pin-key { display: grid; place-items: center; flex: 0 0 22px; height: 22px; border-radius: 50%; background: var(--green); color: white; font-size: .7rem; font-weight: 900; }

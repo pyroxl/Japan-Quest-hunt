@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v89";
+const APP_VERSION = "japan-quest-v97";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -430,10 +430,10 @@ const roadmapGoals = [
   { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Tenma izakaya dinner is the Day 4 capstone after the scored snack mission.", blocker: "", fallback: "Keep the first seated Tenma venue even if the daytime tasting runs long." },
   { id: "konbini", goal: "7-Eleven and konbini food experience", days: ["day02"], status: "Ready", why: "The first small everyday-Japan ritual begins immediately.", blocker: "", fallback: "Build breakfast from the nearest station or hotel konbini." },
   { id: "nara", goal: "Nara Park", days: ["day06"], status: "Ready", why: "Nara bridges Osaka and Kyoto with one iconic first-trip experience.", blocker: "", fallback: "Use taxis and keep the visit to the park and Todai-ji approach." },
-  { id: "nijo", goal: "Nijo Castle", days: ["day07"], status: "Ready", why: "It is Kyoto's strongest non-temple historic anchor and the shared afternoon meeting point.", blocker: "", fallback: "Taxi to the castle; shorten or skip optional Nishiki." },
-  { id: "mt-inari", goal: "Early Fushimi Inari climb", days: ["day07"], status: "Ready", why: "Mai's hillside torii priority pairs with Nijo on one energetic split day.", blocker: "", fallback: "Turn around at Yotsutsuji or sooner; parents skip the climb entirely." },
-  { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day08"], status: "Ready", why: "This is Mai's protected old-Kyoto atmosphere day.", blocker: "", fallback: "Taxi uphill, visit Kiyomizu, then descend only as far as energy allows." },
-  { id: "arashiyama", goal: "Arashiyama scenery day", days: ["day09"], status: "Ready", why: "One garden or bamboo reveal, then a shared riverside cafe—not a temple collection.", blocker: "", fallback: "Togetsukyo, riverside bench/cafe, and one excellent sweet." },
+  { id: "nijo", goal: "Nijo Castle", days: ["day09"], status: "Ready", why: "It is Kyoto's strongest non-temple historic anchor and opens the compact central-Kyoto day.", blocker: "", fallback: "Keep Nijo, then skip either the palace or Manga Museum and rejoin at Nishiki or dinner." },
+  { id: "mt-inari", goal: "Early Fushimi Inari climb", days: ["day07"], status: "Ready", why: "Mai's hillside torii priority now begins a coherent southeast-to-Higashiyama sweep.", blocker: "", fallback: "Turn around at Yotsutsuji or sooner; parents skip Inari and Tofuku-ji entirely." },
+  { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day07"], status: "Ready", why: "Parents meet the couple at Kiyomizu after the Inari and Tofuku-ji morning.", blocker: "", fallback: "Taxi toward Kiyomizu, use a cafe base, then descend only as far as energy allows." },
+  { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day08"], status: "Ready", why: "Bamboo and Togetsukyo lead naturally into Ryoan-ji and Kinkaku-ji via the Randen corridor.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by taxi." },
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
   { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a full Kyoto mountain day with Enryaku-ji and forest paths.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
   { id: "mountain-chapter", goal: "Three-night Kawaguchiko retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "One Fuji-area hotel creates a deliberate quiet escape between two Tokyo stays, with active and gentle versions each day.", blocker: "November weather, local bus schedules, trail status and Tokyo luggage handling need confirmation.", fallback: "Keep the lake hotel and use ropeway, museums, cafes and short shoreline walks instead of a hike." },
@@ -442,7 +442,7 @@ const roadmapGoals = [
   { id: "tokyo-story", goal: "Tokyo through Ghibli, friends, teamLab and food", days: ["day14", "day15", "day16", "day21"], status: "Ready", why: "The tightened Tokyo chapter keeps only the personally distinct anchors.", blocker: "", fallback: "Protect Ghibli/friends and use the final day for the strongest available ticket and bakery route." },
   { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
   { id: "friends-day", goal: "Akko/Yoshi home-neighborhood day", days: ["day16"], status: "Needs Confirmation", why: "The most authentic Tokyo capstone is a meal and neighborhood tour chosen by friends who live there.", blocker: "Confirm neighborhood name, availability, and dinner plan.", fallback: "Keep it seated and social; if near Chofu, Jindaiji and soba are a strong optional anchor." },
-  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day15", "day16"], status: "Ready", why: "Ghibli covers imaginative culture; the friends' neighborhood may add local character spots or optional Chofu/Kitaro details.", blocker: "", fallback: "Use one compact Nakano or themed-cafe stop only if Mai actively asks on another day." },
+  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Ghibli cover imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Ghibli/Kichijoji." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
 ];
@@ -671,7 +671,7 @@ const tripData = {
   kyoto: {
     name: "Kyoto",
     baseLabel: "Future Kyoto hotel",
-    description: "Old streets, Mt Inari, Nijo, Arashiyama and a full Mt Hiei mountain day.",
+    description: "Geographic Kyoto clusters: Inari-to-Gion, Arashiyama-to-Kinkaku, central history, and Mt Hiei.",
     ongoing: [
       {
         title: "Kyoto Soft-Beauty Collection",
@@ -685,10 +685,10 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day07", "2026-10-29", "Torii Before Breakfast", "One intentionally energetic split day: hillside torii, shogun history, then food and river atmosphere.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Nijo Castle", "Kamo River Kyoto", "Pontocho Alley"], "Mai and Brian climb Fushimi Inari early, then meet the parents for Nijo Castle and finish around the Kamo River/Pontocho.", ["Turn around at Yotsutsuji or sooner if the climb is complete", "Notice the nightingale floors at Nijo", "Take a real midday reset", "Try one optional Nishiki snack only if the route has room", "Find an atmospheric but manageable dinner"], ["A fox detail", "Kyoto spreading out below Mt Inari", "A castle gate or painted-room detail"], "Mai gets two of her strongest Kyoto priorities without sacrificing a mountain day later.", "Parents skip Mt Inari; everyone may skip Nishiki."),
-      questDay("day08", "2026-10-30", "Lantern-Lit Higashiyama", "The big preserved-street, temple-on-the-hill day.", ["Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Protect Kiyomizu and the old streets, then let lantern-lit Yasaka/Gion be the atmospheric end.", ["Use a taxi uphill if it saves the day", "Find one matcha or wagashi stop", "Take Mai's dream-trip Kyoto photo", "Move respectfully through Gion without chasing geiko or maiko"], ["A sloping-street detail", "The Kiyomizu panorama", "A lantern-lit corner"], "Mai gets the old-Japan feeling without an overstuffed day.", "Cafe/base-point strategy beats heroic walking."),
-      questDay("day09", "2026-10-31", "River, Bamboo, Breathe", "One garden or bamboo reveal, then a shared riverside regroup.", ["Arashiyama Station Kyoto", "Togetsukyo Bridge", "Arashiyama Bamboo Forest", "Tenryu-ji Temple", "Okochi Sanso Garden"], "Choose Tenryu-ji garden, Okochi Sanso, or a manageable bamboo section, then rejoin the family at a riverside cafe; the rowboat is off the list.", ["See Togetsukyo and the river", "Choose one walking payoff rather than collecting all three", "Find the scenic cafe/rest base", "Try one excellent Arashiyama sweet"], ["A mountain-and-river frame", "A bamboo sound or shadow", "A garden detail worth remembering"], "Mai gets a beautiful open-air Kyoto day.", "Return before scenery becomes stamina debt."),
-      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "A full mountain day of forest paths, sacred precincts and views over Kyoto and Lake Biwa.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station"], "Use the assisted ascent and choose one meaningful Mt Hiei forest walk linking the Enryaku-ji experience and viewpoints.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Return for a restorative Kyoto dinner"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose.", "Dad uses the most assisted route and may return earlier while Mai and Brian walk farther.")
+      questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu and follow the old streets downhill to Gion.", ["Turn around at Yotsutsuji or sooner", "Choose either Tofuku-ji's garden or Tsutenkyo area", "Meet the parents near Kiyomizu around 10:30", "Find one matcha or wagashi pause", "Finish Gion by late afternoon rather than returning at night"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and use a cafe base."),
+      questDay("day08", "2026-10-30", "Bamboo to Gold", "An early Arashiyama payoff followed by the rock garden and Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple", "Kamishichiken Kyoto"], "Lock the Bamboo Grove and Togetsukyo, eat early, then use the Randen corridor for compact Ryoan-ji and Kinkaku-ji visits.", ["Walk the grove before it becomes busiest", "Use the river cafe as the parent payoff", "Do not add another Arashiyama temple", "Give the rock garden one focused hour", "Use Kamishichiken only for optional tea or wagashi"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The first Golden Pavilion reflection"], "Mai gets three distinct Kyoto landscapes without a Saturday Arashiyama crowd.", "Parents skip Ryoan-ji if useful and meet at Kinkaku-ji by taxi."),
+      questDay("day09", "2026-10-31", "Palaces to Pontocho", "A compact central-Kyoto history, manga, market and neighborhood day.", ["Nijo Castle", "Kyoto Imperial Palace", "Kyoto International Manga Museum", "Nishiki Market", "Kamo River Kyoto", "Pontocho Alley"], "Enter Nijo at opening, make the Imperial Palace compact, use the Manga Museum as an optional split, lock Nishiki, then reset before Kamo River and Pontocho dinner.", ["Notice Nijo's nightingale floors", "Keep the palace visit to about an hour", "Use the Manga Museum or a parent rest window", "Bound Nishiki rather than starting a second food mission", "Take a real hotel reset before dinner"], ["A castle gate or painted-room detail", "An Imperial Palace roofline", "A manga-art surprise", "A riverbank dinner approach"], "Mai gets shogun history, imperial history, manga and food without crossing Kyoto again.", "Nijo is shared; parents may skip the palace or Manga Museum and rejoin later."),
+      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "A full mountain day of forest paths, sacred precincts and views over Kyoto and Lake Biwa.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent and choose one meaningful Mt Hiei forest walk.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Use Demachiyanagi for dinner only if returning down the Kyoto side"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose.", "Dad uses the most assisted route and may return earlier while Mai and Brian walk farther.")
     ]
   },
   hiroshima: {
@@ -703,7 +703,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day11", "2026-11-02", "White Heron Westbound", "White-castle reveal, humane pacing, then the first scored train-food ride west.", ["Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station"], "See Himeji's white keep, choose interior or exterior-plus-Koko-en by mobility, then continue to Hiroshima.", ["Forward or simplify large luggage", "Photograph the first full castle reveal", "Buy different regional ekiben", "Photograph each box closed and open", "Score all five Ekiben League categories", "Eat Hiroshima-style okonomiyaki after check-in if energy agrees"], ["A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "Dad's exterior-and-garden version is a complete win."),
+      questDay("day11", "2026-11-02", "White Heron Westbound", "An optional no-delay To-ji dawn, white-castle reveal, then the first scored train-food ride west.", ["To-ji Temple", "Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station"], "Use To-ji's free grounds only if luggage is handled and Himeji arrival remains before 09:00; otherwise begin at Kyoto Station and keep Himeji humane.", ["Skip To-ji unless everyone is voluntarily awake", "Forward or simplify large luggage", "Photograph the first full castle reveal", "Buy different regional ekiben", "Photograph each box closed and open", "Score all five Ekiben League categories"], ["To-ji's pagoda at dawn if earned", "A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "Skipping To-ji and using Himeji's exterior-and-garden version are both complete wins."),
       questDay("day12", "2026-11-03", "Memory Along the River", "Museum, remembrance, river, and the Dome at dusk without emotional clutter.", ["Hiroshima Peace Memorial Museum", "Hiroshima Peace Memorial Park", "Atomic Bomb Dome", "Hiroshima National Peace Memorial Hall"], "Move from the museum through the Cenotaph and memorial axis, then see the Atomic Bomb Dome at dusk.", ["Leave time for a quiet break", "Use the National Peace Memorial Hall if a quieter space helps", "Write one private sentence about what should be remembered", "Try momiji manju or a calm cafe instead of adding sightseeing"], ["The alignment through the Cenotaph", "A paper crane or peace message", "The river changing the mood of the park"], "The day feels thoughtful and humane, not consumed as an attraction.", "Shukkeien is optional; emotional room is the priority."),
       questDay("day13", "2026-11-04", "Torii at the Tide", "Torii, tide, deer, island food, forest, and dusk if the day allows.", ["Miyajimaguchi Station", "Itsukushima Shrine", "Miyajima Omotesando", "Daisho-in Temple", "Miyajima Ropeway"], "See Itsukushima Shrine and the torii at the day's tide, then let the island—not a completion list—be the payoff.", ["Ride the ferry", "Try anago-meshi", "Try a grilled oyster if appealing", "Compare warm and packaged momiji manju", "Choose Daisho-in or ropeway only by energy", "Stay for softer island atmosphere if practical"], ["Torii reflected or revealed by low tide", "A deer behaving like a local", "A forest, lantern, or sea detail away from the busiest street"], "Miyajima earns its place as the romantic westward payoff.", "Shrine, waterfront, food street, and cafe are a complete parent version.")
     ]
@@ -769,22 +769,22 @@ const dayGoals = {
     photoHint: "The Buddha hall interior, a deer moment, or old Naramachi lane."
   },
   day07: {
-    clearPath: "Early Inari climb, real midday reset, Nijo reunion, Kamo/Pontocho dinner.",
-    mainGoal: "Reunite at Nijo with one morning photo to share—torii, fox, or nightingale floors.",
-    photoHint: "Torii tunnel, Kyoto view from Inari, or Nijo gate/floors."
+    clearPath: "Early Inari climb → compact Tofuku-ji → Kiyomizu reunion → old streets → Gion finish.",
+    mainGoal: "Share the Kiyomizu panorama after Mai and Brian complete the Inari-to-Tofuku morning.",
+    photoHint: "Torii tunnel, Kyoto view from Inari, Kiyomizu panorama, or sloping street."
   },
   day08: {
-    clearPath: "Kiyomizu early, slope streets down, long cafe break, Gion lanterns after dark.",
-    mainGoal: "Capture the lantern-lit Gion or Kiyomizu panorama that defines old Kyoto.",
-    photoHint: "Kiyomizu stage view, sloping street, or lantern-lit Gion corner."
+    clearPath: "Bamboo early → Togetsukyo cafe → early lunch → Ryoan-ji → Kinkaku-ji.",
+    mainGoal: "End the west/northwest sweep with the Golden Pavilion reveal.",
+    photoHint: "Bamboo path, Togetsukyo with mountains, rock garden, or Golden Pavilion reflection."
   },
   day09: {
-    clearPath: "One bamboo/garden reveal, riverside regroup at Togetsukyo, leave before overload.",
-    mainGoal: "Reunite at Togetsukyo with one scenery photo you chose—bamboo, garden, or river.",
-    photoHint: "Bamboo path, garden detail, or Togetsukyo with mountains behind."
+    clearPath: "Nijo opening → Imperial Palace → optional Manga Museum → Nishiki → reset → Pontocho.",
+    mainGoal: "Finish the shared Nijo day with a rested Pontocho neighborhood dinner.",
+    photoHint: "Nijo gate/rooms, Imperial roofline, manga art, Nishiki display, or Kamo River."
   },
   day10: {
-    clearPath: "Assisted ascent, Enryaku-ji core, one forest walk, comforting Kyoto dinner after.",
+    clearPath: "Demachiyanagi breakfast, assisted ascent, Enryaku-ji core, one forest walk, comforting dinner after.",
     mainGoal: "Photograph the first wide Kyoto or Lake Biwa view from Mt Hiei.",
     photoHint: "Summit viewpoint, forest path, or Enryaku-ji bell/incense moment."
   },
@@ -962,34 +962,38 @@ const dayContext = {
     history: ["The Nunobiki slopes rise immediately behind Shin-Kobe, making mountain scenery unusually close to the city and port.", "The modern ropeway and herb gardens turn that steep terrain into an assisted scenic outing with broad views over Kobe and Osaka Bay."]
   },
   day06: {
-    summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and luggage never gets to become the main character.",
-    timeline: [["08:00–09:00", "Check out and send or store luggage; travel toward Kintetsu Nara."], ["10:00–12:30", "Walk or taxi through Nara Park toward Todai-ji, keeping deer encounters playful but brief."], ["12:30–15:00", "Eat kakinoha-zushi or mochi, then choose a short Naramachi or cafe pause."], ["15:00–18:00", "Continue to Kyoto, check in, and keep dinner close to the hotel."]],
+    summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and To-ji remains an earned early-arrival bonus.",
+    timeline: [["08:00–09:00", "Check out and send or store luggage; travel toward Kintetsu Nara."], ["10:00–12:30", "Walk or taxi through Nara Park toward Todai-ji, keeping deer encounters playful but brief."], ["12:30–15:00", "Eat kakinoha-zushi or mochi, then choose a short Naramachi or cafe pause."], ["15:00–18:00", "Continue to Kyoto. Attempt To-ji only if everyone is luggage-free by about 15:45; otherwise check in and eat near the hotel."]],
     history: ["Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.", "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling."]
   },
   day07: {
-    summary: "An early Mt Inari climb and afternoon Nijo visit share one energetic day, with a deliberate reset between them and a soft river-food ending.",
-    timeline: [["06:45–10:15", "Mai and Brian climb through Fushimi Inari's torii to Yotsutsuji or the point where the experience feels complete; parents sleep in."], ["10:30–12:30", "Eat, return to the hotel if useful, and reset rather than racing across Kyoto."], ["13:00–16:00", "Meet at Nijo Castle for the palace rooms, nightingale floors, and gardens."], ["17:00–20:00", "Choose Kamo River dusk and a Pontocho-area dinner; Nishiki is optional."]],
-    history: ["Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Donated torii record hopes, gratitude, and commercial prosperity; foxes serve as Inari's messengers.", "Tokugawa Ieyasu built Nijo Castle after winning control of Japan. Its painted rooms and staged approaches turned architecture into political theater, and the castle later hosted the announcement that authority would return to the emperor."]
+    summary: "The maximum-coverage southeast day climbs Mt Inari, samples one Tofuku-ji section, then meets the parents for Kiyomizu and the old streets down to Gion.",
+    timeline: [["05:45–06:15", "Wake, take a packed breakfast and leave promptly. Be at Fushimi Inari's main approach by 06:15; breakfast happens after the climb, not before it."], ["06:15–07:20", "Climb through the torii toward Yotsutsuji. Pace check: if Yotsutsuji is not reached by 07:20, turn around wherever you are—do not chase the summit."], ["07:20–08:15", "Descend and leave the shrine area. Use the train or a short taxi to Tofuku-ji and eat the portable breakfast in transit or before entry."], ["08:50–09:50", "Be at Tofuku-ji for its 09:00 opening. Choose the garden or Tsutenkyo area, not both; leave by 09:50 even if the visit began late."], ["09:50–10:30", "Transfer toward Kiyomizu and message the parents with the exact meeting point. If you missed the 09:50 exit, take a taxi and protect the 10:30 reunion."], ["10:30–11:50", "Visit Kiyomizu together. The panorama, main hall and Otowa waterfall are the complete visit; begin descending before noon."], ["11:50–14:30", "Walk Sannenzaka and Ninenzaka with one bounded lunch or cafe stop. Pace check: be below the steepest slopes by 14:30."], ["14:30–16:00", "Continue to Yasaka and Gion. The required sightseeing day ends here; anything after 16:00 is an evening bonus, not schedule debt."]],
+    evening: { rank: "Most open Kyoto evening", window: "From about 16:00", bestUse: "Stay in Yasaka/Gion for lantern atmosphere, dinner, Shirakawa or a gentle walk toward the Kamo River.", canMove: "Yasaka Shrine, Gion lanes and the architecture of Sannenzaka/Ninenzaka still work after shops close. Fushimi Inari's lower torii can also be atmospheric after dark, but it should not replace this morning's climb.", keepDaylight: "Do not defer Tofuku-ji or Kiyomizu-dera; their interiors, gardens and views require the daytime opening window." },
+    history: ["Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Donated torii record hopes, gratitude, and commercial prosperity; foxes serve as Inari's messengers.", "Tofuku-ji was founded in the 13th century and later became a major Zen complex. Kiyomizu-dera grew around a sacred spring, while Gion developed beside Yasaka Shrine as a living entertainment quarter."]
   },
   day08: {
-    summary: "The protected old-Kyoto day begins uphill at Kiyomizu, descends through historic slopes, and lets lantern light—not another checklist item—provide the ending.",
-    timeline: [["08:00–09:00", "Taxi uphill and enter Kiyomizu-dera before the lanes become busiest."], ["09:00–12:30", "Explore the temple and descend through Sannenzaka and Ninenzaka at an unhurried pace."], ["12:30–16:30", "Choose lunch, matcha, and a substantial cafe or hotel break."], ["17:00–19:30", "Let Yasaka Shrine and Gion provide the lantern-lit atmospheric ending."]],
-    history: ["Kiyomizu-dera's story begins around a sacred spring in the wooded hills east of Kyoto. Its famous stage projects over the slope without nails, transforming pilgrimage into a carefully framed encounter with the city, seasons, and the possibility of divine assistance.", "The roads below carried worshippers, crafts, food, and lodging toward the temple. Farther down, Gion grew beside Yasaka Shrine into an entertainment quarter governed by highly trained arts and social customs. It remains a living neighborhood, which is why restraint around residents and performers matters."]
+    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple.",
+    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo, meet the parents and take the shared riverside cafe pause. The bridge and cafe—not more Arashiyama sights—are the morning payoff."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–15:30", "Complete Kinkaku-ji's one-way garden route. Afterward, Kamishichiken tea or dinner is optional; otherwise return and rest."]],
+    evening: { rank: "Second-most open Kyoto evening", window: "Usually from about 16:30–17:30", bestUse: "Use Kamishichiken only if a specific tea, wagashi or dinner place is open; otherwise return to central Kyoto for an easy meal.", canMove: "A short Kamishichiken neighborhood walk or dinner can happen in the evening. It is an atmosphere add-on, not a substitute for the day's temples.", keepDaylight: "Keep the Bamboo Grove, Togetsukyo, Ryoan-ji and Kinkaku-ji in daylight. Ryoan-ji and Kinkaku-ji close at 17:00, and the river/mountain scenery loses much of its payoff after dark." },
+    history: ["Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span.", "Ryoan-ji's dry garden reduces landscape to stone, gravel and interpretation. Kinkaku-ji's reflective pavilion began as a shogun's retirement villa before becoming a Zen temple."]
   },
   day09: {
-    summary: "Arashiyama is about one beautiful reveal and a shared return to the river—not collecting bamboo, gardens, temples, bridge, and mountain as separate obligations.",
-    timeline: [["08:00–09:00", "Travel west early enough to experience a quieter river or bamboo approach."], ["09:00–12:00", "Choose one main walking payoff: Tenryu-ji garden, Okochi Sanso, or bamboo—not all three."], ["12:00–14:30", "Rejoin at Togetsukyo and settle into lunch or a scenic cafe; rowboat is off the list."], ["14:30–17:00", "Take a gentle riverside finish and return before the area becomes stamina debt."]],
-    history: ["Arashiyama became a retreat for Heian-period aristocrats who traveled from the capital to compose poetry, admire blossoms and autumn leaves, and turn scenery into cultivated experience. Later temples and villas continued that dialogue between designed garden and borrowed mountain view.", "The name Togetsukyo—Moon Crossing Bridge—comes from an emperor's poetic impression of the moon moving across the bridge. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes."]
+    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki and a rested Pontocho dinner in one north-to-south sequence.",
+    timeline: [["08:25–08:45", "Arrive at Nijo before opening with tickets decided. Enter at 08:45; do not begin the day with breakfast or shopping nearby."], ["08:45–10:35", "See Ninomaru Palace, the nightingale corridors and a bounded garden loop. Hard exit by 10:35–10:45."], ["10:45–11:15", "Travel to the Kyoto Imperial Palace and enter through the current public gate after security. Message Dad's chosen rest/rejoin point."], ["11:15–12:15", "Make the palace a one-hour visit. Its October last admission is 15:20, but using that theoretical margin would break Nishiki and the reset."], ["12:15–13:10", "Take a seated lunch near Karasuma Oike. At 12:45 make the decision: Manga Museum only if everyone is on pace and interested."], ["13:10–14:25", "Optional Manga Museum visit or parent/couple rest split. If arrival would be after 13:30, shorten it to one exhibition plus the Manga Wall or skip it."], ["14:35–15:50", "Walk Nishiki in one direction with a short tasting list. Leave by 15:50 before more stalls begin winding down."], ["16:00–17:45", "Return to the hotel for a real reset. This protected break is part of the plan, not unused sightseeing time."], ["17:45–20:30", "Approach by the central Kamo River, then have the planned Pontocho/Kiyamachi dinner. Reserve dinner if a particular restaurant matters."]],
+    evening: { rank: "Best structured evening, but already allocated", window: "17:45 onward after the hotel reset", bestUse: "Kamo River, Pontocho and Kiyamachi are exactly the right evening material and remain fully appreciated after dark.", canMove: "The river walk and Pontocho neighborhood experience belong in the evening. They can absorb extra time without threatening an opening hour.", keepDaylight: "Do not push Nijo, the Imperial Palace, Manga Museum or Nishiki into evening. The Palace closes at 16:00 in October–February, the museum at 17:00, and Nishiki is not a reliable night market." },
+    history: ["Nijo Castle turned Tokugawa architecture into political theater and later hosted the announcement that authority would return to the emperor.", "The Kyoto Imperial Palace represents the court city that preceded modern Tokyo; nearby Nishiki and the Kamo River keep the day connected to contemporary central-Kyoto life."]
   },
   day10: {
     summary: "Mt Hiei receives a full day: assisted ascent, Enryaku-ji's forested precincts, one meaningful walk, and views toward Kyoto or Lake Biwa.",
-    timeline: [["07:30–09:30", "Travel toward the selected Mt Hiei ascent with bakery breakfast and a confirmed seasonal transport plan."], ["09:30–13:00", "Reach Enryaku-ji and focus on one core precinct rather than collecting every hall."], ["13:00–16:00", "Mai and Brian add the chosen forest/viewpoint walk; Dad uses the assisted route and seated pauses."], ["16:00–19:30", "Descend with operating-hour margin and return to Kyoto for a comforting dinner before tomorrow's transfer."]],
+    timeline: [["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."], ["07:50–09:30", "Take the Eizan/Yase assisted approach selected during the final timetable check. Pace check: if the ascent is disrupted, switch immediately to the confirmed Sakamoto-side or direct-bus fallback."], ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."], ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."], ["13:00–15:15", "Mai and Brian take one preselected forest/viewpoint route; Dad uses the assisted core. Do not improvise a second precinct or an unplanned long trail."], ["15:15–16:00", "Regroup at the designated descent transport point. This is the hard turnaround window even if the walk feels unfinished."], ["16:00–18:30", "Descend with at least one-service margin and take the simplest route to the hotel. If returning via Demachiyanagi, dinner there is optional."], ["By 20:30", "Finish dinner, pack for Himeji/Hiroshima and set out the morning bags. Do not borrow sleep from the westbound transfer."]],
+    evening: { rank: "Least dependable Kyoto evening", window: "Only after the actual descent, likely 18:00 or later", bestUse: "A comforting dinner near the hotel—or Demachiyanagi only if the route naturally returns there—followed by packing.", canMove: "No required Day 10 attraction should move into the evening. Dinner is the only flexible neighborhood element.", keepDaylight: "Enryaku-ji, forest paths, viewpoints and mountain transport all require daylight and last-service margin. Treat any unexpectedly early return as recovery time before Day 11." },
     slowTimeline: [["08:30–10:30", "Take the most assisted confirmed ascent after a calm breakfast; avoid an early multi-transfer race."], ["10:30–12:30", "Visit the Todo core only, with Konpon Chudo as the essential temple experience and seated pauses."], ["12:30–14:00", "Eat a proper lunch and use the nearest viewpoint rather than adding a forest route."], ["14:00–16:30", "Begin the assisted descent with generous last-service margin."], ["Evening", "Return to Kyoto early for rest, packing and a comforting dinner."]],
     history: ["Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its temples trained monks who later shaped several major Buddhist traditions.", "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic landscape. Forest paths and scattered precincts are central to the experience: Mt Hiei is not one building but a religious geography."]
   },
   day11: {
-    summary: "The westward chapter opens with Himeji's white keep, then uses garden, lunch, and train time to reach Hiroshima without turning a transfer into an endurance test.",
-    timeline: [["07:30–09:30", "Leave Kyoto with day bags; large luggage should already be forwarded or simplified."], ["09:30–12:30", "Approach Himeji Castle and choose the full interior or exterior-focused route."], ["12:30–15:00", "Visit Koko-en or rest over lunch, then collect an ekiben."], ["15:00–18:00", "Continue to Hiroshima, check in, and eat okonomiyaki only if energy remains."]],
+    summary: "The westward chapter opens with an optional no-delay To-ji dawn and Himeji's white keep, then reaches Hiroshima without turning the transfer into an endurance test.",
+    timeline: [["06:10–09:00", "Use To-ji's free grounds for 30 minutes only if bags are handled and the selected train still reaches Himeji before opening; otherwise leave directly from Kyoto Station."], ["09:00–12:30", "Approach Himeji Castle and choose the full interior or exterior-focused route."], ["12:30–15:00", "Visit Koko-en or rest over lunch, then collect an ekiben."], ["15:00–18:00", "Continue to Hiroshima, check in, and eat okonomiyaki only if energy remains."]],
     history: ["Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.", "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex."]
   },
   day12: {
@@ -1803,6 +1807,13 @@ function dailyGuide(day) {
       ${hasSlowTimeline ? `<div data-timeline-panel="slow" role="tabpanel" hidden><ol class="day-timeline slow-day-timeline">${timelineMarkup(slowTimeline)}</ol></div>` : ""}
       <p class="timeline-note">These are pacing windows, not reservations. Shift them around confirmed tickets, transport, weather, and energy.</p>
     </section>
+    ${context.evening ? `<section class="context-block evening-flex-block">
+      <h4>Evening Flexibility</h4>
+      <p><strong>${context.evening.rank}:</strong> ${context.evening.window}</p>
+      <p><strong>Best use:</strong> ${context.evening.bestUse}</p>
+      <p><strong>Can move later:</strong> ${context.evening.canMove}</p>
+      <p><strong>Keep in daylight:</strong> ${context.evening.keepDaylight}</p>
+    </section>` : ""}
     <section class="context-block">
       <h4>The Story Behind Today</h4>
       <div class="history-story">${context.history.map((paragraph) => `<p>${paragraph}</p>`).join("")}</div>
@@ -2694,6 +2705,32 @@ const mapFrameCenters = {
   fuji: [35.5171, 138.7518]
 };
 
+const placeBackground = {
+  "Fushimi Inari Taisha": "The head shrine of the Inari network, associated with rice, prosperity and enterprise. The thousands of torii are private donations; fox statues represent Inari's messengers rather than the deity itself.",
+  "Yotsutsuji Intersection Kyoto": "This four-way junction is the climb's practical scenic payoff, with a broad view across southern Kyoto. It is also the sensible turnaround point: the summit circuit adds time but not a more dramatic city panorama.",
+  "Tofuku-ji Temple": "Founded in 1236, Tofuku-ji became one of Kyoto's major Rinzai Zen temples. Its name combines characters from Nara's Todai-ji and Kofuku-ji, while the Tsutenkyo bridge and modern Hojo gardens show very different eras of temple design.",
+  "Kiyomizu-dera": "Kiyomizu-dera developed around the Otowa waterfall as a pilgrimage site dedicated to Kannon. Its famous wooden stage projects from the hillside without nails, turning the city view and the act of approaching the sanctuary into part of the religious experience.",
+  "Sannenzaka": "The sloping stone lane formed part of the approach to Kiyomizu and still preserves machiya shopfronts. Its ominous 'three-year slope' legend is best understood as an old caution to walk carefully on steep stones, not a reason for anxiety.",
+  "Ninenzaka": "Ninenzaka continues the historic pilgrimage and commercial approach below Kiyomizu. The lane's value is its scale—stone paving, tiled roofs and narrow frontages—not any single shop.",
+  "Yasaka Shrine": "Yasaka is the spiritual anchor of Gion and the home shrine of the Gion Matsuri, which began as a ritual response to epidemic disease. Its gates and lanterns explain why the surrounding entertainment quarter developed here.",
+  "Gion Kyoto": "Gion grew beside Yasaka Shrine as a district of teahouses and professional arts. It remains a working neighborhood rather than a stage set, so quiet observation and respect for private lanes matter more than trying to spot geiko or maiko.",
+  "Arashiyama Bamboo Forest": "The grove is part of a landscape long used by aristocrats for villas, poetry and seasonal excursions. Its modern fame comes from the immersive sound and vertical light of the path, which is why an early, unhurried passage matters more than its modest length.",
+  "Togetsukyo Bridge": "The present bridge follows a crossing with roots in the Heian period. Its name—Moon Crossing Bridge—comes from an emperor's poetic impression of the moon moving over the span, linking the river view to Arashiyama's courtly history.",
+  "Ryoan-ji Temple": "Ryoan-ji is a Rinzai Zen temple best known for fifteen rocks arranged so that at least one is usually hidden from any single viewpoint. The garden offers no official solution; ambiguity and sustained looking are the point.",
+  "Kinkaku-ji Temple": "The Golden Pavilion was the retirement villa of shogun Ashikaga Yoshimitsu before becoming the Zen temple Rokuon-ji. Its gold, pond and borrowed mountain scenery express political power and an imagined Pure Land, not austere minimalism.",
+  "Kamishichiken Kyoto": "Kyoto's oldest geisha district developed near Kitano Tenmangu and was named for seven teahouses built with leftover materials from a shrine reconstruction. It is quieter than Gion and works best as a restrained tea, sweet or dinner atmosphere stop.",
+  "Nijo Castle": "Nijo was built as the Tokugawa shoguns' Kyoto residence and as a display of authority near the imperial court. The decorated Ninomaru rooms staged political hierarchy; in 1867 the castle also hosted the announcement returning governing authority to the emperor.",
+  "Kyoto Imperial Palace": "This compound was the principal residence of Japan's emperors until the capital moved to Tokyo in 1869. Much of what is seen today reflects repeated rebuilding, but the gates, ceremonial halls and controlled spaces preserve the logic of the court city.",
+  "Kyoto International Manga Museum": "The museum is a partnership between Kyoto City and Kyoto Seika University, housed in a converted elementary school. Its Manga Wall treats comics as something to read, research and preserve, connecting popular culture to the city's academic life.",
+  "Nishiki Market": "Nishiki developed around reliable cold groundwater that helped merchants preserve fish and produce. Known as Kyoto's Kitchen, it remains a retail market as well as a visitor attraction; tasting a few Kyoto ingredients is more revealing than treating it as unlimited street food.",
+  "Kamo River Kyoto": "The Kamo shaped Kyoto's eastern edge, transport, leisure and flood control for centuries. Its central banks now function as shared urban living space, making the evening walk a glimpse of contemporary Kyoto rather than another monument.",
+  "Pontocho Alley": "Pontocho is a narrow entertainment district between the Kamo River and Takase canal, historically lined with teahouses and restaurants. Its compact scale, river-facing dining and evening lanterns are central to the experience.",
+  "Demachiyanagi Station Kyoto": "Demachiyanagi is the junction between central Kyoto, the Kamo/Takano river confluence and the Eizan line into the northeastern hills. Using it for breakfast makes the mountain day begin in a lived-in student and neighborhood district.",
+  "Eizan Cable Hiei Station": "Cable Hiei is the upper station of the steep Eizan funicular from Yase; the line gains 561 meters in roughly 1.3 kilometers. It is a transfer point rather than the summit itself, with the ropeway continuing higher when operating.",
+  "Enryaku-ji Temple": "Saicho founded Enryaku-ji in the late eighth century, and Mt Hiei became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning.",
+  "Hieizan Sakamoto Station": "This JR station connects the Lake Biwa side of Mt Hiei with Kyoto and Otsu. The nearby town of Sakamoto grew around Enryaku-ji's service community and forms the practical eastern exit after descending by the Sakamoto cable route."
+};
+
 function dayMapCenter(day) {
   if (day.id === "day05") return mapFrameCenters.kobe;
   if (["day17", "day18", "day19"].includes(day.id)) return mapFrameCenters.fuji;
@@ -2790,6 +2827,13 @@ function makeMapCard(day) {
       }
     });
     item.append(link);
+    const background = placeBackground[place];
+    if (background) {
+      const backgroundCopy = document.createElement("p");
+      backgroundCopy.className = "map-place-background";
+      backgroundCopy.textContent = background;
+      item.append(backgroundCopy);
+    }
     placeList.appendChild(item);
     items.push(item);
   });
@@ -2837,14 +2881,19 @@ function makeMapCard(day) {
       });
       const marker = L.marker(coordinates, { icon, keyboard: true, title: `${index + 1}. ${place}` }).addTo(map);
       marker.bindTooltip(`<strong>${index + 1}. ${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
+      const background = placeBackground[place];
+      if (background) marker.bindPopup(`<strong>${index + 1}. ${escapeHtml(place)}</strong><p>${escapeHtml(background)}</p>`);
       marker.on("mouseover focus", () => focusPlace(index));
       marker.on("mouseout blur", resetMap);
       markers[index] = marker;
     });
-    points.push(dayMapCenter(day));
     const bounds = L.latLngBounds(points);
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [34, 34], maxZoom: 14 });
     else map.setView(dayMapCenter(day), 11);
+    const missingPlaces = day.places.filter((place) => !window.PLACE_COORDINATES[place]);
+    mapHelp.textContent = missingPlaces.length
+      ? `${points.length} of ${day.places.length} pins loaded. Missing coordinates: ${missingPlaces.join(", ")}.`
+      : `All ${points.length} expected pins are loaded. Hover a numbered stop or map pin to highlight both.`;
     map.whenReady(() => map.invalidateSize());
     if (focusedIndex >= 0) focusPlace(focusedIndex);
   }, 0);
@@ -2907,6 +2956,11 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   }
   function bringWindowToTop(index) {
     if (index <= 0) return;
+    const carouselTop = carousel.getBoundingClientRect().top;
+    const carouselIsAboveViewport = carouselTop < 0;
+    // Only recover a carousel that is already above the viewport; never pull
+    // the page downward when the reader is at or above its current position.
+    if (!carouselIsAboveViewport) return;
     requestAnimationFrame(() => carousel.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }));
   }
   function goTo(index, behavior = "smooth") {
