@@ -1416,6 +1416,40 @@ h3 {
   gap: 8px;
 }
 
+.calendar-day-shell {
+  display: grid;
+  min-width: 0;
+}
+
+.calendar-day-shell .calendar-day {
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-day-shell.has-reference-link .calendar-day {
+  border-radius: 8px 8px 0 0;
+}
+
+.calendar-day-reference {
+  display: block;
+  border: 1px solid rgba(40, 91, 150, 0.35);
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  padding: 7px 10px;
+  background: color-mix(in srgb, #285b96 8%, var(--card));
+  color: #285b96;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-align: right;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.calendar-day-reference:hover,
+.calendar-day-reference:focus-visible {
+  background: color-mix(in srgb, #285b96 15%, var(--card));
+}
+
 .calendar-day {
   display: grid;
   gap: 6px;
@@ -1904,6 +1938,62 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(236, 248, 242, 0.68));
+}
+
+.locked-hotels-panel {
+  margin-bottom: 18px;
+}
+
+.locked-hotel-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.locked-hotel-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--green) 5%, var(--card));
+}
+
+.locked-hotel-list li > span,
+.locked-hotel-list strong,
+.locked-hotel-list small {
+  display: block;
+}
+
+.locked-hotel-list strong {
+  font-size: 0.82rem;
+}
+
+.locked-hotel-list small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.locked-hotel-list a {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .locked-hotel-list li {
+    grid-template-columns: 1fr;
+  }
+
+  .locked-hotel-list a {
+    text-align: left;
+  }
 }
 
 .trip-route-heading {

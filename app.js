@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v111";
+const APP_VERSION = "japan-quest-v113";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -12,6 +12,12 @@ const HOTEL_PLACES = new Set([
   "International House of Japan",
   "Kawaguchiko Hotel"
 ]);
+
+const LOCKED_HOTEL_WEBSITES = {
+  "Hotel Cordia Osaka Hommachi": "https://cordia-osaka.com/hommachi/en/",
+  "Hotel Monterey Kyoto": "https://www.hotelmonterey.co.jp/en/kyoto/",
+  "Hotel Granvia Hiroshima": "https://www.hgh.co.jp/english/"
+};
 
 const STAY_HOTEL_BY_DAY = {
   day02: "Hotel Cordia Osaka Hommachi",
@@ -335,6 +341,13 @@ const calendarThumbnailIdeas = {
   day18: "Idea: two bikes + lake + Fuji",
   day19: "Idea: Mitsutoge summit marker + Fuji",
   day20: "Idea: small bags reunite with suitcases"
+};
+
+const calendarReferenceLinks = {
+  day13: {
+    label: "Nov 4 tide plan ↗",
+    url: "https://www.miyajima.or.jp/sio/sio11.php"
+  }
 };
 
 function calendarWalkLabel(dayId) {
@@ -788,7 +801,7 @@ const dayContext = {
   },
   day13: {
     summary: "Miyajima is the scenic and romantic payoff of the western chapter: shrine and tide first, island food and forest second, with altitude entirely optional. Check tide timing before the ferry—the torii and shrine corridors read differently at high and low water. Shrine, Omotesando snacks, and café time complete the day; Daisho-in or the ropeway are energy choices, not obligations.",
-    timeline: [["08:00–09:30", "Travel to Miyajimaguchi and take the ferry; check the tide plan before setting out."], ["09:30–12:30", "Visit Itsukushima Shrine and the waterfront, then eat anago-meshi or island snacks."], ["12:30–16:00", "Choose Omotesando and cafe time, Daisho-in, or the ropeway according to energy."], ["16:00–18:30", "Stay for softer late light if practical, then ferry back without rushing."]],
+    timeline: [["07:50–09:00 · about 55–70 min", "Walk directly into Hiroshima Station, take the JR San’yō Line to Miyajimaguchi (about 30 min), walk about 6 min to the pier, then take the JR ferry (about 10 min). This is the recommended route from Hotel Granvia."], ["09:00–11:45", "Walk from the ferry terminal to Itsukushima Shrine and the waterfront as the tide recedes toward the 11:46 low tide (107 cm). The gate should look increasingly exposed, but 107 cm is not a guaranteed walk-to-the-gate level."], ["11:45–16:30", "Eat anago-meshi or island snacks, then choose Omotesando and cafe time, Daisho-in, or the ropeway according to energy."], ["16:30–18:30", "Either begin the return before dark, or stay for the strong 18:21 high tide (313 cm) and the torii surrounded by water. The shrine itself closes at 17:30."], ["Return · about 55–70 min", "Take the JR ferry to Miyajimaguchi, walk to JR Miyajimaguchi Station, then ride the JR San’yō Line back to Hiroshima Station. From an 18:30 ferry, expect to reach the hotel around 19:25–19:40."]],
     history: [
       "Itsukushima was treated as a sacred island long before its current buildings appeared. To avoid violating that sanctity, worship took place over the water; the shrine's corridors and great torii still use the tide to blur the boundary between architecture, sea, and mountain.",
       "The 12th-century warrior-statesman Taira no Kiyomori expanded the shrine while cultivating power at the imperial court. Yet Miyajima is not one frozen era: Buddhist halls, pilgrimage paths, merchant food streets, deer, ferries, and tourism have accumulated around the sacred landscape for centuries.",
@@ -2384,15 +2397,23 @@ function renderOverviewChapterMap(host) {
           dayColor: color
         });
         const hotel = isHotelPlace(place);
+        const officialHotelWebsite = LOCKED_HOTEL_WEBSITES[place];
         const marker = L.marker(coordinates, { icon, keyboard: true, title: hotel ? "" : place, zIndexOffset: hotel ? 500 : 0 }).addTo(map);
         marker._overviewBaseZ = hotel ? 500 : 0;
         if (hotel) {
           marker.getElement()?.removeAttribute("title");
-          marker.getElement()?.setAttribute("aria-label", `Hotel: ${place}`);
+          marker.getElement()?.setAttribute("aria-label", officialHotelWebsite ? `Open official website for ${place}` : `Hotel: ${place}`);
+          marker.bindTooltip(`<strong>${escapeHtml(place)}</strong>${officialHotelWebsite ? "<br><span>Open official website ↗</span>" : ""}`, { direction: "top", offset: [0, -4] });
         } else marker.bindTooltip(`<strong>${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
         marker.on("mouseover focus", () => updateHighlight(day.id, { revealMarker: marker }));
         marker.on("mouseout blur", clearHighlight);
-        marker.on("click", () => activateMarker(day, marker));
+        marker.on("click", () => {
+          if (officialHotelWebsite) {
+            window.open(officialHotelWebsite, "_blank", "noopener,noreferrer");
+            return;
+          }
+          activateMarker(day, marker);
+        });
         markers.push(marker);
       });
       markersByDay.set(day.id, markers);
@@ -2514,6 +2535,8 @@ function renderCalendar() {
   const today = todayIso();
   Object.entries(tripData).forEach(([cityId, city]) => {
     city.days.forEach((day) => {
+      const shell = document.createElement("div");
+      shell.className = "calendar-day-shell";
       const button = document.createElement("button");
       button.type = "button";
       button.className = `calendar-day ${day.date === today ? "is-today" : ""}`;
@@ -2541,7 +2564,19 @@ function renderCalendar() {
         showDay(day);
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
-      grid.appendChild(button);
+      shell.appendChild(button);
+      const reference = calendarReferenceLinks[day.id];
+      if (reference) {
+        shell.classList.add("has-reference-link");
+        const link = document.createElement("a");
+        link.className = "calendar-day-reference";
+        link.href = reference.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = reference.label;
+        shell.appendChild(link);
+      }
+      grid.appendChild(shell);
       renderCalendarPhoto(day, button.querySelector(".calendar-photo"));
     });
   });
