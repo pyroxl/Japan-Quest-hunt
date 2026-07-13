@@ -300,9 +300,13 @@ window.PLACE_COORDINATES = {
     35.4984364,
     138.7685395
   ],
-  "Kawaguchiko Hotel": [
-    35.5045641,
-    138.7636697
+  "MIYA HOUSE Kodachi A棟": [
+    35.506874,
+    138.754636
+  ],
+  "Fujisanbike Studio": [
+    35.5037,
+    138.7616
   ],
   "Lake Kawaguchiko": [
     35.5130603,

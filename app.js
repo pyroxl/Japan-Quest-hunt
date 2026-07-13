@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v113";
+const APP_VERSION = "japan-quest-v115";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -10,13 +10,14 @@ const HOTEL_PLACES = new Set([
   "Hotel Monterey Kyoto",
   "Hotel Granvia Hiroshima",
   "International House of Japan",
-  "Kawaguchiko Hotel"
+  "MIYA HOUSE Kodachi A棟"
 ]);
 
 const LOCKED_HOTEL_WEBSITES = {
   "Hotel Cordia Osaka Hommachi": "https://cordia-osaka.com/hommachi/en/",
   "Hotel Monterey Kyoto": "https://www.hotelmonterey.co.jp/en/kyoto/",
-  "Hotel Granvia Hiroshima": "https://www.hgh.co.jp/english/"
+  "Hotel Granvia Hiroshima": "https://www.hgh.co.jp/english/",
+  "MIYA HOUSE Kodachi A棟": "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html"
 };
 
 const STAY_HOTEL_BY_DAY = {
@@ -35,9 +36,9 @@ const STAY_HOTEL_BY_DAY = {
   day14: "International House of Japan",
   day15: "International House of Japan",
   day16: "International House of Japan",
-  day17: "Kawaguchiko Hotel",
-  day18: "Kawaguchiko Hotel",
-  day19: "Kawaguchiko Hotel",
+  day17: "MIYA HOUSE Kodachi A棟",
+  day18: "MIYA HOUSE Kodachi A棟",
+  day19: "MIYA HOUSE Kodachi A棟",
   day20: "International House of Japan",
   day21: "International House of Japan"
 };
@@ -156,7 +157,7 @@ const roadmapGoals = [
   { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day08"], status: "Ready", why: "Bamboo and Togetsukyo lead naturally into Ryoan-ji and Kinkaku-ji via the Randen corridor.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by taxi." },
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
   { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a full Kyoto mountain day with Enryaku-ji and forest paths.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
-  { id: "mountain-chapter", goal: "Three-night Kawaguchiko retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "One Fuji-area hotel creates a deliberate quiet escape between two Tokyo stays, with active and gentle versions each day.", blocker: "November weather, local bus schedules, trail status and Tokyo luggage handling need confirmation.", fallback: "Keep the lake hotel and use ropeway, museums, cafes and short shoreline walks instead of a hike." },
+  { id: "mountain-chapter", goal: "Three-night Kawaguchiko retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "One Fuji-area villa creates a deliberate quiet escape between two Tokyo stays, with active and gentle versions each day.", blocker: "November weather, local bus schedules, trail status, Tokyo luggage handling and Kodachi↔station taxis need confirmation.", fallback: "Keep the villa and use ropeway, museums, cafes and short shoreline walks instead of a hike." },
   { id: "fuji-return", goal: "Protected Kawaguchiko–Tokyo return", days: ["day20"], status: "Needs Booking", why: "Returning on Nov 11 creates a full buffer before the flight and leaves time for missed Tokyo priorities.", blocker: "Reserve the return bus or train and allow road-delay margin.", fallback: "Use the rail route via Otsuki if highway conditions look unreliable." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
   { id: "tokyo-story", goal: "Tokyo through Ghibli, friends, teamLab and food", days: ["day14", "day15", "day16", "day21"], status: "Ready", why: "The tightened Tokyo chapter keeps only the personally distinct anchors.", blocker: "", fallback: "Protect Ghibli/friends and use the final day for the strongest available ticket and bakery route." },
@@ -487,10 +488,10 @@ const tripData = {
       questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "International House of Japan"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
       questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["International House of Japan", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
       questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["International House of Japan", "Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
-      questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "Kawaguchiko Hotel"], "Send or store large luggage, travel with small bags, and arrive early enough to settle in and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Confirm the private-bath plan", "Reach the hotel with dinner margin"], ["The first clear Fuji reveal", "Lake light from the room or shore", "A quiet arrival drink or meal"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day."),
-      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Kawaguchiko Hotel", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Walk to the nearby reserved e-bike pickup; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a hotel-arranged taxi; the Red Line is the budget backup. Choose the ropeway, one museum or hotel time instead and reunite for dinner."),
-      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Kawaguchiko Hotel", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the hotel."),
-      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["Kawaguchiko Station", "Shinjuku Station", "International House of Japan"], "Take the reserved morning return, recover or receive the large bags, check in, and complete only the most useful Tokyo reset tasks.", ["Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
+      questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights in a Kodachi villa beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "MIYA HOUSE Kodachi A棟"], "Send or store large luggage, travel with small bags, taxi from Kawaguchiko Station to the villa after check-in opens, and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Taxi from Kawaguchiko Station to the villa (no property shuttle)", "Check in from 16:00; cook or eat nearby for dinner"], ["The first clear Fuji reveal", "Lake light from the terrace or shore", "A quiet arrival meal in the villa kitchen"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day—taxi from the station if the bus arrives before 16:00."),
+      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Fujisanbike Studio", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Taxi or walk from the Kodachi villa to Fujisanbike Studio; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a taxi from the villa; the Red Line is the budget backup. Choose the ropeway, one museum or villa time instead and reunite for dinner."),
+      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis from the villa", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return and station taxi"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the villa."),
+      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["MIYA HOUSE Kodachi A棟", "Kawaguchiko Station", "Shinjuku Station", "International House of Japan"], "Taxi to Kawaguchiko Station, take the reserved morning return, recover or receive the large bags, check in, and complete only the most useful Tokyo reset tasks.", ["Taxi from the villa to Kawaguchiko Station before the reserved departure", "Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
       questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["International House of Japan", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
     ]
   }
@@ -573,22 +574,22 @@ const dayGoals = {
     photoHint: "Group at dinner, a local shopfront they showed you, or the recommended dish."
   },
   day17: {
-    clearPath: "Small bags only: Tokyo to Kawaguchiko—check in, watch the lake, eat, rest.",
-    mainGoal: "Photograph the first Fuji reveal from the hotel or lakeshore.",
-    photoHint: "Small overnight bags beside a train/bus window, with the first Fuji silhouette beyond."
+    clearPath: "Small bags only: Tokyo to Kawaguchiko—taxi to the Kodachi villa after 16:00, watch Fuji, cook or eat, rest.",
+    mainGoal: "Photograph the first Fuji reveal from the villa terrace or lakeshore walk.",
+    photoHint: "Small overnight bags beside a bus window, with the first Fuji silhouette beyond."
   },
   day18: {
-    clearPath: "E-bike circuit around Kawaguchiko; use the agreed partial loop or Mount Tenjoyama only if cycling conditions push back.",
+    clearPath: "Taxi or walk to Fujisanbike Studio, then the e-bike circuit; use the partial loop or Mount Tenjoyama only if conditions push back.",
     mainGoal: "Complete the planned bike circuit—or its agreed partial loop—and take one bikes-and-Fuji finish photo.",
     photoHint: "Two parked bikes in the foreground, lake across the middle, Fuji or autumn hills behind."
   },
   day19: {
-    clearPath: "Mitsutoge trailhead → summit marker → same-way return, with an official open-trail check and fixed turnaround time.",
+    clearPath: "Prebooked taxi from the villa to Mitsutoge trailhead → summit marker → same-way return with a fixed turnaround time.",
     mainGoal: "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return the same way with daylight margin.",
     photoHint: "Mitsutoge summit marker in the foreground with Fuji beyond."
   },
   day20: {
-    clearPath: "Reserved morning return, final Tokyo check-in, luggage recovery, laundry or priority shopping.",
+    clearPath: "Taxi to Kawaguchiko Station, reserved morning return, final Tokyo check-in, luggage recovery, laundry or priority shopping.",
     mainGoal: "Finish the Tokyo reset and share one easy neighborhood dinner.",
     photoHint: "Small Fuji-trip bags meeting the large suitcases in the final Tokyo hotel room."
   },
@@ -684,11 +685,11 @@ const legacyDayContext = {
     history: "Tokyo's residential neighborhoods reveal everyday Japan through stations, shotengai, temples, parks, and favorite restaurants. If the friends are near Chofu, Jindaiji's wooded temple lanes and soba tradition make a strong optional anchor."
   },
   day17: {
-    summary: "Everyone leaves Tokyo with small bags for three nights beside Lake Kawaguchiko, turning Fuji into a deliberate retreat.",
-    history: "Lake Kawaguchiko became one of the most accessible Fuji Five Lakes retreats, combining lakeshore views, hot-spring stays and routes back to Tokyo."
+    summary: "Everyone leaves Tokyo with small bags for three nights in the confirmed Kodachi villa beside Lake Kawaguchiko.",
+    history: "Lake Kawaguchiko became one of the most accessible Fuji Five Lakes retreats, combining lakeshore views, private-stay villas and routes back to Tokyo."
   },
   day18: {
-    summary: "The first active day is an e-bike circuit around Kawaguchiko, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow.",
+    summary: "The first active day is an e-bike circuit from Fujisanbike Studio around Kawaguchiko, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow.",
     history: "Kawaguchiko's circuit is just under 20 kilometers and changes the angle on Fuji throughout the ride, linking shoreline parks, shrines and rest stops."
   }
 };
@@ -836,17 +837,17 @@ const dayContext = {
     ]
   },
   day17: {
-    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage waits at the final Tokyo hotel. Send or store large luggage, reserve the highway bus or Fuji Excursion, and arrive early enough to watch the light change on Fuji from the room or shore. No further achievement is required after check-in—the view, bath and dinner are the complete day.",
-    timeline: [["Morning", "Send large luggage onward or leave it with the returning Tokyo hotel."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko Station."], ["On arrival, 15:00–20:00", "Telephone Kawaguchiko Hotel and use its free on-call shuttle from station platform 10."], ["15:00–17:30", "Check in; walk only to the nearby lakeshore for the first Fuji view."], ["18:00 onward", "Eat at the lodging; no further achievement is required."]],
+    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage waits at the final Tokyo hotel. Send or store large luggage, reserve the highway bus or Fuji Excursion, and taxi from Kawaguchiko Station to MIYA HOUSE Kodachi A棟 once check-in opens at 16:00. The three-bedroom villa has a private sauna and kitchen but no meals—plan groceries or a nearby dinner. No further achievement is required after check-in—the view, sauna and first meal are the complete day.",
+    timeline: [["Morning", "Send large luggage onward or leave it with the returning Tokyo hotel."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko Station."], ["On arrival", "If before 16:00, wait at the station or explore nearby; then taxi to the Kodachi villa (about 10 minutes; roughly 27 minutes on foot)."], ["16:00–17:30", "Check in at MIYA HOUSE Kodachi A棟; walk toward the lakeshore or Fuji Omuro Sengen Shrine for the first Fuji view."], ["Evening", "Cook in the villa kitchen or eat nearby; use the private sauna if wanted. No further achievement is required."]],
     history: [
       "The Fuji Five Lakes sit along Mt Fuji's northern base in a landscape shaped by lava flows, eruptions, and water collecting in basins below the volcano. Pilgrimage, poetry, and later tourism all treated the lakes as places to inhabit Fuji rather than conquer it.",
-      "Kawaguchiko became especially practical once highway buses and rail links made a multi-night stay feasible from Tokyo without heroic packing. Hot-spring hotels turned the shore into a retreat culture—private baths, long dinners, and repeated views as weather changes.",
+      "Kawaguchiko became especially practical once highway buses and rail links made a multi-night stay feasible from Tokyo without heroic packing. Private villas and small lodges turned the shore into a retreat culture—saunas, home cooking, and repeated views as weather changes.",
       "Arriving with small bags while large luggage waits in Tokyo is a deliberate design choice: the chapter should feel like escape, not logistics stress. The first evening's story is simply light on water and the relief of stopping."
     ]
   },
   day18: {
-    summary: "Complete the Kawaguchiko e-bike circuit as its own win, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow. Check wind, rain and rental status before collecting bikes; a defined partial loop is a complete victory if conditions push back. Return bikes, eat well, and recover at the same hotel—save legs, trail food and attention for the summit day.",
-    timeline: [["09:40", "Walk about 5–10 minutes from the hotel to the reserved e-bike pickup near Kawaguchiko Park Hotel."], ["10:00–10:20", "Collect e-bikes; check helmets, locks, batteries and the firm return time."], ["10:20–12:00", "Cross toward the north shore first and ride to the Itchiku/Oishi area while visibility is worth prioritizing."], ["12:00–13:00", "Use Oishi Park as the lunch, toilet and Fuji-view stop."], ["13:00–16:00", "Continue around the west and south shore, or use the bridge/partial-loop exit before fatigue changes the day."], ["By 16:15", "Return the bikes before sunset and well before closing; walk back, eat well and recover."]],
+    summary: "Complete the Kawaguchiko e-bike circuit as its own win, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow. Taxi or walk from the Kodachi villa to Fujisanbike Studio near Kawaguchiko Park Hotel; reconfirm the walk time before committing to foot. Check wind, rain and rental status before collecting bikes; a defined partial loop is a complete victory if conditions push back. Return bikes, eat well, and recover at the same villa—save legs, trail food and attention for the summit day.",
+    timeline: [["09:40", "Taxi or walk from the Kodachi villa to Fujisanbike Studio beside Kawaguchiko Park Hotel."], ["10:00–10:20", "Collect e-bikes; check helmets, locks, batteries and the firm return time."], ["10:20–12:00", "Cross toward the north shore first and ride to the Itchiku/Oishi area while visibility is worth prioritizing."], ["12:00–13:00", "Use Oishi Park as the lunch, toilet and Fuji-view stop."], ["13:00–16:00", "Continue around the west and south shore, or use the bridge/partial-loop exit before fatigue changes the day."], ["By 16:15", "Return the bikes before sunset and well before closing; taxi or walk back to the villa, eat well and recover."]],
     history: [
       "The official Kawaguchiko town guide describes the lakeside circuit as just under 20 kilometres and recommends cycling as a flexible way to connect viewpoints, museums, parks and shrines. E-bikes lower the barrier enough to make the loop playful rather than athletic.",
       "Fuji appears at different angles around the shore—sometimes dominant, sometimes hidden by cloud—so the ride becomes a lesson in patience as much as distance. Shrines, flower fields, and snack stops give the circuit cultural texture without turning it into a temple collection.",
@@ -854,18 +855,18 @@ const dayContext = {
     ]
   },
   day19: {
-    summary: "Mitsutoge is the headline summit objective, using prebooked taxis and the shorter mountain-road trailhead out-and-back route after route-specific closure, road and weather checks. The current partial closure is on the Haha-no-Shirataki approach rather than this route, but recheck in November. Do not use the once-daily bus: it reaches the trailhead at 10:15 and returns at 10:20. Parents keep the same room and use a single taxi-led north-shore outing while hikers are on the ridge.",
-    timeline: [["Previous evening", "Ask the hotel to prebook both taxi legs to 三ツ峠登山口 and reconfirm the chosen route and road are open."], ["06:50–07:20", "Take the prebooked taxi from the hotel to the mountain-road trailhead; carry layers, water and food."], ["07:20–12:20", "Climb to the summit and return the same way, obeying the fixed turnaround cutoff."], ["12:30–13:00", "Meet the prebooked return taxi at the trailhead and return for a seated recovery meal."], ["Afternoon–evening", "Recover near the hotel, rejoin everyone and confirm tomorrow's Tokyo return."]],
-    slowTimeline: [["09:30", "Take a hotel-arranged taxi directly to Itchiku Kubota Art Museum."], ["Late morning", "If energy is good, take the short Red Line bus hop onward to Oishi Park; otherwise taxi straight back."], ["13:00–14:00", "Taxi back to the hotel; use the longer Red Line return only as the budget fallback."], ["Afternoon", "Use a café, private bath or hotel lounge; do not build a second transport chain."], ["Evening", "Reunite for the summit story and final Kawaguchiko dinner."]],
+    summary: "Mitsutoge is the headline summit objective, using prebooked taxis from the Kodachi villa and the shorter mountain-road trailhead out-and-back route after route-specific closure, road and weather checks. The current partial closure is on the Haha-no-Shirataki approach rather than this route, but recheck in November. Do not use the once-daily bus: it reaches the trailhead at 10:15 and returns at 10:20. Parents keep the same villa and use a single taxi-led north-shore outing while hikers are on the ridge.",
+    timeline: [["Previous evening", "Prebook both taxi legs to 三ツ峠登山口 and reconfirm the chosen route and road are open."], ["06:50–07:20", "Take the prebooked taxi from the villa to the mountain-road trailhead; carry layers, water and food."], ["07:20–12:20", "Climb to the summit and return the same way, obeying the fixed turnaround cutoff."], ["12:30–13:00", "Meet the prebooked return taxi at the trailhead and return for a seated recovery meal."], ["Afternoon–evening", "Recover at the villa, rejoin everyone and confirm tomorrow's Tokyo return taxi."]],
+    slowTimeline: [["09:30", "Take a taxi directly from the villa to Itchiku Kubota Art Museum."], ["Late morning", "If energy is good, take the short Red Line bus hop onward to Oishi Park; otherwise taxi straight back."], ["13:00–14:00", "Taxi back to the villa; use the longer Red Line return only as the budget fallback."], ["Afternoon", "Use the villa kitchen, private sauna or terrace; do not build a second transport chain."], ["Evening", "Reunite for the summit story and final Kawaguchiko dinner."]],
     history: [
       "Mitsutoge is a small group of peaks north of Mt Fuji, prized because the summit ridge looks directly toward Fuji rather than standing on it. Climbers and photographers have long used the mountain as a frame for the volcano, especially when autumn air sharpens the view.",
       "The mountain-road trailhead shortens the ascent enough to make a same-way summit day practical; the longer Mitsutoge Station approach remains outside this plan because it changes the day's risk profile.",
-      "Summit culture here is not about bagging a famous peak list—it is about one unmistakable photograph and the shared story afterward. Parents on the slow lake timeline keep the hotel as a second narrative: Oishi Park flowers, Itchiku Kubota's monumental textiles, or simply a bath while waiting for the hikers' return."
+      "Summit culture here is not about bagging a famous peak list—it is about one unmistakable photograph and the shared story afterward. Parents on the slow lake timeline keep the villa as a second narrative: Oishi Park flowers, Itchiku Kubota's monumental textiles, or simply the sauna while waiting for the hikers' return."
     ]
   },
   day20: {
-    summary: "A reserved morning return creates a protected final Tokyo chapter for luggage, laundry, missed priorities and an easy dinner. Allow road-delay margin or use the Otsuki rail fallback; recovering the large bags and doing one priority shopping cluster is enough. Keep the final full day fresh—this is a soft landing, not another race through Tokyo.",
-    timeline: [["07:00–08:15", "Breakfast, one last Fuji look and checkout."], ["08:00–10:00 window", "Use the hotel's free half-hourly shuttle to Kawaguchiko Station, leaving 30–45 minutes before departure."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Afternoon", "Check in, recover the large bags, and do laundry or one priority shopping cluster."], ["Evening", "Eat near the hotel and keep the final full day fresh."]],
+    summary: "Checkout from the Kodachi villa, taxi to Kawaguchiko Station, and a reserved morning return create a protected final Tokyo chapter for luggage, laundry, missed priorities and an easy dinner. Allow road-delay margin or use the Otsuki rail fallback; recovering the large bags and doing one priority shopping cluster is enough. Keep the final full day fresh—this is a soft landing, not another race through Tokyo.",
+    timeline: [["07:00–08:15", "Breakfast, one last Fuji look and checkout from the villa."], ["08:00–10:00", "Taxi from MIYA HOUSE Kodachi A棟 to Kawaguchiko Station; leave 30–45 minutes before the reserved departure."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Afternoon", "Check in, recover the large bags, and do laundry or one priority shopping cluster."], ["Evening", "Eat near the hotel and keep the final full day fresh."]],
     history: [
       "Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and the highway-bus network. Those links made multi-night stays normal for city dwellers who wanted mountain air without alpine expedition culture.",
       "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency. The psychology shifts from 'last chance to see everything' to 'enough time to do laundry, buy one missing item, and sleep.",
@@ -2809,7 +2810,7 @@ const mapFrameCenters = {
   hiroshima: [34.3974, 132.4756],
   tokyo: [35.6812, 139.7671],
   kobe: [34.6901, 135.1955],
-  fuji: [35.5171, 138.7518]
+  fuji: [35.511, 138.752]
 };
 
 const overviewMapChapters = [
@@ -2826,7 +2827,7 @@ const overviewDayColors = ["#d75f16", "#c7437a", "#285b96", "#397b8f", "#7b61b9"
 const overviewMapViews = {
   kyoto: { center: [34.9858, 135.7588], zoom: 11 },
   "tokyo-1": { center: [35.6812, 139.68], zoom: 11 },
-  kawaguchiko: { center: [35.5171, 138.7518], zoom: 12 },
+  kawaguchiko: { center: [35.511, 138.752], zoom: 12 },
   "tokyo-2": { center: [35.6812, 139.7671], zoom: 12 }
 };
 
@@ -2875,7 +2876,8 @@ const placeBackground = {
   "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
   "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
-  "Kawaguchiko Hotel": "Kawaguchiko Hotel is the assumed lakeside base for Nov 8–11 until a final booking is confirmed. Three nights in one property turn Fuji from a day trip into a deliberate retreat between Tokyo stays.",
+  "MIYA HOUSE Kodachi A棟": "MIYA HOUSE Kodachi A棟 is the confirmed Kodachi villa for Nov 8–11—a three-bedroom villa with private sauna, kitchen and mountain view. Booking.com 6090376904; check-in from 16:00; no meals included. Taxi to Kawaguchiko Station on arrival and departure days.",
+  "Fujisanbike Studio": "Fujisanbike Studio sits beside Kawaguchiko Park Hotel on the south shore and rents Bridgestone e-bikes for the just-under-20-kilometre lake circuit. Reserve by phone and reconfirm November hours; taxi or walk from the Kodachi villa rather than returning to the station.",
   "Ghibli Museum Mitaka": "Hayao Miyazaki designed the Ghibli Museum around curiosity, hand-drawn motion and discovery without a checklist. If tickets work, give the timed visit its full window; if not, Inokashira and Kichijoji still complete the day.",
   "Inokashira Park": "Inokashira Pond supplied water to Edo and later became one of Tokyo's beloved western parks. Ducks, bridges and lakeside paths make it the soft imaginative counterweight to museum time or the full-day fallback.",
   "Kichijoji Sunroad Shopping District": "Kichijoji's covered shotengai and side streets combine cafes, bakeries, music shops and dense residential life. One browse-and-snack loop here keeps the day feeling like a neighbourhood story rather than a museum extraction.",
@@ -2924,6 +2926,7 @@ const placeBackground = {
 function dayMapCenter(day) {
   if (day.id === "day05") return mapFrameCenters.kobe;
   if (["day17", "day18", "day19"].includes(day.id)) return mapFrameCenters.fuji;
+  if (day.id === "day20") return mapFrameCenters.tokyo;
   return mapFrameCenters[state.activeCity] || [36.2048, 138.2529];
 }
 
