@@ -1470,12 +1470,46 @@ h3 {
   gap: 8px;
 }
 
-.calendar-walk {
+.calendar-walk,
+.calendar-day .calendar-wake {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 700;
   line-height: 1.25;
   white-space: nowrap;
+}
+
+.calendar-timing {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+}
+
+.calendar-day .calendar-wake.is-vital-wake {
+  padding: 1px 4px;
+  border: 2px solid #c62828;
+  border-radius: 5px;
+  color: #a31515;
+  animation: vital-wake-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes vital-wake-pulse {
+  0%, 100% {
+    border-color: rgba(198, 40, 40, 0.55);
+    box-shadow: 0 0 0 0 rgba(198, 40, 40, 0);
+  }
+
+  50% {
+    border-color: rgba(198, 40, 40, 1);
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-day .calendar-wake.is-vital-wake {
+    animation: none;
+    border-color: #c62828;
+  }
 }
 
 .calendar-day strong {

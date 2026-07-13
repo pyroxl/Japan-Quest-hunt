@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v110";
+const APP_VERSION = "japan-quest-v111";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -305,6 +305,31 @@ const dayWalkingTime = {
   day21: "~2–3 hr"
 };
 
+const dayWakeUpTime = {
+  day02: "Flight-led",
+  day03: "07:00",
+  day04: "08:15",
+  day05: "08:30",
+  day06: "06:30",
+  day07: "05:45",
+  day08: "05:45",
+  day09: "07:00",
+  day10: "05:45",
+  day11: "06:15",
+  day12: "07:00",
+  day13: "06:30",
+  day14: "07:00",
+  day15: "07:30",
+  day16: "08:30",
+  day17: "07:30",
+  day18: "08:00",
+  day19: "05:30",
+  day20: "06:30",
+  day21: "07:00"
+};
+
+const vitalEarlyWakeDays = new Set(["day07", "day10", "day11", "day19"]);
+
 const calendarThumbnailIdeas = {
   day17: "Idea: small bags + first Fuji reveal",
   day18: "Idea: two bikes + lake + Fuji",
@@ -315,6 +340,15 @@ const calendarThumbnailIdeas = {
 function calendarWalkLabel(dayId) {
   const walk = dayWalkingTime[dayId];
   return walk ? `${walk} walk` : "";
+}
+
+function calendarWakeLabel(dayId) {
+  const wake = dayWakeUpTime[dayId];
+  return wake ? `Wake ${wake}` : "";
+}
+
+function calendarWakeClass(dayId) {
+  return vitalEarlyWakeDays.has(dayId) ? "calendar-wake is-vital-wake" : "calendar-wake";
 }
 
 function applyOutsideCityStyle(element, day, cityId) {
@@ -441,8 +475,8 @@ const tripData = {
       questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["International House of Japan", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
       questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["International House of Japan", "Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
       questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "Kawaguchiko Hotel"], "Send or store large luggage, travel with small bags, and arrive early enough to settle in and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Confirm the private-bath plan", "Reach the hotel with dinner margin"], ["The first clear Fuji reveal", "Lake light from the room or shore", "A quiet arrival drink or meal"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day."),
-      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Kawaguchiko Hotel", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Reserve suitable e-bikes", "Check wind, rain and Fuji visibility", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "Parents choose Oishi Park, the ropeway, a museum or hotel time and reunite for dinner."),
-      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using the mountain-road trailhead out-and-back route after the required open-trail and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Kawaguchiko Hotel", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Confirm the official closure is lifted", "Check wind, temperature and trail conditions", "Do not substitute the longer Mitsutoge Station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents keep the same room and use the separate slow lake, museum, café or hotel timeline."),
+      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Kawaguchiko Hotel", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Walk to the nearby reserved e-bike pickup; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a hotel-arranged taxi; the Red Line is the budget backup. Choose the ropeway, one museum or hotel time instead and reunite for dinner."),
+      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Kawaguchiko Hotel", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the hotel."),
       questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["Kawaguchiko Station", "Shinjuku Station", "International House of Japan"], "Take the reserved morning return, recover or receive the large bags, check in, and complete only the most useful Tokyo reset tasks.", ["Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
       questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["International House of Japan", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
     ]
@@ -736,7 +770,7 @@ const dayContext = {
   },
   day11: {
     summary: "The westward chapter opens with an optional no-delay To-ji dawn and Himeji's white keep, then reaches Hiroshima without turning the transfer into an endurance test. To-ji is thirty free minutes only if bags are handled and Himeji arrival stays before opening; otherwise leave directly from Kyoto Station. Choose castle interior or exterior focus, allow Koko-en or lunch margin, collect ekiben, and eat okonomiyaki in Hiroshima only if energy remains.",
-    timeline: [["06:10–09:00", "Use To-ji's free grounds for 30 minutes only if bags are handled and the selected train still reaches Himeji before opening; otherwise leave directly from Kyoto Station."], ["09:00–12:30", "Approach Himeji Castle and choose the full interior or exterior-focused route."], ["12:30–15:00", "Visit Koko-en or rest over lunch, then collect an ekiben."], ["15:00–18:00", "Continue to Hiroshima, check in, and eat okonomiyaki only if energy remains."]],
+    timeline: [["06:15", "Default wake-up. Himeji is the priority; do not make the group wake at 05:00 for optional To-ji."], ["07:00–09:00", "Leave for Kyoto Station and take the selected westbound train that reaches Himeji around opening. Use To-ji's free grounds only if someone wakes voluntarily and it cannot delay this train."], ["09:00–12:30", "Approach Himeji Castle and choose the full interior or exterior-focused route."], ["12:30–15:00", "Visit Koko-en or rest over lunch, then collect an ekiben."], ["15:00–18:00", "Continue to Hiroshima, check in, and eat okonomiyaki only if energy remains."]],
     history: [
       "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
       "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
@@ -790,7 +824,7 @@ const dayContext = {
   },
   day17: {
     summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage waits at the final Tokyo hotel. Send or store large luggage, reserve the highway bus or Fuji Excursion, and arrive early enough to watch the light change on Fuji from the room or shore. No further achievement is required after check-in—the view, bath and dinner are the complete day.",
-    timeline: [["Morning", "Send large luggage onward or leave it with the returning Tokyo hotel."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko."], ["15:00–17:30", "Check in early enough to enjoy the lake, room and bath plan."], ["18:00 onward", "Eat at the lodging; no further achievement is required."]],
+    timeline: [["Morning", "Send large luggage onward or leave it with the returning Tokyo hotel."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko Station."], ["On arrival, 15:00–20:00", "Telephone Kawaguchiko Hotel and use its free on-call shuttle from station platform 10."], ["15:00–17:30", "Check in; walk only to the nearby lakeshore for the first Fuji view."], ["18:00 onward", "Eat at the lodging; no further achievement is required."]],
     history: [
       "The Fuji Five Lakes sit along Mt Fuji's northern base in a landscape shaped by lava flows, eruptions, and water collecting in basins below the volcano. Pilgrimage, poetry, and later tourism all treated the lakes as places to inhabit Fuji rather than conquer it.",
       "Kawaguchiko became especially practical once highway buses and rail links made a multi-night stay feasible from Tokyo without heroic packing. Hot-spring hotels turned the shore into a retreat culture—private baths, long dinners, and repeated views as weather changes.",
@@ -799,7 +833,7 @@ const dayContext = {
   },
   day18: {
     summary: "Complete the Kawaguchiko e-bike circuit as its own win, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow. Check wind, rain and rental status before collecting bikes; a defined partial loop is a complete victory if conditions push back. Return bikes, eat well, and recover at the same hotel—save legs, trail food and attention for the summit day.",
-    timeline: [["07:30–09:00", "Check wind, rain and rental status; collect reserved e-bikes."], ["09:00–12:00", "Ride the first half of the lake circuit with a planned viewpoint and food stop."], ["12:00–15:00", "Complete the circuit or use the agreed partial-loop exit before fatigue changes the day."], ["Evening", "Return the bikes, eat well and recover at the same hotel."]],
+    timeline: [["09:40", "Walk about 5–10 minutes from the hotel to the reserved e-bike pickup near Kawaguchiko Park Hotel."], ["10:00–10:20", "Collect e-bikes; check helmets, locks, batteries and the firm return time."], ["10:20–12:00", "Cross toward the north shore first and ride to the Itchiku/Oishi area while visibility is worth prioritizing."], ["12:00–13:00", "Use Oishi Park as the lunch, toilet and Fuji-view stop."], ["13:00–16:00", "Continue around the west and south shore, or use the bridge/partial-loop exit before fatigue changes the day."], ["By 16:15", "Return the bikes before sunset and well before closing; walk back, eat well and recover."]],
     history: [
       "The official Kawaguchiko town guide describes the lakeside circuit as just under 20 kilometres and recommends cycling as a flexible way to connect viewpoints, museums, parks and shrines. E-bikes lower the barrier enough to make the loop playful rather than athletic.",
       "Fuji appears at different angles around the shore—sometimes dominant, sometimes hidden by cloud—so the ride becomes a lesson in patience as much as distance. Shrines, flower fields, and snack stops give the circuit cultural texture without turning it into a temple collection.",
@@ -807,9 +841,9 @@ const dayContext = {
     ]
   },
   day19: {
-    summary: "Mitsutoge is the headline summit objective, using the shorter mountain-road trailhead out-and-back route after the required official reopening and conditions checks. Confirm closure status, weather and a non-negotiable turnaround time before leaving; do not substitute the longer Mitsutoge Station approach. Parents keep the same room and use Oishi Park, the art museum or hotel time while hikers are on the ridge.",
-    timeline: [["06:30–07:30", "Confirm the official trail reopening, weather and wind; eat properly and leave with layers, water and food."], ["Morning", "Reach the mountain-road trailhead and climb steadily toward the summit."], ["Summit window", "Touch the summit marker, take the Fuji photograph and start down before the fixed turnaround time."], ["Afternoon", "Return by the same route and have a seated recovery meal."], ["Evening", "Rejoin everyone, confirm tomorrow's Tokyo return and sleep early."]],
-    slowTimeline: [["Morning", "Keep a slow hotel breakfast while the hikers depart."], ["Late morning", "Choose Oishi Park, Itchiku Kubota Art Museum or a short north-shore outing."], ["Afternoon", "Use a café, private bath or hotel lounge; do not build a second transport chain."], ["Evening", "Reunite for the summit story and final Kawaguchiko dinner."]],
+    summary: "Mitsutoge is the headline summit objective, using prebooked taxis and the shorter mountain-road trailhead out-and-back route after route-specific closure, road and weather checks. The current partial closure is on the Haha-no-Shirataki approach rather than this route, but recheck in November. Do not use the once-daily bus: it reaches the trailhead at 10:15 and returns at 10:20. Parents keep the same room and use a single taxi-led north-shore outing while hikers are on the ridge.",
+    timeline: [["Previous evening", "Ask the hotel to prebook both taxi legs to 三ツ峠登山口 and reconfirm the chosen route and road are open."], ["06:50–07:20", "Take the prebooked taxi from the hotel to the mountain-road trailhead; carry layers, water and food."], ["07:20–12:20", "Climb to the summit and return the same way, obeying the fixed turnaround cutoff."], ["12:30–13:00", "Meet the prebooked return taxi at the trailhead and return for a seated recovery meal."], ["Afternoon–evening", "Recover near the hotel, rejoin everyone and confirm tomorrow's Tokyo return."]],
+    slowTimeline: [["09:30", "Take a hotel-arranged taxi directly to Itchiku Kubota Art Museum."], ["Late morning", "If energy is good, take the short Red Line bus hop onward to Oishi Park; otherwise taxi straight back."], ["13:00–14:00", "Taxi back to the hotel; use the longer Red Line return only as the budget fallback."], ["Afternoon", "Use a café, private bath or hotel lounge; do not build a second transport chain."], ["Evening", "Reunite for the summit story and final Kawaguchiko dinner."]],
     history: [
       "Mitsutoge is a small group of peaks north of Mt Fuji, prized because the summit ridge looks directly toward Fuji rather than standing on it. Climbers and photographers have long used the mountain as a frame for the volcano, especially when autumn air sharpens the view.",
       "The mountain-road trailhead shortens the ascent enough to make a same-way summit day practical; the longer Mitsutoge Station approach remains outside this plan because it changes the day's risk profile.",
@@ -818,7 +852,7 @@ const dayContext = {
   },
   day20: {
     summary: "A reserved morning return creates a protected final Tokyo chapter for luggage, laundry, missed priorities and an easy dinner. Allow road-delay margin or use the Otsuki rail fallback; recovering the large bags and doing one priority shopping cluster is enough. Keep the final full day fresh—this is a soft landing, not another race through Tokyo.",
-    timeline: [["07:00–09:00", "Breakfast, one last Fuji look and checkout."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Afternoon", "Check in, recover the large bags, and do laundry or one priority shopping cluster."], ["Evening", "Eat near the hotel and keep the final full day fresh."]],
+    timeline: [["07:00–08:15", "Breakfast, one last Fuji look and checkout."], ["08:00–10:00 window", "Use the hotel's free half-hourly shuttle to Kawaguchiko Station, leaving 30–45 minutes before departure."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Afternoon", "Check in, recover the large bags, and do laundry or one priority shopping cluster."], ["Evening", "Eat near the hotel and keep the final full day fresh."]],
     history: [
       "Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and the highway-bus network. Those links made multi-night stays normal for city dwellers who wanted mountain air without alpine expedition culture.",
       "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency. The psychology shifts from 'last chance to see everything' to 'enough time to do laundry, buy one missing item, and sleep.",
@@ -2135,6 +2169,8 @@ function renderOverviewChapterMap(host) {
     || overviewMapChapters[0];
   let highlightedDayId = null;
   let armedDayId = null;
+  let armedMarker = null;
+  let armedMarkerDayId = null;
   let markersByDay = new Map();
   let dayButtons = new Map();
   let mobileMapOpen = false;
@@ -2237,9 +2273,9 @@ function renderOverviewChapterMap(host) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const updateHighlight = (dayId, locked = false) => {
+  const updateHighlight = (dayId, { lockDay = false, revealAll = false, revealMarker = null } = {}) => {
     highlightedDayId = dayId;
-    if (locked) armedDayId = dayId;
+    if (lockDay) armedDayId = dayId;
     dayButtons.forEach((button, candidateId) => {
       const selected = candidateId === dayId;
       button.classList.toggle("is-highlighted", selected);
@@ -2251,14 +2287,21 @@ function renderOverviewChapterMap(host) {
         const selected = candidateId === dayId;
         marker.setZIndexOffset((marker._overviewBaseZ || 0) + (selected ? 1000 : 0));
         marker.getElement()?.classList.toggle("is-highlighted", selected);
-        if (selected && marker.getTooltip()) marker.openTooltip();
+        if (selected && marker.getTooltip() && (revealAll || marker === revealMarker)) marker.openTooltip();
         else marker.closeTooltip();
       });
     });
   };
 
   const clearHighlight = () => {
-    if (armedDayId) return;
+    if (armedDayId) {
+      updateHighlight(armedDayId, { revealAll: true });
+      return;
+    }
+    if (armedMarker && armedMarkerDayId) {
+      updateHighlight(armedMarkerDayId, { revealMarker: armedMarker });
+      return;
+    }
     highlightedDayId = null;
     updateHighlight(null);
   };
@@ -2268,8 +2311,21 @@ function renderOverviewChapterMap(host) {
       openDay(day);
       return;
     }
+    armedMarker = null;
+    armedMarkerDayId = null;
     armedDayId = null;
-    updateHighlight(day.id, true);
+    updateHighlight(day.id, { lockDay: true, revealAll: true });
+  };
+
+  const activateMarker = (day, marker) => {
+    if (armedMarker === marker) {
+      openDay(day);
+      return;
+    }
+    armedDayId = null;
+    armedMarker = marker;
+    armedMarkerDayId = day.id;
+    updateHighlight(day.id, { revealMarker: marker });
   };
 
   const renderChapter = (chapter) => {
@@ -2280,6 +2336,8 @@ function renderOverviewChapterMap(host) {
     enterMobileMap();
     highlightedDayId = null;
     armedDayId = null;
+    armedMarker = null;
+    armedMarkerDayId = null;
     renderTabs(chapter);
 
     dayList.replaceChildren();
@@ -2296,9 +2354,9 @@ function renderOverviewChapterMap(host) {
       button.className = "chapter-map-day";
       button.innerHTML = `<span class="chapter-map-day-dot" style="--day-color:${overviewDayColors[dayIndex % overviewDayColors.length]}"></span><span class="chapter-map-day-mobile">D${day.id.replace("day", "")} · ${day.short}</span><strong>${day.short}</strong><span class="chapter-map-day-title">${escapeHtml(day.title.replace(/^Day \d+ - /, ""))}</span>`;
       button.setAttribute("aria-pressed", "false");
-      button.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") updateHighlight(day.id); });
+      button.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") updateHighlight(day.id, { revealAll: true }); });
       button.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse") clearHighlight(); });
-      button.addEventListener("focus", () => updateHighlight(day.id));
+      button.addEventListener("focus", () => updateHighlight(day.id, { revealAll: true }));
       button.addEventListener("blur", clearHighlight);
       button.addEventListener("click", () => activateDay(day));
       dayButtons.set(day.id, button);
@@ -2332,9 +2390,9 @@ function renderOverviewChapterMap(host) {
           marker.getElement()?.removeAttribute("title");
           marker.getElement()?.setAttribute("aria-label", `Hotel: ${place}`);
         } else marker.bindTooltip(`<strong>${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
-        marker.on("mouseover focus", () => updateHighlight(day.id));
+        marker.on("mouseover focus", () => updateHighlight(day.id, { revealMarker: marker }));
         marker.on("mouseout blur", clearHighlight);
-        marker.on("click", () => activateDay(day));
+        marker.on("click", () => activateMarker(day, marker));
         markers.push(marker);
       });
       markersByDay.set(day.id, markers);
@@ -2467,7 +2525,10 @@ function renderCalendar() {
         <span class="calendar-photo" aria-hidden="true"></span>
         <div class="calendar-meta">
           <small>${city.name}</small>
-          <span class="calendar-walk">${calendarWalkLabel(day.id)}</span>
+          <span class="calendar-timing">
+            <span class="calendar-walk">${calendarWalkLabel(day.id)}</span>
+            <span class="${calendarWakeClass(day.id)}">${calendarWakeLabel(day.id)}</span>
+          </span>
         </div>
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
@@ -2794,7 +2855,7 @@ const placeBackground = {
   "Fuji Omuro Sengen Shrine": "This lakeside shrine sits among old cedars and is one of the circuit's quieter cultural stops. It rewards a short pause for atmosphere rather than a long visit.",
   "Kawaguchi Asama Shrine": "Kawaguchi Asama Shrine is associated with Fuji worship and offers another angle on local ritual along the bike route. A few minutes for the gate and grounds is enough.",
   "Mt Fuji Panorama Ropeway": "The Panorama Ropeway climbs Mount Tenjoyama for a compact Fuji-and-lake viewpoint when e-bikes are not the right choice. It is the short bad-weather or low-energy fallback—not a second major outing.",
-  "Mitsutoge Trailhead": "The mountain-road trailhead shortens the Mitsutoge ascent enough to make a same-way summit day practical. Confirm official reopening, weather and turnaround time before leaving—do not substitute the longer station approach.",
+  "Mitsutoge Trailhead": "The mountain-road trailhead shortens the Mitsutoge ascent enough to make a same-way summit day practical. Prebook taxis both ways and confirm this specific route, road, weather and turnaround time—do not use the once-daily bus or substitute the longer station approach.",
   "Mount Mitsutoge": "Mitsutoge's summit ridge looks directly toward Fuji rather than standing on it, making the marker photograph the day's headline objective. Start down at the fixed turnaround even if the ridge feels unfinished.",
   "Itchiku Kubota Art Museum": "Itchiku Kubota's museum displays monumental tsujigahana silk dyeing in a building designed around garden and mountain views. It is the slow-day cultural anchor while hikers are on the mountain.",
   "teamLab Borderless Azabudai Hills": "teamLab Borderless uses moving digital imagery to turn the body into part of the artwork. Go with generous admission margin and without trying to 'find every room'—one memorable space is enough.",
