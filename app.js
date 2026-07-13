@@ -1,354 +1,68 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v97";
+const APP_VERSION = "japan-quest-v108";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
 const PHOTO_STORE = "photos";
 
-const legacyTripData = {
-  osaka: {
-    name: "Osaka",
-    baseLabel: "Future Osaka hotel",
-    description: "Food, neon, normal-life neighborhoods, and the Nara bridge to Kyoto.",
-    ongoing: [
-      {
-        title: "Osaka Snack Opening Credits",
-        type: "side",
-        items: [
-          "Try takoyaki or okonomiyaki before leaving Osaka.",
-          "Choose one konbini dessert mostly by vibes.",
-          "Find the best first-trip vending machine drink.",
-          "Take one neon or food-street photo that feels like arrival."
-        ]
-      },
-      {
-        title: "Tiny Osaka Proofs",
-        type: "egg",
-        items: [
-          "Spot a loud food sign or oversized restaurant display.",
-          "Find a tiny side street quieter than the main area.",
-          "Notice one local routine: commuting, shopping, smoking area, bike parking, anything."
-        ]
-      }
-    ],
-    days: [
-      {
-        id: "day02",
-        date: "2026-10-25",
-        short: "Oct 25",
-        title: "Day 2 - First Bite of Osaka",
-        theme: "Land, recover, and let Japan arrive through food and lights.",
-        places: ["Kansai International Airport", "Namba Station Osaka", "Dotonbori Osaka"],
-        groups: [
-          ["Main quest", "main", ["Reach Osaka, check in, rest, and do a gentle Namba or Dotonbori food walk only if the body agrees."]],
-          ["Side quests", "side", ["Eat one first-night snack.", "Find the nearest useful konbini.", "Take one 'we made it' photo.", "Choose tomorrow's breakfast candidate."]],
-          ["Hidden eggs", "egg", ["A canal reflection.", "A food sign bigger than expected.", "A dessert that looks too cute for jet lag."]],
-          ["Mai-coded moment", "mai", ["Mai gets one real first-night Japan moment without pressure."]],
-          ["Soft landing", "soft", ["Stop early enough that tomorrow still feels possible."]]
-        ]
-      },
-      {
-        id: "day03",
-        date: "2026-10-26",
-        short: "Oct 26",
-        title: "Day 3 - Castle to Neon",
-        theme: "Castle, character culture, retro signs, and food.",
-        places: ["Osaka Castle", "Nipponbashi Denden Town", "Shinsekai Osaka"],
-        groups: [
-          ["Main quest", "main", ["Move from Osaka Castle to Den Den Town, then finish under Shinsekai's blue-hour signs with kushikatsu."]],
-          ["Side quests", "side", ["Take the castle-and-moat photo.", "Have one proper seated lunch.", "Find one display that makes Mai stop.", "Share one snack before dinner."]],
-          ["Hidden eggs", "egg", ["A retro sign in Shinsekai.", "A character/anime/gaming detail in Den Den Town.", "A snack you did not know existed this morning."]],
-          ["Mai-coded moment", "mai", ["Mai finds the food-everywhere feeling delightful rather than overwhelming."]],
-          ["Soft landing", "soft", ["Parents choose one southern district; the couple does both without adding a fourth district."]]
-        ]
-      },
-      {
-        id: "day04",
-        date: "2026-10-27",
-        short: "Oct 27",
-        title: "Day 4 - Normal-Life Osaka Quest",
-        theme: "Regular Osaka: cafes, small shops, and lived-in food streets.",
-        places: ["Tenma Osaka", "Fukushima Osaka", "Nakazakicho Osaka"],
-        groups: [
-          ["Main quest", "main", ["Pick one local-feeling Osaka neighborhood cluster and let the day breathe."]],
-          ["Side quests", "side", ["Find a cafe or bakery stop.", "Eat a casual dinner that does not feel tourist-scheduled.", "Take one street photo with no famous landmark in it.", "Choose one neighborhood we would happily return to."]],
-          ["Hidden eggs", "egg", ["A small bar or restaurant with a charming sign.", "A tucked-away shop.", "A tiny houseplant, lantern, menu, or doorway detail."]],
-          ["Mai-coded moment", "mai", ["Mai gets the 'imagine living here for an afternoon' feeling."]],
-          ["Soft landing", "soft", ["Pick Tenma, Fukushima, or Nakazakicho. Not all three unless the day is asking for it."]]
-        ]
-      },
-      {
-        id: "day05",
-        date: "2026-10-28",
-        short: "Oct 28",
-        title: "Day 5 - Deer to Kyoto",
-        theme: "Deer, giant Buddha, old streets, then Kyoto.",
-        places: ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station"],
-        groups: [
-          ["Main quest", "main", ["Use Nara as the Osaka-to-Kyoto bridge: deer park, Todai-ji, and onward to Kyoto."]],
-          ["Side quests", "side", ["Feed or politely observe the deer without turning the day chaotic.", "See Todai-ji's big historic anchor.", "Find a snack or cafe near Naramachi.", "Make the luggage plan feel competent."]],
-          ["Hidden eggs", "egg", ["A deer bow or deer side-eye.", "A temple detail that makes the scale click.", "An old-town shopfront in Naramachi."]],
-          ["Mai-coded moment", "mai", ["Mai gets an iconic Japan moment before the Kyoto chapter begins."]],
-          ["Soft landing", "soft", ["Shorten Nara and go to Kyoto earlier if luggage or legs get annoying."]]
-        ]
-      }
-    ]
-  },
-  kyoto: {
-    name: "Kyoto",
-    baseLabel: "Future Kyoto hotel",
-    description: "Old streets, rivers, scenery, food markets, and one optional small-town transfer bonus.",
-    ongoing: [
-      {
-        title: "Kyoto Soft-Beauty Collection",
-        type: "side",
-        items: [
-          "Try matcha, wagashi, or a Kyoto sweet.",
-          "Find one river or garden moment that makes everyone quiet.",
-          "Take one old-street photo with no rush in it.",
-          "Choose one cafe/rest stop before anyone needs rescuing."
-        ]
-      },
-      {
-        title: "Tiny Kyoto Proofs",
-        type: "egg",
-        items: [
-          "Hear or notice a temple bell, shrine sound, or water sound.",
-          "Spot a noren curtain, lantern, or tiny garden.",
-          "Find a street that looks better when you slow down."
-        ]
-      }
-    ],
-    days: [
-      {
-        id: "day06",
-        date: "2026-10-29",
-        short: "Oct 29",
-        title: "Day 6 - First Full Kyoto Quest",
-        theme: "One historic anchor, then food and river atmosphere.",
-        places: ["Nijo Castle", "Nishiki Market", "Pontocho Alley", "Sanjo Ohashi Bridge Kyoto"],
-        groups: [
-          ["Main quest", "main", ["Visit Nijo Castle, then let Nishiki, Pontocho, and the Kamo River carry the softer part of the day."]],
-          ["Side quests", "side", ["Hear or notice the nightingale floors.", "Try one Nishiki snack.", "Walk by the Kamo River near Sanjo.", "Find a dinner lane that feels atmospheric."]],
-          ["Hidden eggs", "egg", ["A castle gate detail.", "A food stall display that looks jewel-like.", "A riverbank sitting moment."]],
-          ["Mai-coded moment", "mai", ["Mai gets Kyoto as history plus food, not just temples."]],
-          ["Soft landing", "soft", ["Taxi or rest between the castle and evening if needed."]]
-        ]
-      },
-      {
-        id: "day07",
-        date: "2026-10-30",
-        short: "Oct 30",
-        title: "Day 7 - Lantern-Lit Higashiyama",
-        theme: "The big preserved-street, temple-on-the-hill day.",
-        places: ["Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"],
-        groups: [
-          ["Main quest", "main", ["Protect the old-Kyoto day: Kiyomizu-dera, Sannenzaka/Ninenzaka, and a gentle lower-Higashiyama ending."]],
-          ["Side quests", "side", ["Use a taxi uphill if it saves the day.", "Find one matcha or sweet stop.", "Take one photo that feels like Mai's dream-trip Kyoto.", "Let Yasaka or Gion be the endpoint, not another forced march."]],
-          ["Hidden eggs", "egg", ["A sloping-street detail.", "A view from Kiyomizu-dera.", "A lantern, shrine detail, or quiet corner near Yasaka."]],
-          ["Mai-coded moment", "mai", ["Mai gets the old-Japan feeling without the day being overstuffed."]],
-          ["Soft landing", "soft", ["Cafe/base-point strategy beats heroic walking."]]
-        ]
-      },
-      {
-        id: "day08",
-        date: "2026-10-31",
-        short: "Oct 31",
-        title: "Day 8 - River, Bamboo, Breathe",
-        theme: "River, mountains, bamboo, and one scenic pause.",
-        places: ["Arashiyama Station Kyoto", "Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Okochi Sanso Garden"],
-        groups: [
-          ["Main quest", "main", ["Make Arashiyama about scenery and breathing room, not temple completionism."]],
-          ["Side quests", "side", ["See the river and Togetsukyo Bridge.", "Walk a manageable bamboo section.", "Find a scenic cafe/rest point.", "Add Okochi Sanso only if the group wants more."]],
-          ["Hidden eggs", "egg", ["A mountain-and-river view.", "A bamboo sound or shadow.", "A garden detail worth remembering."]],
-          ["Mai-coded moment", "mai", ["Mai gets a beautiful open-air Kyoto day."]],
-          ["Soft landing", "soft", ["Return before scenery becomes stamina debt."]]
-        ]
-      },
-      {
-        id: "day09",
-        date: "2026-11-01",
-        short: "Nov 1",
-        title: "Day 9 - Soft Kyoto Quest",
-        theme: "River rhythm, optional Fushimi Inari, cafes, and recovery.",
-        places: ["Fushimi Inari Taisha", "Demachiyanagi Station", "Kamo River Delta", "Nanzen-ji"],
-        groups: [
-          ["Main quest", "main", ["Choose the soft version of Kyoto: optional early Fushimi Inari, then river/cafe/local rhythm."]],
-          ["Side quests", "side", ["If doing Fushimi Inari, go early or keep it short.", "Sit at or near the Kamo River Delta.", "Find a bakery, cafe, or matcha stop.", "Add Nanzen-ji only if it sounds calming."]],
-          ["Hidden eggs", "egg", ["A stepping-stone or river moment.", "A fox detail at Fushimi Inari.", "A quiet temple/scenery detail."]],
-          ["Mai-coded moment", "mai", ["Mai gets Kyoto as a place to exist, not only sightsee."]],
-          ["Soft landing", "soft", ["Let this day repair the trip battery."]]
-        ]
-      },
-      {
-        id: "day10",
-        date: "2026-11-02",
-        short: "Nov 2",
-        title: "Day 10 - Omihachiman Bonus Quest",
-        theme: "A canal-town lunch stop on the way to Tokyo, if energy allows.",
-        places: ["Omi-Hachiman Station", "Hachiman-bori Canal", "Himure Hachimangu Shrine", "Hachimanyama Ropeway", "Tokyo Station"],
-        groups: [
-          ["Main quest", "main", ["If the group feels good, do the Omihachiman canal stop before continuing to Tokyo. If not, go straight to Tokyo."]],
-          ["Side quests", "side", ["Store luggage without drama.", "Walk Hachiman-bori Canal.", "Eat lunch or a snack in town.", "Add the shrine or ropeway only if the day has room."]],
-          ["Hidden eggs", "egg", ["A canal reflection.", "An old merchant-town detail.", "A Lake Biwa or hill-view hint."]],
-          ["Mai-coded moment", "mai", ["Mai gets a small-town/quaint bonus without changing hotels."]],
-          ["Soft landing", "soft", ["Skipping Omihachiman still counts as winning the travel day."]]
-        ]
-      }
-    ]
-  },
-  tokyo: {
-    name: "Tokyo",
-    baseLabel: "Future Tokyo hotel",
-    description: "Local rhythm, Kawagoe, Ghibli/Kichijoji, teamLab, creative streets, and old Tokyo.",
-    ongoing: [
-      {
-        title: 'The "Our Tokyo" Quest',
-        type: "side",
-        items: ['Find the cafe, bakery, konbini, or supermarket that becomes "our place."', "Return to it at least once.", "Remember one tiny routine from Tokyo that would be nice to steal for normal life."]
-      },
-      {
-        title: "The Snack Dex",
-        description: "Catch at least 10 Tokyo snacks or small foods. One bite counts.",
-        type: "side",
-        items: ["Depachika bento or prepared food", "Konbini dessert", "Onigiri", "Ramen", "Curry", "Melonpan", "Sweet potato snack in Kawagoe", "Cafe cake or parfait", "Soft serve", "Vending machine drink", "Station bakery item", "Mystery snack chosen mostly by packaging"]
-      },
-      {
-        title: "The Photo Set",
-        description: "No need to be influencers. These are for the album.",
-        type: "side",
-        items: ['Mai in front of something that feels like "her Tokyo"', "Us reflected in something: train window, shop glass, museum mirror, elevator, anything", "One extremely beautiful food photo", "One intentionally stupid food photo", "A quiet street", "A station sign from the neighborhood we sleep in", "The last Tokyo dinner or snack"]
-      },
-      {
-        title: "The Tiny Proofs Of Life",
-        type: "egg",
-        items: ["Hear a station jingle and remember the line or station.", "Notice a display of seasonal sweets.", "Find a tiny shrine, statue, mascot, sign, or shop detail that was not planned.", "See a local person doing something ordinary that makes Tokyo feel livable.", "Buy one small thing under 1000 yen that feels like a souvenir from the day."]
-      }
-    ],
-    days: [
-      {
-        id: "day11",
-        date: "2026-11-03",
-        short: "Nov 3",
-        title: "Day 11 - Tokyo Settling Day",
-        theme: "Make Tokyo usable before making it impressive.",
-        places: ["Tokyo Station Ichibangai", "Kichijoji Station", "Ueno Station", "Nihonbashi Station"],
-        groups: [
-          ["Main quest", "main", ["Learn the hotel neighborhood: nearest station entrance, nearest konbini, one easy dinner option, and one place to sit."]],
-          ["Side quests", "side", ["Do a depachika, supermarket, or station food hall dinner where everyone chooses one thing.", "Pick a default breakfast or coffee candidate.", "Find the most charming ordinary object of the day: mailbox, sign, menu board, tiny garden, train poster, anything.", "Choose one low-pressure evening route that we could repeat later if tired."]],
-          ["Hidden eggs", "egg", ["A vending machine with a drink neither of us can confidently explain.", "A plastic food display or menu photo that makes us stop.", "A tiny local shop that looks like it has regulars."]],
-          ["Mai-coded moment", "mai", ["Mai finds something cute within walking distance of the hotel."]],
-          ["Soft landing", "soft", ["End before the city feels too big."]]
-        ]
-      },
-      {
-        id: "day12",
-        date: "2026-11-04",
-        short: "Nov 4",
-        title: 'Day 12 - Kawagoe "Little Edo" Quest',
-        theme: "A small-town chapter without moving hotels.",
-        places: ["Kawagoe Station", "Kurazukuri no Machinami", "Toki no Kane", "Kashiya Yokocho"],
-        groups: [
-          ["Main quest", "main", ["Walk the kurazukuri warehouse street, find Toki no Kane bell tower, and reach Kashiya Yokocho candy alley."]],
-          ["Side quests", "side", ["Try one sweet potato thing.", "Find a shopfront, sign, or old building detail that feels like a storybook panel.", "Buy one tiny sweet from candy alley.", "Get a photo where the modern street and old-town facade are both visible.", "Find a cafe or lunch spot that lets the day slow down."]],
-          ["Hidden eggs", "egg", ["Bell tower sound, bell tower view, or bell tower snack.", "A sweet potato item that seems excessive.", "A side street quieter than the main drag."]],
-          ["Mai-coded moment", "mai", ["Mai chooses the cutest shop, snack, or street detail of Kawagoe."]],
-          ["Soft landing", "soft", ["Use a bus, taxi, cafe break, or early train back if the day starts asking too much."]]
-        ]
-      },
-      {
-        id: "day13",
-        date: "2026-11-05",
-        short: "Nov 5",
-        title: "Day 13 - Ghibli or Not Ghibli",
-        theme: "Soft imaginative Tokyo.",
-        places: ["Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"],
-        groups: [
-          ["Main quest", "main", ["If tickets work: visit the Ghibli Museum. If tickets do not work: make Inokashira Park and Kichijoji the main quest and treat Ghibli as a photo-at-the-gate bonus only if it is convenient."]],
-          ["Side quests", "side", ["Walk by the pond in Inokashira Park.", "Find a cafe that feels like it belongs in this day.", "Browse Kichijoji Sunroad or nearby streets without turning it into a shopping chore.", 'Choose a small object, snack, or memory that feels "animated" in spirit.', "Sit somewhere green for at least 10 minutes."]],
-          ["Hidden eggs", "egg", ["A duck, boat, bridge, or pond reflection.", "A tiny handmade-looking shop display.", "A museum or park detail that rewards looking closely."]],
-          ["Mai-coded moment", "mai", ['Mai gets the "this is why Tokyo is not just skyscrapers" feeling.']],
-          ["Soft landing", "soft", ["Keep the post-museum plan gentle. Wonder uses battery."]]
-        ]
-      },
-      {
-        id: "day14",
-        date: "2026-11-06",
-        short: "Nov 6",
-        title: "Day 14 - teamLab / Modern Tokyo Quest",
-        theme: "Tokyo as light, polish, and food halls.",
-        places: ["teamLab Borderless Azabudai Hills", "Azabudai Hills", "Ginza Mitsukoshi", "Nihonbashi Tokyo"],
-        groups: [
-          ["Main quest", "main", ["Visit teamLab Borderless at the booked time, or swap the day if booking/weather makes another plan smarter."]],
-          ["Side quests", "side", ["Find the room or installation we most want to remember.", "Take one photo that is abstract enough to look like another planet.", "Recover with food or coffee around Azabudai, Roppongi, Ginza, or Nihonbashi.", "Do one beautiful food hall browse without needing to buy everything.", "Pick the fanciest-looking sweet we can reasonably split."]],
-          ["Hidden eggs", "egg", ["A reflection that makes the room feel bigger.", "A food display arranged like jewelry.", "A tiny design detail in a modern building: restroom, elevator, sign, packaging, escalator view."]],
-          ["Mai-coded moment", "mai", ["Mai finds one room, light effect, or dessert that feels magical rather than just impressive."]],
-          ["Soft landing", "soft", ["Leave while the day still feels shiny."]]
-        ]
-      },
-      {
-        id: "day15",
-        date: "2026-11-07",
-        short: "Nov 7",
-        title: "Day 15 - Cozy West Tokyo Quest",
-        theme: "Let people who live there show us their Japan.",
-        places: ["Tokyo Station", "Ueno Park", "Kichijoji"],
-        groups: [
-          ["Main quest", "main", ["Explore Jindaiji's temple lanes, share a soba lunch, and let Mai choose a garden, cafe, or cute neighborhood finish."]],
-          ["Side quests", "side", ["Ask them for one place they genuinely like, not the place they think tourists should see.", "Eat something they recommend without over-researching it first.", "Learn one neighborhood fact, memory, or routine from them.", "Take a group photo that does not feel stiff.", "Get one local-life tip we would never have found alone."]],
-          ["Hidden eggs", "egg", ["A leafy temple approach.", "A hand-painted yokai or shop detail.", "Steam rising from a soba kitchen."]],
-          ["Mai-coded moment", "mai", ["Mai gets to feel welcomed into a real corner of Japan."]],
-          ["Soft landing", "soft", ["Let the social part be the achievement. Do not add a big extra sightseeing plan unless everyone is clearly energized."]]
-        ]
-      },
-      {
-        id: "day16",
-        date: "2026-11-08",
-        short: "Nov 8",
-        title: "Day 16 - Creative Neighborhood Quest",
-        theme: "Indie Tokyo, manga-adjacent but not merch prison.",
-        places: ["Shimokitazawa Station", "Koenji Station", "Nakano Broadway"],
-        groups: [
-          ["Main quest", "main", ["Choose one main neighborhood: Shimokitazawa, Koenji, or Nakano. Do it well instead of trying to win the map."]],
-          ["Side quests", "side", ["Find one cafe, curry, ramen, crepe, or bakery stop.", "Browse vintage, record, book, character, or odd little shops for fun.", "If Nakano happens: find one specific anime/manga/object that makes Mai react.", "Take a street photo that captures creative local Tokyo.", "Find one shop that would be dangerous if luggage space were infinite."]],
-          ["Hidden eggs", "egg", ["A hand-drawn sign.", "A tiny upstairs or basement shop.", "A weirdly specific collectible.", "A curry menu that creates indecision."]],
-          ["Mai-coded moment", "mai", ["Mai finds something cute, nostalgic, strange, or deeply her."]],
-          ["Soft landing", "soft", ["Stop before browsing becomes a stamina tax."]]
-        ]
-      },
-      {
-        id: "day17",
-        date: "2026-11-09",
-        short: "Nov 9",
-        title: "Day 17 - Older Tokyo Quest",
-        theme: "Small streets, temples, sweets, and old-neighborhood rhythm.",
-        places: ["Yanaka Ginza", "Nezu Shrine", "Ueno Park", "Senso-ji Asakusa"],
-        groups: [
-          ["Main quest", "main", ["Do a gentle Yanaka / Nezu / Sendagi loop, with Yanaka Ginza and Nezu Shrine as the strongest anchors."]],
-          ["Side quests", "side", ["Try melonpan if Asakusa or a good bakery fits naturally.", "Find a small temple, shrine, or cemetery-lane moment that feels calm rather than touristy.", "Eat one street snack on Yanaka Ginza.", "Add Ueno or Asakusa only if energy is good.", "Pick one old-neighborhood street we would happily wander again."]],
-          ["Hidden eggs", "egg", ["A cat-themed sign, item, or shop detail in Yanaka.", "Red torii or shrine detail at Nezu.", "A Showa-feeling storefront.", "A snack line that looks worth it but not punishing."]],
-          ["Mai-coded moment", "mai", ["Mai finds old Tokyo softer and cuter than expected."]],
-          ["Soft landing", "soft", ["Skip Asakusa if the old-neighborhood loop already gave us enough."]]
-        ]
-      },
-      {
-        id: "day18",
-        date: "2026-11-10",
-        short: "Nov 10",
-        title: "Day 18 - Final Food / Favorites Quest",
-        theme: "No new stress. Collect the ending.",
-        places: ["Tokyo Station", "Ginza", "Kichijoji"],
-        groups: [
-          ["Main quest", "main", ["Choose the final day by mood: souvenir run, missed target, repeat favorite, food crawl, or gentle neighborhood day."]],
-          ["Side quests", "side", ["Revisit one place from earlier in Tokyo.", "Buy the snack or small souvenir we kept thinking about.", 'Eat the final "this is Tokyo" meal.', "Pack before the last evening gets too late.", "Say out loud the moment we think will stick with us."]],
-          ["Hidden eggs", "egg", ["A final station sound.", "A last konbini choice.", "A food hall or supermarket item that deserves suitcase consideration.", "One tiny goodbye photo."]],
-          ["Mai-coded moment", "mai", ["Mai gets to choose the emotional ending: cozy, tasty, cute, fancy, nostalgic, or low-key."]],
-          ["Soft landing", "soft", ["Protect tomorrow's airport transfer by ending with margin."]]
-        ]
-      }
-    ]
-  }
+const HOTEL_PLACES = new Set([
+  "Hotel Cordia Osaka Hommachi",
+  "Hotel Monterey Kyoto",
+  "Hotel Granvia Hiroshima",
+  "International House of Japan",
+  "Kawaguchiko Hotel"
+]);
+
+const STAY_HOTEL_BY_DAY = {
+  day02: "Hotel Cordia Osaka Hommachi",
+  day03: "Hotel Cordia Osaka Hommachi",
+  day04: "Hotel Cordia Osaka Hommachi",
+  day05: "Hotel Cordia Osaka Hommachi",
+  day06: "Hotel Monterey Kyoto",
+  day07: "Hotel Monterey Kyoto",
+  day08: "Hotel Monterey Kyoto",
+  day09: "Hotel Monterey Kyoto",
+  day10: "Hotel Monterey Kyoto",
+  day11: "Hotel Granvia Hiroshima",
+  day12: "Hotel Granvia Hiroshima",
+  day13: "Hotel Granvia Hiroshima",
+  day14: "International House of Japan",
+  day15: "International House of Japan",
+  day16: "International House of Japan",
+  day17: "Kawaguchiko Hotel",
+  day18: "Kawaguchiko Hotel",
+  day19: "Kawaguchiko Hotel",
+  day20: "International House of Japan",
+  day21: "International House of Japan"
 };
+
+const HOTEL_MARKER_ICON = `<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9a4 4 0 0 0-4-4z"/></svg>`;
+
+function isHotelPlace(place) {
+  return HOTEL_PLACES.has(place);
+}
+
+function dayMapPlaces(day) {
+  const hotel = STAY_HOTEL_BY_DAY[day.id];
+  if (!hotel) return day.places.slice();
+  const activities = day.places.filter((place) => place !== hotel);
+  return [hotel, ...activities];
+}
+
+function makeLeafletMarkerIcon({ shellClass, isHotel, label, dayColor }) {
+  const html = isHotel
+    ? HOTEL_MARKER_ICON
+    : escapeHtml(String(label));
+  const spanClass = isHotel ? "map-marker-hotel-core" : "map-marker-activity-core";
+  const style = isHotel ? "" : ` style="--day-color:${dayColor}"`;
+  return L.divIcon({
+    className: `${shellClass}${isHotel ? " is-hotel-marker" : ""}`,
+    html: `<span class="${spanClass}"${style}>${html}</span>`,
+    iconSize: isHotel ? [36, 44] : [30, 38],
+    iconAnchor: isHotel ? [18, 44] : [15, 38],
+    tooltipAnchor: [0, isHotel ? -38 : -31]
+  });
+}
 
 const coreExperienceQuests = [
   {
@@ -445,13 +159,6 @@ const roadmapGoals = [
   { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Ghibli cover imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Ghibli/Kichijoji." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
-];
-
-const planningConstraints = [
-  { title: "Private-only onsen rule", text: "Use only an in-room private bath, reservable private/family bath, clothed footbath, or skip bathing." },
-  { title: "Ticket watch", text: "Ghibli Museum and teamLab remain protected roadmap goals with booking fallbacks." },
-  { title: "Nice-to-have: Miyajima stay", text: "Consider an island splurge only if budget and luggage logistics support it; Hiroshima base remains a complete trip." },
-  { title: "Nice-to-have: parents' extension", text: "A Tokyo extension after Mai and the user leave remains separate from the core trip." }
 ];
 
 const regionalQuestPools = {
@@ -640,7 +347,7 @@ function questDay(id, date, title, theme, places, main, side, eggs, mai, soft) {
 const tripData = {
   osaka: {
     name: "Osaka",
-    baseLabel: "Future Osaka hotel",
+    baseLabel: "Hotel Cordia Osaka Hommachi",
     description: "Arrival neon, maximum-pop Osaka, the scored snack mission, Kobe Nunobiki, and the Nara bridge.",
     ongoing: [
       {
@@ -661,16 +368,16 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day02", "2026-10-24", "First Bite of Osaka", "Land, recover, and let Japan arrive through food and lights.", ["Kansai International Airport", "Namba Station Osaka", "Ebisu Bridge Osaka", "Dotonbori Osaka"], "Reach Osaka, rest properly, then cross Ebisu Bridge for one neon photo and one hot snack if the body agrees.", ["Find the nearest useful konbini", "Take the we-made-it photo", "Choose tomorrow's breakfast candidate", "Start the melon passport with a packaged baseline if hunger agrees"], ["A canal reflection", "A food sign bigger than expected", "A dessert too cute for jet lag"], "Mai gets one real first-night Japan moment without pressure.", "Stop while Dotonbori still feels magical."),
+      questDay("day02", "2026-10-24", "First Bite of Osaka", "Land, recover, and let Japan arrive through food and lights.", ["Kansai International Airport", "Hotel Cordia Osaka Hommachi", "Ebisu Bridge Osaka", "Dotonbori Osaka"], "Reach Osaka, rest properly, then cross Ebisu Bridge for one neon photo and one hot snack if the body agrees.", ["Find the nearest useful konbini", "Take the we-made-it photo", "Choose tomorrow's breakfast candidate", "Start the melon passport with a packaged baseline if hunger agrees"], ["A canal reflection", "A food sign bigger than expected", "A dessert too cute for jet lag"], "Mai gets one real first-night Japan moment without pressure.", "Stop while Dotonbori still feels magical."),
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town and reach Shinsekai for blue hour and kushikatsu.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack", "Finish with kushikatsu"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents choose Den Den or Shinsekai—not both."),
-      questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Namba Osaka", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
-      questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, café time and an optional Kobe dinner.", ["Namba Osaka", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing and do not add a wider city checklist.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet", "Add Kobe dinner only if it improves the day"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day."),
-      questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Observe or feed deer without making them the entire day", "Try yomogi mochi or kakinoha-zushi", "Find a cafe near Naramachi", "Make the luggage strategy feel competent"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
+      questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
+      questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, café time and an optional Kobe dinner.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing and do not add a wider city checklist.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet", "Add Kobe dinner only if it improves the day"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day."),
+      questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Observe or feed deer without making them the entire day", "Try yomogi mochi or kakinoha-zushi", "Find a cafe near Naramachi", "Make the luggage strategy feel competent"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
     ]
   },
   kyoto: {
     name: "Kyoto",
-    baseLabel: "Future Kyoto hotel",
+    baseLabel: "Hotel Monterey Kyoto",
     description: "Geographic Kyoto clusters: Inari-to-Gion, Arashiyama-to-Kinkaku, central history, and Mt Hiei.",
     ongoing: [
       {
@@ -693,7 +400,7 @@ const tripData = {
   },
   hiroshima: {
     name: "Hiroshima",
-    baseLabel: "Future Hiroshima hotel",
+    baseLabel: "Hotel Granvia Hiroshima",
     description: "Himeji's reveal, a focused peace day, and Miyajima's island payoff.",
     ongoing: [
       {
@@ -703,14 +410,14 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day11", "2026-11-02", "White Heron Westbound", "An optional no-delay To-ji dawn, white-castle reveal, then the first scored train-food ride west.", ["To-ji Temple", "Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station"], "Use To-ji's free grounds only if luggage is handled and Himeji arrival remains before 09:00; otherwise begin at Kyoto Station and keep Himeji humane.", ["Skip To-ji unless everyone is voluntarily awake", "Forward or simplify large luggage", "Photograph the first full castle reveal", "Buy different regional ekiben", "Photograph each box closed and open", "Score all five Ekiben League categories"], ["To-ji's pagoda at dawn if earned", "A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "Skipping To-ji and using Himeji's exterior-and-garden version are both complete wins."),
+      questDay("day11", "2026-11-02", "White Heron Westbound", "An optional no-delay To-ji dawn, white-castle reveal, then the first scored train-food ride west.", ["To-ji Temple", "Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Use To-ji's free grounds only if luggage is handled and Himeji arrival remains before 09:00; otherwise begin at Kyoto Station and keep Himeji humane.", ["Skip To-ji unless everyone is voluntarily awake", "Forward or simplify large luggage", "Photograph the first full castle reveal", "Buy different regional ekiben", "Photograph each box closed and open", "Score all five Ekiben League categories"], ["To-ji's pagoda at dawn if earned", "A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "Skipping To-ji and using Himeji's exterior-and-garden version are both complete wins."),
       questDay("day12", "2026-11-03", "Memory Along the River", "Museum, remembrance, river, and the Dome at dusk without emotional clutter.", ["Hiroshima Peace Memorial Museum", "Hiroshima Peace Memorial Park", "Atomic Bomb Dome", "Hiroshima National Peace Memorial Hall"], "Move from the museum through the Cenotaph and memorial axis, then see the Atomic Bomb Dome at dusk.", ["Leave time for a quiet break", "Use the National Peace Memorial Hall if a quieter space helps", "Write one private sentence about what should be remembered", "Try momiji manju or a calm cafe instead of adding sightseeing"], ["The alignment through the Cenotaph", "A paper crane or peace message", "The river changing the mood of the park"], "The day feels thoughtful and humane, not consumed as an attraction.", "Shukkeien is optional; emotional room is the priority."),
       questDay("day13", "2026-11-04", "Torii at the Tide", "Torii, tide, deer, island food, forest, and dusk if the day allows.", ["Miyajimaguchi Station", "Itsukushima Shrine", "Miyajima Omotesando", "Daisho-in Temple", "Miyajima Ropeway"], "See Itsukushima Shrine and the torii at the day's tide, then let the island—not a completion list—be the payoff.", ["Ride the ferry", "Try anago-meshi", "Try a grilled oyster if appealing", "Compare warm and packaged momiji manju", "Choose Daisho-in or ropeway only by energy", "Stay for softer island atmosphere if practical"], ["Torii reflected or revealed by low tide", "A deer behaving like a local", "A forest, lantern, or sea detail away from the busiest street"], "Miyajima earns its place as the romantic westward payoff.", "Shrine, waterfront, food street, and cafe are a complete parent version.")
     ]
   },
   tokyo: {
     name: "Tokyo",
-    baseLabel: "Future Tokyo hotel",
+    baseLabel: "International House of Japan (placeholder)",
     description: "Tokyo bookends a three-night Kawaguchiko retreat: settle in after Hiroshima, escape to Fuji with small bags, then return for an easy final Tokyo chapter.",
     ongoing: [
       {
@@ -730,14 +437,14 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "Tokyo Hotel Area"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
-      questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
-      questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
-      questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "Lake Kawaguchiko"], "Send or store large luggage, travel with small bags, and arrive early enough to settle in and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Confirm the private-bath plan", "Reach the hotel with dinner margin"], ["The first clear Fuji reveal", "Lake light from the room or shore", "A quiet arrival drink or meal"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day."),
-      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Lake Kawaguchiko", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Reserve suitable e-bikes", "Check wind, rain and Fuji visibility", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "Parents choose Oishi Park, the ropeway, a museum or hotel time and reunite for dinner."),
-      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using the mountain-road trailhead out-and-back route after the required open-trail and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Lake Kawaguchiko", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Confirm the official closure is lifted", "Check wind, temperature and trail conditions", "Do not substitute the longer Mitsutoge Station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents keep the same room and use the separate slow lake, museum, café or hotel timeline."),
-      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["Kawaguchiko Station", "Shinjuku Station", "Tokyo Hotel Area"], "Take the reserved morning return, recover or receive the large bags, check in, and complete only the most useful Tokyo reset tasks.", ["Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
-      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
+      questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "International House of Japan"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
+      questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["International House of Japan", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
+      questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["International House of Japan", "Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
+      questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "Kawaguchiko Hotel"], "Send or store large luggage, travel with small bags, and arrive early enough to settle in and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Confirm the private-bath plan", "Reach the hotel with dinner margin"], ["The first clear Fuji reveal", "Lake light from the room or shore", "A quiet arrival drink or meal"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day."),
+      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Kawaguchiko Hotel", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Reserve suitable e-bikes", "Check wind, rain and Fuji visibility", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "Parents choose Oishi Park, the ropeway, a museum or hotel time and reunite for dinner."),
+      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using the mountain-road trailhead out-and-back route after the required open-trail and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Kawaguchiko Hotel", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Confirm the official closure is lifted", "Check wind, temperature and trail conditions", "Do not substitute the longer Mitsutoge Station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents keep the same room and use the separate slow lake, museum, café or hotel timeline."),
+      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["Kawaguchiko Station", "Shinjuku Station", "International House of Japan"], "Take the reserved morning return, recover or receive the large bags, check in, and complete only the most useful Tokyo reset tasks.", ["Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
+      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["International House of Japan", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
     ]
   }
 };
@@ -941,111 +648,191 @@ const legacyDayContext = {
 
 const dayContext = {
   day02: {
-    summary: "Arrival day stays deliberately small: reach Namba, rest for real, then let one neon-and-food walk be the first chapter of Japan.",
+    summary: "Arrival day stays deliberately small: land at KIX, reach Namba, rest for real, then let one neon-and-food walk be the first chapter of Japan. The goal is not to 'see Osaka' but to recover cleanly—shower, unpack essentials, and cross Ebisu Bridge only if the body agrees. Stop while Dotonbori still feels magical; tomorrow's castle day matters more than squeezing in another district tonight.",
     timeline: [["Afternoon", "Land at KIX, clear the airport, and travel directly to the Osaka hotel."], ["17:00–19:00", "Check in, shower, unpack only what is needed, and rest."], ["19:00–21:00", "If energy agrees, cross Ebisu Bridge, share one hot Osaka snack, and find the nearest useful konbini."], ["By 21:30", "Return while the lights still feel magical; tomorrow matters more than squeezing in another stop."]],
-    history: ["Osaka became Japan's great merchant city because water routes and warehouses connected the country's rice, goods, and money here. The phrase often translated as “the nation's kitchen” originally described this commercial role before it became shorthand for Osaka's appetite.", "Dotonbori began as a 17th-century canal project and grew into a theater district. Restaurants followed the crowds, and the extravagant signs outside are descendants of that competitive entertainment culture: Osaka announcing, loudly and cheerfully, that pleasure is serious business."]
+    history: [
+      "Osaka became Japan's great merchant city because water routes and warehouses connected the country's rice, goods, and money here. The phrase often translated as “the nation's kitchen” originally described this commercial role before it became shorthand for Osaka's appetite.",
+      "Dotonbori began as a 17th-century canal project and grew into a theater district. Restaurants followed the crowds, and the extravagant signs outside are descendants of that competitive entertainment culture: Osaka announcing, loudly and cheerfully, that pleasure is serious business.",
+      "For a first night after a long flight, that history matters less than the feeling: neon over water, steam from a grill, and the sense that Japan has arrived without demanding a heroic schedule. The canal was built for commerce; tonight it works as a gentle threshold."
+    ]
   },
   day03: {
-    summary: "Castle, character culture and retro food give Osaka one intentionally big day.",
+    summary: "Castle, character culture and retro food give Osaka one intentionally big day—monumental history in the morning, Den Den browsing in the afternoon, Shinsekai kushikatsu at blue hour. Do not add a fourth district; the arc works because each stop has a different emotional register. Parents can skip the castle interior or shorten Den Den and still meet at Shinsekai for the shared evening finish.",
     timeline: [["08:30–11:30", "Reach Osaka Castle near opening; enjoy the reveal and choose the interior by interest."], ["11:30–13:00", "Travel south and sit for a substantial Nippombashi lunch."], ["13:00–16:00", "Browse a defined Den Den Town segment."], ["16:00–19:30", "Continue to Shinsekai for blue-hour signs and kushikatsu; add no fourth district."]],
-    history: ["Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan. The current keep is a reconstruction and museum, but its moat and walls still establish Osaka's monumental scale.", "Shinsekai was unveiled in 1912 as a vision of the new world. Den Den Town tells a later popular-culture story, shifting from postwar electronics into games, anime and collector culture."]
+    history: [
+      "Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan. The current keep is a reconstruction and museum, but its moat and walls still establish Osaka's monumental scale.",
+      "Shinsekai was unveiled in 1912 as a vision of the new world, with Tsutenkaku tower as its symbol. Den Den Town tells a later popular-culture story, shifting from postwar electronics into games, anime and collector culture.",
+      "Put together, the day moves through three different Osaka moods: political power, hobby obsession, and retro street theatre. None of them require completion—only enough time to feel the shift from castle gravity to arcade colour to kushikatsu warmth."
+    ]
   },
   day04: {
-    summary: "The Osaka Snack League turns Kuromon, Shinsaibashi and Amerikamura into a bounded five-taste quest before a protected Tenma dinner.",
+    summary: "The Osaka Snack League turns Kuromon, Shinsaibashi and Amerikamura into a bounded five-taste quest before a protected Tenma dinner. Four Kuromon categories by 11:30, one depachika checkpoint, one Amerikamura wildcard, then a real hotel reset before izakaya—not more grazing. The scorecard and hard exits turn market abundance into a game Mai can actually win without ruining appetite for dinner.",
     timeline: [["10:00–11:30", "At Kuromon, share and score exactly four categories: raw/seafood, hot/grilled, savory non-seafood and fruit/sweet. Hard exit at 11:30."], ["12:00–14:30", "Use Daimaru Shinsaibashi for one controlled food-hall checkpoint and seating; continue to Amerikamura for one wildcard only."], ["15:00–17:00", "Return to the Namba hotel for a real reset and stop eating."], ["17:30–21:00", "Go to Tenma: one izakaya for shared plates, then at most one specialist negiyaki, ramen, gyoza or dessert finish."]],
-    history: ["Kuromon Ichiba began as a wholesale fish market and became one of Osaka's most famous public market streets. The snack mission works because shared portions, category limits and a hard exit turn abundance into a game instead of a blur.", "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Markets, neighborhood restaurants and compact bars make it a strong lived-in dinner district without needing Dotonbori energy."]
+    history: [
+      "Kuromon Ichiba began as a wholesale fish market and became one of Osaka's most famous public market streets. Merchants built reputations on freshness, knife work, and the theatre of preparation behind glass counters.",
+      "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Markets, neighborhood restaurants and compact bars make it a strong lived-in dinner district without needing Dotonbori energy.",
+      "The Snack League turns that merchant culture into a game: categories, shared bites, photographed receipts, and a hard exit before the body rebels. Tenma then answers a different Osaka instinct—sitting down, sharing plates, and letting the day become conversation rather than consumption."
+    ]
   },
   day05: {
-    summary: "Kobe Nunobiki remains the selected romantic outing, with the ropeway and gardens doing the work instead of a wider Kobe checklist.",
+    summary: "Kobe Nunobiki remains the selected romantic outing, with the ropeway and gardens doing the work instead of a wider Kobe checklist. Budget roughly 60–75 minutes each way from Osaka, ride up once, pause at a terrace, and return without adding harbor districts or shopping streets. Parents can take the same ropeway/view/café version or stay in Osaka entirely—Kobe dinner is optional, not required.",
     timeline: [["Sleep-in morning", "Leave Osaka/Umeda when ready; budget roughly 60-75 minutes each way toward Shin-Kobe."], ["Late morning–15:30", "Ride the ropeway, explore a chosen garden segment and take a café/terrace pause."], ["15:30–18:00", "Descend and choose a Kobe sweet or optional dinner according to appetite."], ["Evening", "Return to Osaka without adding another Kobe district."]],
     slowTimeline: [["10:00–11:30", "Sleep in, eat near the Osaka hotel and leave only when everyone feels ready."], ["Late morning", "Travel to Shin-Kobe and ride the ropeway both ways; the view is the main event."], ["Midday–15:00", "Use one terrace or café and only the shortest comfortable garden section."], ["Afternoon", "Return directly to Osaka for a proper hotel rest."], ["Evening", "Eat close to the hotel; Kobe dinner is unnecessary."]],
-    history: ["The Nunobiki slopes rise immediately behind Shin-Kobe, making mountain scenery unusually close to the city and port.", "The modern ropeway and herb gardens turn that steep terrain into an assisted scenic outing with broad views over Kobe and Osaka Bay."]
+    history: [
+      "The Nunobiki slopes rise immediately behind Shin-Kobe, making mountain scenery unusually close to the city and port. For centuries the ridge was admired in poetry and travel writing as a sudden vertical escape from harbour commerce.",
+      "The modern ropeway and herb gardens turn that steep terrain into an assisted scenic outing with broad views over Kobe and Osaka Bay. Kobe itself grew as one of Japan's first treaty ports, mixing foreign architecture, hillside neighbourhoods and harbour light.",
+      "Choosing Nunobiki is a deliberate refusal of the wider Kobe checklist—no Chinatown circuit, no harbour cruise, no fashion district. The story of the day is proximity: city, ropeway, garden terrace, and optional sweet or dinner before returning to Osaka's familiar hotel."
+    ]
   },
   day06: {
-    summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and To-ji remains an earned early-arrival bonus.",
+    summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and luggage never becomes the main character. Travel with day bags only, keep deer encounters playful but brief, and treat entering the Great Buddha Hall as the capstone—not a full Nara checklist. To-ji at dawn on Day 11 is the earned early-arrival bonus; today ends at Kyoto Station or the hotel.",
     timeline: [["08:00–09:00", "Check out and send or store luggage; travel toward Kintetsu Nara."], ["10:00–12:30", "Walk or taxi through Nara Park toward Todai-ji, keeping deer encounters playful but brief."], ["12:30–15:00", "Eat kakinoha-zushi or mochi, then choose a short Naramachi or cafe pause."], ["15:00–18:00", "Continue to Kyoto. Attempt To-ji only if everyone is luggage-free by about 15:45; otherwise check in and eat near the hotel."]],
-    history: ["Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.", "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling."]
+    history: [
+      "Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.",
+      "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
+      "The deer roaming Nara Park are not props—they belong to a landscape where sacred precincts, open grass, and animal life have coexisted for centuries. Naramachi's merchant lanes then carry the day toward Kyoto: old shopfronts, sweets, and the quieter scale of a town that once ruled Japan."
+    ]
   },
   day07: {
-    summary: "The maximum-coverage southeast day climbs Mt Inari, samples one Tofuku-ji section, then meets the parents for Kiyomizu and the old streets down to Gion.",
+    summary: "The maximum-coverage southeast day climbs Mt Inari, samples one Tofuku-ji section, then meets the parents for Kiyomizu and the old streets down to Gion. Hard pace checks at Yotsutsuji (07:20) and Tofuku-ji exit (09:50) protect the 10:30 reunion; everything after 16:00 in Gion is evening bonus, not schedule debt. Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and use a café base while the couple does the morning climb.",
     timeline: [["05:45–06:15", "Wake, take a packed breakfast and leave promptly. Be at Fushimi Inari's main approach by 06:15; breakfast happens after the climb, not before it."], ["06:15–07:20", "Climb through the torii toward Yotsutsuji. Pace check: if Yotsutsuji is not reached by 07:20, turn around wherever you are—do not chase the summit."], ["07:20–08:15", "Descend and leave the shrine area. Use the train or a short taxi to Tofuku-ji and eat the portable breakfast in transit or before entry."], ["08:50–09:50", "Be at Tofuku-ji for its 09:00 opening. Choose the garden or Tsutenkyo area, not both; leave by 09:50 even if the visit began late."], ["09:50–10:30", "Transfer toward Kiyomizu and message the parents with the exact meeting point. If you missed the 09:50 exit, take a taxi and protect the 10:30 reunion."], ["10:30–11:50", "Visit Kiyomizu together. The panorama, main hall and Otowa waterfall are the complete visit; begin descending before noon."], ["11:50–14:30", "Walk Sannenzaka and Ninenzaka with one bounded lunch or cafe stop. Pace check: be below the steepest slopes by 14:30."], ["14:30–16:00", "Continue to Yasaka and Gion. The required sightseeing day ends here; anything after 16:00 is an evening bonus, not schedule debt."]],
     evening: { rank: "Most open Kyoto evening", window: "From about 16:00", bestUse: "Stay in Yasaka/Gion for lantern atmosphere, dinner, Shirakawa or a gentle walk toward the Kamo River.", canMove: "Yasaka Shrine, Gion lanes and the architecture of Sannenzaka/Ninenzaka still work after shops close. Fushimi Inari's lower torii can also be atmospheric after dark, but it should not replace this morning's climb.", keepDaylight: "Do not defer Tofuku-ji or Kiyomizu-dera; their interiors, gardens and views require the daytime opening window." },
-    history: ["Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Donated torii record hopes, gratitude, and commercial prosperity; foxes serve as Inari's messengers.", "Tofuku-ji was founded in the 13th century and later became a major Zen complex. Kiyomizu-dera grew around a sacred spring, while Gion developed beside Yasaka Shrine as a living entertainment quarter."]
+    history: [
+      "Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Donated torii record hopes, gratitude, and commercial prosperity; foxes serve as Inari's messengers rather than the deity itself.",
+      "Tofuku-ji was founded in the 13th century and later became a major Zen complex. Its name deliberately echoes Nara's Todai-ji and Kofuku-ji, claiming continuity with older capital authority while pursuing a different Buddhist path.",
+      "Kiyomizu-dera grew around a sacred spring dedicated to Kannon, and the wooden stage projecting from the hillside turns approach into part of the religious experience. Below it, Sannenzaka and Ninenzaka preserve the pilgrimage-and-shopfront scale that made old Kyoto legible on foot, while Yasaka and Gion grew beside the shrine as a living entertainment quarter—not a museum street."
+    ]
   },
   day08: {
-    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple.",
+    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Parents may skip Ryoan-ji and meet at Kinkaku-ji; Kamishichiken tea is optional atmosphere, not a third major stop.",
     timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo, meet the parents and take the shared riverside cafe pause. The bridge and cafe—not more Arashiyama sights—are the morning payoff."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–15:30", "Complete Kinkaku-ji's one-way garden route. Afterward, Kamishichiken tea or dinner is optional; otherwise return and rest."]],
     evening: { rank: "Second-most open Kyoto evening", window: "Usually from about 16:30–17:30", bestUse: "Use Kamishichiken only if a specific tea, wagashi or dinner place is open; otherwise return to central Kyoto for an easy meal.", canMove: "A short Kamishichiken neighborhood walk or dinner can happen in the evening. It is an atmosphere add-on, not a substitute for the day's temples.", keepDaylight: "Keep the Bamboo Grove, Togetsukyo, Ryoan-ji and Kinkaku-ji in daylight. Ryoan-ji and Kinkaku-ji close at 17:00, and the river/mountain scenery loses much of its payoff after dark." },
-    history: ["Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span.", "Ryoan-ji's dry garden reduces landscape to stone, gravel and interpretation. Kinkaku-ji's reflective pavilion began as a shogun's retirement villa before becoming a Zen temple."]
+    history: [
+      "Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Aristocrats travelled from the capital to compose verses, admire blossoms and autumn leaves, and borrow mountain scenery into designed gardens and villas.",
+      "Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes.",
+      "Ryoan-ji's dry garden reduces landscape to stone, gravel and interpretation; the temple offers no official solution, so sustained looking becomes the ritual. Kinkaku-ji's reflective pavilion began as shogun Ashikaga Yoshimitsu's retirement villa before becoming a Zen temple—gold, pond and borrowed mountain scenery expressing power and an imagined Pure Land rather than austerity."
+    ]
   },
   day09: {
-    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki and a rested Pontocho dinner in one north-to-south sequence.",
+    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki and a rested Pontocho dinner in one north-to-south sequence. Enter Nijo at opening, keep the palace to about an hour, and treat the 16:00–17:45 hotel reset as part of the plan—not unused sightseeing time. The Manga Museum is an optional split; parents may skip palace or museum and rejoin for Nishiki or the Kamo River approach to dinner.",
     timeline: [["08:25–08:45", "Arrive at Nijo before opening with tickets decided. Enter at 08:45; do not begin the day with breakfast or shopping nearby."], ["08:45–10:35", "See Ninomaru Palace, the nightingale corridors and a bounded garden loop. Hard exit by 10:35–10:45."], ["10:45–11:15", "Travel to the Kyoto Imperial Palace and enter through the current public gate after security. Message Dad's chosen rest/rejoin point."], ["11:15–12:15", "Make the palace a one-hour visit. Its October last admission is 15:20, but using that theoretical margin would break Nishiki and the reset."], ["12:15–13:10", "Take a seated lunch near Karasuma Oike. At 12:45 make the decision: Manga Museum only if everyone is on pace and interested."], ["13:10–14:25", "Optional Manga Museum visit or parent/couple rest split. If arrival would be after 13:30, shorten it to one exhibition plus the Manga Wall or skip it."], ["14:35–15:50", "Walk Nishiki in one direction with a short tasting list. Leave by 15:50 before more stalls begin winding down."], ["16:00–17:45", "Return to the hotel for a real reset. This protected break is part of the plan, not unused sightseeing time."], ["17:45–20:30", "Approach by the central Kamo River, then have the planned Pontocho/Kiyamachi dinner. Reserve dinner if a particular restaurant matters."]],
     evening: { rank: "Best structured evening, but already allocated", window: "17:45 onward after the hotel reset", bestUse: "Kamo River, Pontocho and Kiyamachi are exactly the right evening material and remain fully appreciated after dark.", canMove: "The river walk and Pontocho neighborhood experience belong in the evening. They can absorb extra time without threatening an opening hour.", keepDaylight: "Do not push Nijo, the Imperial Palace, Manga Museum or Nishiki into evening. The Palace closes at 16:00 in October–February, the museum at 17:00, and Nishiki is not a reliable night market." },
-    history: ["Nijo Castle turned Tokugawa architecture into political theater and later hosted the announcement that authority would return to the emperor.", "The Kyoto Imperial Palace represents the court city that preceded modern Tokyo; nearby Nishiki and the Kamo River keep the day connected to contemporary central-Kyoto life."]
+    history: [
+      "Nijo Castle turned Tokugawa architecture into political theatre. The decorated Ninomaru rooms staged hierarchy through painted screens and famously squeaking nightingale floors that warned residents of movement; in 1867 the castle also hosted the announcement returning governing authority to the emperor.",
+      "The Kyoto Imperial Palace compound preserves the logic of the court city that preceded modern Tokyo—gates, ceremonial halls, and controlled spaces rebuilt across centuries. Nearby Nishiki Market developed around reliable cold groundwater that helped merchants preserve fish and produce, earning the nickname Kyoto's Kitchen.",
+      "Pontocho and the Kamo River connect that historic centre to contemporary Kyoto life: narrow entertainment lanes, riverbank walks, and evening lanterns that belong after dark. Optional manga culture at the International Manga Museum adds a 20th-century layer—comics preserved and read in a converted schoolhouse rather than collected as merchandise."
+    ]
   },
   day10: {
-    summary: "Mt Hiei receives a full day: assisted ascent, Enryaku-ji's forested precincts, one meaningful walk, and views toward Kyoto or Lake Biwa.",
+    summary: "Mt Hiei receives a full day: assisted ascent, Enryaku-ji's forested precincts, one meaningful walk, and views toward Kyoto or Lake Biwa. Confirm live cable, ropeway and descent times at Demachiyanagi before boarding; the 15:15–16:00 regroup is the hard turnaround even if the forest walk feels unfinished. Pack for Himeji/Hiroshima tonight—do not borrow sleep from tomorrow's westbound transfer.",
     timeline: [["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."], ["07:50–09:30", "Take the Eizan/Yase assisted approach selected during the final timetable check. Pace check: if the ascent is disrupted, switch immediately to the confirmed Sakamoto-side or direct-bus fallback."], ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."], ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."], ["13:00–15:15", "Mai and Brian take one preselected forest/viewpoint route; Dad uses the assisted core. Do not improvise a second precinct or an unplanned long trail."], ["15:15–16:00", "Regroup at the designated descent transport point. This is the hard turnaround window even if the walk feels unfinished."], ["16:00–18:30", "Descend with at least one-service margin and take the simplest route to the hotel. If returning via Demachiyanagi, dinner there is optional."], ["By 20:30", "Finish dinner, pack for Himeji/Hiroshima and set out the morning bags. Do not borrow sleep from the westbound transfer."]],
     evening: { rank: "Least dependable Kyoto evening", window: "Only after the actual descent, likely 18:00 or later", bestUse: "A comforting dinner near the hotel—or Demachiyanagi only if the route naturally returns there—followed by packing.", canMove: "No required Day 10 attraction should move into the evening. Dinner is the only flexible neighborhood element.", keepDaylight: "Enryaku-ji, forest paths, viewpoints and mountain transport all require daylight and last-service margin. Treat any unexpectedly early return as recovery time before Day 11." },
     slowTimeline: [["08:30–10:30", "Take the most assisted confirmed ascent after a calm breakfast; avoid an early multi-transfer race."], ["10:30–12:30", "Visit the Todo core only, with Konpon Chudo as the essential temple experience and seated pauses."], ["12:30–14:00", "Eat a proper lunch and use the nearest viewpoint rather than adding a forest route."], ["14:00–16:30", "Begin the assisted descent with generous last-service margin."], ["Evening", "Return to Kyoto early for rest, packing and a comforting dinner."]],
-    history: ["Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its temples trained monks who later shaped several major Buddhist traditions.", "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic landscape. Forest paths and scattered precincts are central to the experience: Mt Hiei is not one building but a religious geography."]
+    history: [
+      "Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning—not one building but a religious landscape.",
+      "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic vantage. Emperors and warriors treated control of Hiei as control of the capital's spiritual flank.",
+      "Modern visitors experience that geography through assisted ascents, cedar corridors, bell sounds, and views that open suddenly toward either the basin of Kyoto or the wider water of Biwa. The day works when treated as mountain time: breakfast carried, one forest walk chosen, and descent planned around last cable or bus service rather than sunset ambition."
+    ]
   },
   day11: {
-    summary: "The westward chapter opens with an optional no-delay To-ji dawn and Himeji's white keep, then reaches Hiroshima without turning the transfer into an endurance test.",
+    summary: "The westward chapter opens with an optional no-delay To-ji dawn and Himeji's white keep, then reaches Hiroshima without turning the transfer into an endurance test. To-ji is thirty free minutes only if bags are handled and Himeji arrival stays before opening; otherwise leave directly from Kyoto Station. Choose castle interior or exterior focus, allow Koko-en or lunch margin, collect ekiben, and eat okonomiyaki in Hiroshima only if energy remains.",
     timeline: [["06:10–09:00", "Use To-ji's free grounds for 30 minutes only if bags are handled and the selected train still reaches Himeji before opening; otherwise leave directly from Kyoto Station."], ["09:00–12:30", "Approach Himeji Castle and choose the full interior or exterior-focused route."], ["12:30–15:00", "Visit Koko-en or rest over lunch, then collect an ekiben."], ["15:00–18:00", "Continue to Hiroshima, check in, and eat okonomiyaki only if energy remains."]],
-    history: ["Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.", "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex."]
+    history: [
+      "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
+      "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
+      "Koko-en beside the moat reframes the keep from below—Edo-style garden rooms built on samurai residence sites. Optional To-ji at dawn adds a free Kyoto pagoda silhouette only if the transfer rhythm stays humane. The day's larger story is departure: Kyoto's temple city giving way to the white keep, then ekiben culture and the long slide west toward Hiroshima."
+    ]
   },
   day12: {
-    summary: "Hiroshima receives a full, emotionally uncluttered day: museum first, quiet space afterward, then the memorial axis and Dome as daylight softens.",
+    summary: "Hiroshima receives a full, emotionally uncluttered day: museum first, quiet space afterward, then the memorial axis and Dome as daylight softens. Leave real margin between the museum and the park walk—emotional room is the priority, not adding Shukkeien or extra sights. The Dome at dusk closes the sequence; okonomiyaki dinner should feel calm, not like another checklist item.",
     timeline: [["08:30–11:30", "Visit the Peace Memorial Museum while attention and emotional energy are strongest."], ["11:30–13:30", "Take a real quiet break and a gentle lunch; do not rush directly into another attraction."], ["13:30–17:00", "Move through the Memorial Hall, Cenotaph, park, river, and Atomic Bomb Dome."], ["17:00 onward", "Let dusk close the memorial sequence, then choose a calm okonomiyaki dinner."]],
-    history: ["Hiroshima began as a castle town in the late 16th century and grew into a regional military and industrial center. At 8:15 on August 6, 1945, the first atomic bomb used in war exploded above the city, killing tens of thousands immediately and many more through injury and radiation.", "The Peace Memorial Park does not preserve a frozen ruin alone. Its design creates an axis among the museum, Cenotaph, and Dome, asking visitors to move from evidence to mourning to public commitment. Hiroshima's larger story is also one of survivors rebuilding a living city and insisting that memory serve peace."]
+    history: [
+      "Hiroshima began as a castle town in the late 16th century and grew into a regional military and industrial center. At 8:15 on August 6, 1945, the first atomic bomb used in war exploded above the city, killing tens of thousands immediately and many more through injury and radiation.",
+      "The Peace Memorial Park does not preserve a frozen ruin alone. Its design creates an axis among the museum, Cenotaph, and Dome, asking visitors to move from evidence to mourning to public commitment.",
+      "Hiroshima's larger story is also one of survivors rebuilding a living city and insisting that memory serve peace. The river, rebuilt avenues, and ordinary lunch spots after the museum are part of that story too—the city refuses to be only a monument."
+    ]
   },
   day13: {
-    summary: "Miyajima is the scenic and romantic payoff of the western chapter: shrine and tide first, island food and forest second, with altitude entirely optional.",
+    summary: "Miyajima is the scenic and romantic payoff of the western chapter: shrine and tide first, island food and forest second, with altitude entirely optional. Check tide timing before the ferry—the torii and shrine corridors read differently at high and low water. Shrine, Omotesando snacks, and café time complete the day; Daisho-in or the ropeway are energy choices, not obligations.",
     timeline: [["08:00–09:30", "Travel to Miyajimaguchi and take the ferry; check the tide plan before setting out."], ["09:30–12:30", "Visit Itsukushima Shrine and the waterfront, then eat anago-meshi or island snacks."], ["12:30–16:00", "Choose Omotesando and cafe time, Daisho-in, or the ropeway according to energy."], ["16:00–18:30", "Stay for softer late light if practical, then ferry back without rushing."]],
-    history: ["Itsukushima was treated as a sacred island long before its current buildings appeared. To avoid violating that sanctity, worship took place over the water; the shrine's corridors and great torii still use the tide to blur the boundary between architecture, sea, and mountain.", "The 12th-century warrior-statesman Taira no Kiyomori expanded the shrine while cultivating power at the imperial court. Yet Miyajima is not one frozen era: Buddhist halls, pilgrimage paths, merchant food streets, deer, ferries, and tourism have accumulated around the sacred landscape for centuries."]
+    history: [
+      "Itsukushima was treated as a sacred island long before its current buildings appeared. To avoid violating that sanctity, worship took place over the water; the shrine's corridors and great torii still use the tide to blur the boundary between architecture, sea, and mountain.",
+      "The 12th-century warrior-statesman Taira no Kiyomori expanded the shrine while cultivating power at the imperial court. Yet Miyajima is not one frozen era: Buddhist halls, pilgrimage paths, merchant food streets, deer, ferries, and tourism have accumulated around the sacred landscape for centuries.",
+      "Island food—anago-meshi, grilled oysters, momiji manju—grew from pilgrimage demand and later leisure travel. The ropeway and forest paths add altitude only if wanted; the romantic payoff is tide, torii, and the sense that the western chapter ends in beauty rather than checklist completion."
+    ]
   },
   day14: {
-    summary: "The long train is the experience: browse Hiroshima's ekiben, reveal and score them after departure, then arrive in Tokyo as temporary neighborhood residents rather than sightseers.",
+    summary: "The long train is the experience: browse Hiroshima's ekiben, reveal and score them after departure, then arrive in Tokyo as temporary neighborhood residents rather than sightseers. Photograph closed and open boxes, trade tastes, and score all five Ekiben League categories while the landscape changes. Evening is depachika, supermarket, or ramen near the hotel—no sightseeing campaign after arrival.",
     timeline: [["08:30–10:00", "Check out and reach Hiroshima Station early enough to browse regional ekiben calmly."], ["10:00–14:30", "Ride east, photograph closed and open boxes, trade tastes, score them, and watch the country change."], ["15:00–17:30", "Reach the Tokyo hotel, learn the correct station exit, and fully settle in."], ["Evening", "Choose a depachika, supermarket, ramen, or curry dinner near the hotel; add no sightseeing campaign."]],
-    history: ["Japan's first railway opened in 1872, and station boxed meals soon turned travel into a way of tasting place. Ekiben packaging, ingredients, and presentation became miniature regional advertisements, allowing a train journey to carry local identity across the country.", "The Tokaido corridor linking Kyoto, Osaka, and Tokyo has organized movement for centuries, first as a famed highway and now as the country's busiest high-speed rail axis. Arriving by Shinkansen compresses landscapes once measured in days of walking into a single seated chapter."]
+    history: [
+      "Japan's first railway opened in 1872, and station boxed meals soon turned travel into a way of tasting place. Ekiben packaging, ingredients, and presentation became miniature regional advertisements, allowing a train journey to carry local identity across the country.",
+      "The Tokaido corridor linking Kyoto, Osaka, and Tokyo has organized movement for centuries, first as a famed highway and now as the country's busiest high-speed rail axis. Arriving by Shinkansen compresses landscapes once measured in days of walking into a single seated chapter.",
+      "Making the train the main event reverses the usual arrival panic: no monuments required after Tokyo Station, only learning the hotel exit, the konbini rhythm, and the easiest neighbourhood dinner. Tokyo begins as habitation, not performance."
+    ]
   },
   day15: {
-    summary: "Ghibli is the scarce-ticket anchor, but Inokashira Park and Kichijoji make the day feel like a neighborhood story rather than a museum extraction.",
+    summary: "Ghibli is the scarce-ticket anchor, but Inokashira Park and Kichijoji make the day feel like a neighborhood story rather than a museum extraction. If tickets work, give the timed visit its full window without scheduling another central-Tokyo attraction. If tickets fail, let the park, café and shotengai browse become the complete quest—wonder uses battery, so keep the post-museum plan gentle.",
     timeline: [["Morning", "Travel to Mitaka or Kichijoji with generous ticket-time margin."], ["Timed window", "Give the Ghibli Museum its full visit without scheduling another central-Tokyo attraction."], ["Afterward–17:00", "Walk through Inokashira Park and pause at a cafe."], ["17:00–20:00", "Browse one Kichijoji shopping street and eat nearby; if tickets failed, let this become the full day."]],
-    history: ["Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. Rail connections transformed nearby Kichijoji into a western neighborhood where green space, small commerce, music, cafes, and dense residential life meet.", "The Ghibli Museum deliberately avoids a prescribed route. Hayao Miyazaki designed it around curiosity, hand-drawn motion, architecture at a child's scale, and discovery without a checklist. That philosophy is the ideal rhythm for the whole day."]
+    history: [
+      "Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. Rail connections transformed nearby Kichijoji into a western neighbourhood where green space, small commerce, music, cafes, and dense residential life meet.",
+      "The Ghibli Museum deliberately avoids a prescribed route. Hayao Miyazaki designed it around curiosity, hand-drawn motion, architecture at a child's scale, and discovery without a checklist.",
+      "That philosophy is the ideal rhythm for the whole day: if tickets work, wonder inside the museum; if not, wonder in the park and shotengai instead. Tokyo is not only skyscrapers—this corner proves the city also lives through ponds, ducks, bakeries, and streets sized for wandering home."
+    ]
   },
   day16: {
-    summary: "Akko and Yoshi show their home neighborhood; the dinner they choose is the most authentic Tokyo capstone of the trip.",
+    summary: "Akko and Yoshi show their home neighborhood; the dinner they choose is the most authentic Tokyo capstone of the trip. Follow their lead through local spots they genuinely like—not a tourist checklist—and keep the day seated, social, and unhurried. Jindaiji or the botanical gardens are optional only if the friends route there; the friends' dinner pick is the real destination.",
     timeline: [["Late morning", "Travel toward the friends' neighborhood; confirm the exact meeting point once Chofu or another base is locked in."], ["Midday–afternoon", "Follow Akko and Yoshi through the local spots they genuinely like—not a tourist checklist."], ["Optional", "If the route passes Chofu, Jindaiji temple lanes, soba, or the botanical gardens can anchor a parent-paced pause."], ["Evening", "Let the friends choose dinner; keep the day seated, social, and unhurried."]],
-    history: ["Tokyo's residential neighborhoods are as important to understanding the city as its famous districts. Being shown everyday shops, routines, and food by people who live there is more valuable than importing another sightseeing plan.", "If the friends are near Chofu, Jindaiji traces its foundation to the 8th century and preserves a pilgrimage-edge feeling outside the old city. Chofu is also linked to GeGeGe no Kitaro creator Shigeru Mizuki, whose yokai details appear around the area."]
+    history: [
+      "Tokyo's residential neighborhoods are as important to understanding the city as its famous districts. Stations, shotengai, temples, parks, and favourite restaurants reveal everyday Japan more honestly than another imported sightseeing plan.",
+      "Being shown those routines by friends who live there turns travel into hospitality. The meal they choose carries more cultural weight than any guidebook ranking because it encodes memory, budget, and pride in a local spot.",
+      "If the route passes Chofu, Jindaiji traces its foundation to the 8th century and preserves wooded temple lanes and soba tradition on the city's western edge. The area is also linked to GeGeGe no Kitaro creator Shigeru Mizuki, whose yokai details appear in local shopfronts—optional texture, not the day's purpose."
+    ]
   },
   day17: {
-    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage waits at the final Tokyo hotel.",
+    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage waits at the final Tokyo hotel. Send or store large luggage, reserve the highway bus or Fuji Excursion, and arrive early enough to watch the light change on Fuji from the room or shore. No further achievement is required after check-in—the view, bath and dinner are the complete day.",
     timeline: [["Morning", "Send large luggage onward or leave it with the returning Tokyo hotel."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko."], ["15:00–17:30", "Check in early enough to enjoy the lake, room and bath plan."], ["18:00 onward", "Eat at the lodging; no further achievement is required."]],
-    history: ["The Fuji Five Lakes sit along Mt Fuji's northern base in a landscape shaped by lava flows and water.", "Kawaguchiko's Tokyo access, lakeshore and hot-spring hotels make it a practical place to inhabit for several days instead of chasing a single Fuji photograph."]
+    history: [
+      "The Fuji Five Lakes sit along Mt Fuji's northern base in a landscape shaped by lava flows, eruptions, and water collecting in basins below the volcano. Pilgrimage, poetry, and later tourism all treated the lakes as places to inhabit Fuji rather than conquer it.",
+      "Kawaguchiko became especially practical once highway buses and rail links made a multi-night stay feasible from Tokyo without heroic packing. Hot-spring hotels turned the shore into a retreat culture—private baths, long dinners, and repeated views as weather changes.",
+      "Arriving with small bags while large luggage waits in Tokyo is a deliberate design choice: the chapter should feel like escape, not logistics stress. The first evening's story is simply light on water and the relief of stopping."
+    ]
   },
   day18: {
-    summary: "Complete the Kawaguchiko e-bike circuit as its own win, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow.",
+    summary: "Complete the Kawaguchiko e-bike circuit as its own win, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow. Check wind, rain and rental status before collecting bikes; a defined partial loop is a complete victory if conditions push back. Return bikes, eat well, and recover at the same hotel—save legs, trail food and attention for the summit day.",
     timeline: [["07:30–09:00", "Check wind, rain and rental status; collect reserved e-bikes."], ["09:00–12:00", "Ride the first half of the lake circuit with a planned viewpoint and food stop."], ["12:00–15:00", "Complete the circuit or use the agreed partial-loop exit before fatigue changes the day."], ["Evening", "Return the bikes, eat well and recover at the same hotel."]],
-    history: ["The official town guide describes the Kawaguchiko circuit as just under 20 kilometers and recommends cycling as a flexible way to connect lakeside viewpoints, museums, parks and shrines.", "Giving the circuit its own day keeps the ride playful and preserves fresh legs, food and attention for the Mitsutoge summit tomorrow."]
+    history: [
+      "The official Kawaguchiko town guide describes the lakeside circuit as just under 20 kilometres and recommends cycling as a flexible way to connect viewpoints, museums, parks and shrines. E-bikes lower the barrier enough to make the loop playful rather than athletic.",
+      "Fuji appears at different angles around the shore—sometimes dominant, sometimes hidden by cloud—so the ride becomes a lesson in patience as much as distance. Shrines, flower fields, and snack stops give the circuit cultural texture without turning it into a temple collection.",
+      "Giving the bike day its own victory protects tomorrow's summit psychology: legs, food, and attention remain resources rather than debts. Mount Tenjoyama's ropeway exists as a compact fallback, not a consolation prize."
+    ]
   },
   day19: {
-    summary: "Mitsutoge is the headline summit objective, using the shorter mountain-road trailhead out-and-back route after the required official reopening and conditions checks.",
+    summary: "Mitsutoge is the headline summit objective, using the shorter mountain-road trailhead out-and-back route after the required official reopening and conditions checks. Confirm closure status, weather and a non-negotiable turnaround time before leaving; do not substitute the longer Mitsutoge Station approach. Parents keep the same room and use Oishi Park, the art museum or hotel time while hikers are on the ridge.",
     timeline: [["06:30–07:30", "Confirm the official trail reopening, weather and wind; eat properly and leave with layers, water and food."], ["Morning", "Reach the mountain-road trailhead and climb steadily toward the summit."], ["Summit window", "Touch the summit marker, take the Fuji photograph and start down before the fixed turnaround time."], ["Afternoon", "Return by the same route and have a seated recovery meal."], ["Evening", "Rejoin everyone, confirm tomorrow's Tokyo return and sleep early."]],
     slowTimeline: [["Morning", "Keep a slow hotel breakfast while the hikers depart."], ["Late morning", "Choose Oishi Park, Itchiku Kubota Art Museum or a short north-shore outing."], ["Afternoon", "Use a café, private bath or hotel lounge; do not build a second transport chain."], ["Evening", "Reunite for the summit story and final Kawaguchiko dinner."]],
-    history: ["Mitsutoge is a small group of peaks north of Mt Fuji, prized because the summit ridge looks directly toward Fuji rather than standing on it.", "The mountain-road trailhead shortens the ascent enough to make a same-way summit day practical; the longer Mitsutoge Station approach remains outside this plan."]
+    history: [
+      "Mitsutoge is a small group of peaks north of Mt Fuji, prized because the summit ridge looks directly toward Fuji rather than standing on it. Climbers and photographers have long used the mountain as a frame for the volcano, especially when autumn air sharpens the view.",
+      "The mountain-road trailhead shortens the ascent enough to make a same-way summit day practical; the longer Mitsutoge Station approach remains outside this plan because it changes the day's risk profile.",
+      "Summit culture here is not about bagging a famous peak list—it is about one unmistakable photograph and the shared story afterward. Parents on the slow lake timeline keep the hotel as a second narrative: Oishi Park flowers, Itchiku Kubota's monumental textiles, or simply a bath while waiting for the hikers' return."
+    ]
   },
   day20: {
-    summary: "A reserved morning return creates a protected final Tokyo chapter for luggage, laundry, missed priorities and an easy dinner.",
+    summary: "A reserved morning return creates a protected final Tokyo chapter for luggage, laundry, missed priorities and an easy dinner. Allow road-delay margin or use the Otsuki rail fallback; recovering the large bags and doing one priority shopping cluster is enough. Keep the final full day fresh—this is a soft landing, not another race through Tokyo.",
     timeline: [["07:00–09:00", "Breakfast, one last Fuji look and checkout."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Afternoon", "Check in, recover the large bags, and do laundry or one priority shopping cluster."], ["Evening", "Eat near the hotel and keep the final full day fresh."]],
-    history: ["Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and highway-bus network.", "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency."]
+    history: [
+      "Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and the highway-bus network. Those links made multi-night stays normal for city dwellers who wanted mountain air without alpine expedition culture.",
+      "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency. The psychology shifts from 'last chance to see everything' to 'enough time to do laundry, buy one missing item, and sleep.",
+      "Tokyo's final hotel chapter is intentionally mundane—suitcases reunited, neighbourhood ramen, early packing—which is how a long trip should end: not in spectacle, but in calm readiness."
+    ]
   },
   day21: {
-    summary: "The final full day protects three things only: teamLab, Mai's chosen special melon bread, and a fully packed, well-fed ending.",
+    summary: "The final full day protects three things only: teamLab, Mai's chosen special melon bread, and a fully packed, well-fed ending. Visit Borderless with generous admission margin without trying to locate every room; confirm the exact melon-bread branch and stock before the last afternoon. Name the ekiben and melon-bread champions at dinner, then pack with airport margin—nothing else needs to be added.",
     timeline: [["Morning", "Use a morning teamLab time if available and travel with generous admission margin."], ["Timed entry–3 hours", "Explore Borderless without trying to locate every room; use the tea house or Azabudai for a reset."], ["Mid-afternoon–18:00", "Go to Mai's exact melon-bread shop and complete the final passport score; handle only essential souvenirs."], ["18:00–21:00", "Eat the final celebratory meal, name the ekiben and melon-bread champions, and pack completely."]],
-    history: ["teamLab belongs to Tokyo's long habit of using new technology to reorganize how bodies experience space. Its moving images replace the framed artwork with an environment visitors help shape.", "Melon bread is a modern Japanese bakery form rather than a single fixed recipe. Ending with Mai's chosen specialist turns a humble everyday food into a personal trip ritual—the kind of memory repetition and anticipation make larger than the object itself."]
+    history: [
+      "teamLab belongs to Tokyo's long habit of using new technology to reorganize how bodies experience space. Its moving images replace the framed artwork with an environment visitors help shape through presence, reflection, and movement.",
+      "Melon bread is a modern Japanese bakery form rather than a single fixed recipe—crisp cookie crust, soft interior, and endless regional variations. Ending with Mai's chosen specialist turns an everyday snack into a personal trip ritual, the kind of memory repetition and anticipation make larger than the object itself.",
+      "The last full day is structured like a closing ceremony: one immersive room to remember, one flavour to carry home, one meal to mark the group, and a suitcase that leaves nothing important behind. Tokyo does not need another district added—only these anchors done well."
+    ]
   }
 };
 
@@ -1088,6 +875,7 @@ function defaultState() {
     roadmapReady: {},
     dayWindows: {},
     overviewWindows: {},
+    overviewMapChapter: "osaka",
     theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light",
     activeCity: "osaka"
   };
@@ -1620,65 +1408,6 @@ function roadmapStatus(goal) {
   return goal.status;
 }
 
-function renderRoadmap() {
-  const grid = document.querySelector("#roadmapGrid");
-  const summary = document.querySelector("#roadmapSummary");
-  const alerts = document.querySelector("#planningAlerts");
-  if (!grid || !summary || !alerts) return;
-  grid.innerHTML = "";
-  const uncovered = roadmapGoals.filter((goal) => !goal.days.length);
-  const trackable = roadmapGoals.filter((goal) => !goal.persistent);
-  const completed = trackable.filter(roadmapGoalCompleted).length;
-  summary.className = `coverage-summary ${uncovered.length ? "has-gap" : "complete"}`;
-  summary.innerHTML = `<strong>${uncovered.length ? `${uncovered.length} must-dos uncovered` : "All must-dos have a path"}</strong><span>${completed} of ${trackable.length} experience goals completed · persistent safeguards stay active</span>`;
-
-  roadmapGoals.forEach((goal) => {
-    const card = document.createElement("article");
-    const status = roadmapStatus(goal);
-    const dayLabels = goal.days.map((dayId) => findDay(dayId)?.day.short).filter(Boolean).join(" · ");
-    card.className = "roadmap-card";
-    card.innerHTML = `
-      <div class="roadmap-card-heading"><span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${status}</span><small>${dayLabels || "Unassigned"}</small></div>
-      <h3>${goal.goal}</h3>
-      <p>${goal.why}</p>
-      ${goal.blocker ? `<p class="roadmap-blocker"><strong>Before the trip:</strong> ${goal.blocker}</p>` : ""}
-      <p class="roadmap-fallback"><strong>Lower-energy path:</strong> ${goal.fallback}</p>
-    `;
-    if (goal.days.length) {
-      if (["Needs Booking", "Needs Confirmation", "Conditional"].includes(goal.status)) {
-        const readinessButton = document.createElement("button");
-        readinessButton.type = "button";
-        readinessButton.className = "text-button roadmap-ready";
-        readinessButton.textContent = state.roadmapReady[goal.id] ? "Set back to pending" : "Mark ready";
-        readinessButton.addEventListener("click", () => {
-          state.roadmapReady[goal.id] = !state.roadmapReady[goal.id];
-          saveState();
-          renderOverview();
-          renderStats();
-        });
-        card.appendChild(readinessButton);
-      }
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "text-button roadmap-open";
-      button.textContent = "Open assigned day";
-      button.addEventListener("click", () => {
-        const match = findDay(goal.days[0]);
-        if (!match) return;
-        state.activeCity = match.cityId;
-        saveState();
-        renderNav();
-        showDay(match.day);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-      card.appendChild(button);
-    }
-    grid.appendChild(card);
-  });
-
-  alerts.innerHTML = `<details class="planning-alerts"><summary>Planning alerts and conditional ideas <span>${planningConstraints.length}</span></summary><div>${planningConstraints.map((item) => `<article><strong>${item.title}</strong><p>${item.text}</p></article>`).join("")}</div></details>`;
-}
-
 function deckPoolForDay(day) {
   const cityId = findDay(day.id)?.cityId || state.activeCity;
   const regionId = ({ day06: "nara", day11: "himeji", day12: "hiroshima", day13: "miyajima", day14: "rail" })[day.id] || cityId;
@@ -1789,11 +1518,9 @@ function dailyGuide(day) {
   card.innerHTML = `
     <div class="daily-guide-heading"><p class="label">Today's clear path</p><span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${status}</span></div>
     <h3>${dayClearPath(day)}</h3>
-    <p><strong>Why today matters:</strong> ${goals.length ? goals.map((goal) => goal.goal).join(" · ") : day.theme}</p>
-    ${goals.some((goal) => goal.blocker) ? `<p class="roadmap-blocker"><strong>Before the trip:</strong> ${goals.filter((goal) => goal.blocker).map((goal) => goal.blocker).join(" ")}</p>` : ""}
     <section class="context-block merged-summary">
       <h4>Quick Summary</h4>
-      <p>${context.summary}</p>
+      <div class="summary-body">${context.summary}</div>
     </section>
     <section class="context-block timeline-block">
       <div class="timeline-heading">
@@ -2353,7 +2080,8 @@ function renderTripRouteMap() {
   if (!host) return;
   host.innerHTML = `
     <div class="trip-route-map-frame">
-      <svg viewBox="50 30 590 355" role="img" aria-labelledby="tripMapTitle tripMapDesc">
+      <div class="chapter-map-tabs" role="tablist" aria-label="Trip chapters"></div>
+      <svg class="route-map-layer" viewBox="50 30 590 355" role="img" aria-labelledby="tripMapTitle tripMapDesc">
         <title id="tripMapTitle">Japan trip route</title>
         <desc id="tripMapDesc">Colored travel legs connect Osaka, Kyoto, Hiroshima, Tokyo and Kawaguchiko. Hover or focus a leg for its travel time.</desc>
         <g class="japan-outline" aria-hidden="true">
@@ -2364,13 +2092,18 @@ function renderTripRouteMap() {
         ${makeRouteLegSvg("leg-tokyo-fuji", "#d28732", "M370.3 320.6 Q357 298 345.5 316.4", "4", "Tokyo → Kawaguchiko", "~2 hr", "bus / train", 294, 201)}
         ${makeRouteLegSvg("leg-fuji-tokyo", "#3a77b8", "M345.5 316.4 Q361 348 370.3 320.6", "5", "Kawaguchiko → Tokyo", "~2 hr", "return to Tokyo", 294, 201)}
         ${makeRouteLegSvg("leg-osaka-kyoto", "#e06b8f", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara day", 294, 201)}
-        ${makeRouteCitySvg(252.4, 308.9, -9, 25, "end", "Osaka", "Oct 24–28 · 4 nights")}
-        ${makeRouteCitySvg(263.2, 301.6, 9, -13, "start", "Kyoto", "Oct 28–Nov 2 · 5 nights")}
-        ${makeRouteCitySvg(171, 287.2, -9, -13, "end", "Hiroshima", "Nov 2–5 · 3 nights")}
-        ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "Nov 5–8 &amp; 11–13 · 5 nights")}
-        ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights")}
+        ${makeRouteCitySvg(252.4, 308.9, -9, 25, "end", "Osaka", "Oct 24–28 · 4 nights", "osaka")}
+        ${makeRouteCitySvg(263.2, 301.6, 9, -13, "start", "Kyoto", "Oct 28–Nov 2 · 5 nights", "kyoto")}
+        ${makeRouteCitySvg(171, 287.2, -9, -13, "end", "Hiroshima", "Nov 2–5 · 3 nights", "hiroshima")}
+        ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "Nov 5–8 &amp; 11–13 · 5 nights", "tokyo-1")}
+        ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights", "kawaguchiko")}
       </svg>
-      <p class="trip-map-instruction">Hover or tap a colored travel leg to see its details.</p>
+      <p class="trip-map-instruction">Double-click a city label or use the rainbow tabs for its chapter.</p>
+    <section class="chapter-map" aria-labelledby="chapterMapTitle">
+      <h3 class="sr-only" id="chapterMapTitle">Chapter overview map</h3>
+      <div class="overview-leaflet-map" role="application" aria-label="Interactive chapter overview map"></div>
+      <div class="chapter-map-days" aria-label="Days in selected chapter"></div>
+    </section>
     </div>`;
 
   const routeSvg = host.querySelector(".trip-route-map-frame svg");
@@ -2384,6 +2117,190 @@ function renderTripRouteMap() {
     host._tripMapResizeObserver.observe(host);
   }
   resizeMap();
+  renderOverviewChapterMap(host);
+}
+
+let activeOverviewLeafletMap = null;
+
+function overviewChapterForDay(dayId) {
+  return overviewMapChapters.find((chapter) => chapter.dayIds.includes(dayId));
+}
+
+function overviewMapDays(chapter) {
+  return chapter.dayIds.map((dayId) => findDay(dayId)?.day).filter(Boolean);
+}
+
+function renderOverviewChapterMap(host) {
+  const frame = host.querySelector(".trip-route-map-frame");
+  const tabs = host.querySelector(".chapter-map-tabs");
+  const mapElement = host.querySelector(".overview-leaflet-map");
+  const dayList = host.querySelector(".chapter-map-days");
+  const routeSvg = host.querySelector(".route-map-layer");
+  if (!tabs || !mapElement || !dayList || !routeSvg) return;
+
+  let selectedChapter = overviewMapChapters.find((chapter) => chapter.id === state.overviewMapChapter)
+    || overviewMapChapters.find((chapter) => chapter.cityId === state.activeCity)
+    || overviewMapChapters[0];
+  let highlightedDayId = null;
+  let armedDayId = null;
+  let markersByDay = new Map();
+  let dayButtons = new Map();
+
+  const showRoute = () => {
+    frame?.classList.remove("is-chapter-open");
+    activeOverviewLeafletMap?.remove();
+    activeOverviewLeafletMap = null;
+    renderTabs(selectedChapter, true);
+  };
+
+  const renderTabs = (chapter, routeActive = false) => {
+    tabs.replaceChildren();
+    const routeButton = document.createElement("button");
+    routeButton.type = "button";
+    routeButton.textContent = "Route";
+    routeButton.setAttribute("role", "tab");
+    routeButton.setAttribute("aria-selected", String(routeActive));
+    routeButton.classList.toggle("active", routeActive);
+    routeButton.addEventListener("click", showRoute);
+    tabs.appendChild(routeButton);
+    overviewMapChapters.forEach((candidate) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = candidate.label;
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", String(!routeActive && candidate.id === chapter.id));
+      button.classList.toggle("active", !routeActive && candidate.id === chapter.id);
+      button.addEventListener("click", () => renderChapter(candidate));
+      tabs.appendChild(button);
+    });
+  };
+
+  const openDay = (day) => {
+    const chapter = overviewChapterForDay(day.id);
+    state.activeCity = chapter?.cityId || state.activeCity;
+    saveState();
+    renderNav();
+    showDay(day);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const updateHighlight = (dayId, locked = false) => {
+    highlightedDayId = dayId;
+    if (locked) armedDayId = dayId;
+    dayButtons.forEach((button, candidateId) => {
+      const selected = candidateId === dayId;
+      button.classList.toggle("is-highlighted", selected);
+      button.classList.toggle("is-armed", armedDayId === candidateId);
+      button.setAttribute("aria-pressed", String(armedDayId === candidateId));
+    });
+    markersByDay.forEach((markers, candidateId) => {
+      markers.forEach((marker) => {
+        const selected = candidateId === dayId;
+        marker.setZIndexOffset(selected ? 1000 : 0);
+        marker.getElement()?.classList.toggle("is-highlighted", selected);
+        if (selected) marker.openTooltip(); else marker.closeTooltip();
+      });
+    });
+  };
+
+  const clearHighlight = () => {
+    if (armedDayId) return;
+    highlightedDayId = null;
+    updateHighlight(null);
+  };
+
+  const activateDay = (day) => {
+    if (armedDayId === day.id) {
+      openDay(day);
+      return;
+    }
+    armedDayId = null;
+    updateHighlight(day.id, true);
+  };
+
+  const renderChapter = (chapter) => {
+    selectedChapter = chapter;
+    state.overviewMapChapter = chapter.id;
+    saveState();
+    frame?.classList.add("is-chapter-open");
+    highlightedDayId = null;
+    armedDayId = null;
+    renderTabs(chapter);
+
+    dayList.replaceChildren();
+    activeOverviewLeafletMap?.remove();
+    activeOverviewLeafletMap = null;
+    mapElement.replaceChildren();
+    markersByDay = new Map();
+    dayButtons = new Map();
+    const days = overviewMapDays(chapter);
+
+    days.forEach((day, dayIndex) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "chapter-map-day";
+      button.innerHTML = `<span class="chapter-map-day-dot" style="--day-color:${overviewDayColors[dayIndex % overviewDayColors.length]}"></span><strong>${day.short}</strong><span>${escapeHtml(day.title.replace(/^Day \d+ - /, ""))}</span>`;
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") updateHighlight(day.id); });
+      button.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse") clearHighlight(); });
+      button.addEventListener("focus", () => updateHighlight(day.id));
+      button.addEventListener("blur", clearHighlight);
+      button.addEventListener("click", () => activateDay(day));
+      dayButtons.set(day.id, button);
+      dayList.appendChild(button);
+    });
+    if (!window.L || !window.PLACE_COORDINATES) return;
+    const map = L.map(mapElement, { scrollWheelZoom: false, zoomControl: true });
+    activeOverviewLeafletMap = map;
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
+    const points = [];
+    const focusPoints = [];
+    const focusDayIds = overviewMapFitDayIds[chapter.id];
+    days.forEach((day, dayIndex) => {
+      const markers = [];
+      const color = overviewDayColors[dayIndex % overviewDayColors.length];
+      dayMapPlaces(day).forEach((place) => {
+        const coordinates = window.PLACE_COORDINATES[place];
+        if (!coordinates) return;
+        points.push(coordinates);
+        if (focusDayIds?.includes(day.id)) focusPoints.push(coordinates);
+        const icon = makeLeafletMarkerIcon({
+          shellClass: "overview-map-marker-shell",
+          isHotel: isHotelPlace(place),
+          label: day.id.replace("day", ""),
+          dayColor: color
+        });
+        const markerLabel = isHotelPlace(place) ? `Hotel: ${place}` : place;
+        const marker = L.marker(coordinates, { icon, keyboard: true, title: `${day.title}: ${markerLabel}`, zIndexOffset: isHotelPlace(place) ? 500 : 0 }).addTo(map);
+        marker.bindTooltip(`<strong>${escapeHtml(day.title)}</strong><br>${isHotelPlace(place) ? "Hotel base · " : ""}${escapeHtml(place)}`, { direction: "top", offset: [0, -4] });
+        marker.on("mouseover focus", () => updateHighlight(day.id));
+        marker.on("mouseout blur", clearHighlight);
+        marker.on("click", () => activateDay(day));
+        markers.push(marker);
+      });
+      markersByDay.set(day.id, markers);
+    });
+    const view = overviewMapViews[chapter.id];
+    if (view) map.setView(view.center, view.zoom);
+    else {
+      const bounds = L.latLngBounds(focusPoints.length ? focusPoints : points);
+      if (bounds.isValid()) map.fitBounds(bounds, { padding: [34, 34], maxZoom: 13 });
+      else map.setView(mapFrameCenters[chapter.cityId], 11);
+    }
+    map.whenReady(() => map.invalidateSize());
+  };
+
+  frame?.querySelectorAll(".route-city-trigger[data-chapter]").forEach((trigger) => {
+    const openChapter = () => {
+      const chapter = overviewMapChapters.find((candidate) => candidate.id === trigger.dataset.chapter);
+      if (chapter) renderChapter(chapter);
+    };
+    trigger.addEventListener("dblclick", openChapter);
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openChapter(); }
+    });
+  });
+  renderTabs(selectedChapter, true);
 }
 
 function makeRouteLegSvg(id, color, path, number, title, duration, note, labelX, labelY) {
@@ -2398,12 +2315,12 @@ function makeRouteLegSvg(id, color, path, number, title, duration, note, labelX,
   </g>`;
 }
 
-function makeRouteCitySvg(pinX, pinY, nameX, nameY, anchor, city, dates) {
+function makeRouteCitySvg(pinX, pinY, nameX, nameY, anchor, city, dates, chapterId) {
   const nameWidth = city.length * 7 + 14;
   const nameLeft = anchor === "end" ? pinX + nameX - nameWidth : pinX + nameX - 7;
   return `<g class="route-city">
     <circle class="route-city-pin" cx="${pinX}" cy="${pinY}" r="7" />
-    <g class="route-city-trigger" tabindex="0" aria-label="${city}, ${dates}">
+    <g class="route-city-trigger" data-chapter="${chapterId}" tabindex="0" role="button" aria-label="${city}, ${dates}. Double-click to open its chapter map.">
       <rect class="route-city-name-hit" x="${nameLeft}" y="${pinY + nameY - 15}" width="${nameWidth}" height="21" rx="5" />
       <text class="route-city-name" x="${pinX + nameX}" y="${pinY + nameY}" text-anchor="${anchor}">${city}</text>
       <g class="route-city-callout" transform="translate(294 201)">
@@ -2705,7 +2622,90 @@ const mapFrameCenters = {
   fuji: [35.5171, 138.7518]
 };
 
+const overviewMapChapters = [
+  { id: "osaka", label: "Osaka", cityId: "osaka", dayIds: ["day02", "day03", "day04", "day05", "day06"] },
+  { id: "kyoto", label: "Kyoto", cityId: "kyoto", dayIds: ["day07", "day08", "day09", "day10"] },
+  { id: "hiroshima", label: "Hiroshima", cityId: "hiroshima", dayIds: ["day11", "day12", "day13"] },
+  { id: "tokyo-1", label: "Tokyo 1", cityId: "tokyo", dayIds: ["day14", "day15", "day16"] },
+  { id: "kawaguchiko", label: "Kawaguchiko", cityId: "tokyo", dayIds: ["day17", "day18", "day19"] },
+  { id: "tokyo-2", label: "Tokyo 2", cityId: "tokyo", dayIds: ["day20", "day21"] }
+];
+
+const overviewDayColors = ["#d75f16", "#c7437a", "#285b96", "#397b8f", "#7b61b9"];
+
+const overviewMapViews = {
+  kyoto: { center: [34.9858, 135.7588], zoom: 11 },
+  "tokyo-1": { center: [35.6812, 139.68], zoom: 11 },
+  kawaguchiko: { center: [35.5171, 138.7518], zoom: 12 },
+  "tokyo-2": { center: [35.6812, 139.7671], zoom: 12 }
+};
+
+const overviewMapFitDayIds = {
+  hiroshima: ["day12", "day13"]
+};
+
 const placeBackground = {
+  "Kansai International Airport": "KIX sits on an artificial island in Osaka Bay and is the main international gateway for the Kansai region. Treat arrival as logistics first—immigration, bags, IC cards and transit—before the trip's first Japan moment begins in Namba.",
+  "Namba Station Osaka": "Namba is one of Osaka's great south-side hubs, linking the Midosuji subway, private railways toward Nara and Kansai Airport, and the dense Namba/Dotonbori entertainment zone. For this trip it is the practical front door to the hotel and first-night food walk.",
+  "Namba Osaka": "The Namba hotel base is the reset point between scored tasting missions and evening izakaya runs. Return here for a real break—shower, lie down, stop eating—before heading to Tenma or Shin-Kobe.",
+  "Ebisu Bridge Osaka": "Ebisu Bridge spans the Dotonbori canal and is one of the district's classic photo points, with neon, canal reflections and the running Glico sign nearby. On arrival night it works as a single contained reveal rather than the start of a long crawl.",
+  "Dotonbori Osaka": "Dotonbori grew from a 17th-century canal project into Osaka's loudest food-and-entertainment strip. The giant signs and street snacks are not random spectacle—they come from a merchant city that has long treated eating well and showing off as the same art.",
+  "Osaka Castle": "Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan; the present keep is a reconstruction and museum, but the moat, walls and distant reveal still establish Osaka's monumental scale. Arrive near opening for the best light and fewer crowds on the approach.",
+  "Nippombashi Osaka": "Nippombashi is the broader district around Den Den Town and electronics culture south of the castle. It is the sensible lunch-and-transfer anchor between castle morning and pop-culture afternoon without adding another Osaka neighborhood.",
+  "Nipponbashi Denden Town": "Den Den Town evolved from postwar electronics shopping into games, anime, figures and hobby stores. The value is browsing one or two displays that genuinely stop you—not trying to 'complete' the district.",
+  "Shinsekai Osaka": "Shinsekai was unveiled in 1912 as a 'new world' entertainment district and keeps a retro, slightly theatrical street energy. Kushikatsu, Tsutenkaku views and blue-hour neon make it the day's natural evening finish.",
+  "Kuromon Ichiba Market": "Kuromon began as a wholesale fish market and became one of Osaka's most famous public market streets. The Snack League works here because shared portions, category limits and a hard 11:30 exit turn abundance into a game instead of a blur.",
+  "Daimaru Shinsaibashi": "Daimaru's Shinsaibashi flagship is a classic depachika-and-department-store food hall stop between Kuromon and Amerikamura. Use it for one controlled seated checkpoint—not a second full food mission.",
+  "Amerikamura": "Amerikamura ('American Village') is Osaka's youth-fashion and casual-snack pocket near Shinsaibashi. One wildcard taste or drink here completes the afternoon arc before the hotel reset.",
+  "Tenma Osaka": "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Compact izakaya streets and neighborhood bars make it the right lived-in dinner finish after a scored tasting day—not another Dotonbori night.",
+  "Shin-Kobe Station": "Shin-Kobe is the Shinkansen station on Kobe's northern slope, immediately below the Nunobiki ropeway. It is the cleanest access point for the selected romantic outing without turning Kobe into a multi-district checklist.",
+  "Nunobiki Ropeway": "The Nunobiki ropeway climbs from behind Shin-Kobe in minutes, opening broad views over the city, port and inland mountains. The ride itself is part of the payoff—pause at the window rather than treating it as pure transport.",
+  "Kobe Nunobiki Herb Gardens": "Terraced herb and flower gardens sit above the upper ropeway station with café terraces and seasonal planting. One garden segment plus a seated pause is enough; the harbor view does the emotional work.",
+  "Kintetsu Nara Station": "Kintetsu Nara brings you directly into the park-side east of the city, closer to Todai-ji than JR Nara. It is the practical arrival point for the Osaka-to-Kyoto bridge day with day bags only.",
+  "Nara Park": "Nara Park preserves a landscape where deer, temples and open grass have coexisted for centuries. Keep deer encounters playful and brief—they open the day, but Todai-ji's scale is the capstone.",
+  "Todai-ji Temple": "Todai-ji's Great Buddha Hall houses one of the world's largest bronze Buddha images, cast in the 8th century during political and epidemic anxiety. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
+  "Naramachi": "Naramachi preserves merchant-lane townhouses and small shops south of the park. A short café or shopfront pause here transitions the day from sacred Nara toward Kyoto without adding another major sight.",
+  "Kyoto Station": "Kyoto Station is a modern hub at the city's southern edge, linking Shinkansen, subways, buses and luggage services. On transfer days it is logistics—tickets, ekiben, bag forwarding—not a sightseeing destination.",
+  "To-ji Temple": "To-ji's five-story pagoda is one of Kyoto's most recognizable skyline markers and the temple grounds are free to enter early. Use it only as an earned dawn bonus when luggage is handled and Himeji timing stays intact.",
+  "Himeji Station": "Himeji Station sits a short walk or bus ride from the castle complex. Arriving before opening keeps the white-keep reveal humane and leaves margin for garden time and the westbound train.",
+  "Himeji Castle": "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. Defensive design—narrow gates, confusing approaches, steep interiors— sits inside that beauty; choose interior or exterior focus rather than trying to exhaust every corner.",
+  "Koko-en Garden": "Koko-en is a set of nine Edo-style gardens beside the castle moat, built on the site of samurai residences. It frames the keep from below and works as a calmer post-castle pause before collecting ekiben and continuing west.",
+  "Hiroshima Station": "Hiroshima Station anchors the city's modern rail network and ekiben culture. On Day 11 it is the evening arrival point; on Day 14 it is where the eastbound tasting ritual begins before Tokyo.",
+  "Hiroshima Peace Memorial Museum": "The museum presents evidence of the August 6, 1945 bombing and its human cost through objects, testimony and context. Visit while attention is strongest; the experience is meant to be faced directly, not rushed through as one item on a list.",
+  "Hiroshima Peace Memorial Park": "The park links the museum, Cenotaph, Peace Flame and Atomic Bomb Dome along a designed memorial axis. Walking the axis after the museum lets evidence move toward public mourning and commitment rather than staying abstract.",
+  "Atomic Bomb Dome": "The dome preserves the ruined Hiroshima Prefectural Industrial Promotion Hall, one of the few structures left standing near the hypocenter. Seeing it at dusk, after the museum and park walk, changes how the ruin reads against the living city around it.",
+  "Hiroshima National Peace Memorial Hall": "The Memorial Hall offers a quieter, more contemplative space for remembrance alongside the main museum route. Use it if you need stillness after the primary exhibits rather than adding another crowded attraction.",
+  "Miyajimaguchi Station": "Miyajimaguchi is the JR gateway to the ferry for Miyajima (Itsukushima). Check tide timing before leaving—torii and shrine corridors read differently at high and low water.",
+  "Itsukushima Shrine": "Itsukushima was treated as too sacred to build on directly, so worship took place over the water. The floating corridors and great torii still use the tide to blur the boundary between architecture, sea and mountain.",
+  "Miyajima Omotesando": "Omotesando is Miyajima's main merchant street for grilled oysters, anago-meshi, momiji manju and souvenir browsing. It is the island's food-and-atmosphere layer after the shrine—not a second checklist of temples.",
+  "Daisho-in Temple": "Daisho-in climbs the hillside behind the town with lanterns, halls and forest atmosphere away from the busiest waterfront. Choose it when energy favors a quieter Buddhist precinct over the ropeway.",
+  "Miyajima Ropeway": "The Miyajima ropeway climbs toward Mount Misen for broad Seto Inland Sea views. Altitude is entirely optional—the shrine, food street and forest paths already complete the romantic westward payoff.",
+  "Tokyo Station": "Tokyo Station's red-brick Marunouchi side is both a Shinkansen hub and a symbol of Meiji-era modernisation. On arrival and departure days it handles ekiben, luggage and final train logistics rather than sightseeing.",
+  "International House of Japan": "The International House in Roppongi is a placeholder Tokyo base for visa and map planning—not a confirmed booking. It sits between Azabu-juban and Roppongi stations and works as a stand-in until the real Nov 5–8 and Nov 11–13 property is locked.",
+  "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
+  "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
+  "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
+  "Kawaguchiko Hotel": "Kawaguchiko Hotel is the assumed lakeside base for Nov 8–11 until a final booking is confirmed. Three nights in one property turn Fuji from a day trip into a deliberate retreat between Tokyo stays.",
+  "Ghibli Museum Mitaka": "Hayao Miyazaki designed the Ghibli Museum around curiosity, hand-drawn motion and discovery without a checklist. If tickets work, give the timed visit its full window; if not, Inokashira and Kichijoji still complete the day.",
+  "Inokashira Park": "Inokashira Pond supplied water to Edo and later became one of Tokyo's beloved western parks. Ducks, bridges and lakeside paths make it the soft imaginative counterweight to museum time or the full-day fallback.",
+  "Kichijoji Sunroad Shopping District": "Kichijoji's covered shotengai and side streets combine cafes, bakeries, music shops and dense residential life. One browse-and-snack loop here keeps the day feeling like a neighbourhood story rather than a museum extraction.",
+  "Chofu Station Tokyo": "Chofu is a western Tokyo residential hub and the practical rail access for the friends-day neighbourhood. Treat it as a meeting point, not a destination in itself.",
+  "Jindaiji Temple": "Jindaiji traces its foundation to the 8th century and preserves wooded temple lanes and soba tradition on Tokyo's western edge. Use it only if the friends route there—it is an optional parent-paced pause, not a required checklist temple.",
+  "Jindai Botanical Gardens": "The botanical gardens beside Jindaiji offer seasonal planting and quiet paths when a gentler outdoor pause fits the friends-day rhythm. Skip if the social route stays entirely in shops and restaurants.",
+  "Friends Neighborhood Tokyo": "Akko and Yoshi's home area is the most authentic Tokyo capstone because it is chosen by people who live there. Follow their food, shops and dinner pick without over-researching a tourist overlay.",
+  "Shinjuku Station": "Shinjuku is one of the world's busiest rail nodes and the main launch point for the Kawaguchiko highway bus and Fuji Excursion. On Fuji days it is transfer logistics with small bags only; on return days it reunites you with the final Tokyo hotel.",
+  "Kawaguchiko Station": "Kawaguchiko Station is the lakeside hub for buses, local routes and the start of the e-bike circuit. Arrive early enough on Day 17 to settle in before the light changes on Fuji.",
+  "Lake Kawaguchiko": "Lake Kawaguchiko is the most accessible of the Fuji Five Lakes, with shoreline views that shift through the day as weather and angle change. Three nights here turn Fuji from a photograph into a lived-in retreat.",
+  "Oishi Park": "Oishi Park on the lake's north shore is famous for seasonal flower fields framed against Fuji. It is the gentle parent-day anchor while hikers are on Mitsutoge—one viewpoint and café, not a second transport chain.",
+  "Fuji Omuro Sengen Shrine": "This lakeside shrine sits among old cedars and is one of the circuit's quieter cultural stops. It rewards a short pause for atmosphere rather than a long visit.",
+  "Kawaguchi Asama Shrine": "Kawaguchi Asama Shrine is associated with Fuji worship and offers another angle on local ritual along the bike route. A few minutes for the gate and grounds is enough.",
+  "Mt Fuji Panorama Ropeway": "The Panorama Ropeway climbs Mount Tenjoyama for a compact Fuji-and-lake viewpoint when e-bikes are not the right choice. It is the short bad-weather or low-energy fallback—not a second major outing.",
+  "Mitsutoge Trailhead": "The mountain-road trailhead shortens the Mitsutoge ascent enough to make a same-way summit day practical. Confirm official reopening, weather and turnaround time before leaving—do not substitute the longer station approach.",
+  "Mount Mitsutoge": "Mitsutoge's summit ridge looks directly toward Fuji rather than standing on it, making the marker photograph the day's headline objective. Start down at the fixed turnaround even if the ridge feels unfinished.",
+  "Itchiku Kubota Art Museum": "Itchiku Kubota's museum displays monumental tsujigahana silk dyeing in a building designed around garden and mountain views. It is the slow-day cultural anchor while hikers are on the mountain.",
+  "teamLab Borderless Azabudai Hills": "teamLab Borderless uses moving digital imagery to turn the body into part of the artwork. Go with generous admission margin and without trying to 'find every room'—one memorable space is enough.",
+  "Tokyo Melonpan": "Melon bread is a modern Japanese bakery form rather than a single fixed recipe. Mai's chosen specialist branch turns an everyday snack into the trip's final food ritual—confirm stock and branch before the last afternoon.",
+  "Final Tokyo Dinner": "The last celebratory meal is deliberately unhurried: name the ekiben and melon-bread champions, eat well, and finish packing with airport margin. Nothing else needs to be added to make the ending complete.",
   "Fushimi Inari Taisha": "The head shrine of the Inari network, associated with rice, prosperity and enterprise. The thousands of torii are private donations; fox statues represent Inari's messengers rather than the deity itself.",
   "Yotsutsuji Intersection Kyoto": "This four-way junction is the climb's practical scenic payoff, with a broad view across southern Kyoto. It is also the sensible turnaround point: the summit circuit adds time but not a more dramatic city panorama.",
   "Tofuku-ji Temple": "Founded in 1236, Tofuku-ji became one of Kyoto's major Rinzai Zen temples. Its name combines characters from Nara's Todai-ji and Kofuku-ji, while the Tsutenkyo bridge and modern Hojo gardens show very different eras of temple design.",
@@ -2738,11 +2738,11 @@ function dayMapCenter(day) {
 }
 
 function mapsRouteUrl(day) {
-  const places = day.places || [];
-  const hotel = (state.lodging[state.activeCity] || "").trim();
+  const places = dayMapPlaces(day);
+  const hotel = STAY_HOTEL_BY_DAY[day.id] || (state.lodging[state.activeCity] || "").trim();
   const origin = hotel || places[0] || "Japan";
   const destination = places.at(-1) || origin;
-  const waypoints = (hotel ? places : places.slice(1, -1)).join("|");
+  const waypoints = places.filter((place) => place !== hotel && place !== origin && place !== destination).join("|");
   const params = new URLSearchParams({ api: "1", travelmode: "transit", destination });
   params.set("origin", origin);
   if (waypoints) params.set("waypoints", waypoints);
@@ -2752,18 +2752,25 @@ function mapsRouteUrl(day) {
 let activeDayLeafletMap = null;
 
 function makeMapCard(day) {
-  const { card, content } = makeCollapsibleCard({
+  const mapPlaces = dayMapPlaces(day);
+  const { card, content, summary } = makeCollapsibleCard({
     className: "map-card",
     label: "Map Layer",
     title: "Where things are",
     badge: "Map",
     open: true
   });
+  card.classList.add("is-fixed-open");
+  summary.tabIndex = -1;
+  summary.setAttribute("aria-disabled", "true");
+  summary.addEventListener("click", (event) => event.preventDefault());
+  summary.addEventListener("keydown", (event) => event.preventDefault());
+  card.addEventListener("toggle", () => { if (!card.open) card.open = true; });
 
   const mapElement = document.createElement("div");
   mapElement.className = "day-leaflet-map";
   mapElement.setAttribute("role", "application");
-  mapElement.setAttribute("aria-label", `${day.title} interactive map with ${day.places.length} numbered stops`);
+  mapElement.setAttribute("aria-label", `${day.title} interactive map with ${mapPlaces.length} numbered stops`);
 
   const placeList = document.createElement("ul");
   placeList.className = "place-list";
@@ -2793,16 +2800,25 @@ function makeMapCard(day) {
     });
   };
 
-  day.places.forEach((place, index) => {
+  let activityNumber = 0;
+  mapPlaces.forEach((place, index) => {
+    const hotel = isHotelPlace(place);
+    const stopLabel = hotel ? null : ++activityNumber;
     const item = document.createElement("li");
+    if (hotel) item.classList.add("is-hotel-stop");
     const link = document.createElement("a");
     const pinKey = document.createElement("span");
     link.href = mapsSearchUrl(`${place}, Japan`);
     link.target = "_blank";
     link.rel = "noopener";
-    link.setAttribute("aria-label", `Stop ${index + 1}, ${place}. On touch screens, tap once to highlight and again to open Google Maps.`);
-    pinKey.className = "map-pin-key";
-    pinKey.textContent = String(index + 1);
+    link.setAttribute("aria-label", `${hotel ? "Hotel base" : `Stop ${stopLabel}`}, ${place}. On touch screens, tap once to highlight and again to open Google Maps.`);
+    pinKey.className = `map-pin-key${hotel ? " is-hotel-pin" : ""}`;
+    if (hotel) {
+      pinKey.innerHTML = HOTEL_MARKER_ICON;
+      pinKey.setAttribute("aria-label", "Hotel");
+    } else {
+      pinKey.textContent = String(stopLabel);
+    }
     link.append(pinKey, document.createTextNode(place));
     link.addEventListener("pointerenter", (event) => {
       if (event.pointerType === "mouse") focusPlace(index);
@@ -2821,7 +2837,7 @@ function makeMapCard(day) {
         event.preventDefault();
         armedLinkIndex = index;
         focusPlace(index);
-        link.setAttribute("aria-label", `Stop ${index + 1}, ${place}, highlighted. Tap again to open Google Maps.`);
+        link.setAttribute("aria-label", `${hotel ? "Hotel base" : `Stop ${stopLabel}`}, ${place}, highlighted. Tap again to open Google Maps.`);
       } else {
         armedLinkIndex = -1;
       }
@@ -2840,7 +2856,7 @@ function makeMapCard(day) {
 
   const mapHelp = document.createElement("p");
   mapHelp.className = "map-hover-help";
-  mapHelp.textContent = "Every expected stop has its own pin. Hover a numbered stop or a map pin to highlight both.";
+  mapHelp.textContent = "Gold bed pins mark tonight's hotel. Numbered pins are the day's activities. Hover a stop or map pin to highlight both; tap a pin for the full background note.";
 
   const actions = document.createElement("div");
   actions.className = "map-actions";
@@ -2868,21 +2884,24 @@ function makeMapCard(day) {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
     const points = [];
-    day.places.forEach((place, index) => {
+    activityNumber = 0;
+    mapPlaces.forEach((place, index) => {
       const coordinates = window.PLACE_COORDINATES[place];
       if (!coordinates) return;
       points.push(coordinates);
-      const icon = L.divIcon({
-        className: "day-map-marker-shell",
-        html: `<span>${index + 1}</span>`,
-        iconSize: [30, 38],
-        iconAnchor: [15, 38],
-        tooltipAnchor: [0, -31]
+      const hotel = isHotelPlace(place);
+      const stopLabel = hotel ? null : ++activityNumber;
+      const icon = makeLeafletMarkerIcon({
+        shellClass: "day-map-marker-shell",
+        isHotel: hotel,
+        label: stopLabel,
+        dayColor: "var(--green)"
       });
-      const marker = L.marker(coordinates, { icon, keyboard: true, title: `${index + 1}. ${place}` }).addTo(map);
-      marker.bindTooltip(`<strong>${index + 1}. ${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
+      const markerTitle = hotel ? `Hotel: ${place}` : `${stopLabel}. ${place}`;
+      const marker = L.marker(coordinates, { icon, keyboard: true, title: markerTitle, zIndexOffset: hotel ? 500 : 0 }).addTo(map);
+      marker.bindTooltip(`<strong>${hotel ? "Hotel base" : stopLabel}. ${escapeHtml(place)}</strong>`, { direction: "top", offset: [0, -4] });
       const background = placeBackground[place];
-      if (background) marker.bindPopup(`<strong>${index + 1}. ${escapeHtml(place)}</strong><p>${escapeHtml(background)}</p>`);
+      if (background) marker.bindPopup(`<strong>${hotel ? "Hotel base" : stopLabel}. ${escapeHtml(place)}</strong><p>${escapeHtml(background)}</p>`);
       marker.on("mouseover focus", () => focusPlace(index));
       marker.on("mouseout blur", resetMap);
       markers[index] = marker;
@@ -2890,10 +2909,10 @@ function makeMapCard(day) {
     const bounds = L.latLngBounds(points);
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [34, 34], maxZoom: 14 });
     else map.setView(dayMapCenter(day), 11);
-    const missingPlaces = day.places.filter((place) => !window.PLACE_COORDINATES[place]);
+    const missingPlaces = mapPlaces.filter((place) => !window.PLACE_COORDINATES[place]);
     mapHelp.textContent = missingPlaces.length
-      ? `${points.length} of ${day.places.length} pins loaded. Missing coordinates: ${missingPlaces.join(", ")}.`
-      : `All ${points.length} expected pins are loaded. Hover a numbered stop or map pin to highlight both.`;
+      ? `${points.length} of ${mapPlaces.length} pins loaded. Missing coordinates: ${missingPlaces.join(", ")}.`
+      : `All ${points.length} pins loaded. Gold bed pins mark tonight's hotel; numbered pins are activities. Hover a stop or map pin to highlight both; tap a pin for the full note.`;
     map.whenReady(() => map.invalidateSize());
     if (focusedIndex >= 0) focusPlace(focusedIndex);
   }, 0);
@@ -2988,7 +3007,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
 
   let dragStart = null;
   viewport.addEventListener("pointerdown", (event) => {
-    if (event.pointerType !== "mouse" || event.target.closest("button, input, select, textarea, a, summary, iframe, label")) return;
+    if (event.pointerType !== "mouse" || event.target.closest("button, input, select, textarea, a, summary, iframe, label, .leaflet-container, .overview-leaflet-map, .day-leaflet-map")) return;
     dragStart = { x: event.clientX, left: viewport.scrollLeft };
     viewport.classList.add("is-dragging");
     viewport.setPointerCapture(event.pointerId);

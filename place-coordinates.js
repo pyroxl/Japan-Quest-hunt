@@ -4,6 +4,10 @@ window.PLACE_COORDINATES = {
     34.4342045,
     135.222523
   ],
+  "Hotel Cordia Osaka Hommachi": [
+    34.684601,
+    135.498514
+  ],
   "Namba Station Osaka": [
     34.6636625,
     135.5017751
@@ -83,6 +87,10 @@ window.PLACE_COORDINATES = {
   "Kyoto Station": [
     34.9866415,
     135.7584698
+  ],
+  "Hotel Monterey Kyoto": [
+    35.00775,
+    135.75948
   ],
   "Fushimi Inari Taisha": [
     34.9675192,
@@ -208,6 +216,10 @@ window.PLACE_COORDINATES = {
     34.3978256,
     132.4755766
   ],
+  "Hotel Granvia Hiroshima": [
+    34.399111,
+    132.475472
+  ],
   "Hiroshima Peace Memorial Museum": [
     34.3915495,
     132.4530979
@@ -248,9 +260,9 @@ window.PLACE_COORDINATES = {
     35.682634,
     139.7648012
   ],
-  "Tokyo Hotel Area": [
-    35.681236,
-    139.767125
+  "International House of Japan": [
+    35.65823,
+    139.7335
   ],
   "Ghibli Museum Mitaka": [
     35.6961731,
@@ -287,6 +299,10 @@ window.PLACE_COORDINATES = {
   "Kawaguchiko Station": [
     35.4984364,
     138.7685395
+  ],
+  "Kawaguchiko Hotel": [
+    35.5045641,
+    138.7636697
   ],
   "Lake Kawaguchiko": [
     35.5130603,
