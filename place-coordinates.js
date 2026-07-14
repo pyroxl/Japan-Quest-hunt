@@ -260,9 +260,9 @@ window.PLACE_COORDINATES = {
     35.682634,
     139.7648012
   ],
-  "International House of Japan": [
-    35.65823,
-    139.7335
+  "KOKO HOTEL Premier Nihonbashi Hamacho": [
+    35.68722,
+    139.78737
   ],
   "Ghibli Museum Mitaka": [
     35.6961731,

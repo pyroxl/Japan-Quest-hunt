@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v115";
+const APP_VERSION = "japan-quest-v117";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -9,7 +9,7 @@ const HOTEL_PLACES = new Set([
   "Hotel Cordia Osaka Hommachi",
   "Hotel Monterey Kyoto",
   "Hotel Granvia Hiroshima",
-  "International House of Japan",
+  "KOKO HOTEL Premier Nihonbashi Hamacho",
   "MIYA HOUSE Kodachi A棟"
 ]);
 
@@ -17,7 +17,8 @@ const LOCKED_HOTEL_WEBSITES = {
   "Hotel Cordia Osaka Hommachi": "https://cordia-osaka.com/hommachi/en/",
   "Hotel Monterey Kyoto": "https://www.hotelmonterey.co.jp/en/kyoto/",
   "Hotel Granvia Hiroshima": "https://www.hgh.co.jp/english/",
-  "MIYA HOUSE Kodachi A棟": "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html"
+  "MIYA HOUSE Kodachi A棟": "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html",
+  "KOKO HOTEL Premier Nihonbashi Hamacho": "https://koko-hotels.com/nihonbashi_hamacho/"
 };
 
 const STAY_HOTEL_BY_DAY = {
@@ -33,14 +34,14 @@ const STAY_HOTEL_BY_DAY = {
   day11: "Hotel Granvia Hiroshima",
   day12: "Hotel Granvia Hiroshima",
   day13: "Hotel Granvia Hiroshima",
-  day14: "International House of Japan",
-  day15: "International House of Japan",
-  day16: "International House of Japan",
+  day14: "KOKO HOTEL Premier Nihonbashi Hamacho",
+  day15: "KOKO HOTEL Premier Nihonbashi Hamacho",
+  day16: "KOKO HOTEL Premier Nihonbashi Hamacho",
   day17: "MIYA HOUSE Kodachi A棟",
   day18: "MIYA HOUSE Kodachi A棟",
   day19: "MIYA HOUSE Kodachi A棟",
-  day20: "International House of Japan",
-  day21: "International House of Japan"
+  day20: "KOKO HOTEL Premier Nihonbashi Hamacho",
+  day21: "KOKO HOTEL Premier Nihonbashi Hamacho"
 };
 
 const HOTEL_MARKER_ICON = `<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9a4 4 0 0 0-4-4z"/></svg>`;
@@ -465,7 +466,7 @@ const tripData = {
   },
   tokyo: {
     name: "Tokyo",
-    baseLabel: "International House of Japan (placeholder)",
+    baseLabel: "KOKO HOTEL Premier Nihonbashi Hamacho",
     description: "Tokyo bookends a three-night Kawaguchiko retreat: settle in after Hiroshima, escape to Fuji with small bags, then return for an easy final Tokyo chapter.",
     ongoing: [
       {
@@ -485,14 +486,14 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "International House of Japan"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
-      questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["International House of Japan", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
-      questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["International House of Japan", "Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
+      questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "KOKO HOTEL Premier Nihonbashi Hamacho"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
+      questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
+      questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
       questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights in a Kodachi villa beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "MIYA HOUSE Kodachi A棟"], "Send or store large luggage, travel with small bags, taxi from Kawaguchiko Station to the villa after check-in opens, and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Taxi from Kawaguchiko Station to the villa (no property shuttle)", "Check in from 16:00; cook or eat nearby for dinner"], ["The first clear Fuji reveal", "Lake light from the terrace or shore", "A quiet arrival meal in the villa kitchen"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day—taxi from the station if the bus arrives before 16:00."),
       questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Fujisanbike Studio", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Taxi or walk from the Kodachi villa to Fujisanbike Studio; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a taxi from the villa; the Red Line is the budget backup. Choose the ropeway, one museum or villa time instead and reunite for dinner."),
       questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis from the villa", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return and station taxi"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the villa."),
-      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["MIYA HOUSE Kodachi A棟", "Kawaguchiko Station", "Shinjuku Station", "International House of Japan"], "Taxi to Kawaguchiko Station, take the reserved morning return, recover or receive the large bags, check in, and complete only the most useful Tokyo reset tasks.", ["Taxi from the villa to Kawaguchiko Station before the reserved departure", "Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
-      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["International House of Japan", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
+      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["MIYA HOUSE Kodachi A棟", "Kawaguchiko Station", "Shinjuku Station", "KOKO HOTEL Premier Nihonbashi Hamacho"], "Taxi to Kawaguchiko Station, take the reserved morning return, recover or receive the large bags, check in at KOKO from 15:00, and complete only the most useful Tokyo reset tasks.", ["Taxi from the villa to Kawaguchiko Station before the reserved departure", "Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
+      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
     ]
   }
 };
@@ -837,8 +838,8 @@ const dayContext = {
     ]
   },
   day17: {
-    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage waits at the final Tokyo hotel. Send or store large luggage, reserve the highway bus or Fuji Excursion, and taxi from Kawaguchiko Station to MIYA HOUSE Kodachi A棟 once check-in opens at 16:00. The three-bedroom villa has a private sauna and kitchen but no meals—plan groceries or a nearby dinner. No further achievement is required after check-in—the view, sauna and first meal are the complete day.",
-    timeline: [["Morning", "Send large luggage onward or leave it with the returning Tokyo hotel."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko Station."], ["On arrival", "If before 16:00, wait at the station or explore nearby; then taxi to the Kodachi villa (about 10 minutes; roughly 27 minutes on foot)."], ["16:00–17:30", "Check in at MIYA HOUSE Kodachi A棟; walk toward the lakeshore or Fuji Omuro Sengen Shrine for the first Fuji view."], ["Evening", "Cook in the villa kitchen or eat nearby; use the private sauna if wanted. No further achievement is required."]],
+    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage stays at KOKO's front desk between the two Tokyo stays. Send or store large luggage, reserve the highway bus or Fuji Excursion, and taxi from Kawaguchiko Station to MIYA HOUSE Kodachi A棟 once check-in opens at 16:00. The three-bedroom villa has a private sauna and kitchen but no meals—plan groceries or a nearby dinner. No further achievement is required after check-in—the view, sauna and first meal are the complete day.",
+    timeline: [["Morning", "Check out of KOKO, leave large bags at the front desk, and take small bags to Shinjuku for the reserved Fuji transfer."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko Station."], ["On arrival", "If before 16:00, wait at the station or explore nearby; then taxi to the Kodachi villa (about 10 minutes; roughly 27 minutes on foot)."], ["16:00–17:30", "Check in at MIYA HOUSE Kodachi A棟; walk toward the lakeshore or Fuji Omuro Sengen Shrine for the first Fuji view."], ["Evening", "Cook in the villa kitchen or eat nearby; use the private sauna if wanted. No further achievement is required."]],
     history: [
       "The Fuji Five Lakes sit along Mt Fuji's northern base in a landscape shaped by lava flows, eruptions, and water collecting in basins below the volcano. Pilgrimage, poetry, and later tourism all treated the lakes as places to inhabit Fuji rather than conquer it.",
       "Kawaguchiko became especially practical once highway buses and rail links made a multi-night stay feasible from Tokyo without heroic packing. Private villas and small lodges turned the shore into a retreat culture—saunas, home cooking, and repeated views as weather changes.",
@@ -2134,7 +2135,7 @@ function renderTripRouteMap() {
         ${makeRouteCitySvg(252.4, 308.9, -9, 25, "end", "Osaka", "Oct 24–28 · 4 nights", "osaka")}
         ${makeRouteCitySvg(263.2, 301.6, 9, -13, "start", "Kyoto", "Oct 28–Nov 2 · 5 nights", "kyoto")}
         ${makeRouteCitySvg(171, 287.2, -9, -13, "end", "Hiroshima", "Nov 2–5 · 3 nights", "hiroshima")}
-        ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "Nov 5–8 &amp; 11–13 · 5 nights", "tokyo-1")}
+        ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "KOKO · Nov 5–8 &amp; 11–13", "tokyo-1")}
         ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights", "kawaguchiko")}
       </svg>
       <p class="trip-map-instruction">Double-click a city label or use the chapter buttons.</p>
@@ -2872,7 +2873,7 @@ const placeBackground = {
   "Daisho-in Temple": "Daisho-in climbs the hillside behind the town with lanterns, halls and forest atmosphere away from the busiest waterfront. Choose it when energy favors a quieter Buddhist precinct over the ropeway.",
   "Miyajima Ropeway": "The Miyajima ropeway climbs toward Mount Misen for broad Seto Inland Sea views. Altitude is entirely optional—the shrine, food street and forest paths already complete the romantic westward payoff.",
   "Tokyo Station": "Tokyo Station's red-brick Marunouchi side is both a Shinkansen hub and a symbol of Meiji-era modernisation. On arrival and departure days it handles ekiben, luggage and final train logistics rather than sightseeing.",
-  "International House of Japan": "The International House in Roppongi is a placeholder Tokyo base for visa and map planning—not a confirmed booking. It sits between Azabu-juban and Roppongi stations and works as a stand-in until the real Nov 5–8 and Nov 11–13 property is locked.",
+  "KOKO HOTEL Premier Nihonbashi Hamacho": "KOKO HOTEL Premier Nihonbashi Hamacho is your confirmed Tokyo base for both stays (Nov 5–8 and Nov 11–13). One minute from Hamacho Station on the Toei Shinjuku Line—direct to Shinjuku for the Fuji bus—and six minutes from Ningyocho on the Hibiya Line. Leave large bags at the front desk between stays during the Kawaguchiko gap.",
   "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
   "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
