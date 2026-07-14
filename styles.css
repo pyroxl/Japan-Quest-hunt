@@ -1421,10 +1421,6 @@ h3 {
   min-width: 0;
 }
 
-.calendar-day-shell:has(.calendar-day.is-transit-day) {
-  padding-top: 22px;
-}
-
 .calendar-day-shell .calendar-day {
   width: 100%;
   height: 100%;
@@ -1455,7 +1451,6 @@ h3 {
 }
 
 .calendar-day {
-  position: relative;
   display: grid;
   gap: 6px;
   min-height: 180px;
@@ -1466,24 +1461,39 @@ h3 {
   color: var(--ink);
   text-align: left;
   cursor: pointer;
-  overflow: visible;
 }
 
-.calendar-day.is-transit-day::before {
-  position: absolute;
-  top: 3px;
-  left: 12px;
-  right: 12px;
-  z-index: 1;
-  height: 2px;
+.calendar-transit-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: start;
+  max-width: 100%;
+  padding: 2px 8px;
+  border: 1px solid color-mix(in srgb, var(--outside-to) 28%, var(--line));
   border-radius: 999px;
-  background: color-mix(in srgb, var(--outside-to) 28%, var(--line));
-  pointer-events: none;
-  content: "";
+  background: color-mix(in srgb, var(--outside-from) 6%, var(--card));
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+
+.calendar-transit-route .from {
+  color: color-mix(in srgb, var(--outside-from) 78%, var(--ink));
+}
+
+.calendar-transit-route .to {
+  color: color-mix(in srgb, var(--outside-to) 78%, var(--ink));
+}
+
+.calendar-transit-route .arrow {
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 900;
 }
 
 .calendar-photo {
-  position: relative;
   display: block;
   width: 100%;
   min-height: 92px;
@@ -1492,25 +1502,6 @@ h3 {
   overflow: hidden;
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--green) 18%, white), color-mix(in srgb, var(--gold) 18%, white));
-}
-
-.calendar-shinkansen {
-  position: absolute;
-  top: -24px;
-  left: 50%;
-  z-index: 3;
-  width: min(190px, 82%);
-  height: auto;
-  color: #285b96;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 4px rgba(40, 91, 150, 0.24));
-  transform: translateX(-50%);
-}
-
-.calendar-shinkansen svg {
-  display: block;
-  width: 100%;
-  height: auto;
 }
 
 .calendar-photo.has-photo {
@@ -1624,10 +1615,6 @@ h3 {
     color-mix(in srgb, var(--outside-to) 13%, white) 100%);
 }
 
-.calendar-day.is-transit-day .calendar-shinkansen {
-  color: color-mix(in srgb, var(--outside-to) 72%, #285b96);
-}
-
 .calendar-day.is-today {
   background: linear-gradient(135deg, var(--green), var(--rose));
   color: white;
@@ -1636,6 +1623,17 @@ h3 {
 .calendar-day.is-today small,
 .calendar-day.is-today span {
   color: rgba(255, 255, 255, 0.86);
+}
+
+.calendar-day.is-today .calendar-transit-route {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.calendar-day.is-today .calendar-transit-route .from,
+.calendar-day.is-today .calendar-transit-route .to,
+.calendar-day.is-today .calendar-transit-route .arrow {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .stat {
@@ -2029,6 +2027,64 @@ h3 {
   text-align: right;
 }
 
+.reservation-countdown {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.reservation-countdown-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.reservation-countdown-heading p,
+.reservation-countdown-heading h3,
+.reservation-countdown-heading small { margin: 0; }
+.reservation-countdown-heading small { color: var(--muted); font-size: .72rem; }
+
+.reservation-countdown-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reservation-countdown-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--rose) 4%, var(--card));
+}
+
+.reservation-countdown-list li.is-urgent {
+  border-color: color-mix(in srgb, var(--rose) 55%, var(--line));
+  background: color-mix(in srgb, var(--rose) 10%, var(--card));
+}
+
+.reservation-countdown-copy,
+.reservation-countdown-copy strong,
+.reservation-countdown-copy small,
+.reservation-countdown-date strong,
+.reservation-countdown-date small { display: block; }
+
+.reservation-countdown-copy > strong,
+.reservation-countdown-copy > a { color: var(--ink); font-size: .82rem; font-weight: 900; }
+.reservation-countdown-copy > a { text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent); }
+.reservation-countdown-copy small { margin-top: 3px; color: var(--muted); font-size: .72rem; line-height: 1.35; }
+.reservation-countdown-date { min-width: 70px; text-align: right; }
+.reservation-countdown-date strong { color: var(--rose); font-size: .8rem; }
+.reservation-countdown-date small { margin-top: 2px; color: var(--muted); font-size: .68rem; }
+
 @media (max-width: 520px) {
   .locked-hotel-list li {
     grid-template-columns: 1fr;
@@ -2037,6 +2093,9 @@ h3 {
   .locked-hotel-list a {
     text-align: left;
   }
+
+  .reservation-countdown-list li { grid-template-columns: 1fr; }
+  .reservation-countdown-date { text-align: left; }
 }
 
 .trip-route-heading {
@@ -2778,10 +2837,6 @@ body[data-theme="dark"] .calendar-day.is-transit-day .calendar-photo:not(.has-ph
     color-mix(in srgb, var(--outside-from) 24%, var(--card)) 49.5%,
     color-mix(in srgb, var(--outside-to) 24%, var(--card)) 50.5%,
     color-mix(in srgb, var(--outside-to) 24%, var(--card)) 100%);
-}
-
-body[data-theme="dark"] .calendar-shinkansen {
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
 }
 
 body[data-theme="dark"] .coverage-summary.has-gap {
