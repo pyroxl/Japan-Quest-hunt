@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v119";
+const APP_VERSION = "japan-quest-v120";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -17,7 +17,7 @@ const LOCKED_HOTELS = [
   { dates: "Osaka · Oct 24–28", note: "Hommachi · 1 room", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/" },
   { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
   { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
-  { dates: "Tokyo · Nov 5–8 & Nov 11–13", note: "Nihonbashi Hamacho · 2 rooms (first stay)", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://koko-hotels.com/nihonbashi_hamacho/" },
+  { dates: "Tokyo · Nov 5–8 & Nov 11–13", note: "Nihonbashi Hamacho · 2 rooms on both stays", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://koko-hotels.com/nihonbashi_hamacho/" },
   { dates: "Kawaguchiko · Nov 8–11", note: "Kodachi · 3-bedroom villa", name: "MIYA HOUSE Kodachi A棟", url: "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html" }
 ];
 
