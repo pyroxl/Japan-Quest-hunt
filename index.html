@@ -54,6 +54,19 @@
                 </summary>
                 <div class="collapsible-content">
                   <ul class="locked-hotel-list" aria-live="polite"></ul>
+                  <section class="reservation-countdown" aria-labelledby="reservationCountdownTitle">
+                    <div class="reservation-countdown-heading">
+                      <div>
+                        <p class="label">Action calendar</p>
+                        <h3 id="reservationCountdownTitle">Still to reserve</h3>
+                      </div>
+                      <a class="calendar-all-button" id="addAllReservationReminders" href="#" download="japan-trip-reservation-reminders.ics">
+                        <span aria-hidden="true">🗓</span> Add all reminders
+                      </a>
+                    </div>
+                    <p class="reservation-countdown-intro">Recommended action dates—not trip dates. Countdown badges update automatically.</p>
+                    <ul class="reservation-countdown-list" aria-live="polite"></ul>
+                  </section>
                 </div>
               </details>
               <div class="calendar-grid" id="calendarGrid"></div>

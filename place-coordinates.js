@@ -276,6 +276,18 @@ window.PLACE_COORDINATES = {
     35.704,
     139.579
   ],
+  "Shibuya Crossing": [
+    35.6595,
+    139.7005
+  ],
+  "Hachiko Statue": [
+    35.6591,
+    139.7006
+  ],
+  "Shibuya PARCO": [
+    35.662,
+    139.6987
+  ],
   "Chofu Station Tokyo": [
     35.6517768,
     139.5448061
@@ -335,6 +347,10 @@ window.PLACE_COORDINATES = {
   "Mount Mitsutoge": [
     35.5492,
     138.8094
+  ],
+  "Asakusa Engei Hall": [
+    35.7131,
+    139.7934
   ],
   "Itchiku Kubota Art Museum": [
     35.5253486,

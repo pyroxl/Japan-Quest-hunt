@@ -1989,6 +1989,7 @@ h3 {
 
 .locked-hotel-list {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin: 0;
   padding: 0;
@@ -2003,7 +2004,7 @@ h3 {
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--green) 5%, var(--card));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--green) 7%, var(--card)), var(--card));
 }
 
 .locked-hotel-list li > span,
@@ -2029,7 +2030,144 @@ h3 {
   text-align: right;
 }
 
+.reservation-countdown {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--rose) 18%, var(--line));
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--rose) 12%, transparent), transparent 42%),
+    color-mix(in srgb, var(--card) 92%, var(--rose));
+}
+
+.reservation-countdown-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.reservation-countdown-heading p,
+.reservation-countdown-heading h3 { margin: 0; }
+.reservation-countdown-heading h3 { font-size: 1.08rem; }
+
+.calendar-all-button,
+.calendar-reminder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid color-mix(in srgb, var(--green) 35%, var(--line));
+  border-radius: 999px;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 7%, var(--card));
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.calendar-all-button { padding: 8px 11px; font-size: .74rem; white-space: nowrap; }
+.calendar-reminder { width: fit-content; margin-top: 9px; padding: 5px 9px; font-size: .68rem; }
+.calendar-all-button:hover,
+.calendar-all-button:focus-visible,
+.calendar-reminder:hover,
+.calendar-reminder:focus-visible {
+  border-color: var(--green);
+  background: color-mix(in srgb, var(--green) 14%, var(--card));
+}
+
+.reservation-countdown-intro {
+  margin: -3px 0 2px;
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.reservation-countdown-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reservation-countdown-list li {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: start;
+  gap: 11px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--card) 96%, var(--rose));
+  box-shadow: 0 4px 14px rgba(45, 32, 41, .045);
+}
+
+.reservation-countdown-list li.is-urgent {
+  border-color: color-mix(in srgb, var(--rose) 42%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--rose) 11%, var(--card)), var(--card));
+}
+
+.reservation-date-tile {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--rose) 30%, var(--line));
+  border-radius: 9px;
+  background: var(--card);
+  text-align: center;
+}
+
+.reservation-date-tile span {
+  width: 100%;
+  padding: 3px 2px;
+  color: white;
+  background: var(--rose);
+  font-size: .58rem;
+  font-weight: 950;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.reservation-date-tile strong { padding: 5px 2px 6px; color: var(--ink); font-size: 1rem; line-height: 1; }
+.reservation-countdown-copy { min-width: 0; }
+.reservation-countdown-copy strong,
+.reservation-countdown-copy small { display: block; }
+
+.reservation-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.reservation-title-row > strong,
+.reservation-title-row > a { color: var(--ink); font-size: .8rem; font-weight: 950; line-height: 1.25; }
+.reservation-title-row > a { text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent); }
+.reservation-countdown-copy p { margin: 5px 0 0; color: var(--muted); font-size: .7rem; line-height: 1.38; }
+.reservation-countdown-copy small { margin-top: 5px; color: var(--ink); font-size: .65rem; font-weight: 800; opacity: .72; }
+
+.reservation-countdown-pill {
+  flex: 0 0 auto;
+  padding: 3px 6px;
+  border-radius: 999px;
+  color: var(--green);
+  background: color-mix(in srgb, var(--green) 10%, var(--card));
+  font-size: .61rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.is-urgent .reservation-countdown-pill {
+  color: #a51d48;
+  background: color-mix(in srgb, var(--rose) 17%, var(--card));
+}
+
 @media (max-width: 520px) {
+  .locked-hotel-list { grid-template-columns: 1fr; }
+
   .locked-hotel-list li {
     grid-template-columns: 1fr;
   }
@@ -2037,6 +2175,11 @@ h3 {
   .locked-hotel-list a {
     text-align: left;
   }
+
+  .reservation-countdown { padding: 13px; }
+  .reservation-countdown-heading { align-items: flex-start; flex-direction: column; }
+  .calendar-all-button { width: 100%; }
+  .reservation-countdown-list { grid-template-columns: 1fr; }
 }
 
 .trip-route-heading {
