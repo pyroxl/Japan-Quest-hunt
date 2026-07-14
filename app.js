@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v118";
+const APP_VERSION = "japan-quest-v119";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -13,13 +13,15 @@ const HOTEL_PLACES = new Set([
   "MIYA HOUSE Kodachi A棟"
 ]);
 
-const LOCKED_HOTEL_WEBSITES = {
-  "Hotel Cordia Osaka Hommachi": "https://cordia-osaka.com/hommachi/en/",
-  "Hotel Monterey Kyoto": "https://www.hotelmonterey.co.jp/en/kyoto/",
-  "Hotel Granvia Hiroshima": "https://www.hgh.co.jp/english/",
-  "MIYA HOUSE Kodachi A棟": "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html",
-  "KOKO HOTEL Premier Nihonbashi Hamacho": "https://koko-hotels.com/nihonbashi_hamacho/"
-};
+const LOCKED_HOTELS = [
+  { dates: "Osaka · Oct 24–28", note: "Hommachi · 1 room", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/" },
+  { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
+  { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
+  { dates: "Tokyo · Nov 5–8 & Nov 11–13", note: "Nihonbashi Hamacho · 2 rooms (first stay)", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://koko-hotels.com/nihonbashi_hamacho/" },
+  { dates: "Kawaguchiko · Nov 8–11", note: "Kodachi · 3-bedroom villa", name: "MIYA HOUSE Kodachi A棟", url: "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html" }
+];
+
+const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
 
 const STAY_HOTEL_BY_DAY = {
   day02: "Hotel Cordia Osaka Hommachi",
@@ -2097,12 +2099,27 @@ function renderTripQuestDashboard() {
   if (cityRingLabel) cityRingLabel.textContent = `${activeCity().name} chapter`;
 }
 
+function renderLockedHotelsPanel() {
+  const panel = document.querySelector(".locked-hotels-panel");
+  const list = panel?.querySelector(".locked-hotel-list");
+  const badge = panel?.querySelector(".count-badge");
+  if (!list) return;
+  if (badge) badge.textContent = `${LOCKED_HOTELS.length} locked`;
+  list.innerHTML = LOCKED_HOTELS.map((hotel) => `
+    <li>
+      <span><strong>${hotel.dates}</strong><small>${hotel.note}</small></span>
+      <a href="${hotel.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(hotel.name)} ↗</a>
+    </li>
+  `).join("");
+}
+
 function renderOverview() {
   const review = document.querySelector("#planeRideReview");
   if (review) review.innerHTML = "";
   document.querySelector("#albumGrid").innerHTML = "";
   document.querySelector("#calendarGrid").innerHTML = "";
 
+  renderLockedHotelsPanel();
   renderTripRouteMap();
   renderCalendar();
   renderTripQuestDashboard();
