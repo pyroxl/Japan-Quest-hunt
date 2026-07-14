@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v120";
+const APP_VERSION = "japan-quest-v124";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -376,6 +376,54 @@ function applyOutsideCityStyle(element, day, cityId) {
   element.style.setProperty("--outside-city-color", cityTintPalette[cityId] || cityTintPalette.tokyo);
   element.style.setProperty("--outside-from", cityTintPalette[style.from] || cityTintPalette[cityId]);
   element.style.setProperty("--outside-to", cityTintPalette[style.to] || cityTintPalette[cityId]);
+}
+
+function isTransitTravelDay(dayId) {
+  const style = outsideCityStyles[dayId];
+  return Boolean(style && style.from !== style.to);
+}
+
+function attachCalendarShinkansen(day, card) {
+  if (!card || !isTransitTravelDay(day.id)) return;
+  card.querySelector(".calendar-shinkansen")?.remove();
+  const shinkansen = makeShinkansenDecor();
+  card.appendChild(shinkansen);
+}
+
+function makeShinkansenDecor() {
+  const span = document.createElement("span");
+  span.className = "calendar-shinkansen";
+  span.setAttribute("aria-hidden", "true");
+  span.innerHTML = `
+    <svg viewBox="0 0 244 44" xmlns="http://www.w3.org/2000/svg" role="presentation">
+      <path d="M14 31V17Q14 12 20 12H190Q207 12 218 19L239 31H14Z" fill="#fffafc" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M14 31H239Q237 36 225 37H21Q14 37 14 31Z" fill="currentColor" opacity="0.96"/>
+      <path d="M198 14Q209 16 218 21L235 31H205Z" fill="#8ecbf3" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M20 27H207" fill="none" stroke="currentColor" stroke-width="2" opacity="0.92"/>
+      <g fill="#8ecbf3" stroke="currentColor" stroke-width="0.8">
+        <rect x="24" y="16" width="12" height="7" rx="2"/>
+        <rect x="42" y="16" width="12" height="7" rx="2"/>
+        <rect x="72" y="16" width="12" height="7" rx="2"/>
+        <rect x="90" y="16" width="12" height="7" rx="2"/>
+        <rect x="120" y="16" width="12" height="7" rx="2"/>
+        <rect x="138" y="16" width="12" height="7" rx="2"/>
+        <rect x="168" y="16" width="12" height="7" rx="2"/>
+        <rect x="186" y="16" width="10" height="7" rx="2"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M61 13V34"/>
+        <path d="M109 13V34"/>
+        <path d="M157 13V34"/>
+      </g>
+      <g fill="#34222a">
+        <circle cx="34" cy="37" r="3"/><circle cx="52" cy="37" r="3"/>
+        <circle cx="82" cy="37" r="3"/><circle cx="100" cy="37" r="3"/>
+        <circle cx="130" cy="37" r="3"/><circle cx="148" cy="37" r="3"/>
+        <circle cx="178" cy="37" r="3"/><circle cx="196" cy="37" r="3"/>
+      </g>
+    </svg>
+  `;
+  return span;
 }
 
 function questDay(id, date, title, theme, places, main, side, eggs, mai, soft) {
@@ -2614,9 +2662,10 @@ async function renderCalendarPhoto(day, target) {
     img.src = image;
     target.appendChild(img);
     target.classList.add("has-photo");
-    return;
+  } else {
+    target.classList.remove("has-photo");
   }
-  target.classList.remove("has-photo");
+  attachCalendarShinkansen(day, target.closest(".calendar-day"));
 }
 
 async function renderAlbum() {
