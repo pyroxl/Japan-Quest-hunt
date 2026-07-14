@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v127";
+const APP_VERSION = "japan-quest-v124";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -22,19 +22,6 @@ const LOCKED_HOTELS = [
 ];
 
 const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
-
-const RESERVATION_COUNTDOWN = [
-  { name: "Parent rooms: Osaka, Kyoto & Hiroshima", recommendedOn: "2026-07-14", target: "Oct 24–Nov 5", note: "Records show only 1 room at each. Reserve now unless Mom and Dad already booked separately." },
-  { name: "Open-jaw flights", recommendedOn: "2026-07-14", target: "Oct 23 & Nov 13", note: "Needed for the visa file; use a changeable/refundable fare if practical." },
-  { name: "KOKO luggage hold", recommendedOn: "2026-07-14", target: "Nov 8–11", note: "Get written confirmation now using both Tokyo reservation numbers." },
-  { name: "Gion Corner", recommendedOn: "2026-08-01", target: "Oct 29 at 18:00", note: "October inventory should be checked when the next monthly block appears.", url: "https://www.kyoto-gioncorner.com/global/en.html" },
-  { name: "teamLab Borderless", recommendedOn: "2026-09-01", target: "Nov 12 morning", note: "Start checking September 1 and buy as soon as November 12 is released.", url: "https://www.teamlab.art/e/tokyo/" },
-  { name: "Kawaguchiko e-bikes", recommendedOn: "2026-09-15", target: "Nov 9", note: "Reserve two bikes for Mai/Brian; reconfirm November hours and the parents' separate slow plan.", url: "https://fujisanbikestudio.wixsite.com/fujisanbike-studio" },
-  { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and the Hiroshima→Tokyo seats on Oct 5; request oversized-baggage space if needed." },
-  { name: "Kawaguchiko transfers", recommendedOn: "2026-10-08", target: "Nov 8 & Nov 11", note: "Book outbound when it opens around Oct 8 and return around Oct 11." },
-  { name: "Ghibli Museum", recommendedOn: "2026-10-10", target: "Nov 6", note: "Official overseas sale: Oct 10 at 10:00 JST. Be online at release.", url: "https://www.ghibli-museum.jp/en/tickets/" },
-  { name: "Mitsutoge taxis", recommendedOn: "2026-10-27", target: "Nov 10", note: "Prebook both villa↔trailhead legs and agree the fixed return pickup." }
-];
 
 const STAY_HOTEL_BY_DAY = {
   day02: "Hotel Cordia Osaka Hommachi",
@@ -176,11 +163,9 @@ const roadmapGoals = [
   { id: "mountain-chapter", goal: "Three-night Kawaguchiko retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "One Fuji-area villa creates a deliberate quiet escape between two Tokyo stays, with active and gentle versions each day.", blocker: "November weather, local bus schedules, trail status, Tokyo luggage handling and Kodachi↔station taxis need confirmation.", fallback: "Keep the villa and use ropeway, museums, cafes and short shoreline walks instead of a hike." },
   { id: "fuji-return", goal: "Protected Kawaguchiko–Tokyo return", days: ["day20"], status: "Needs Booking", why: "Returning on Nov 11 creates a full buffer before the flight and leaves time for missed Tokyo priorities.", blocker: "Reserve the return bus or train and allow road-delay margin.", fallback: "Use the rail route via Otsuki if highway conditions look unreliable." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
-  { id: "tokyo-story", goal: "Tokyo through Ghibli, Shibuya, friends, Asakusa, teamLab and food", days: ["day14", "day15", "day16", "day20", "day21"], status: "Ready", why: "The tightened Tokyo chapter keeps personally distinct anchors and gives Dad and Mai one requested experience each.", blocker: "", fallback: "Protect Ghibli, Shibuya/Akko and Asakusa Hall; use the final day for teamLab and the bakery route." },
+  { id: "tokyo-story", goal: "Tokyo through Ghibli, friends, teamLab and food", days: ["day14", "day15", "day16", "day21"], status: "Ready", why: "The tightened Tokyo chapter keeps only the personally distinct anchors.", blocker: "", fallback: "Protect Ghibli/friends and use the final day for the strongest available ticket and bakery route." },
   { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
-  { id: "shibuya-crossing", goal: "Dad's Shibuya Crossing", days: ["day16"], status: "Ready", why: "A compact morning gives Dad the crossing at street level without consuming the protected friends' evening.", blocker: "Akko's meeting point sets the exact departure time.", fallback: "Cross once, take the Hachiko photo, use a seated lunch, and leave Shibuya by about 15:30." },
-  { id: "friends-day", goal: "Akko/Yoshi evening", days: ["day16"], status: "Needs Confirmation", why: "The friends' neighborhood time and dinner remain the emotional capstone after Shibuya.", blocker: "Confirm meeting point, start time, and dinner plan.", fallback: "Travel directly from Shibuya and keep it seated, social and friend-led." },
-  { id: "asakusa-hall", goal: "Asakusa Engei Hall with Mai", days: ["day20"], status: "Needs Schedule Check", why: "A drop-in yose gives Mai rakugo, manzai and visual variety without risking a timed ticket after the Fuji return.", blocker: "Confirm the Nov 11 bill, hours and any exceptional closure.", fallback: "Shorten the visit to several acts if the return runs late." },
+  { id: "friends-day", goal: "Akko/Yoshi home-neighborhood day", days: ["day16"], status: "Needs Confirmation", why: "The most authentic Tokyo capstone is a meal and neighborhood tour chosen by friends who live there.", blocker: "Confirm neighborhood name, availability, and dinner plan.", fallback: "Keep it seated and social; if near Chofu, Jindaiji and soba are a strong optional anchor." },
   { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Ghibli cover imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Ghibli/Kichijoji." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
@@ -359,7 +344,7 @@ const calendarThumbnailIdeas = {
   day17: "Idea: small bags + first Fuji reveal",
   day18: "Idea: two bikes + lake + Fuji",
   day19: "Idea: Mitsutoge summit marker + Fuji",
-  day20: "Idea: suitcases reunited + Asakusa yose curtain"
+  day20: "Idea: small bags reunite with suitcases"
 };
 
 const calendarReferenceLinks = {
@@ -383,23 +368,6 @@ function calendarWakeClass(dayId) {
   return vitalEarlyWakeDays.has(dayId) ? "calendar-wake is-vital-wake" : "calendar-wake";
 }
 
-const cityDisplayNames = {
-  osaka: "Osaka",
-  kyoto: "Kyoto",
-  hiroshima: "Hiroshima",
-  tokyo: "Tokyo",
-  nara: "Nara",
-  kawaguchiko: "Kawaguchiko"
-};
-
-function calendarTransitRouteMarkup(dayId) {
-  const style = outsideCityStyles[dayId];
-  if (!style || style.from === style.to) return "";
-  const from = cityDisplayNames[style.from] || style.from;
-  const to = cityDisplayNames[style.to] || style.to;
-  return `<span class="calendar-transit-route"><span class="from">${from}</span><span class="arrow" aria-hidden="true">→</span><span class="to">${to}</span></span>`;
-}
-
 function applyOutsideCityStyle(element, day, cityId) {
   const style = outsideCityStyles[day.id];
   if (!style || !element) return;
@@ -408,6 +376,54 @@ function applyOutsideCityStyle(element, day, cityId) {
   element.style.setProperty("--outside-city-color", cityTintPalette[cityId] || cityTintPalette.tokyo);
   element.style.setProperty("--outside-from", cityTintPalette[style.from] || cityTintPalette[cityId]);
   element.style.setProperty("--outside-to", cityTintPalette[style.to] || cityTintPalette[cityId]);
+}
+
+function isTransitTravelDay(dayId) {
+  const style = outsideCityStyles[dayId];
+  return Boolean(style && style.from !== style.to);
+}
+
+function attachCalendarShinkansen(day, card) {
+  if (!card || !isTransitTravelDay(day.id)) return;
+  card.querySelector(".calendar-shinkansen")?.remove();
+  const shinkansen = makeShinkansenDecor();
+  card.appendChild(shinkansen);
+}
+
+function makeShinkansenDecor() {
+  const span = document.createElement("span");
+  span.className = "calendar-shinkansen";
+  span.setAttribute("aria-hidden", "true");
+  span.innerHTML = `
+    <svg viewBox="0 0 244 44" xmlns="http://www.w3.org/2000/svg" role="presentation">
+      <path d="M14 31V17Q14 12 20 12H190Q207 12 218 19L239 31H14Z" fill="#fffafc" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M14 31H239Q237 36 225 37H21Q14 37 14 31Z" fill="currentColor" opacity="0.96"/>
+      <path d="M198 14Q209 16 218 21L235 31H205Z" fill="#8ecbf3" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M20 27H207" fill="none" stroke="currentColor" stroke-width="2" opacity="0.92"/>
+      <g fill="#8ecbf3" stroke="currentColor" stroke-width="0.8">
+        <rect x="24" y="16" width="12" height="7" rx="2"/>
+        <rect x="42" y="16" width="12" height="7" rx="2"/>
+        <rect x="72" y="16" width="12" height="7" rx="2"/>
+        <rect x="90" y="16" width="12" height="7" rx="2"/>
+        <rect x="120" y="16" width="12" height="7" rx="2"/>
+        <rect x="138" y="16" width="12" height="7" rx="2"/>
+        <rect x="168" y="16" width="12" height="7" rx="2"/>
+        <rect x="186" y="16" width="10" height="7" rx="2"/>
+      </g>
+      <g fill="none" stroke="currentColor" stroke-width="1" opacity="0.55">
+        <path d="M61 13V34"/>
+        <path d="M109 13V34"/>
+        <path d="M157 13V34"/>
+      </g>
+      <g fill="#34222a">
+        <circle cx="34" cy="37" r="3"/><circle cx="52" cy="37" r="3"/>
+        <circle cx="82" cy="37" r="3"/><circle cx="100" cy="37" r="3"/>
+        <circle cx="130" cy="37" r="3"/><circle cx="148" cy="37" r="3"/>
+        <circle cx="178" cy="37" r="3"/><circle cx="196" cy="37" r="3"/>
+      </g>
+    </svg>
+  `;
+  return span;
 }
 
 function questDay(id, date, title, theme, places, main, side, eggs, mai, soft) {
@@ -522,11 +538,11 @@ const tripData = {
     days: [
       questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "KOKO HOTEL Premier Nihonbashi Hamacho"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
       questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
-      questDay("day16", "2026-11-07", "Scramble Into Their Tokyo", "Give Dad the Shibuya Crossing, give Mai one playful stop, then let Akko own the evening.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Shibuya Crossing", "Hachiko Statue", "Shibuya PARCO", "Friends Neighborhood Tokyo"], "Cross Shibuya at street level, take the Hachiko photo, choose one Mai-facing stop, and leave by about 15:30 for Akko and Yoshi's evening.", ["Cross the scramble together", "Watch one full signal cycle from the edge", "Take Dad's Hachiko/crossing photo", "Choose only one of Shibuya PARCO, Miyashita Park or Shibuya Sky", "Eat a seated lunch", "Depart directly for the confirmed friends' meeting point by about 15:30", "Take a relaxed group photo at dinner", "Bring a small consumable thank-you gift"], ["Dad in the crossing", "Shibuya movement from the curb", "A playful PARCO detail", "The group at Akko's dinner"], "Dad gets his unmistakable Tokyo moment and Mai ends the day welcomed into a real corner of Japan.", "After the crossing, use a cafe or seated lunch as Dad's base; travel directly to the friends and let them set the evening pace."),
+      questDay("day16", "2026-11-07", "Tokyo Through Their Eyes", "Let people who live here show us their everyday Japan.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Chofu Station Tokyo", "Jindaiji Temple", "Jindai Botanical Gardens", "Friends Neighborhood Tokyo"], "Travel to Akko and Yoshi's home neighborhood, follow their lead through local spots, and let the dinner they choose be the capstone.", ["Ask them for one place they genuinely like", "Eat something they recommend without over-researching it", "Learn one neighborhood fact, memory, or routine from them", "Take a relaxed group photo", "Bring a small consumable thank-you gift", "Use Jindaiji or the botanical gardens only if the friends route them there"], ["A lived-in shopfront or local sign", "Steam rising from a recommended kitchen", "A tiny charm, statue, or hand-painted detail"], "Mai gets welcomed into a real corner of Japan.", "Keep it seated and social; let the friends choose the pace and dinner spot."),
       questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights in a Kodachi villa beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "MIYA HOUSE Kodachi A棟"], "Send or store large luggage, travel with small bags, taxi from Kawaguchiko Station to the villa after check-in opens, and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Taxi from Kawaguchiko Station to the villa (no property shuttle)", "Check in from 16:00; cook or eat nearby for dinner"], ["The first clear Fuji reveal", "Lake light from the terrace or shore", "A quiet arrival meal in the villa kitchen"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day—taxi from the station if the bus arrives before 16:00."),
       questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Fujisanbike Studio", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Taxi or walk from the Kodachi villa to Fujisanbike Studio; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a taxi from the villa; the Red Line is the budget backup. Choose the ropeway, one museum or villa time instead and reunite for dinner."),
       questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis from the villa", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return and station taxi"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the villa."),
-      questDay("day20", "2026-11-11", "Back to Tokyo, Into the Yose", "Return early, reunite the luggage, then take Mai into Asakusa's old-school variety hall.", ["MIYA HOUSE Kodachi A棟", "Kawaguchiko Station", "Shinjuku Station", "KOKO HOTEL Premier Nihonbashi Hamacho", "Asakusa Engei Hall"], "Take the reserved early return, recover the large bags, then watch 60–90 minutes of rakugo, manzai, magic, paper cutting or acrobatics at Asakusa Engei Hall.", ["Taxi from the villa to Kawaguchiko Station before the reserved departure", "Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage before sightseeing", "Check the Nov 11 hall bill and hours", "Enter and leave between acts", "Stay for several acts rather than the entire program", "Eat an easy Asakusa or hotel-area dinner"], ["The last Fuji glimpse", "Suitcases reunited", "The yose curtain or playbill", "Mai reacting to a visual variety act"], "Mai gets a living slice of Tokyo entertainment culture and the final Tokyo stay still begins calmly.", "The transfer and hotel reset are complete for Dad; join the seated hall visit only if energy is good."),
+      questDay("day20", "2026-11-11", "Back to Tokyo Glow", "Return to Tokyo with a full buffer before the flight and an easy afternoon for laundry, shopping or anything missed.", ["MIYA HOUSE Kodachi A棟", "Kawaguchiko Station", "Shinjuku Station", "KOKO HOTEL Premier Nihonbashi Hamacho"], "Taxi to Kawaguchiko Station, take the reserved morning return, recover or receive the large bags, check in at KOKO from 15:00, and complete only the most useful Tokyo reset tasks.", ["Taxi from the villa to Kawaguchiko Station before the reserved departure", "Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Do laundry if still needed", "Buy only priority items", "Choose an easy neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "A calm final-Tokyo dinner"], "Tokyo feels like a soft landing and finale, not another race.", "The transfer and hotel reset are a complete day."),
       questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
     ]
   }
@@ -604,9 +620,9 @@ const dayGoals = {
     photoHint: "Pond reflection, museum detail, or handmade shop display."
   },
   day16: {
-    clearPath: "Shibuya Crossing and Hachiko → seated lunch → one Mai-facing stop → depart by 15:30 for Akko/Yoshi.",
-    mainGoal: "Take Dad's crossing photo and still arrive relaxed for the friends' evening.",
-    photoHint: "Dad in the scramble, Hachiko, one playful PARCO detail, or the group at dinner."
+    clearPath: "Let Akko/Yoshi lead the neighborhood; dinner they choose is the capstone.",
+    mainGoal: "Take the group photo at the friends' chosen dinner table.",
+    photoHint: "Group at dinner, a local shopfront they showed you, or the recommended dish."
   },
   day17: {
     clearPath: "Small bags only: Tokyo to Kawaguchiko—taxi to the Kodachi villa after 16:00, watch Fuji, cook or eat, rest.",
@@ -624,9 +640,9 @@ const dayGoals = {
     photoHint: "Mitsutoge summit marker in the foreground with Fuji beyond."
   },
   day20: {
-    clearPath: "Taxi to Kawaguchiko Station, reserved early return, luggage recovery, then 60–90 minutes at Asakusa Engei Hall.",
-    mainGoal: "Reunite the luggage and take Mai into the yose for several different acts.",
-    photoHint: "Suitcases reunited, the Asakusa hall curtain/playbill, or Mai reacting to the show."
+    clearPath: "Taxi to Kawaguchiko Station, reserved morning return, final Tokyo check-in, luggage recovery, laundry or priority shopping.",
+    mainGoal: "Finish the Tokyo reset and share one easy neighborhood dinner.",
+    photoHint: "Small Fuji-trip bags meeting the large suitcases in the final Tokyo hotel room."
   },
   day21: {
     clearPath: "teamLab, Mai's melon-bread shop, final meal, suitcase fully packed.",
@@ -716,8 +732,8 @@ const legacyDayContext = {
     history: "Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. The Ghibli Museum was designed around curiosity and discovery without a checklist."
   },
   day16: {
-    summary: "Dad gets Shibuya Crossing in a compact morning; one Mai-facing stop follows before the group leaves by about 15:30 for Akko and Yoshi's evening.",
-    history: "Shibuya's crossing became an icon of Tokyo's rail-centered growth, while the friend-led evening restores the intimate neighborhood perspective after the spectacle."
+    summary: "Akko and Yoshi show their home neighborhood; the dinner they choose is the most authentic Tokyo capstone of the trip.",
+    history: "Tokyo's residential neighborhoods reveal everyday Japan through stations, shotengai, temples, parks, and favorite restaurants. If the friends are near Chofu, Jindaiji's wooded temple lanes and soba tradition make a strong optional anchor."
   },
   day17: {
     summary: "Everyone leaves Tokyo with small bags for three nights in the confirmed Kodachi villa beside Lake Kawaguchiko.",
@@ -863,12 +879,12 @@ const dayContext = {
     ]
   },
   day16: {
-    summary: "Dad's Shibuya Crossing is the daytime anchor and Akko's evening is the capstone. Cross at street level, take the Hachiko photo, use a seated lunch, and choose only one Mai-facing stop—Shibuya PARCO is the default. Leave by about 15:30 and travel directly to the confirmed meeting point; do not add Harajuku, Meiji Jingu, Omotesando or Shinjuku.",
-    timeline: [["09:30–10:30", "Travel from KOKO Hamacho to Shibuya without an early alarm after Ghibli day."], ["10:30–11:15", "Hachiko, cross the scramble together, watch one full signal cycle and take Dad's photo."], ["11:15–13:30", "Seated lunch plus exactly one: Shibuya PARCO, Miyashita Park or a prebooked Shibuya Sky slot."], ["13:30–15:15", "Cafe/rest or one short browse; retain the travel buffer."], ["By 15:30", "Depart directly for Akko and Yoshi's confirmed meeting point."], ["Evening", "Let the friends choose the neighborhood time and dinner; keep it seated, social and unhurried."]],
+    summary: "Akko and Yoshi show their home neighborhood; the dinner they choose is the most authentic Tokyo capstone of the trip. Follow their lead through local spots they genuinely like—not a tourist checklist—and keep the day seated, social, and unhurried. Jindaiji or the botanical gardens are optional only if the friends route there; the friends' dinner pick is the real destination.",
+    timeline: [["Late morning", "Travel toward the friends' neighborhood; confirm the exact meeting point once Chofu or another base is locked in."], ["Midday–afternoon", "Follow Akko and Yoshi through the local spots they genuinely like—not a tourist checklist."], ["Optional", "If the route passes Chofu, Jindaiji temple lanes, soba, or the botanical gardens can anchor a parent-paced pause."], ["Evening", "Let the friends choose dinner; keep the day seated, social, and unhurried."]],
     history: [
-      "Shibuya Crossing sits beside one of Tokyo's busiest rail hubs. Its fame comes from the way several pedestrian streams receive the signal at once, turning ordinary station circulation into a recurring piece of urban choreography.",
-      "The Hachiko statue commemorates the Akita dog remembered for continuing to wait near Shibuya Station after his owner's death. It became both a loyalty symbol and Tokyo's best-known meeting point.",
-      "The day deliberately moves from Tokyo as global spectacle to Tokyo as hospitality. Being shown an evening by friends who live there reveals the city through memory, routine and a meal chosen for personal reasons rather than rankings."
+      "Tokyo's residential neighborhoods are as important to understanding the city as its famous districts. Stations, shotengai, temples, parks, and favourite restaurants reveal everyday Japan more honestly than another imported sightseeing plan.",
+      "Being shown those routines by friends who live there turns travel into hospitality. The meal they choose carries more cultural weight than any guidebook ranking because it encodes memory, budget, and pride in a local spot.",
+      "If the route passes Chofu, Jindaiji traces its foundation to the 8th century and preserves wooded temple lanes and soba tradition on the city's western edge. The area is also linked to GeGeGe no Kitaro creator Shigeru Mizuki, whose yokai details appear in local shopfronts—optional texture, not the day's purpose."
     ]
   },
   day17: {
@@ -900,12 +916,12 @@ const dayContext = {
     ]
   },
   day20: {
-    summary: "Checkout from the Kodachi villa, taxi to Kawaguchiko Station and take the earliest humane reserved return. Recover the large bags before going to Asakusa Engei Hall with Mai for roughly 60–90 minutes. The yose format is ideal after a transfer: enter between acts, enjoy several different performers and leave without needing to finish the whole bill.",
-    timeline: [["07:00–08:15", "Breakfast, one last Fuji look and checkout from the villa."], ["08:00–10:00", "Taxi from MIYA HOUSE Kodachi A棟 to Kawaguchiko Station; leave 30–45 minutes before the reserved departure."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Early afternoon", "Reach KOKO, leave/recover the large bags and check in when available."], ["About 15:30–17:00", "Go to Asakusa Engei Hall and watch several rakugo, manzai, magic, paper-cutting or acrobatic acts."], ["After the hall", "Eat an early Asakusa or hotel-area dinner; add no wider sightseeing checklist."]],
+    summary: "Checkout from the Kodachi villa, taxi to Kawaguchiko Station, and a reserved morning return create a protected final Tokyo chapter for luggage, laundry, missed priorities and an easy dinner. Allow road-delay margin or use the Otsuki rail fallback; recovering the large bags and doing one priority shopping cluster is enough. Keep the final full day fresh—this is a soft landing, not another race through Tokyo.",
+    timeline: [["07:00–08:15", "Breakfast, one last Fuji look and checkout from the villa."], ["08:00–10:00", "Taxi from MIYA HOUSE Kodachi A棟 to Kawaguchiko Station; leave 30–45 minutes before the reserved departure."], ["Morning–early afternoon", "Use the reserved Shinjuku bus, with rail via Otsuki as the road-delay fallback."], ["Afternoon", "Check in, recover the large bags, and do laundry or one priority shopping cluster."], ["Evening", "Eat near the hotel and keep the final full day fresh."]],
     history: [
       "Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and the highway-bus network. Those links made multi-night stays normal for city dwellers who wanted mountain air without alpine expedition culture.",
-      "Asakusa's yose tradition presents entertainment in a flowing bill rather than one sealed theatrical work. Rakugo storytellers share the stage with manzai duos and visual variety performers, letting audiences enter for a portion of the program.",
-      "Returning two nights before the flight converts weather or traffic risk into an inconvenience. Pairing the reset with one flexible seated performance keeps the finale culturally alive without making it fragile."
+      "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency. The psychology shifts from 'last chance to see everything' to 'enough time to do laundry, buy one missing item, and sleep.",
+      "Tokyo's final hotel chapter is intentionally mundane—suitcases reunited, neighbourhood ramen, early packing—which is how a long trip should end: not in spectacle, but in calm readiness."
     ]
   },
   day21: {
@@ -2134,31 +2150,15 @@ function renderTripQuestDashboard() {
 function renderLockedHotelsPanel() {
   const panel = document.querySelector(".locked-hotels-panel");
   const list = panel?.querySelector(".locked-hotel-list");
-  const reservationList = panel?.querySelector(".reservation-countdown-list");
   const badge = panel?.querySelector(".count-badge");
   if (!list) return;
-  if (badge) badge.textContent = `${LOCKED_HOTELS.length} locked · ${RESERVATION_COUNTDOWN.length} pending`;
+  if (badge) badge.textContent = `${LOCKED_HOTELS.length} locked`;
   list.innerHTML = LOCKED_HOTELS.map((hotel) => `
     <li>
       <span><strong>${hotel.dates}</strong><small>${hotel.note}</small></span>
       <a href="${hotel.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(hotel.name)} ↗</a>
     </li>
   `).join("");
-  if (reservationList) {
-    const today = Date.parse(`${todayIso()}T00:00:00Z`);
-    reservationList.innerHTML = RESERVATION_COUNTDOWN.map((item) => {
-      const days = Math.ceil((Date.parse(`${item.recommendedOn}T00:00:00Z`) - today) / 86400000);
-      const countdown = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Do now" : `${days}d to go`;
-      const dateLabel = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${item.recommendedOn}T00:00:00Z`));
-      const name = item.url
-        ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.name)} ↗</a>`
-        : `<strong>${escapeHtml(item.name)}</strong>`;
-      return `<li class="${days <= 7 ? "is-urgent" : ""}">
-        <span class="reservation-countdown-copy">${name}<small>${escapeHtml(item.target)} · ${escapeHtml(item.note)}</small></span>
-        <span class="reservation-countdown-date"><strong>${countdown}</strong><small>${dateLabel}</small></span>
-      </li>`;
-    }).join("");
-  }
 }
 
 function renderOverview() {
@@ -2620,7 +2620,6 @@ function renderCalendar() {
             <span class="${calendarWakeClass(day.id)}">${calendarWakeLabel(day.id)}</span>
           </span>
         </div>
-        ${calendarTransitRouteMarkup(day.id)}
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
         <span class="calendar-capstone">${capstone || "Not yet defined"}</span>
@@ -2666,6 +2665,7 @@ async function renderCalendarPhoto(day, target) {
   } else {
     target.classList.remove("has-photo");
   }
+  attachCalendarShinkansen(day, target.closest(".calendar-day"));
 }
 
 async function renderAlbum() {
