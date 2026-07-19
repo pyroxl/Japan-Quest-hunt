@@ -300,7 +300,7 @@ window.PLACE_COORDINATES = {
     35.6699056,
     139.5479592
   ],
-  "Friends Neighborhood Tokyo": [
+  "Akko meetup · provisional Chofu Station": [
     35.65165,
     139.54416
   ],

@@ -8,7 +8,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v148">
   </head>
   <body>
     <div class="app-shell">
@@ -111,6 +111,40 @@
               </section>
             </section>
 
+            <!-- FOOD MAP PROTOTYPE: remove this section to undo the placeholder UI. -->
+            <section class="overview-window" id="cityFoodMapView">
+              <section class="city-food-map-card" id="cityFoodMapCard">
+                <div class="section-heading city-food-map-heading">
+                  <div>
+                    <p class="label" id="cityFoodMapLabel">Osaka food scout · researched picks</p>
+                    <h2 id="cityFoodMapTitle">Osaka Food Map</h2>
+                  </div>
+                  <span class="city-food-mascot" aria-hidden="true">おいしい!</span>
+                </div>
+                <div class="city-food-intro">
+                  <span aria-hidden="true">🍙</span>
+                  <p id="cityFoodIntroCopy"><strong>What kind of Osaka food sounds good?</strong> Filter the map by local specialty—from takoyaki and kushikatsu to izakayas, noodles, cafés, and conbini.</p>
+                </div>
+                <div class="city-food-toolbar">
+                  <div class="city-food-filters" id="cityFoodFilters" aria-label="Filter food map"></div>
+                  <div class="city-food-subfilters" id="cityFoodSubfilters" aria-label="Filter by food subtype" hidden></div>
+                </div>
+                <p class="city-food-result-count" id="cityFoodResultCount" aria-live="polite"></p>
+                <div class="city-food-layout">
+                  <div class="city-food-map-wrap">
+                    <div class="city-food-leaflet-map" id="cityFoodLeafletMap" role="application" aria-label="Interactive city food map"></div>
+                    <div class="city-food-map-key" aria-label="Food pin legend">
+                      <span><i class="is-restaurant">🍜</i> Restaurant</span>
+                      <span><i class="is-cafe">☕</i> Café</span>
+                      <span><i class="is-conbini">🍙</i> Conbini</span>
+                      <span><i class="is-sweet">★</i> Sweets</span>
+                    </div>
+                  </div>
+                  <div class="city-food-list" id="cityFoodList"></div>
+                </div>
+              </section>
+            </section>
+
             <section class="overview-window" id="photoAlbum">
               <div class="section-heading">
                 <p class="label">Memory Loot</p>
@@ -133,6 +167,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v148"></script>
   </body>
 </html>

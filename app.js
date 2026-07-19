@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v127";
+const APP_VERSION = "japan-quest-v148";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -68,6 +68,7 @@ function isHotelPlace(place) {
 function dayMapPlaces(day) {
   const hotel = STAY_HOTEL_BY_DAY[day.id];
   if (!hotel) return day.places.slice();
+  if (isTransitTravelDay(day.id)) return day.places.slice();
   const activities = day.places.filter((place) => place !== hotel);
   return [hotel, ...activities];
 }
@@ -180,7 +181,7 @@ const roadmapGoals = [
   { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
   { id: "shibuya-crossing", goal: "Dad's Shibuya Crossing", days: ["day16"], status: "Ready", why: "It gives Dad's Tokyo request a clear morning anchor without jeopardizing the evening meetup.", blocker: "", fallback: "Cross once, take the Hachiko photo, and skip the mall stop." },
   { id: "friends-day", goal: "Evening with Akko", days: ["day16"], status: "Needs Confirmation", why: "The social evening is the protected capstone, so the Shibuya day ends early enough to travel wherever Akko chooses.", blocker: "Confirm meeting point, time, and whether Yoshi is joining.", fallback: "Leave Shibuya by 15:30 and keep dinner seated and unhurried." },
-  { id: "asakusa-hall", goal: "Asakusa Engei Hall for Mai", days: ["day20"], status: "Needs Same-Day Check", why: "A short yose visit adds rakugo and variety entertainment without taking over the Fuji return day.", blocker: "Check the day's bill and exact stage times after returning to Tokyo.", fallback: "Walk around Asakusa and choose another compact traditional performance if the bill or timing is poor." },
+  { id: "asakusa-hall", goal: "Asakusa Engei Hall for Mai", days: ["day20"], status: "Needs Schedule Check", why: "A short yose visit adds rakugo and variety entertainment without taking over the Fuji return day.", blocker: "Check the Nov 11 bill when it is published about one month ahead; special programs can change the normal hours.", fallback: "If the return reaches Shinjuku after 14:00, skip the hall and protect luggage, rest, and dinner." },
   { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Ghibli cover imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Ghibli/Kichijoji." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
@@ -326,7 +327,7 @@ const dayWalkingTime = {
   day17: "~1–2 hr",
   day18: "~1 hr",
   day19: "~4–5 hr",
-  day20: "~3–4 hr",
+  day20: "~1–2 hr",
   day21: "~2–3 hr"
 };
 
@@ -553,7 +554,7 @@ const tripData = {
     days: [
       questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "KOKO HOTEL Premier Nihonbashi Hamacho"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
       questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
-      questDay("day16", "2026-11-07", "Scramble Into Their Tokyo", "Give Dad his Shibuya moment, one Mai-friendly pop-culture stop, then protect the evening with Akko.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Shibuya Crossing", "Hachiko Statue", "Shibuya PARCO", "Friends Neighborhood Tokyo"], "Cross the Scramble, take the Hachiko photo, eat lunch nearby, choose one compact Mai stop, and leave Shibuya by 15:30 for Akko's evening plan.", ["Cross Shibuya Crossing together", "Take Dad's Hachiko or crossing photo", "Choose one rooftop, cafe, or people-watching view", "Give Mai one focused PARCO or character-culture stop", "Leave by 15:30 for the confirmed meetup point", "Bring a small consumable thank-you gift for Akko"], ["Dad in the crossing", "Hachiko or Shibuya street texture", "The relaxed group dinner with Akko"], "Dad gets his Tokyo icon and Mai gets one playful stop without exhausting the social evening.", "Cross once, take the photo, and skip PARCO if the meetup requires an earlier departure."),
+      questDay("day16", "2026-11-07", "Scramble Into Their Tokyo", "Give Dad his Shibuya moment, one Mai-friendly pop-culture stop, then protect the evening with Akko.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Shibuya Crossing", "Hachiko Statue", "Shibuya PARCO", "Akko meetup · provisional Chofu Station"], "Cross the Scramble, take the Hachiko photo, eat lunch nearby, choose one compact Mai stop, and leave Shibuya by 15:30 for Akko's evening plan.", ["Cross Shibuya Crossing together", "Take Dad's Hachiko or crossing photo", "Choose one rooftop, cafe, or people-watching view", "Give Mai one focused PARCO or character-culture stop", "Leave by 15:30 for the confirmed meetup point", "Bring a small consumable thank-you gift for Akko"], ["Dad in the crossing", "Hachiko or Shibuya street texture", "The relaxed group dinner with Akko"], "Dad gets his Tokyo icon and Mai gets one playful stop without exhausting the social evening.", "Cross once, take the photo, and skip PARCO if the meetup requires an earlier departure."),
       questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights in a Kodachi villa beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "MIYA HOUSE Kodachi A棟"], "Send or store large luggage, travel with small bags, taxi from Kawaguchiko Station to the villa after check-in opens, and watch the light change on Fuji.", ["Confirm final Tokyo luggage handling", "Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Taxi from Kawaguchiko Station to the villa (no property shuttle)", "Check in from 16:00; cook or eat nearby for dinner"], ["The first clear Fuji reveal", "Lake light from the terrace or shore", "A quiet arrival meal in the villa kitchen"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day—taxi from the station if the bus arrives before 16:00."),
       questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Fujisanbike Studio", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Taxi or walk from the Kodachi villa to Fujisanbike Studio; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a taxi from the villa; the Red Line is the budget backup. Choose the ropeway, one museum or villa time instead and reunite for dinner."),
       questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis from the villa", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return and station taxi"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the villa."),
@@ -895,7 +896,7 @@ const dayContext = {
   },
   day16: {
     summary: "Dad's Shibuya Crossing is the morning anchor, with Hachiko, lunch and one focused Mai-friendly stop before a hard 15:30 departure for Akko. Do not turn Shibuya into a full shopping marathon—the evening meetup is the capstone and should begin without anyone already exhausted.",
-    timeline: [["09:30–10:30", "Reach Shibuya, cross the Scramble together, and take Dad's Hachiko/crossing photo before the area gets busier."], ["10:30–12:00", "Choose one elevated view, cafe, or short neighborhood loop; do not stack multiple observatories."], ["12:00–14:30", "Eat lunch, then give Mai one focused PARCO or character-culture stop."], ["By 15:30", "Leave Shibuya for Akko's confirmed meeting point with real transfer margin."], ["Evening", "Let Akko choose the neighborhood and dinner; keep it seated, social and unhurried."]],
+    timeline: [["09:30–10:30", "Travel from KOKO Hamacho to Shibuya; no early alarm after the Ghibli day."], ["10:30–11:15", "See Hachiko, cross the Scramble, watch one full signal cycle, and take Dad's group photo."], ["11:15–13:30", "Have a seated lunch, then choose exactly one Mai-facing stop; Shibuya PARCO is the default."], ["13:30–15:15", "Use a cafe/rest buffer or one short Shibuya browse—do not add Harajuku."], ["By 15:30", "Depart directly for Akko's confirmed meeting point; leave earlier if the location is farther away."], ["Evening", "Let Akko choose the neighborhood and dinner; keep it seated, social and unhurried."]],
     history: [
       "Tokyo's residential neighborhoods are as important to understanding the city as its famous districts. Stations, shotengai, temples, parks, and favourite restaurants reveal everyday Japan more honestly than another imported sightseeing plan.",
       "Being shown those routines by friends who live there turns travel into hospitality. The meal they choose carries more cultural weight than any guidebook ranking because it encodes memory, budget, and pride in a local spot.",
@@ -932,7 +933,8 @@ const dayContext = {
   },
   day20: {
     summary: "Checkout from the Kodachi villa and a reserved morning return protect the Tokyo landing. Recover the large bags first; if the transfer runs cleanly, take Mai to Asakusa Engei Hall for a compact 60–90 minute taste of rakugo and variety entertainment. This is still a soft landing, so a delayed return automatically cancels the hall rather than creating a race.",
-    timeline: [["07:00–08:15", "Breakfast, one last Fuji look and checkout from the villa."], ["Morning–early afternoon", "Taxi to Kawaguchiko Station and use the reserved Shinjuku return, with rail via Otsuki as the road-delay fallback."], ["Early afternoon", "Reach KOKO, recover the large bags and settle the hotel logistics first."], ["15:00–17:00", "If timing and energy are good, go to Asakusa Engei Hall and watch one 60–90 minute segment; check the day's bill before leaving."], ["Evening", "Eat in Asakusa or near the hotel, then keep the final full day fresh."]],
+    timeline: [["07:00–08:15", "Breakfast, one last Fuji look, checkout, and taxi to Kawaguchiko Station 30–45 minutes before the reserved departure."], ["Morning–early afternoon", "Use a departure scheduled to reach Shinjuku by about 14:00 at the latest; use rail via Otsuki when road-delay risk is worse."], ["Early afternoon–15:45", "Travel from Shinjuku to KOKO, recover the large bags, and complete check-in before sightseeing. If Shinjuku arrival is after 14:00, switch to the slow plan."], ["15:45–16:40", "Travel to Asakusa Engei Hall and check the posted bill; the normal night program begins at 16:40."], ["16:40–18:10", "Watch roughly 60–90 minutes of the night program, leaving between acts if energy is fading."], ["After 18:10", "Eat an easy Asakusa or hotel-neighborhood dinner; add no second Asakusa sightseeing circuit."]],
+    slowTimeline: [["07:00–08:15", "Breakfast, checkout, and taxi to Kawaguchiko Station with the same departure margin."], ["Morning–early afternoon", "Use the reserved Shinjuku return or the Otsuki rail fallback."], ["Early afternoon", "Reach KOKO, recover the large bags, check in, and make the hotel the rest base."], ["Evening", "Skip Asakusa and meet the others for dinner near KOKO, or make hotel rest the complete day."]],
     history: [
       "Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and the highway-bus network. Those links made multi-night stays normal for city dwellers who wanted mountain air without alpine expedition culture.",
       "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency. The psychology shifts from 'last chance to see everything' to 'enough time to do laundry, buy one missing item, and sleep.",
@@ -971,7 +973,7 @@ const dayRail = document.querySelector(".day-rail");
 const overviewPanel = document.querySelector("#overviewPanel");
 const dayPanel = document.querySelector("#dayPanel");
 const state = loadState();
-const todayTarget = applyTodayTarget();
+applyTodayTarget();
 
 function defaultState() {
   return {
@@ -989,6 +991,7 @@ function defaultState() {
     roadmapReady: {},
     dayWindows: {},
     overviewWindows: {},
+    foodMapLeftPageReady: false,
     overviewMapChapter: "osaka",
     theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light",
     activeCity: "osaka"
@@ -2139,6 +2142,436 @@ function renderCityDiscoveryChecklist() {
   });
 }
 
+/* FOOD MAP PROTOTYPE START
+ * All four city chapters contain researched, itinerary-matched places.
+ * Remove this block, the matching HTML section, its CSS block, and the
+ * render/setup references to undo the prototype.
+ */
+const CITY_FOOD_MAP_PROTOTYPE = {
+  osaka: [
+    { name: "7-Eleven Osaka Kawaramachi 4-chome", type: "conbini", category: "conbini", typeLabel: "Closest 7-Eleven", area: "Hotel base · ~160 m direct", price: "¥", note: "The nearest mapped 7-Eleven candidate, north of the hotel: check it first for breakfast, drinks and Mai's packaged melonpan baseline.", coordinates: [34.6859309, 135.4991197] },
+    { name: "FamilyMart Hommachi 4-chome", type: "conbini", category: "conbini", typeLabel: "Closest FamilyMart", area: "Hotel base · ~210 m direct", price: "¥", note: "East of the hotel near Hommachi Station. The current store listing includes an eat-in area, ATM, Wi-Fi and copying.", coordinates: [34.683325, 135.5001866], officialUrl: "https://as.chizumaru.com/famima/detailMap?accmd=0&account=famima&bid=37995" },
+    { name: "Lawson Nishihonmachi 1-chome", type: "conbini", category: "conbini", typeLabel: "Closest Lawson", area: "Hotel base · ~265 m direct", price: "¥", note: "West across Midosuji. Use it for a Lawson breakfast comparison or an alternate ATM/snack run.", coordinates: [34.6823844, 135.4974355], officialUrl: "https://yamabuki-lawson.co.jp/lawson17/" },
+    { name: "Café itutu", type: "cafe", category: "cafe", typeLabel: "Zero-effort café", area: "Inside Hotel Cordia", price: "¥¥", note: "The hotel's own first-floor breakfast, lunch and tea lounge. Best fallback when arrival energy or weather says stay put.", coordinates: [34.684601, 135.498514], officialUrl: "https://cordia-osaka.com/hommachi/en/?locale=en&tripla_booking_widget_open=search" },
+    { name: "Ourlog Coffee Hommachi", type: "cafe", category: "cafe", typeLabel: "Near-hotel coffee", area: "Hotel base · Awajimachi", price: "¥¥", note: "Independent specialty coffee roughly a few minutes north of the hotel; a better coffee-first option than making a sightseeing detour.", coordinates: [34.6867532, 135.4982412] },
+    { name: "JTRRD cafe & Season0", type: "cafe", category: "cafe", typeLabel: "Near-hotel café", area: "Hotel base · Utsubohommachi", price: "¥¥", note: "Colorful smoothies and a sit-down pause northwest of the hotel. Choose this for cute presentation; choose Ourlog for coffee.", coordinates: [34.6861556, 135.4972583] },
+    { name: "R Baker Osaka Castle Park", type: "cafe", category: "cafe", typeLabel: "Castle breakfast", area: "Day 3 · Osaka Castle", price: "¥", note: "A bakery-café inside the park near Osakajokoen Station. Useful before the castle or as the parents' seated rest stop.", coordinates: [34.68842, 135.53305], officialUrl: "https://r-baker.com/shops/" },
+    { name: "LiLo Coffee Kissa", type: "cafe", category: "cafe", typeLabel: "Shinsaibashi coffee", area: "Day 4 · Shinsaibashi", price: "¥¥", note: "Retro kissaten atmosphere with serious specialty coffee, close to Daimaru and Amerikamura. This is the intentional café, not another snack mission.", coordinates: [34.6710513, 135.5010541], officialUrl: "https://coffee.liloinveve.com/pages/lilo-coffee-kissa-1" },
+    { name: "Sennariya Coffee", type: "cafe", category: "cafe", typeLabel: "Historic kissaten", area: "Day 3 · Shinsekai", price: "¥", note: "Founded in 1948 and identifies itself as the birthplace of mixed juice. A strong non-alcoholic pause before the Shinsekai evening.", coordinates: [34.65077, 135.50476], officialUrl: "https://www.sennariya-coffee.jp/" },
+    { name: "Sanwa Coffee Works Tenma", type: "cafe", category: "cafe", typeLabel: "Tenma coffee", area: "Day 4 · Tenma", price: "¥¥", note: "Long-running roastery café near the Tenjinbashisuji route. Use only before dinner; after the hotel reset, protect appetite for the Tenma finish.", coordinates: [34.7082518, 135.5124233], officialUrl: "https://store.sanwacoffeeworks.com/pages/about-scw" },
+    { name: "CAFE ANNON Namba Main Store", type: "sweet", category: "dessert", typeLabel: "Soufflé dessert", area: "Day 3 · Namba / Den Den", price: "¥¥", note: "A cute soufflé-pancake option near the Namba end of Den Den Town. Treat it as a dessert stop; queues can make it an easy skip.", coordinates: [34.66383, 135.50345] },
+    { name: "Uncle Rikuro's Namba Main Store", type: "sweet", category: "cheesecake", typeLabel: "Osaka cheesecake", area: "Day 2/3 · Namba · Ebisubashi-suji", price: "¥¥", note: "Osaka's famous warm, jiggly cheesecake with raisins at the base. One cake is made for sharing, so use this as the group's signature Osaka sweet rather than adding another individual dessert stop.", coordinates: [34.6663213, 135.5005897], officialUrl: "https://www.rikuro.co.jp/shoplist/134.html" },
+    { name: "Takoyaki Doraku Wanaka Sennichimae", type: "restaurant", category: "takoyaki", typeLabel: "Takoyaki checklist", area: "Day 3 · Namba / Den Den", price: "¥", note: "The famous Sennichimae main shop. Share one order on the Den Den route so takoyaki stays a snack, not the seated lunch.", coordinates: [34.6652095, 135.5034015], officialUrl: "https://takoyaki-wanaka.com/en/" },
+    { name: "551 HORAI Main Store", type: "restaurant", category: "butaman", typeLabel: "Butaman · Osaka pork bun", area: "Day 2/3 · Namba · Ebisubashi-suji", price: "¥", note: "The route-friendly flagship for a hot Osaka pork bun. Buy one or two downstairs to share as a snack; the upper floors are a full restaurant, but there is no need to turn this into another meal.", coordinates: [34.666438, 135.4991023], officialUrl: "https://www.551horai.co.jp/shop/list/13/" },
+    { name: "Chitose Bekkan", type: "restaurant", category: "nikusui", typeLabel: "Nikusui · Osaka beef soup", area: "Day 3 · Namba Grand Kagetsu", price: "¥¥", note: "The easier itinerary fit for Osaka-born nikusui: beef, soft egg and dashi without noodles. It sits inside Namba Grand Kagetsu and stays open later than the tiny original shop, though it can close when the dashi sells out.", coordinates: [34.6656996, 135.5036018], officialUrl: "https://www.chitose-nikusui.com/" },
+    { name: "Okonomiyaki Mizuno", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki checklist", area: "Day 2 · Dotonbori", price: "¥¥", note: "A Dotonbori institution operating since 1945. It fits the arrival neighborhood, but the queue makes this an early-meal choice rather than a jet-lag obligation.", coordinates: [34.6684527, 135.5030691], officialUrl: "https://www.mizuno-osaka.com/" },
+    { name: "Kushikatsu Daruma Shinsekai Main Store", type: "restaurant", category: "kushikatsu", typeLabel: "Kushikatsu checklist", area: "Day 3 · Shinsekai", price: "¥¥", note: "The classic specialist in exactly the planned evening neighborhood. Go early, share skewers and keep this as Day 3's proper finish.", coordinates: [34.65208, 135.50616], officialUrl: "https://www.kushikatu-daruma.com/location/" },
+    { name: "Fukutaro Honten", type: "restaurant", category: "okonomiyaki", typeLabel: "Negiyaki checklist", area: "Day 3/4 · Sennichimae", price: "¥¥", note: "Known for both negiyaki and okonomiyaki near Kuromon and Den Den. Best checklist backup when Mizuno's queue or Dotonbori timing does not work.", coordinates: [34.6655928, 135.5045307], officialUrl: "https://2951.jp/" },
+    { name: "Yaki Yaki Haru no Hana", type: "restaurant", typeLabel: "Okonomiyaki · video pick", area: "Kyomachibori · west of hotel", price: "¥¥¥", note: "The original video pick and reservable, but inconvenient from the Namba sightseeing arc. Keep it only if this specific restaurant matters more than easy routing.", coordinates: [34.6887, 135.4918], officialUrl: "http://www.haru-no-hana.com/" },
+    { name: "Ajinoya Honten", type: "restaurant", typeLabel: "Okonomiyaki · classic", area: "Day 2/3 · Namba", price: "¥¥", note: "Classic Namba choice with a light, cabbage-forward style. Strong option, but plan for a queue or check its current advance-booking rules.", coordinates: [34.66665, 135.50055], officialUrl: "https://ajinoya-okonomiyaki.com/" },
+    { name: "Okonomiyaki AT THE 21 Namba", type: "restaurant", typeLabel: "Okonomiyaki · reservable", area: "Day 3/4 · Namba Sennichimae", price: "¥¥", note: "The reservation-friendly okonomiyaki alternative near Kuromon and Den Den. A practical group choice when famous walk-in queues are unappealing.", coordinates: [34.66472, 135.50535], officialUrl: "https://tabelog.com/en/osaka/A2701/A270202/27136557/" },
+    { name: "Tako no Tetsu KITTE Osaka", type: "restaurant", typeLabel: "Takoyaki · cook it yourself", area: "Umeda · intentional detour", price: "¥¥", note: "Cook-it-yourself takoyaki and the best group-activity version. Use only when already in Umeda; it does not fit the current south-Osaka food route naturally.", coordinates: [34.70085, 135.49345], officialUrl: "http://takonotetsu.co.jp/" },
+    { name: "Aizuya Namba Walk", type: "restaurant", typeLabel: "Takoyaki · historical style", area: "Day 2/3 · Namba Walk", price: "¥", note: "Small, sauce-free original-style takoyaki plus rajio-yaki. The historical contrast makes this more useful than simply repeating another sauced order.", coordinates: [34.66705, 135.50485], officialUrl: "https://walk.osaka-chikagai.jp/shopguide/572" },
+    { name: "Takoya Dotonbori Kukuru Honten", type: "restaurant", typeLabel: "Takoyaki · convenient", area: "Day 2 · Dotonbori", price: "¥", note: "Extremely convenient on the arrival walk, with large octopus pieces and a softer, gooier texture. Choose it for ease, not to create another destination.", coordinates: [34.66867, 135.50072], officialUrl: "https://www.shirohato.com/kukuru/" },
+    { name: "Nikushou Nakata Honten", type: "restaurant", typeLabel: "Yakiniku · premium", area: "Day 2/3 · Namba", price: "¥¥¥¥", note: "Premium aged-wagyu dinner near Namba. Reservation-worthy, expensive and currently restricted to guests over age 10; treat it as the trip's deliberate splurge.", coordinates: [34.66665, 135.50055], officialUrl: "https://nikusyo-nakata.jp/nanba_honten.html" },
+    { name: "Yakiniku Horumon Kurono Ura-Namba Honten", type: "restaurant", typeLabel: "Yakiniku · casual wagyu", area: "Day 3/4 · Ura-Namba", price: "¥¥¥", note: "The cheaper, livelier Oita-wagyu alternative in Ura-Namba. Reservable and much easier to combine with Kuromon, Den Den or Sennichimae.", coordinates: [34.66465, 135.50578], officialUrl: "https://kurono-namba.com/en_us/page-10/" },
+    { name: "Ramen Goku Honten", type: "restaurant", typeLabel: "Ramen · route-specific", area: "Tennoji / Abeno", price: "¥", note: "Useful only when already around Tennoji or Abeno. It can pair with Shinsekai, but is not worth crossing Osaka for from Namba.", coordinates: [34.64725, 135.51115], officialUrl: "https://ramen-goku.osaka/" },
+    { name: "Naniwa Menjiro", type: "restaurant", typeLabel: "Ramen · station champion", area: "Day 2/3 · Osaka-Namba Station", price: "¥", note: "Excellent and exceptionally convenient inside Kintetsu Osaka-Namba Station. Remember that it is inside the paid station area when planning access.", coordinates: [34.66615, 135.49945], officialUrl: "https://naniwamenjiro.com/store_01" },
+    { name: "Menya Joroku Namba", type: "restaurant", typeLabel: "Ramen · dark chuka soba", area: "Day 3 · Namba / Den Den", price: "¥", note: "Known for dark Osaka-style chuka soba in a small shop off the main Namba streets. Strong lunch candidate if the queue fits the day.", coordinates: [34.66395, 135.50505], officialUrl: "https://metronine.osaka/en/spot-details/?spot_id=69027084754" },
+    { name: "NEXT Shikaku", type: "restaurant", typeLabel: "Ramen · oyster broth", area: "Day 3 · Doguyasuji / Den Den", price: "¥", note: "Distinctive oyster-based ramen with a deliberately theatrical room. Best adventurous ramen option and directly on the Namba-to-Den-Den route.", coordinates: [34.66355, 135.50492], officialUrl: "https://www.doguyasuji.or.jp/en/shop/nextshikaku/" },
+    { name: "Kitashinchi Kushikatsu Bon", type: "restaurant", typeLabel: "Kushikatsu · luxury tasting", area: "Kitashinchi · splurge detour", price: "¥¥¥¥", note: "A luxury tasting-menu interpretation with ingredients such as chateaubriand, foie gras and truffles. Reserve it only for a deliberate fine-dining night.", coordinates: [34.6962, 135.49835], officialUrl: "https://guide.michelin.com/us/en/osaka-region/osaka/restaurant/kitashinchi-kushikatsu-bon" },
+    { name: "Tengu", type: "restaurant", typeLabel: "Kushikatsu · atmosphere", area: "Day 3 · Shinsekai", price: "¥", note: "Traditional Janjan Yokocho counter energy and the strongest atmosphere pick. Choose Tengu over Daruma when old-school Shinsekai character matters most.", coordinates: [34.65072, 135.5045], officialUrl: "https://insideosaka.com/tengu/" },
+    { name: "Kushikatsu Tanaka Amerikamura", type: "restaurant", typeLabel: "Kushikatsu · chain backup", area: "Day 4 · Amerikamura", price: "¥¥", note: "Reliable national-chain backup directly on the Day 4 route. Convenient, family-friendly and reservable, but not a destination over Tengu or Daruma.", coordinates: [34.6739, 135.4981], officialUrl: "https://restaurant.kushi-tanaka.com/" },
+    { name: "DEARBROS Sennichimae", type: "restaurant", typeLabel: "Omurice · flexible lunch", area: "Day 2/3/4 · Namba", price: "¥¥", note: "Rich, meat-heavy omurice near Namba. A flexible lunch fallback when the group wants a filling break from flour dishes, skewers and ramen.", coordinates: [34.66705, 135.50425], officialUrl: "https://www.instagram.com/dearbros_official/" },
+    { name: "Ippoutei Honten", type: "restaurant", typeLabel: "High · historic shumai", area: "Day 3 · beside Nankai Namba", price: "¥", note: "Founded in Namba in 1933 and known for soft shumai wrapped in thin egg rather than ordinary flour skins. Inexpensive, distinctive and one of the strongest route-friendly lunches.", coordinates: [34.66285, 135.50215], officialUrl: "https://www.ippoutei.com/" },
+    { name: "Kitatake Udon", type: "restaurant", typeLabel: "Medium-high · udon lunch", area: "Day 3 · Namba / Den Den", price: "¥", note: "Excellent specialist lunch beyond ramen, about three minutes from Nankai Namba. Lunch runs only until 15:00 and can finish when the noodles sell out.", coordinates: [34.66255, 135.50365], officialUrl: "http://kamatakeudon.kt.fc2.com/" },
+    { name: "Sakenomi Ario", type: "restaurant", typeLabel: "Medium · local izakaya", area: "Namba · Motomachi", price: "¥¥", note: "Small, reservable neighborhood izakaya west of Namba. It has moved from its old Nambanaka address to Motomachi, so use this pin rather than older map results.", coordinates: [34.66205, 135.49675], officialUrl: "https://www.instagram.com/sakenomi_ario/" },
+    { name: "Kawara Soba En", type: "restaurant", typeLabel: "Optional · Yamaguchi specialty", area: "Day 3/4 · Ura-Namba", price: "¥¥¥", note: "Green-tea soba presented on a heated roof tile: unusual and photogenic, but Yamaguchi rather than Osaka cuisine. Tiny, evening-only and better reserved if chosen.", coordinates: [34.66385, 135.50515], officialUrl: "https://tabelog.com/osaka/A2701/A270202/27090699/" }
+  ],
+  kyoto: [
+    { name: "FamilyMart Karasuma Rokkaku", type: "conbini", category: "conbini", typeLabel: "Closest FamilyMart", area: "Hotel base · ~140 m south", price: "¥", note: "The quickest mapped supply run from Hotel Monterey: useful for early breakfast, drinks and trail snacks before the sightseeing day starts.", coordinates: [35.00648, 135.75943], officialUrl: "https://store.family.co.jp/points/33097" },
+    { name: "Lawson Karasuma Sanjo", type: "conbini", category: "conbini", typeLabel: "Closest Lawson", area: "Hotel base · ~170 m north", price: "¥", note: "A 24-hour option beside Karasuma Oike. Use it for a Lawson breakfast comparison, an ATM stop or an easy late-night fallback on the walk back to the hotel.", coordinates: [35.0092, 135.75954], officialUrl: "https://map.yahoo.co.jp/v3/place/HDPZIRykzBM" },
+    { name: "7-Eleven Kyoto Oikedori Tatsuikecho", type: "conbini", category: "conbini", typeLabel: "Nearest useful 7-Eleven", area: "Hotel base · ~350 m northwest", price: "¥", note: "Slightly farther than FamilyMart and Lawson but still close enough for the three-chain breakfast comparison, Seven Bank ATM and packaged melonpan hunt.", coordinates: [35.01057, 135.75772], officialUrl: "https://location.sevenbank.co.jp/sevenbank/spot/detail?code=0000031318&lang=en" },
+    { name: "Sohonke Nishin Soba Matsuba Honten", type: "restaurant", category: "nishin-soba", typeLabel: "Nishin soba · must try", area: "Day 7 · Gion-Shijo / Minamiza", price: "¥¥", note: "Kyoto's signature buckwheat noodles with sweet-simmered herring, served where the dish originated. The easiest distinctive dinner before or after the Gion evening.", coordinates: [35.00365, 135.77262], officialUrl: "https://sobamatsuba.co.jp/menu/access.html" },
+    { name: "Izuju", type: "restaurant", category: "kyoto-sushi", typeLabel: "Saba-zushi · high priority", area: "Day 7 · Yasaka Shrine", price: "¥¥¥", note: "Traditional Kyoto pressed sushi beside Yasaka. Share saba-zushi or hako-zushi as a tasting; current last order is early enough that this is lunch or early dinner, not a post-show fallback.", coordinates: [35.00362, 135.77853], officialUrl: "https://gion-izuju.com/english-page/" },
+    { name: "Kiyomizu Junsei Okabeya", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu & yuba · route pick", area: "Day 7 · Kiyomizu-dera approach", price: "¥¥¥", note: "The most practical tofu meal on this itinerary: yudofu and fresh yuba directly on the Kiyomizu route. Use it as the seated lunch if the morning timing remains healthy.", coordinates: [34.99616, 135.78082], officialUrl: "https://www.okabeya.com/lang/en.html" },
+    { name: "Yudofu Sagano", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu · timing-risk option", area: "Day 8 · Arashiyama / Tenryu-ji", price: "¥¥¥", note: "Classic garden yudofu beside the Arashiyama sights, but it opens at 11:00 and your hard exit is 11:20. Keep the pin for context; do not queue or sacrifice Ryoan-ji and Kinkaku-ji for it.", coordinates: [35.01558, 135.67446], officialUrl: "https://kyoto-sagano.jp/access" },
+    { name: "Menami", type: "restaurant", category: "obanzai", typeLabel: "Obanzai · dinner pick", area: "Day 9 · Sanjo / Kiyamachi", price: "¥¥¥", note: "A strong evening introduction to Kyoto home-style seasonal side dishes, with yuba, nama-fu and white-miso dishes also represented. Reserve if this becomes the protected Day 9 dinner.", coordinates: [35.00904, 135.77055], officialUrl: "https://www.menami.jp/menu1" },
+    { name: "Nishiki Hirano", type: "restaurant", category: "obanzai", typeLabel: "Obanzai & dashimaki", area: "Day 9 · Nishiki Market", price: "¥¥", note: "Useful seated counterpoint to market snacking: a Kyoto-style set or dashimaki omelet without leaving the planned Nishiki window.", coordinates: [35.00498, 135.76242], officialUrl: "https://nishikihirano.com/en/" },
+    { name: "Konnamonja", type: "sweet", category: "soy-sweets", typeLabel: "Soy-milk sweets · share", area: "Day 9 · Nishiki Market", price: "¥", note: "Tofu-shop snack stop for soy-milk doughnuts and soft serve. Share one item and eat at the shop; Nishiki asks visitors not to eat while walking.", coordinates: [35.00496, 135.76418], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/konnamonja/" },
+    { name: "Uchida Tsukemono", type: "restaurant", category: "kyo-pickles", typeLabel: "Kyo-tsukemono · taste/buy", area: "Day 9 · Nishiki Market", price: "¥", note: "Kyoto pickles are a core local food rather than a full meal. Taste one seasonal style or buy a small pack; keep the market visit bounded.", coordinates: [35.00499, 135.76168], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/uchida/" },
+    { name: "Kinmata", type: "restaurant", category: "kaiseki", typeLabel: "Kyo-kaiseki · splurge", area: "Central Kyoto · east of Nishiki", price: "¥¥¥¥", note: "The one deliberate formal Kyoto-cuisine option: a historic machiya, seasonal courses and reservation-level pricing. Choose it instead of, not in addition to, another major dinner.", coordinates: [35.00389, 135.7657], officialUrl: "https://www.kinmata.com/en/" },
+    { name: "Zuientei at Hotel Monterey Kyoto", type: "restaurant", category: "kaiseki", typeLabel: "Kaiseki · zero-travel backup", area: "Inside Hotel Monterey · 2F", price: "¥¥¥", note: "The practical second kaiseki choice: Kyoto ingredients and proper seated courses without another journey. Reserve it when weather, tired parents or a late hotel reset makes Kinmata unrealistic.", coordinates: [35.00775, 135.75948], officialUrl: "https://www.hotelmonterey.co.jp/en/kyoto/restaurant/shop/78594a0dcf5c178.html" },
+    { name: "Ippodo Tea Kyoto Main Store", type: "cafe", category: "tea", typeLabel: "Japanese tea · top pick", area: "Day 9 · Imperial Palace / Teramachi", price: "¥¥", note: "A proper tea experience with staff-guided brewing and wagashi, not simply another matcha dessert. It fits naturally after the Imperial Palace if the afternoon stays on time.", coordinates: [35.01446, 135.76756], officialUrl: "https://global.ippodo-tea.co.jp/pages/store-kyoto" },
+    { name: "Gion Tsujiri Gion Main Store", type: "cafe", category: "tea", typeLabel: "Matcha & hojicha", area: "Day 7 · Gion", price: "¥¥", note: "Very easy route fit for tea or a matcha dessert in Gion. Treat it as the convenient tea choice; choose Ippodo when the tea itself is the experience.", coordinates: [35.00165, 135.77514], officialUrl: "https://www.giontsujiri.co.jp/en/store/giontsujiri-honten/" },
+    { name: "Maeda Coffee Muromachi Honten", type: "cafe", category: "coffee", typeLabel: "Kyoto kissaten breakfast", area: "Hotel base · Muromachi", price: "¥¥", note: "A Kyoto coffee institution close to Hotel Monterey, open early enough for an actual breakfast. Best low-friction café option; save tea-house time for Ippodo or Gion.", coordinates: [35.00572, 135.75669], officialUrl: "https://www.maedacoffee.com/en/shopinfo/honten/" },
+    { name: "Inoda Coffee Main Shop", type: "cafe", category: "coffee", typeLabel: "Historic Kyoto coffee", area: "Day 9 / hotel area · Sanjo-Sakaimachi", price: "¥¥", note: "A roomy, old-school Kyoto coffee alternative open from 07:00. Use it for breakfast or a seated central-city reset; choose Maeda when minimum walking matters.", coordinates: [35.00694, 135.76415], officialUrl: "https://www.inoda-coffee.co.jp/english/shop/" },
+    { name: "Kagizen Yoshifusa Shijo Main Store", type: "sweet", category: "kuzukiri", typeLabel: "Kuzukiri · must try", area: "Day 7 · Gion", price: "¥¥", note: "The priority Kyoto dessert stop: chilled translucent kudzu noodles with syrup in a seated tea room, plus seasonal wagashi. It is directly on the Gion route.", coordinates: [35.00347, 135.77643], officialUrl: "https://www.kagizen.co.jp/en/pages/shops-honten" },
+    { name: "Honke Nishio Yatsuhashi Shinkyogoku", type: "sweet", category: "yatsuhashi", typeLabel: "Yatsuhashi · share a sample", area: "Day 9 · Nishiki / Shinkyogoku", price: "¥", note: "Try both the cinnamon-baked cracker and soft nama-yatsuhashi if available; one shared pack is enough. This branch is an easy Nishiki add-on, not a separate excursion.", coordinates: [35.00624, 135.76726], officialUrl: "https://www.8284.co.jp/shop/shinkyogoku.html" },
+    { name: "Oimatsu Kitano", type: "sweet", category: "wagashi", typeLabel: "Seasonal wagashi", area: "Day 8 · optional Kamishichiken", price: "¥¥", note: "A refined seasonal wagashi stop that fits only if the optional Kamishichiken/Nishijin ending survives the Kinkaku-ji day. Skip without regret if the parents need the hotel.", coordinates: [35.02978, 135.73998], officialUrl: "https://oimatu.co.jp/" },
+    { name: "Toraya Karyo Kyoto Ichijo", type: "sweet", category: "wagashi", typeLabel: "Wagashi & yokan · palace route", area: "Day 9 · Kyoto Imperial Palace", price: "¥¥", note: "The route-friendly second wagashi choice: seasonal sweets and yokan in a garden-facing tearoom near the palace. Choose it instead of Oimatsu when Day 8 is already full.", coordinates: [35.02625, 135.75738], officialUrl: "https://global.toraya-group.co.jp/pages/shop-kyoto" },
+    { name: "Demachi Futaba", type: "sweet", category: "mochi-dango", typeLabel: "Mame-mochi · later only", area: "Day 10 · Demachiyanagi", price: "¥", note: "Famous salty-sweet bean mochi near the Mt Hiei departure corridor, but it opens after your planned departure. Buy it after the mountain or on another day; never delay the ascent for a queue.", coordinates: [35.03003, 135.76836], officialUrl: "https://www.hieizan.gr.jp/yase/demachifutaba" },
+    { name: "Kamo Mitarashi Chaya", type: "sweet", category: "mochi-dango", typeLabel: "Mitarashi dango · optional", area: "Day 10 · Shimogamo / Demachiyanagi", price: "¥", note: "A birthplace-linked Kyoto mitarashi-dango stop. Like Futaba, it opens too late for the outbound Mt Hiei plan; use it only after descent or on a flexible afternoon.", coordinates: [35.03804, 135.77208], officialUrl: "https://www.hieizan.gr.jp/yase/kamo-mitarashi-chaya" }
+  ],
+  hiroshima: [
+    { name: "7-Eleven Heart-in ekie Hiroshima Shinkansen Exit", type: "conbini", category: "conbini", typeLabel: "Closest station 7-Eleven", area: "Hotel Granvia · inside ekie", price: "¥", note: "The lowest-effort supply stop beside the station-connected hotel. Use it for breakfast, drinks or the Shinkansen morning; this branch is outside the ticket gates.", coordinates: [34.39805, 132.47535], officialUrl: "https://www.sn-hiroshima.co.jp/pages/127/" },
+    { name: "FamilyMart Hiroshima Station North Exit", type: "conbini", category: "conbini", typeLabel: "Closest FamilyMart", area: "Hotel Granvia · north exit", price: "¥", note: "A useful street-level backup on the north side of the station for an ATM, breakfast or late supplies without crossing through the whole station.", coordinates: [34.39925, 132.47578], officialUrl: "https://store.family.co.jp/points/35382" },
+    { name: "Lawson Hiroshima TV", type: "conbini", category: "conbini", typeLabel: "Closest useful Lawson", area: "Hotel Granvia · ~4 min north", price: "¥", note: "The practical Lawson comparison just beyond the Shinkansen exit. Choose it only when you want the different chain; the station 7-Eleven is easier.", coordinates: [34.40018, 132.4771], officialUrl: "https://www.lawson.co.jp/company/fc/seminar/seminar/068451.html" },
+    { name: "Reichan ekie Hiroshima", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · arrival-night pick", area: "Day 11 · Hiroshima Station ekie 1F", price: "¥¥", note: "The zero-detour introduction to layered Hiroshima okonomiyaki after Himeji. It is walk-in only and often queues, so eat early or switch to another ekie option if arrival energy is low.", coordinates: [34.3977, 132.47545], officialUrl: "https://www.o-reichan.jp/shop.htm" },
+    { name: "Nagata-ya", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · Peace Park option", area: "Day 12 · across from Peace Park", price: "¥¥", note: "A tourist-friendly classic about ten seconds from the park. Keep it as an optional early lunch or dinner; a long queue is the signal to protect the memorial day and move on.", coordinates: [34.39328, 132.45357], officialUrl: "https://nagataya-okonomi.com/" },
+    { name: "Oyster Ship Kanawa Seto", type: "restaurant", category: "oysters", typeLabel: "Hiroshima oysters · seated meal", area: "Day 12 · Motoyasu River / Peace Park", price: "¥¥¥", note: "A floating restaurant beside Motoyasu Bridge for raw, grilled and fried oysters or oyster rice. The route fit is excellent, but decide after the museum whether a proper meal feels right.", coordinates: [34.39316, 132.45322], officialUrl: "https://www.kanawa.co.jp/en/seto" },
+    { name: "Kakiya", type: "restaurant", category: "oysters", typeLabel: "Grilled oysters · Miyajima pick", area: "Day 13 · Miyajima Omotesando", price: "¥¥", note: "The island's oyster specialist, directly on the shopping-street route. Share grilled oysters or use the set as lunch; this is the more atmospheric oyster choice than adding another city meal.", coordinates: [34.29696, 132.32044], officialUrl: "https://www.kaki-ya.jp/" },
+    { name: "Anagomeshi Ueno", type: "restaurant", category: "anagomeshi", typeLabel: "Anago-meshi · top regional pick", area: "Day 13 · JR Miyajimaguchi", price: "¥¥¥", note: "The famous grilled conger-eel rice stop opposite Miyajimaguchi Station. Queues can be substantial: pre-order a bento for the island or eat only if the wait fits the tide plan.", coordinates: [34.31172, 132.30223], officialUrl: "https://www.anagomeshi.com/" },
+    { name: "Kunimatsu + Musashibo", type: "restaurant", category: "soupless-tantan", typeLabel: "Soupless tantanmen · station", area: "Day 11/14 · Hiroshima Station ekie 1F", price: "¥", note: "Two respected Hiroshima soupless-tantan styles in one station counter. Mix the noodles thoroughly; it is a fast, distinctive backup when okonomiyaki feels too heavy.", coordinates: [34.39778, 132.47558], officialUrl: "https://www.minamoa-ekie.jp/shop/?id=34" },
+    { name: "Bakudanya Shintenchi", type: "restaurant", category: "tsukemen", typeLabel: "Hiroshima tsukemen · spicy dip", area: "Day 12 evening · Shintenchi", price: "¥", note: "Cold noodles and cabbage dipped in a spicy red-pepper broth. It is the clearest contrast to soupless tantanmen; pick one noodle specialty unless appetite is unusually ambitious.", coordinates: [34.39163, 132.46234], officialUrl: "https://dive-hiroshima.com/en/feature/noodle/" },
+    { name: "Musubi Musashi Shinkansen Store", type: "restaurant", category: "local-bites", typeLabel: "Musubi & bento · departure pick", area: "Day 14 · Hiroshima Station ekie 1F", price: "¥", note: "A Hiroshima rice-ball institution and the most useful food pin for the long Tokyo transfer. Buy a musubi set or bento before boarding rather than relying on the train cart.", coordinates: [34.39808, 132.47565], officialUrl: "https://www.city.hiroshima.lg.jp/english/hiroshima-brand-en/1032092/1032094/1014814.html" },
+    { name: "Akushu Cafe ORGANIC", type: "cafe", category: "cafe", typeLabel: "Peace Park reset", area: "Day 12 · Orizuru Tower 1F", price: "¥¥", note: "The easiest low-pressure pause by the Atomic Bomb Dome, with coffee and Hiroshima lemon drinks. Use it for decompression, not as another destination on an emotionally full day.", coordinates: [34.39555, 132.45394], officialUrl: "https://akushucafe.com/" },
+    { name: "Miyajima Coffee", type: "cafe", category: "cafe", typeLabel: "Miyajima coffee pause", area: "Day 13 · Omotesando", price: "¥¥", note: "A roomy island-roasted coffee stop on the main walking route. Best as a seated reset between the shrine and the optional Daisho-in or ropeway section.", coordinates: [34.29725, 132.32063], officialUrl: "https://miyajimacoffee.com/shop/" },
+    { name: "Momijido Main Store", type: "sweet", category: "momiji-manju", typeLabel: "Age-momiji · must share", area: "Day 13 · Miyajima Omotesando", price: "¥", note: "Try one freshly fried age-momiji, the crisp hot version of Hiroshima's maple-leaf cake. Share it immediately; packaged momiji manju is a separate comparison.", coordinates: [34.29704, 132.32071], officialUrl: "https://momijido.com/" },
+    { name: "Nishikido Hiroshima Station ekie", type: "sweet", category: "momiji-manju", typeLabel: "Nama-momiji & classic", area: "Day 11/14 · Hiroshima Station ekie 2F", price: "¥", note: "The no-detour place to compare classic sponge-like momiji manju with the chewier nama-momiji style. Buy singles or one small mixed box, not a second dessert mission.", coordinates: [34.39772, 132.47543], officialUrl: "https://www.nisikido.co.jp/en/locations/" },
+    { name: "Shimagokoro SETODA ekie", type: "sweet", category: "lemon-sweets", typeLabel: "Setouchi lemon cake", area: "Day 11/14 · Hiroshima Station ekie 2F", price: "¥", note: "A station-friendly Setouchi lemon cake made with local lemon peel. This covers Hiroshima's citrus identity without detouring away from the itinerary.", coordinates: [34.39775, 132.47551], officialUrl: "https://www.patisserie-okumoto.com/shop.html" }
+  ],
+  tokyo: [
+    { name: "7-Eleven Ningyocho Amazake Yokocho", type: "conbini", category: "conbini", typeLabel: "Closest useful 7-Eleven", area: "Hotel base · ~4 min west", price: "¥", note: "The most useful Seven on the walk toward Ningyocho and Amazake Yokocho. Use it for breakfast, Seven Bank or the final packaged-melonpan comparison.", coordinates: [35.68653, 139.78433] },
+    { name: "Lawson Nihonbashi Hamacho 2-chome", type: "conbini", category: "conbini", typeLabel: "Closest Lawson", area: "Hotel base · ~4 min northwest", price: "¥", note: "A practical Lawson run between the hotel and Ningyocho. It is the easiest late fallback when everyone wants supplies rather than a restaurant.", coordinates: [35.68702, 139.78488], officialUrl: "https://map.yahoo.co.jp/v3/place/qGfFMObFc2A" },
+    { name: "FamilyMart Nihonbashi Kakigaracho", type: "conbini", category: "conbini", typeLabel: "Closest useful FamilyMart", area: "Hotel base · Suitengumae side", price: "¥", note: "The third-chain option southeast of Ningyocho. It is farther than Seven and Lawson, so use it when heading toward Suitengumae or specifically comparing FamilyMart breakfast items.", coordinates: [35.68385, 139.78557] },
+    { name: "Ningyocho Imahan Main Store", type: "restaurant", category: "sukiyaki", typeLabel: "Sukiyaki · final-dinner candidate", area: "Hotel base · Ningyocho", price: "¥¥¥¥", note: "A historic, reservation-worthy wagyu sukiyaki meal only a few minutes from the hotel. This is the easiest celebratory final dinner for the whole family; choose it instead of another major splurge.", coordinates: [35.68577, 139.78349], officialUrl: "https://imahan-tokyo.com/official/" },
+    { name: "Kaneko Hannosuke Nihonbashi Main Store", type: "restaurant", category: "tempura", typeLabel: "Edo-style tendon · high priority", area: "Nihonbashi / Mitsukoshimae", price: "¥¥", note: "A dramatic but affordable bowl of sesame-oil-fried Edomae tempura near the hotel/Tokyo Station corridor. Famous queues make this an off-peak lunch, not a fixed appointment.", coordinates: [35.68633, 139.77491], officialUrl: "https://www.kanekohannosuke.com/" },
+    { name: "Manten Sushi Nihonbashi", type: "restaurant", category: "edomae-sushi", typeLabel: "Edomae sushi · reservable omakase", area: "COREDO Muromachi 2", price: "¥¥¥", note: "The structured, beginner-friendly omakase candidate for the final meal. Reserve online; choose this when the group wants sushi, and Imahan when a table-based family dinner matters more.", coordinates: [35.6872, 139.77461], officialUrl: "https://www.manten-sushi.com/" },
+    { name: "Sushi no Midori Shibuya", type: "restaurant", category: "edomae-sushi", typeLabel: "Sushi · Shibuya lunch option", area: "Day 16 · Shibuya Mark City 4F", price: "¥¥", note: "Generous, approachable sushi directly beside the Crossing route. It fits Dad's Shibuya day, but the queue must not jeopardize the 15:30 departure for Akko.", coordinates: [35.65817, 139.69852], officialUrl: "https://www.shibuyago.com/shop/sushi-no-midori-shibuya/" },
+    { name: "Tsukishima Monja Moheji Main Store", type: "restaurant", category: "monjayaki", typeLabel: "Monjayaki · Tokyo-only detour", area: "Tsukishima Monja Street", price: "¥¥", note: "The clearest only-in-Tokyo group food experience: loose savory batter eaten from the griddle with tiny spatulas. It requires a deliberate detour, so use it only if monja becomes a priority dinner.", coordinates: [35.66284, 139.78116], officialUrl: "https://monja-moheji.tokyo/" },
+    { name: "Fukagawa-juku Tomioka Hachimangu", type: "restaurant", category: "fukagawa-meshi", typeLabel: "Fukagawa-meshi · local history", area: "Monzen-nakacho / Fukagawa", price: "¥¥", note: "Clam rice in its home neighborhood, relatively close to Hamacho but outside the fixed itinerary. Pick it for one old-Tokyo lunch; do not add it to a full sightseeing day.", coordinates: [35.67142, 139.79835], officialUrl: "https://www.gotokyo.org/en/destinations/eastern-tokyo/fukagawa/index.html" },
+    { name: "Oden & Robata Takeshi Ningyocho", type: "restaurant", category: "everyday-tokyo", typeLabel: "Neighborhood izakaya · easy dinner", area: "Hotel base · Ningyocho Station", price: "¥¥", note: "The practical arrival- or return-night meal the map needs: oden, charcoal-grilled dishes and small plates close to the hotel. It is not a checklist specialty; it is an easy lived-in Tokyo evening.", coordinates: [35.68474, 139.78323], officialUrl: "https://shops.alwayssaisei.co.jp/detail/1240034/" },
+    { name: "Soranoiro Nippon", type: "restaurant", category: "tokyo-noodles", typeLabel: "Tokyo shoyu ramen · flexible", area: "Tokyo Station · Ramen Street B1F", price: "¥", note: "A polished shoyu-ramen option with vegan and gluten-free bowls, useful on arrival or the final packing day. Choose this for flexibility and a lighter broth.", coordinates: [35.68153, 139.76806], officialUrl: "https://www.tokyoeki-1bangai.co.jp/street/ramen/en/" },
+    { name: "Rokurinsha Tokyo Station", type: "restaurant", category: "tokyo-noodles", typeLabel: "Tsukemen · Tokyo Station icon", area: "Tokyo Station · Ramen Street B1F", price: "¥", note: "Extra-thick dipping noodles with a rich seafood-pork broth. It is the bolder noodle choice, but its queue makes Soranoiro the practical backup.", coordinates: [35.68158, 139.76812], officialUrl: "https://rokurinsha.com/en/menu/" },
+    { name: "Boulangerie Le Cinq", type: "cafe", category: "cafe", typeLabel: "Zero-travel bakery café", area: "Inside KOKO Hotel · 1F", price: "¥¥", note: "The hotel's own bakery and easiest breakfast reset. Use it on a transfer morning or when the parents want a proper seat without beginning another neighborhood mission.", coordinates: [35.68722, 139.78737], officialUrl: "https://www.boulangerie-le-cinq.com/pages/%E3%83%AB%E3%82%B5%E3%83%B3%E3%82%AF-%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9" },
+    { name: "Coffee Hall Kugutsuso", type: "cafe", category: "cafe", typeLabel: "Kichijoji kissaten · top café pick", area: "Day 15 · Kichijoji Daiyagai", price: "¥¥", note: "A cave-like 1979 kissaten founded by members of a puppet-theatre troupe. Coffee, toast, curry or pudding make it an unusually good thematic fit after Ghibli and Inokashira Park.", coordinates: [35.70473, 139.57854], officialUrl: "https://www.kugutsusou.info/" },
+    { name: "Chatei Hatou", type: "cafe", category: "cafe", typeLabel: "Shibuya kissaten · quiet buffer", area: "Day 16 · east of Shibuya Station", price: "¥¥", note: "A serious old-school coffee room hidden close to the Scramble. Use it only as the protected rest buffer before leaving for Akko; skip if the lunch queue consumed the margin.", coordinates: [35.65969, 139.70395] },
+    { name: "Yanagiya", type: "sweet", category: "taiyaki", typeLabel: "Taiyaki · hotel-neighborhood must", area: "Ningyocho Amazake Yokocho", price: "¥", note: "One of Tokyo's classic taiyaki names, cooking each crisp fish-shaped cake in an individual iron mold. It is close enough to become a neighborhood ritual, but the line can decide the timing.", coordinates: [35.68574, 139.78284], officialUrl: "https://www.nihonbashi-tokyo.jp/en/shops/" },
+    { name: "Shigemori Eishindo", type: "sweet", category: "ningyo-yaki", typeLabel: "Ningyo-yaki · origin-neighborhood pick", area: "Ningyocho / Suitengu", price: "¥", note: "The route-fit place to try the small molded cakes named for Ningyocho. Buy a few to share; save Asakusa's landmark-shaped version for comparison only if that day runs easily.", coordinates: [35.68427, 139.78516], officialUrl: "https://www.ningyocho.or.jp/english/feature/index.html" },
+    { name: "Kimuraya Ningyo-yaki Main Shop", type: "sweet", category: "ningyo-yaki", typeLabel: "Asakusa ningyo-yaki", area: "Day 20 · Senso-ji / Nakamise", price: "¥", note: "Fresh landmark-shaped cakes beside Senso-ji, useful if Asakusa Engei Hall survives the Fuji return. Compare with Ningyocho; do not buy another large souvenir box.", coordinates: [35.71178, 139.79642], officialUrl: "https://e-asakusa.jp/en/spot/2148" },
+    { name: "Tokyo Melonpan Asakusabashi", type: "sweet", category: "melonpan", typeLabel: "Melon bread finale · protected", area: "Day 20/21 · Asakusabashi West Exit", price: "¥", note: "Mai's named Tokyo Melonpan finale, close enough to the hotel to protect without rebuilding the day. Confirm this is her intended branch and check same-day stock before leaving teamLab.", coordinates: [35.69719, 139.78457], officialUrl: "https://tokyo-melonpan.net/" }
+  ]
+};
+
+const CITY_FOOD_TYPES = {
+  restaurant: { label: "Restaurants", icon: "🍜", tileImage: "food-icons/restaurant-ramen.png" },
+  cafe: { label: "Cafés", icon: "☕", tileImage: "food-icons/cafe-matcha.png" },
+  conbini: { label: "Conbini", icon: "🍙", tileImage: "food-icons/conbini-onigiri.png" },
+  sweet: { label: "Sweet shops", icon: "★", tileImage: "food-icons/sweet-dango.png" }
+};
+
+const OSAKA_FOOD_CATEGORIES = {
+  takoyaki: { label: "Takoyaki", icon: "🐙" },
+  okonomiyaki: { label: "Okonomiyaki & negiyaki", icon: "🥞" },
+  kushikatsu: { label: "Kushikatsu", icon: "🍢" },
+  butaman: { label: "Butaman", icon: "🐷" },
+  nikusui: { label: "Nikusui", icon: "🥣" },
+  izakaya: { label: "Izakayas", icon: "🏮" },
+  noodles: { label: "Ramen & noodles", icon: "🍜" },
+  yakiniku: { label: "Yakiniku", icon: "🥩" },
+  cafe: { label: "Cafés & kissaten", icon: "☕" },
+  dessert: { label: "Soufflé pancakes", icon: "🍰" },
+  cheesecake: { label: "Osaka cheesecake", icon: "🧀" },
+  conbini: { label: "Conbini", icon: "🍙" },
+  other: { label: "Other local bites", icon: "🍽️" }
+};
+
+const OSAKA_PRIMARY_FOOD_TYPES = {
+  restaurant: { label: "Dinner & savory", icon: "🍽️", tileImage: "food-icons/restaurant-ramen.png" },
+  cafe: { label: "Cafés", icon: "☕", tileImage: "food-icons/cafe-matcha.png" },
+  sweet: { label: "Sweets", icon: "★", tileImage: "food-icons/sweet-dango.png" },
+  conbini: { label: "Conbini", icon: "🍙", tileImage: "food-icons/conbini-onigiri.png" }
+};
+
+const KYOTO_FOOD_CATEGORIES = {
+  kaiseki: { label: "Kyo-kaiseki", icon: "🍱" },
+  obanzai: { label: "Obanzai", icon: "🥢" },
+  "tofu-yuba": { label: "Yudofu, yuba & soy", icon: "⬜" },
+  "kyoto-sushi": { label: "Kyoto sushi", icon: "🍣" },
+  "nishin-soba": { label: "Nishin soba", icon: "🍜" },
+  "kyo-pickles": { label: "Kyo-tsukemono", icon: "🥒" },
+  tea: { label: "Tea rooms", icon: "🍵" },
+  coffee: { label: "Kyoto coffee", icon: "☕" },
+  kuzukiri: { label: "Kuzukiri", icon: "🧊" },
+  yatsuhashi: { label: "Yatsuhashi", icon: "🔺" },
+  wagashi: { label: "Seasonal wagashi", icon: "🌸" },
+  "soy-sweets": { label: "Soy-milk sweets", icon: "🥛" },
+  "mochi-dango": { label: "Mochi & dango", icon: "🍡" },
+  conbini: { label: "Conbini", icon: "🍙" }
+};
+
+const KYOTO_PRIMARY_FOOD_TYPES = {
+  restaurant: { label: "Meals & savory", icon: "🍽️", tileImage: "food-icons/restaurant-ramen.png" },
+  cafe: { label: "Tea & cafés", icon: "🍵", tileImage: "food-icons/cafe-matcha.png" },
+  sweet: { label: "Kyoto sweets", icon: "★", tileImage: "food-icons/sweet-dango.png" },
+  conbini: { label: "Conbini", icon: "🍙", tileImage: "food-icons/conbini-onigiri.png" }
+};
+
+const HIROSHIMA_FOOD_CATEGORIES = {
+  okonomiyaki: { label: "Hiroshima okonomiyaki", icon: "🥞" },
+  oysters: { label: "Hiroshima oysters", icon: "🦪" },
+  anagomeshi: { label: "Anago-meshi", icon: "🍱" },
+  "soupless-tantan": { label: "Soupless tantanmen", icon: "🌶️" },
+  tsukemen: { label: "Hiroshima tsukemen", icon: "🍜" },
+  "local-bites": { label: "Musubi & local bites", icon: "🍙" },
+  cafe: { label: "Cafés & pauses", icon: "☕" },
+  "momiji-manju": { label: "Momiji manju", icon: "🍁" },
+  "lemon-sweets": { label: "Setouchi lemon sweets", icon: "🍋" },
+  conbini: { label: "Conbini", icon: "🏪" }
+};
+
+const HIROSHIMA_PRIMARY_FOOD_TYPES = {
+  restaurant: { label: "Meals & savory", icon: "🍽️", tileImage: "food-icons/restaurant-ramen.png" },
+  cafe: { label: "Cafés & pauses", icon: "☕", tileImage: "food-icons/cafe-matcha.png" },
+  sweet: { label: "Hiroshima sweets", icon: "★", tileImage: "food-icons/sweet-dango.png" },
+  conbini: { label: "Conbini", icon: "🍙", tileImage: "food-icons/conbini-onigiri.png" }
+};
+
+const TOKYO_FOOD_CATEGORIES = {
+  "edomae-sushi": { label: "Edomae sushi", icon: "🍣" },
+  tempura: { label: "Edo tempura & tendon", icon: "🍤" },
+  sukiyaki: { label: "Sukiyaki", icon: "🥩" },
+  monjayaki: { label: "Monjayaki", icon: "🥞" },
+  "fukagawa-meshi": { label: "Fukagawa-meshi", icon: "🦪" },
+  "tokyo-noodles": { label: "Tokyo ramen & tsukemen", icon: "🍜" },
+  "everyday-tokyo": { label: "Neighborhood izakaya", icon: "🏮" },
+  cafe: { label: "Kissaten & cafés", icon: "☕" },
+  taiyaki: { label: "Taiyaki", icon: "🐟" },
+  "ningyo-yaki": { label: "Ningyo-yaki", icon: "🏮" },
+  melonpan: { label: "Melon bread finale", icon: "🍈" },
+  conbini: { label: "Conbini", icon: "🏪" }
+};
+
+const TOKYO_PRIMARY_FOOD_TYPES = {
+  restaurant: { label: "Meals & savory", icon: "🍽️", tileImage: "food-icons/restaurant-ramen.png" },
+  cafe: { label: "Kissaten & cafés", icon: "☕", tileImage: "food-icons/cafe-matcha.png" },
+  sweet: { label: "Tokyo sweets", icon: "★", tileImage: "food-icons/sweet-dango.png" },
+  conbini: { label: "Conbini", icon: "🍙", tileImage: "food-icons/conbini-onigiri.png" }
+};
+
+function cityFoodCategory(place) {
+  if (place.category) return place.category;
+  if (state.activeCity !== "osaka") return place.type;
+  const description = `${place.name} ${place.typeLabel}`.toLowerCase();
+  if (description.includes("takoyaki") || description.startsWith("tako ")) return "takoyaki";
+  if (description.includes("okonomiyaki") || description.includes("negiyaki")) return "okonomiyaki";
+  if (description.includes("kushikatsu")) return "kushikatsu";
+  if (description.includes("izakaya")) return "izakaya";
+  if (/ramen|menya|udon|soba/.test(description)) return "noodles";
+  if (description.includes("yakiniku")) return "yakiniku";
+  if (place.type === "cafe") return "cafe";
+  if (place.type === "sweet") return "dessert";
+  if (place.type === "conbini") return "conbini";
+  return "other";
+}
+
+let activeCityFoodPrototypeMap = null;
+
+function renderCityFoodMapPrototype() {
+  const mapElement = document.querySelector("#cityFoodLeafletMap");
+  const list = document.querySelector("#cityFoodList");
+  const filters = document.querySelector("#cityFoodFilters");
+  const subfilters = document.querySelector("#cityFoodSubfilters");
+  const resultCount = document.querySelector("#cityFoodResultCount");
+  const title = document.querySelector("#cityFoodMapTitle");
+  const label = document.querySelector("#cityFoodMapLabel");
+  const intro = document.querySelector("#cityFoodIntroCopy");
+  if (!mapElement || !list || !filters || !subfilters) return;
+
+  activeCityFoodPrototypeMap?.remove();
+  activeCityFoodPrototypeMap = null;
+  const places = CITY_FOOD_MAP_PROTOTYPE[state.activeCity] || [];
+  const foodCategories = state.activeCity === "osaka" ? OSAKA_FOOD_CATEGORIES
+    : state.activeCity === "kyoto" ? KYOTO_FOOD_CATEGORIES
+      : state.activeCity === "hiroshima" ? HIROSHIMA_FOOD_CATEGORIES
+        : state.activeCity === "tokyo" ? TOKYO_FOOD_CATEGORIES : CITY_FOOD_TYPES;
+  const primaryFoodTypes = state.activeCity === "osaka" ? OSAKA_PRIMARY_FOOD_TYPES
+    : state.activeCity === "kyoto" ? KYOTO_PRIMARY_FOOD_TYPES
+      : state.activeCity === "hiroshima" ? HIROSHIMA_PRIMARY_FOOD_TYPES
+        : state.activeCity === "tokyo" ? TOKYO_PRIMARY_FOOD_TYPES : CITY_FOOD_TYPES;
+  if (title) title.textContent = `${activeCity().name} Food Map`;
+  const isResearchedCity = ["osaka", "kyoto", "hiroshima", "tokyo"].includes(state.activeCity);
+  if (label) label.textContent = state.activeCity === "osaka" ? "Osaka food scout · researched picks"
+    : state.activeCity === "kyoto" ? "Kyoto food scout · itinerary-matched picks"
+      : state.activeCity === "hiroshima" ? "Hiroshima food scout · station, Peace Park & Miyajima"
+        : state.activeCity === "tokyo" ? "Tokyo food scout · hotel, day routes & final dinner" : "Snack scout · sample data";
+  if (intro) intro.innerHTML = state.activeCity === "osaka"
+    ? "<strong>What kind of Osaka food sounds good?</strong> Filter the map by local specialty—from takoyaki and kushikatsu to izakayas, noodles, cafés, and conbini."
+    : state.activeCity === "kyoto"
+      ? "<strong>What kind of Kyoto food sounds good?</strong> Start with meals, tea, sweets, or hotel-near conbini; meals and sweets then open into the city's traditional specialties."
+      : state.activeCity === "hiroshima"
+        ? "<strong>What kind of Hiroshima food sounds good?</strong> Start with meals, cafés, sweets, or hotel-near conbini; meals and sweets then open into Hiroshima and Miyajima specialties."
+        : state.activeCity === "tokyo"
+          ? "<strong>What kind of Tokyo food sounds good?</strong> Start with meals, kissaten, sweets, or hotel-near conbini; meals and sweets then open into Edo traditions and neighborhood favorites."
+          : "<strong>What sounds good nearby?</strong> Explore the sample meals, cafés, conbini, and sweet shops for this city.";
+  let selectedPrimaryType = "all";
+  let selectedCategory = "all";
+
+  const draw = () => {
+    const primaryKeys = Object.keys(primaryFoodTypes);
+    const categoryKeys = Object.keys(foodCategories);
+    const visiblePlaces = places.filter((place) => {
+      if (selectedPrimaryType !== "all" && place.type !== selectedPrimaryType) return false;
+      return selectedCategory === "all" || cityFoodCategory(place) === selectedCategory;
+    }).slice();
+    visiblePlaces.sort((a, b) => primaryKeys.indexOf(a.type) - primaryKeys.indexOf(b.type)
+      || categoryKeys.indexOf(cityFoodCategory(a)) - categoryKeys.indexOf(cityFoodCategory(b))
+      || a.name.localeCompare(b.name));
+    const selectionLabel = selectedCategory !== "all"
+      ? foodCategories[selectedCategory].label
+      : selectedPrimaryType !== "all" ? primaryFoodTypes[selectedPrimaryType].label : "food overview";
+    if (resultCount) resultCount.textContent = `${visiblePlaces.length} ${isResearchedCity ? "researched" : "sample"} ${visiblePlaces.length === 1 ? "place" : "places"} · ${selectionLabel}`;
+    list.replaceChildren();
+    activeCityFoodPrototypeMap?.remove();
+    activeCityFoodPrototypeMap = null;
+    mapElement.replaceChildren();
+
+    const cards = new Map();
+    let previousGroup = null;
+    visiblePlaces.forEach((place) => {
+      const category = cityFoodCategory(place);
+      const showPrimaryGroups = selectedPrimaryType === "all";
+      const showCategoryGroups = selectedPrimaryType !== "all" && selectedCategory === "all" && !subfilters.hidden;
+      const group = showPrimaryGroups ? place.type : showCategoryGroups ? category : null;
+      if (group && group !== previousGroup) {
+        const heading = document.createElement("h3");
+        heading.className = "city-food-group-heading";
+        const groupMeta = showPrimaryGroups ? primaryFoodTypes[group] : foodCategories[group];
+        heading.innerHTML = `<span aria-hidden="true">${groupMeta.icon}</span>${escapeHtml(groupMeta.label)}`;
+        list.appendChild(heading);
+        previousGroup = group;
+      }
+      const card = document.createElement("article");
+      card.className = `city-food-place is-${place.type}`;
+      card.innerHTML = `
+        <div class="city-food-place-topline"><span><i aria-hidden="true">${foodCategories[category].icon}</i>${escapeHtml(place.typeLabel)}</span><strong>${escapeHtml(place.price)}</strong></div>
+        <h3>${escapeHtml(place.name)}</h3>
+        <p class="city-food-area">${escapeHtml(place.area)}</p>
+        <p>${escapeHtml(place.note)}</p>
+        <div class="city-food-place-links">
+          <a href="${mapsSearchUrl(`${place.name}, ${activeCity().name}, Japan`)}" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+          ${place.officialUrl ? `<a href="${escapeHtml(place.officialUrl)}" target="_blank" rel="noopener">Official details ↗</a>` : ""}
+        </div>
+      `;
+      cards.set(place.name, card);
+      list.appendChild(card);
+    });
+
+    if (!window.L || !visiblePlaces.length) {
+      mapElement.classList.add("map-unavailable");
+      mapElement.textContent = visiblePlaces.length ? "Map unavailable; place cards are still shown." : "No places in this filter.";
+      return;
+    }
+    mapElement.classList.remove("map-unavailable");
+    const map = L.map(mapElement, { scrollWheelZoom: false, zoomControl: true });
+    activeCityFoodPrototypeMap = map;
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    const points = [];
+    const markers = new Map();
+    visiblePlaces.forEach((place) => {
+      points.push(place.coordinates);
+      const icon = L.divIcon({
+        className: `city-food-marker-shell is-${place.type}`,
+        html: `<span aria-hidden="true">${foodCategories[cityFoodCategory(place)].icon}</span>`,
+        iconSize: [38, 46],
+        iconAnchor: [19, 46],
+        tooltipAnchor: [0, -37]
+      });
+      const marker = L.marker(place.coordinates, { icon, keyboard: true, title: place.name }).addTo(map);
+      markers.set(place.name, marker);
+      marker.bindTooltip(`<strong>${escapeHtml(place.name)}</strong><br>${escapeHtml(place.area)}`, { direction: "top", offset: [0, -4] });
+      marker.on("click", () => {
+        cards.forEach((card) => card.classList.remove("is-selected"));
+        const card = cards.get(place.name);
+        card?.classList.add("is-selected");
+        card?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    });
+    cards.forEach((card, placeName) => {
+      card.addEventListener("click", (event) => {
+        if (event.target.closest("a")) return;
+        cards.forEach((candidate) => candidate.classList.remove("is-selected"));
+        card.classList.add("is-selected");
+        const marker = markers.get(placeName);
+        if (marker) {
+          map.panTo(marker.getLatLng());
+          marker.openTooltip();
+        }
+      });
+    });
+    const bounds = L.latLngBounds(points);
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 13 });
+    else map.setView(mapFrameCenters[state.activeCity], 11);
+    map.whenReady(() => map.invalidateSize());
+  };
+
+  const renderSubfilters = () => {
+    subfilters.replaceChildren();
+    selectedCategory = "all";
+    const supportsSubcategories = ["osaka", "kyoto", "hiroshima", "tokyo"].includes(state.activeCity) && ["restaurant", "sweet"].includes(selectedPrimaryType);
+    if (!supportsSubcategories) {
+      subfilters.hidden = true;
+      return;
+    }
+    const availableCategories = Object.entries(foodCategories).filter(([value]) =>
+      places.some((place) => place.type === selectedPrimaryType && cityFoodCategory(place) === value));
+    subfilters.hidden = !availableCategories.length;
+    availableCategories.forEach(([value, meta]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.foodCategory = value;
+      const count = places.filter((place) => place.type === selectedPrimaryType && cityFoodCategory(place) === value).length;
+      button.innerHTML = `<span aria-hidden="true">${meta.icon}</span><strong>${escapeHtml(meta.label)}</strong><small>${count}</small>`;
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        selectedCategory = selectedCategory === value ? "all" : value;
+        subfilters.querySelectorAll("button").forEach((candidate) => {
+          const active = candidate.dataset.foodCategory === selectedCategory;
+          candidate.classList.toggle("active", active);
+          candidate.setAttribute("aria-pressed", String(active));
+        });
+        draw();
+      });
+      subfilters.appendChild(button);
+    });
+  };
+
+  filters.replaceChildren();
+  Object.entries(primaryFoodTypes).map(([value, meta]) => [value, meta.label, meta.icon]).forEach(([value, label, icon]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.foodType = value;
+    const count = places.filter((place) => place.type === value).length;
+    const tileArt = primaryFoodTypes[value].tileImage
+      ? `<span class="food-filter-art" aria-hidden="true"><img src="${primaryFoodTypes[value].tileImage}" alt=""></span>`
+      : `<span class="food-filter-orb" aria-hidden="true"><i>${icon}</i><b></b></span>`;
+    button.innerHTML = `
+      ${tileArt}
+      <span class="food-filter-copy"><strong>${label}</strong><small>${count} ${count === 1 ? "spot" : "spots"}</small></span>
+      <span class="food-filter-check" aria-hidden="true">✓</span>
+    `;
+    button.classList.toggle("active", value === selectedPrimaryType);
+    button.setAttribute("aria-pressed", String(value === selectedPrimaryType));
+    button.addEventListener("click", () => {
+      selectedPrimaryType = selectedPrimaryType === value ? "all" : value;
+      filters.querySelectorAll("button").forEach((candidate) => {
+        const active = candidate.dataset.foodType === selectedPrimaryType;
+        candidate.classList.toggle("active", active);
+        candidate.setAttribute("aria-pressed", String(active));
+      });
+      renderSubfilters();
+      draw();
+    });
+    filters.appendChild(button);
+  });
+  draw();
+}
+/* FOOD MAP PROTOTYPE END */
+
 function setProgressRing(element, completed, total) {
   if (!element) return;
   const percent = total ? Math.round((completed / total) * 100) : 0;
@@ -2248,6 +2681,7 @@ function renderOverview() {
   renderCalendar();
   renderTripQuestDashboard();
   renderCityDiscoveryChecklist();
+  renderCityFoodMapPrototype();
   renderMelonPassport();
   if (review && todayIso() >= "2026-11-10") review.appendChild(makePlaneRideReviewCard());
   renderAlbum();
@@ -2650,11 +3084,17 @@ function makeRouteCitySvg(pinX, pinY, nameX, nameY, anchor, city, dates, chapter
 
 function setupOverviewCarousel() {
   const host = document.querySelector("#overviewCarouselHost");
-  if (!host || host.querySelector(".overview-carousel")) return;
+  if (!host) return;
+  if (!state.foodMapLeftPageReady) {
+    state.overviewWindows = state.overviewWindows || {};
+    state.overviewWindows.overview = 1;
+    state.foodMapLeftPageReady = true;
+    saveState();
+  }
   const review = host.querySelector("#planeRideReview");
   const unlocked = todayIso() >= "2026-11-10";
-  const windows = [host.querySelector("#calendarView"), host.querySelector("#tripQuestView"), host.querySelector("#cityQuestView"), host.querySelector("#photoAlbum")].filter(Boolean);
-  const labels = ["Calendar", "Trip Quests", `${activeCity().name} Quests`, "Album"];
+  const windows = [host.querySelector("#cityFoodMapView"), host.querySelector("#calendarView"), host.querySelector("#tripQuestView"), host.querySelector("#cityQuestView"), host.querySelector("#photoAlbum")].filter(Boolean);
+  const labels = [`${activeCity().name} Food`, "Calendar", "Trip Quests", `${activeCity().name} Quests`, "Album"];
   if (unlocked && review) {
     windows.push(review);
     labels.push("Review");
@@ -3027,7 +3467,7 @@ const placeBackground = {
   "Chofu Station Tokyo": "Chofu is a western Tokyo residential hub and the practical rail access for the friends-day neighbourhood. Treat it as a meeting point, not a destination in itself.",
   "Jindaiji Temple": "Jindaiji traces its foundation to the 8th century and preserves wooded temple lanes and soba tradition on Tokyo's western edge. Use it only if the friends route there—it is an optional parent-paced pause, not a required checklist temple.",
   "Jindai Botanical Gardens": "The botanical gardens beside Jindaiji offer seasonal planting and quiet paths when a gentler outdoor pause fits the friends-day rhythm. Skip if the social route stays entirely in shops and restaurants.",
-  "Friends Neighborhood Tokyo": "Akko and Yoshi's home area is the most authentic Tokyo capstone because it is chosen by people who live there. Follow their food, shops and dinner pick without over-researching a tourist overlay.",
+  "Akko meetup · provisional Chofu Station": "This pin is deliberately provisional: Chofu is only the current planning placeholder. Replace it as soon as Akko confirms the actual meeting point, then leave Shibuya early enough for that real route.",
   "Shinjuku Station": "Shinjuku is one of the world's busiest rail nodes and the main launch point for the Kawaguchiko highway bus and Fuji Excursion. On Fuji days it is transfer logistics with small bags only; on return days it reunites you with the final Tokyo hotel.",
   "Kawaguchiko Station": "Kawaguchiko Station is the lakeside hub for buses, local routes and the start of the e-bike circuit. Arrive early enough on Day 17 to settle in before the light changes on Fuji.",
   "Lake Kawaguchiko": "Lake Kawaguchiko is the most accessible of the Fuji Five Lakes, with shoreline views that shift through the day as weather and angle change. Three nights here turn Fuji from a photograph into a lived-in retreat.",
@@ -3075,10 +3515,10 @@ function dayMapCenter(day) {
 
 function mapsRouteUrl(day) {
   const places = dayMapPlaces(day);
-  const hotel = STAY_HOTEL_BY_DAY[day.id] || (state.lodging[state.activeCity] || "").trim();
-  const origin = hotel || places[0] || "Japan";
+  const fallbackHotel = STAY_HOTEL_BY_DAY[day.id] || (state.lodging[state.activeCity] || "").trim();
+  const origin = places[0] || fallbackHotel || "Japan";
   const destination = places.at(-1) || origin;
-  const waypoints = places.filter((place) => place !== hotel && place !== origin && place !== destination).join("|");
+  const waypoints = places.slice(1, -1).join("|");
   const params = new URLSearchParams({ api: "1", travelmode: "transit", destination });
   params.set("origin", origin);
   if (waypoints) params.set("waypoints", waypoints);
@@ -3289,11 +3729,21 @@ function makeDailyPhotoCard(day) {
 function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWindows") {
   const carousel = document.createElement("section");
   const viewport = document.createElement("div");
-  carousel.className = "day-carousel";
+  carousel.className = "day-carousel has-side-navigation";
   viewport.className = "day-window-strip";
   viewport.setAttribute("aria-label", "Swipe or drag between windows");
 
+  const previousButton = document.createElement("button");
+  const nextButton = document.createElement("button");
+  previousButton.type = "button";
+  previousButton.className = "carousel-side-jump is-previous";
+  previousButton.innerHTML = '<span class="carousel-side-arrow" aria-hidden="true">‹</span><small></small>';
+  nextButton.type = "button";
+  nextButton.className = "carousel-side-jump is-next";
+  nextButton.innerHTML = '<span class="carousel-side-arrow" aria-hidden="true">›</span><small></small>';
+
   windows.forEach((window, index) => {
+    window.querySelector(":scope > .overview-page-nav")?.remove();
     window.classList.add("day-window");
     window.dataset.windowIndex = String(index);
     window.setAttribute("aria-label", `${labels[index]} window`);
@@ -3318,6 +3768,16 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
     if (!carouselIsAboveViewport) return;
     requestAnimationFrame(() => carousel.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }));
   }
+  function updateControls() {
+    const previousIndex = (currentIndex - 1 + windows.length) % windows.length;
+    const nextIndex = (currentIndex + 1) % windows.length;
+    const previousLabel = labels[previousIndex];
+    const nextLabel = labels[nextIndex];
+    previousButton.setAttribute("aria-label", `Previous carousel page: ${previousLabel}`);
+    previousButton.querySelector("small").textContent = previousLabel;
+    nextButton.setAttribute("aria-label", `Next carousel page: ${nextLabel}`);
+    nextButton.querySelector("small").textContent = nextLabel;
+  }
   function goTo(index, behavior = "smooth") {
     const previousIndex = currentIndex;
     currentIndex = Math.max(0, Math.min(index, maxIndex));
@@ -3325,6 +3785,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
     state[storageGroup] = state[storageGroup] || {};
     state[storageGroup][carouselId] = currentIndex;
     saveState();
+    updateControls();
     if (previousIndex !== currentIndex) bringWindowToTop(currentIndex);
   }
   viewport.addEventListener("scroll", () => {
@@ -3336,6 +3797,7 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
         state[storageGroup] = state[storageGroup] || {};
         state[storageGroup][carouselId] = currentIndex;
         saveState();
+        updateControls();
         bringWindowToTop(currentIndex);
       }
     }, 90);
@@ -3362,7 +3824,11 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   viewport.addEventListener("pointerup", endDrag);
   viewport.addEventListener("pointercancel", endDrag);
 
-  carousel.append(viewport);
+  previousButton.addEventListener("click", () => goTo((currentIndex - 1 + windows.length) % windows.length));
+  nextButton.addEventListener("click", () => goTo((currentIndex + 1) % windows.length));
+
+  carousel.append(previousButton, viewport, nextButton);
+  updateControls();
   requestAnimationFrame(() => goTo(currentIndex, "auto"));
   return carousel;
 }
@@ -3401,14 +3867,16 @@ function renderNav() {
 function snapOverviewToActiveCity() {
   requestAnimationFrame(() => {
     const overviewStrip = document.querySelector("#overviewCarouselHost .overview-carousel .day-window-strip");
+    const calendarWindow = overviewStrip?.querySelector("#calendarView");
     if (overviewStrip) {
       // Reset the primary overview directly. Calling scrollIntoView on a card
       // inside the hidden window can make the browser restore the wrong page.
-      overviewStrip.scrollLeft = 0;
-      overviewStrip.scrollTo({ left: 0, behavior: "auto" });
+      const calendarLeft = calendarWindow?.offsetLeft || 0;
+      overviewStrip.scrollLeft = calendarLeft;
+      overviewStrip.scrollTo({ left: calendarLeft, behavior: "auto" });
     }
     state.overviewWindows = state.overviewWindows || {};
-    state.overviewWindows.overview = 0;
+    state.overviewWindows.overview = 1;
     saveState();
     const firstCityDay = document.querySelector(`#calendarGrid .calendar-day[data-city="${state.activeCity}"]`);
     if (!firstCityDay) return;
@@ -3421,8 +3889,13 @@ function snapOverviewToActiveCity() {
     // window cannot be selected again as a side effect.
     const targetTop = verticalTarget.getBoundingClientRect().top + window.scrollY - 12;
     window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
-    if (overviewStrip) overviewStrip.scrollLeft = 0;
+    if (overviewStrip) overviewStrip.scrollLeft = calendarWindow?.offsetLeft || 0;
   });
+}
+
+function resetOverviewToCalendar() {
+  state.overviewWindows = state.overviewWindows || {};
+  state.overviewWindows.overview = 1;
 }
 
 function showOverview() {
@@ -3457,6 +3930,7 @@ cityRail.addEventListener("click", (event) => {
   const shouldSnap = citySnapArmedFor === selectedCity;
   citySnapArmedFor = shouldSnap ? null : selectedCity;
   state.activeCity = selectedCity;
+  resetOverviewToCalendar();
   saveState();
   renderNav();
   showOverview();
@@ -3476,6 +3950,8 @@ dayRail.addEventListener("click", (event) => {
   const view = button.dataset.view;
   document.querySelectorAll(".chip").forEach((chip) => chip.classList.toggle("active", chip === button));
   if (view === "overview") {
+    resetOverviewToCalendar();
+    saveState();
     showOverview();
   } else {
     showDay(activeCity().days.find((day) => day.id === view));
@@ -3505,8 +3981,6 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 
 applyTheme();
 renderNav();
-if (todayTarget) {
-  showDay(todayTarget.day);
-} else {
-  showOverview();
-}
+resetOverviewToCalendar();
+saveState();
+showOverview();
