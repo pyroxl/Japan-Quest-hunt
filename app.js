@@ -194,6 +194,8 @@ const regionalQuestPools = {
     ["osaka-kushikatsu", "food", "Try kushikatsu in Osaka.", ["day03"]],
     ["osaka-negiyaki", "food", "Find negiyaki or another Osaka griddle specialty.", ["day04"]],
     ["osaka-konbini", "food", "Build a konbini breakfast or dessert haul.", ["day02"]],
+    ["osaka-solaniwa", "culture", "Keep Solaniwa Onsen Osaka Bay Tower as the weather-proof Osaka reset option.", ["day05"]],
+    ["osaka-department-store", "culture", "Browse a department-store restaurant floor for an easy meal and its basement depachika for food souvenirs.", ["day04"]],
     ["osaka-sign", "find", "Spot the loudest oversized food sign.", ["day02"]],
     ["osaka-street", "photo", "Photograph an ordinary street with no landmark.", ["day04"]],
     ["osaka-kissaten", "culture", "Pause in a kissaten or neighborhood cafe.", ["day04"]]
@@ -204,6 +206,10 @@ const regionalQuestPools = {
     ["kyoto-matcha", "food", "Pair matcha with wagashi."],
     ["kyoto-tea", "food", "Find a matcha, hojicha, or tea-flavored treat."],
     ["kyoto-noodles", "food", "Choose soba or udon for an easy meal."],
+    ["kyoto-flip-up", "food", "Try a bread from Flip Up! near the hotel and Manga Museum."],
+    ["kyoto-handicraft", "culture", "Browse the Kyoto Handicraft Center for traditional crafts and a meaningful keepsake.", ["day09"]],
+    ["kyoto-teramachi", "culture", "Walk a bounded stretch of Teramachi Street when it naturally connects the palace, Nishiki, or dinner route.", ["day09"]],
+    ["kyoto-department-store", "culture", "Use a department-store restaurant floor for choice and its basement depachika for compact souvenirs.", ["day09"]],
     ["kyoto-noren", "find", "Find a beautiful noren, lantern, or tiny garden."],
     ["kyoto-river", "photo", "Catch a quiet river routine."],
     ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto."],
@@ -247,12 +253,16 @@ const regionalQuestPools = {
   tokyo: [
     ["tokyo-sushi", "food", "Choose a sushi meal that fits today's neighborhood."],
     ["tokyo-ramen", "food", "Try a neighborhood ramen shop."],
-    ["tokyo-curry", "food", "Try Japanese curry."],
+    ["tokyo-curry", "food", "Try Japanese curry; CoCo Ichibanya is the easy chain fallback."],
     ["tokyo-yakitori", "food", "Share yakitori at a casual dinner."],
     ["tokyo-teishoku", "food", "Order a teishoku set meal."],
     ["tokyo-taiyaki", "food", "Find taiyaki or ningyo-yaki."],
     ["tokyo-kissaten", "food", "Try a kissaten breakfast or toast set."],
     ["tokyo-bakery", "food", "Check a neighborhood bakery for a new melon bread."],
+    ["tokyo-kappabashi", "culture", "Browse Kappabashi for kitchenware or food replicas only if it replaces other Asakusa shopping.", ["day20"]],
+    ["tokyo-aoyama-square", "culture", "Browse Japan Traditional Crafts Aoyama Square for one well-made keepsake.", ["day21"]],
+    ["tokyo-nakano-broadway", "culture", "Use Nakano Broadway as the optional collector-culture extension after the west-Tokyo day.", ["day15"]],
+    ["tokyo-department-store", "culture", "Check a department-store restaurant floor for an easy meal and the basement depachika for souvenirs."],
     ["tokyo-reflection", "photo", "Photograph the two of us reflected in the city."],
     ["tokyo-routine", "culture", "Repeat one cafe, bakery, konbini, or supermarket."]
   ]
@@ -2161,10 +2171,14 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Sanwa Coffee Works Tenma", type: "cafe", category: "cafe", typeLabel: "Tenma coffee", area: "Day 4 · Tenma", price: "¥¥", note: "Long-running roastery café near the Tenjinbashisuji route. Use only before dinner; after the hotel reset, protect appetite for the Tenma finish.", coordinates: [34.7082518, 135.5124233], officialUrl: "https://store.sanwacoffeeworks.com/pages/about-scw" },
     { name: "CAFE ANNON Namba Main Store", type: "sweet", category: "dessert", typeLabel: "Soufflé dessert", area: "Day 3 · Namba / Den Den", price: "¥¥", note: "A cute soufflé-pancake option near the Namba end of Den Den Town. Treat it as a dessert stop; queues can make it an easy skip.", coordinates: [34.66383, 135.50345] },
     { name: "Uncle Rikuro's Namba Main Store", type: "sweet", category: "cheesecake", typeLabel: "Osaka cheesecake", area: "Day 2/3 · Namba · Ebisubashi-suji", price: "¥¥", note: "Osaka's famous warm, jiggly cheesecake with raisins at the base. One cake is made for sharing, so use this as the group's signature Osaka sweet rather than adding another individual dessert stop.", coordinates: [34.6663213, 135.5005897], officialUrl: "https://www.rikuro.co.jp/shoplist/134.html" },
+    { name: "ÉCHIRÉ Marché au Beurre", type: "sweet", category: "bakery", typeLabel: "French butter bakery · Umeda", area: "Hankyu Umeda Main Store · B2F", price: "¥¥¥", note: "Mai's Umeda butter-and-pastry pick inside the depachika. Treat the branch-limited items as a bonus, not a queue obligation.", coordinates: [34.70272, 135.49815], officialUrl: "https://website.hankyu-dept.co.jp/fl/english/honten/store/floorb2.html" },
+    { name: "Naruto Taiyaki Honpo Sonezaki", type: "sweet", category: "taiyaki", typeLabel: "Taiyaki · Umeda", area: "Sonezaki · near Higashi-Umeda", price: "¥", note: "A takeaway taiyaki specialist with freshly cooked sweet-bean and custard options. Best when the route already reaches Umeda or Ohatsu Tenjin.", coordinates: [34.69924, 135.50055], officialUrl: "http://www.taiyaki.co.jp/" },
+    { name: "TruffleBAKERY Osaka Store", type: "sweet", category: "bakery", typeLabel: "Truffle salt bread · Nakazakicho", area: "Nakazakicho · north of Umeda", price: "¥¥", note: "The Nakazakicho bakery known for white-truffle salt bread. It is an intentional north-Osaka stop, so pair it with Umeda rather than the Namba sightseeing arc.", coordinates: [34.7077497, 135.5067993], officialUrl: "https://www.truffle-bakery.jp/" },
     { name: "Takoyaki Doraku Wanaka Sennichimae", type: "restaurant", category: "takoyaki", typeLabel: "Takoyaki checklist", area: "Day 3 · Namba / Den Den", price: "¥", note: "The famous Sennichimae main shop. Share one order on the Den Den route so takoyaki stays a snack, not the seated lunch.", coordinates: [34.6652095, 135.5034015], officialUrl: "https://takoyaki-wanaka.com/en/" },
     { name: "551 HORAI Main Store", type: "restaurant", category: "butaman", typeLabel: "Butaman · Osaka pork bun", area: "Day 2/3 · Namba · Ebisubashi-suji", price: "¥", note: "The route-friendly flagship for a hot Osaka pork bun. Buy one or two downstairs to share as a snack; the upper floors are a full restaurant, but there is no need to turn this into another meal.", coordinates: [34.666438, 135.4991023], officialUrl: "https://www.551horai.co.jp/shop/list/13/" },
     { name: "Chitose Bekkan", type: "restaurant", category: "nikusui", typeLabel: "Nikusui · Osaka beef soup", area: "Day 3 · Namba Grand Kagetsu", price: "¥¥", note: "The easier itinerary fit for Osaka-born nikusui: beef, soft egg and dashi without noodles. It sits inside Namba Grand Kagetsu and stays open later than the tiny original shop, though it can close when the dashi sells out.", coordinates: [34.6656996, 135.5036018], officialUrl: "https://www.chitose-nikusui.com/" },
     { name: "Okonomiyaki Mizuno", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki checklist", area: "Day 2 · Dotonbori", price: "¥¥", note: "A Dotonbori institution operating since 1945. It fits the arrival neighborhood, but the queue makes this an early-meal choice rather than a jet-lag obligation.", coordinates: [34.6684527, 135.5030691], officialUrl: "https://www.mizuno-osaka.com/" },
+    { name: "Chibo Dotonbori Building", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · wife's pick", area: "Day 2 · Dotonbori", price: "¥¥", note: "The multi-floor Dotonbori flagship at the supplied address. It is a convenient full-meal alternative on the arrival route; choose Chibo or Mizuno rather than queueing for both.", coordinates: [34.6688364, 135.5039025], officialUrl: "https://www.chibo.com/" },
     { name: "Kushikatsu Daruma Shinsekai Main Store", type: "restaurant", category: "kushikatsu", typeLabel: "Kushikatsu checklist", area: "Day 3 · Shinsekai", price: "¥¥", note: "The classic specialist in exactly the planned evening neighborhood. Go early, share skewers and keep this as Day 3's proper finish.", coordinates: [34.65208, 135.50616], officialUrl: "https://www.kushikatu-daruma.com/location/" },
     { name: "Fukutaro Honten", type: "restaurant", category: "okonomiyaki", typeLabel: "Negiyaki checklist", area: "Day 3/4 · Sennichimae", price: "¥¥", note: "Known for both negiyaki and okonomiyaki near Kuromon and Den Den. Best checklist backup when Mizuno's queue or Dotonbori timing does not work.", coordinates: [34.6655928, 135.5045307], officialUrl: "https://2951.jp/" },
     { name: "Yaki Yaki Haru no Hana", type: "restaurant", typeLabel: "Okonomiyaki · video pick", area: "Kyomachibori · west of hotel", price: "¥¥¥", note: "The original video pick and reservable, but inconvenient from the Namba sightseeing arc. Keep it only if this specific restaurant matters more than easy routing.", coordinates: [34.6887, 135.4918], officialUrl: "http://www.haru-no-hana.com/" },
@@ -2183,6 +2197,9 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Tengu", type: "restaurant", typeLabel: "Kushikatsu · atmosphere", area: "Day 3 · Shinsekai", price: "¥", note: "Traditional Janjan Yokocho counter energy and the strongest atmosphere pick. Choose Tengu over Daruma when old-school Shinsekai character matters most.", coordinates: [34.65072, 135.5045], officialUrl: "https://insideosaka.com/tengu/" },
     { name: "Kushikatsu Tanaka Amerikamura", type: "restaurant", typeLabel: "Kushikatsu · chain backup", area: "Day 4 · Amerikamura", price: "¥¥", note: "Reliable national-chain backup directly on the Day 4 route. Convenient, family-friendly and reservable, but not a destination over Tengu or Daruma.", coordinates: [34.6739, 135.4981], officialUrl: "https://restaurant.kushi-tanaka.com/" },
     { name: "DEARBROS Sennichimae", type: "restaurant", typeLabel: "Omurice · flexible lunch", area: "Day 2/3/4 · Namba", price: "¥¥", note: "Rich, meat-heavy omurice near Namba. A flexible lunch fallback when the group wants a filling break from flour dishes, skewers and ramen.", coordinates: [34.66705, 135.50425], officialUrl: "https://www.instagram.com/dearbros_official/" },
+    { name: "Sukiyaki Shabushabu Daibokujou Sennichimae", type: "restaurant", category: "sukiyaki", typeLabel: "Sukiyaki & shabu-shabu · wife's pick", area: "Day 2/3/4 · Namba · ECS 32 Building 5F", price: "¥¥¥", note: "A central Namba hot-pot option with all-you-can-eat courses and private-room capacity. Reserve it only when this is the night's proper seated meal.", coordinates: [34.66686, 135.5019], officialUrl: "https://gurunavi.com/en/kahb207/rst/" },
+    { name: "Maruyoshi Sushi", type: "restaurant", category: "sushi", typeLabel: "Market sushi · early meal", area: "Kizu Wholesale Market · Daikokucho", price: "¥¥", note: "A small market sushi and seafood-bowl stop with very early hours. Use it as breakfast or early lunch and recheck the market calendar before making the trip.", coordinates: [34.6553, 135.5005] },
+    { name: "Honke Shibato", type: "restaurant", category: "unagi", typeLabel: "Osaka-style eel · historic", area: "Koraibashi · east of hotel", price: "¥¥¥¥", note: "A centuries-old eel specialist for Osaka mamushi, with eel layered into rice. This is a deliberate traditional meal close to the hotel, not a casual snack stop.", coordinates: [34.6900344, 135.5037614], officialUrl: "http://www.shibato.net/" },
     { name: "Ippoutei Honten", type: "restaurant", typeLabel: "High · historic shumai", area: "Day 3 · beside Nankai Namba", price: "¥", note: "Founded in Namba in 1933 and known for soft shumai wrapped in thin egg rather than ordinary flour skins. Inexpensive, distinctive and one of the strongest route-friendly lunches.", coordinates: [34.66285, 135.50215], officialUrl: "https://www.ippoutei.com/" },
     { name: "Kitatake Udon", type: "restaurant", typeLabel: "Medium-high · udon lunch", area: "Day 3 · Namba / Den Den", price: "¥", note: "Excellent specialist lunch beyond ramen, about three minutes from Nankai Namba. Lunch runs only until 15:00 and can finish when the noodles sell out.", coordinates: [34.66255, 135.50365], officialUrl: "http://kamatakeudon.kt.fc2.com/" },
     { name: "Sakenomi Ario", type: "restaurant", typeLabel: "Medium · local izakaya", area: "Namba · Motomachi", price: "¥¥", note: "Small, reservable neighborhood izakaya west of Namba. It has moved from its old Nambanaka address to Motomachi, so use this pin rather than older map results.", coordinates: [34.66205, 135.49675], officialUrl: "https://www.instagram.com/sakenomi_ario/" },
@@ -2192,6 +2209,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "FamilyMart Karasuma Rokkaku", type: "conbini", category: "conbini", typeLabel: "Closest FamilyMart", area: "Hotel base · ~140 m south", price: "¥", note: "The quickest mapped supply run from Hotel Monterey: useful for early breakfast, drinks and trail snacks before the sightseeing day starts.", coordinates: [35.00648, 135.75943], officialUrl: "https://store.family.co.jp/points/33097" },
     { name: "Lawson Karasuma Sanjo", type: "conbini", category: "conbini", typeLabel: "Closest Lawson", area: "Hotel base · ~170 m north", price: "¥", note: "A 24-hour option beside Karasuma Oike. Use it for a Lawson breakfast comparison, an ATM stop or an easy late-night fallback on the walk back to the hotel.", coordinates: [35.0092, 135.75954], officialUrl: "https://map.yahoo.co.jp/v3/place/HDPZIRykzBM" },
     { name: "7-Eleven Kyoto Oikedori Tatsuikecho", type: "conbini", category: "conbini", typeLabel: "Nearest useful 7-Eleven", area: "Hotel base · ~350 m northwest", price: "¥", note: "Slightly farther than FamilyMart and Lawson but still close enough for the three-chain breakfast comparison, Seven Bank ATM and packaged melonpan hunt.", coordinates: [35.01057, 135.75772], officialUrl: "https://location.sevenbank.co.jp/sevenbank/spot/detail?code=0000031318&lang=en" },
+    { name: "Flip Up!", type: "sweet", category: "bakery", typeLabel: "Neighborhood bakery · wife's pick", area: "Hotel / Manga Museum · Oshikoji", price: "¥", note: "A compact, route-friendly bakery close to the hotel and Manga Museum. Pick one or two breads for breakfast or the Mt Hiei trail rather than building a separate meal around it.", coordinates: [35.0122892, 135.7582458] },
     { name: "Sohonke Nishin Soba Matsuba Honten", type: "restaurant", category: "nishin-soba", typeLabel: "Nishin soba · must try", area: "Day 7 · Gion-Shijo / Minamiza", price: "¥¥", note: "Kyoto's signature buckwheat noodles with sweet-simmered herring, served where the dish originated. The easiest distinctive dinner before or after the Gion evening.", coordinates: [35.00365, 135.77262], officialUrl: "https://sobamatsuba.co.jp/menu/access.html" },
     { name: "Izuju", type: "restaurant", category: "kyoto-sushi", typeLabel: "Saba-zushi · high priority", area: "Day 7 · Yasaka Shrine", price: "¥¥¥", note: "Traditional Kyoto pressed sushi beside Yasaka. Share saba-zushi or hako-zushi as a tasting; current last order is early enough that this is lunch or early dinner, not a post-show fallback.", coordinates: [35.00362, 135.77853], officialUrl: "https://gion-izuju.com/english-page/" },
     { name: "Kiyomizu Junsei Okabeya", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu & yuba · route pick", area: "Day 7 · Kiyomizu-dera approach", price: "¥¥¥", note: "The most practical tofu meal on this itinerary: yudofu and fresh yuba directly on the Kiyomizu route. Use it as the seated lunch if the morning timing remains healthy.", coordinates: [34.99616, 135.78082], officialUrl: "https://www.okabeya.com/lang/en.html" },
@@ -2270,9 +2288,14 @@ const OSAKA_FOOD_CATEGORIES = {
   izakaya: { label: "Izakayas", icon: "🏮" },
   noodles: { label: "Ramen & noodles", icon: "🍜" },
   yakiniku: { label: "Yakiniku", icon: "🥩" },
+  sukiyaki: { label: "Sukiyaki & shabu-shabu", icon: "🍲" },
+  sushi: { label: "Sushi & seafood", icon: "🍣" },
+  unagi: { label: "Unagi", icon: "🐟" },
   cafe: { label: "Cafés & kissaten", icon: "☕" },
   dessert: { label: "Soufflé pancakes", icon: "🍰" },
   cheesecake: { label: "Osaka cheesecake", icon: "🧀" },
+  bakery: { label: "Bakeries & butter sweets", icon: "🥐" },
+  taiyaki: { label: "Taiyaki", icon: "🐟" },
   conbini: { label: "Conbini", icon: "🍙" },
   other: { label: "Other local bites", icon: "🍽️" }
 };
@@ -2298,6 +2321,7 @@ const KYOTO_FOOD_CATEGORIES = {
   wagashi: { label: "Seasonal wagashi", icon: "🌸" },
   "soy-sweets": { label: "Soy-milk sweets", icon: "🥛" },
   "mochi-dango": { label: "Mochi & dango", icon: "🍡" },
+  bakery: { label: "Bakeries", icon: "🥐" },
   conbini: { label: "Conbini", icon: "🍙" }
 };
 
@@ -3094,7 +3118,7 @@ function setupOverviewCarousel() {
   const review = host.querySelector("#planeRideReview");
   const unlocked = todayIso() >= "2026-11-10";
   const windows = [host.querySelector("#cityFoodMapView"), host.querySelector("#calendarView"), host.querySelector("#tripQuestView"), host.querySelector("#cityQuestView"), host.querySelector("#photoAlbum")].filter(Boolean);
-  const labels = [`${activeCity().name} Food`, "Calendar", "Trip Quests", `${activeCity().name} Quests`, "Album"];
+  const labels = [`${activeCity().name} Food`, "Calendar", "Trip Questions", `${activeCity().name} Quests`, "Album"];
   if (unlocked && review) {
     windows.push(review);
     labels.push("Review");
@@ -3827,7 +3851,17 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   previousButton.addEventListener("click", () => goTo((currentIndex - 1 + windows.length) % windows.length));
   nextButton.addEventListener("click", () => goTo((currentIndex + 1) % windows.length));
 
-  carousel.append(previousButton, viewport, nextButton);
+  if (carouselId === "overview") {
+    const navigation = document.createElement("nav");
+    navigation.className = "overview-carousel-navigation";
+    navigation.setAttribute("aria-label", "Overview pages");
+    navigation.append(previousButton, nextButton);
+    carousel.classList.add("has-top-navigation");
+    carousel.classList.remove("has-side-navigation");
+    carousel.append(navigation, viewport);
+  } else {
+    carousel.append(previousButton, viewport, nextButton);
+  }
   updateControls();
   requestAnimationFrame(() => goTo(currentIndex, "auto"));
   return carousel;

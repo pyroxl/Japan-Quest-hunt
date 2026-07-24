@@ -538,6 +538,68 @@ h3 {
   outline-offset: 2px;
 }
 
+.day-carousel.has-top-navigation {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.overview-carousel-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.overview-carousel-navigation .carousel-side-jump {
+  position: static;
+  flex: 0 1 auto;
+  flex-direction: row;
+  gap: 7px;
+  width: auto;
+  height: auto;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+
+.overview-carousel-navigation .carousel-side-arrow {
+  flex: 0 0 auto;
+  font-size: 1.25rem;
+}
+
+.overview-carousel-navigation .carousel-side-jump small {
+  max-width: none;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  font-size: clamp(0.7rem, 2.6vw, 0.82rem);
+  line-height: 1;
+}
+
+.overview-carousel-navigation .carousel-side-jump.is-next {
+  flex-direction: row-reverse;
+}
+
+@media (max-width: 420px) {
+  .overview-carousel-navigation {
+    gap: 6px;
+  }
+
+  .overview-carousel-navigation .carousel-side-jump {
+    max-width: calc(50% - 3px);
+    gap: 5px;
+    padding-inline: 8px;
+  }
+
+  .overview-carousel-navigation .carousel-side-arrow {
+    font-size: 1.05rem;
+  }
+
+  .overview-carousel-navigation .carousel-side-jump small {
+    font-size: 0.68rem;
+  }
+}
+
 .coverage-summary,
 .melon-progress {
   display: flex;
