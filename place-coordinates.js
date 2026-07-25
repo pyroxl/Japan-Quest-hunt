@@ -80,6 +80,10 @@ window.PLACE_COORDINATES = {
     34.6874989,
     135.839814
   ],
+  "Kasuga Taisha": [
+    34.6805063,
+    135.8460746
+  ],
   "Naramachi": [
     34.6776,
     135.8327
@@ -287,6 +291,14 @@ window.PLACE_COORDINATES = {
   "Shibuya PARCO": [
     35.662,
     139.6987
+  ],
+  "Pokémon Center Shibuya": [
+    35.66205,
+    139.69875
+  ],
+  "Pokémon Center Tokyo DX": [
+    35.6805346,
+    139.7744125
   ],
   "Chofu Station Tokyo": [
     35.6517768,
