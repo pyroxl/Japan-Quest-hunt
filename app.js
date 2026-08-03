@@ -1257,9 +1257,9 @@ const defaultPlanPhotos = {
   day14: "capstones/day14.jpg",
   day15: "capstones/day15.jpeg",
   day16: "capstones/day16.jpeg",
-  day17: "capstones/day17.webp",
-  day18: "capstones/day18.webp",
-  day19: "capstones/day19.jpeg",
+  day17: "capstones/day17.jpg",
+  day18: "capstones/day18.jpg",
+  day19: "capstones/day19.webp",
   day20: "capstones/day20.webp",
   day21: "capstones/day21.jpg"
 };
