@@ -352,13 +352,25 @@ window.PLACE_COORDINATES = {
     35.2376,
     138.9958
   ],
-  "Lake Ashi": [
-    35.204,
-    139.0
+  "Moto-Hakone Port": [
+    35.2023,
+    139.0313
   ],
   "Hakone Shrine": [
     35.2048,
     139.025
+  ],
+  "Kowakidani Station": [
+    35.2383,
+    139.0518
+  ],
+  "Gora Station (Return)": [
+    35.2509,
+    139.0482
+  ],
+  "Gora Park": [
+    35.2493,
+    139.0437
   ],
   "Sengoku": [
     35.271,
