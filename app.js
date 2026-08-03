@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v150";
+const APP_VERSION = "japan-quest-v151";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -10,7 +10,7 @@ const HOTEL_PLACES = new Set([
   "Hotel Monterey Kyoto",
   "Hotel Granvia Hiroshima",
   "KOKO HOTEL Premier Nihonbashi Hamacho",
-  "MIYA HOUSE Kodachi A棟"
+  "Tokinoyu Setsugetsuka"
 ]);
 
 const LOCKED_HOTELS = [
@@ -18,21 +18,21 @@ const LOCKED_HOTELS = [
   { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
   { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
   { dates: "Tokyo · Nov 5–8 & Nov 11–13", note: "Nihonbashi Hamacho · 2 rooms on both stays", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://koko-hotels.com/nihonbashi_hamacho/" },
-  { dates: "Kawaguchiko · Nov 8–11", note: "Kodachi · 3-bedroom villa", name: "MIYA HOUSE Kodachi A棟", url: "https://www.booking.com/hotel/jp/miya-house-kodachi-adong.html" }
+  { dates: "Hakone · Nov 8–11", note: "Gora · verify room, meals & cancellation", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/" }
 ];
 
 const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
 
 const RESERVATION_COUNTDOWN = [
   { name: "Parent rooms: Osaka, Kyoto & Hiroshima", recommendedOn: "2026-07-14", target: "Oct 24–Nov 5", note: "Records show only 1 room at each. Reserve now unless Mom and Dad already booked separately." },
-  { name: "Open-jaw flights", recommendedOn: "2026-07-14", target: "Oct 23 & Nov 13", note: "Needed for the visa file; use a changeable/refundable fare if practical." },
+  { name: "Verify Expedia/JAL ticketing", recommendedOn: "2026-08-02", target: "Oct 23 & Nov 13", note: "Record both airline locators/e-ticket numbers, operating flight numbers and Heathrow connection; resolve seat assignment." },
   { name: "Gion Corner", recommendedOn: "2026-08-01", target: "Oct 29 at 18:00", note: "Check for the October ticket block and reserve four seats.", url: "https://www.kyoto-gioncorner.com/global/en.html" },
   { name: "teamLab Borderless", recommendedOn: "2026-09-01", target: "Nov 12 morning", note: "Start checking and buy as soon as November 12 is released.", url: "https://www.teamlab.art/e/tokyo/" },
-  { name: "Kawaguchiko e-bikes", recommendedOn: "2026-09-15", target: "Nov 9", note: "Reserve two bikes for Mai/Brian and reconfirm November hours.", url: "https://fujisanbikestudio.wixsite.com/fujisanbike-studio" },
+  { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid. Tickets are date-and-time specific. Nov 4–17 is closed, so Nov 6 is not possible; Oct 25 morning is safer if the first Tokyo night is added.", url: "https://www.ghibli-museum.jp/en/tickets/" },
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
-  { name: "Kawaguchiko transfers", recommendedOn: "2026-10-08", target: "Nov 8 & Nov 11", note: "Book outbound around Oct 8 and return around Oct 11." },
-  { name: "Ghibli Museum", recommendedOn: "2026-10-10", target: "Nov 6", note: "Official sale: October 10 at 10:00 JST. Be online at release.", url: "https://www.ghibli-museum.jp/en/tickets/" },
-  { name: "Mitsutoge taxis", recommendedOn: "2026-10-27", target: "Nov 10", note: "Prebook both villa↔trailhead legs and the fixed return pickup." }
+  { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Reserve Shinjuku→Hakone-Yumoto, then use the Hakone Tozan Railway to Gora." },
+  { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Reserve Hakone-Yumoto→Shinjuku early enough to reach KOKO around noon." },
+  { name: "Verify Setsugetsuka, then cancel MIYA HOUSE", recommendedOn: "2026-08-02", target: "Nov 8–11", note: "Confirm the Hakone booking, room type, meals and cancellation terms before cancelling the Kawaguchiko villa." }
 ];
 
 const STAY_HOTEL_BY_DAY = {
@@ -51,9 +51,9 @@ const STAY_HOTEL_BY_DAY = {
   day14: "KOKO HOTEL Premier Nihonbashi Hamacho",
   day15: "KOKO HOTEL Premier Nihonbashi Hamacho",
   day16: "KOKO HOTEL Premier Nihonbashi Hamacho",
-  day17: "MIYA HOUSE Kodachi A棟",
-  day18: "MIYA HOUSE Kodachi A棟",
-  day19: "MIYA HOUSE Kodachi A棟",
+  day17: "Tokinoyu Setsugetsuka",
+  day18: "Tokinoyu Setsugetsuka",
+  day19: "Tokinoyu Setsugetsuka",
   day20: "KOKO HOTEL Premier Nihonbashi Hamacho",
   day21: "KOKO HOTEL Premier Nihonbashi Hamacho"
 };
@@ -173,15 +173,15 @@ const roadmapGoals = [
   { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day08"], status: "Ready", why: "Bamboo and Togetsukyo lead naturally into Ryoan-ji and Kinkaku-ji via the Randen corridor.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by taxi." },
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
   { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a full Kyoto mountain day with Enryaku-ji and forest paths.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
-  { id: "mountain-chapter", goal: "Three-night Kawaguchiko retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "One Fuji-area villa creates a deliberate quiet escape between two Tokyo stays, with active and gentle versions each day.", blocker: "November weather, local bus schedules, trail status, and Kodachi↔station taxis need confirmation.", fallback: "Keep the villa and use ropeway, museums, cafes and short shoreline walks instead of a hike." },
-  { id: "fuji-return", goal: "Protected Kawaguchiko–Tokyo return", days: ["day20"], status: "Needs Booking", why: "Returning on Nov 11 creates a full buffer before the flight and leaves time for missed Tokyo priorities.", blocker: "Reserve the return bus or train and allow road-delay margin.", fallback: "Use the rail route via Otsuki if highway conditions look unreliable." },
+  { id: "mountain-chapter", goal: "Three-night Hakone retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "A Gora hotel beside the station makes the mountain chapter usable by scheduled transport, with the classic loop and a real hiking day.", blocker: "November weather, ropeway/boat status, trail conditions, and the Setsugetsuka booking details need confirmation.", fallback: "Use the Open-Air Museum, Gora Park and Pola Museum if weather closes the high route." },
+  { id: "hakone-return", goal: "Protected Hakone–Tokyo return", days: ["day20"], status: "Needs Booking", why: "A reserved morning rail return avoids highway uncertainty and leaves time for luggage and a soft Tokyo landing.", blocker: "Reserve the Romancecar and allow the Gora-to-Hakone-Yumoto connection margin.", fallback: "Use regular Odakyu services if the preferred Romancecar sells out." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
-  { id: "tokyo-story", goal: "Tokyo through Ghibli, Shibuya, friends, Asakusa, teamLab and food", days: ["day14", "day15", "day16", "day20", "day21"], status: "Ready", why: "Each Tokyo day has one distinct anchor, with Dad's Shibuya request and Mai's yose visit protected.", blocker: "", fallback: "Protect Ghibli, Shibuya Crossing, the evening with Akko, and Asakusa Engei Hall; trim shopping first." },
-  { id: "ghibli", goal: "Ghibli and cute-culture experience", days: ["day15"], status: "Needs Booking", why: "It gives Mai a soft, imaginative Tokyo anchor.", blocker: "Ghibli Museum tickets must be secured.", fallback: "Make Inokashira Park and Kichijoji the complete day." },
+  { id: "tokyo-story", goal: "Tokyo through Shibuya, friends, Asakusa, teamLab and food", days: ["day14", "day15", "day16", "day20", "day21"], status: "Ready", why: "Each Tokyo day has one distinct anchor, with Dad's Shibuya request and Mai's yose visit protected.", blocker: "", fallback: "Protect Shibuya Crossing, the evening with Akko, and Asakusa Engei Hall; trim shopping first." },
+  { id: "ghibli", goal: "Ghibli Museum arrival-day attempt", days: ["day02"], status: "Needs Booking", why: "The museum is closed Nov 4–17, so the only current itinerary opportunity is Oct 24 after landing.", blocker: "Buy on Sep 10 at 10:00 JST / 03:00 Madrid; a delayed arrival could make even 16:00 risky.", fallback: "Choose Oct 25 morning only if an initial Tokyo night is added; otherwise make Kichijoji and Inokashira the Nov 6 experience." },
   { id: "shibuya-crossing", goal: "Dad's Shibuya Crossing", days: ["day16"], status: "Ready", why: "It gives Dad's Tokyo request a clear morning anchor without jeopardizing the evening meetup.", blocker: "", fallback: "Cross once, take the Hachiko photo, and skip the mall stop." },
   { id: "friends-day", goal: "Evening with Akko", days: ["day16"], status: "Needs Confirmation", why: "The social evening is the protected capstone, so the Shibuya day ends early enough to travel wherever Akko chooses.", blocker: "Confirm meeting point, time, and whether Yoshi is joining.", fallback: "Leave Shibuya by 15:30 and keep dinner seated and unhurried." },
-  { id: "asakusa-hall", goal: "Asakusa Engei Hall for Mai", days: ["day20"], status: "Needs Schedule Check", why: "A short yose visit adds rakugo and variety entertainment without taking over the Fuji return day.", blocker: "Check the Nov 11 bill when it is published about one month ahead; special programs can change the normal hours.", fallback: "If the return reaches Shinjuku after 14:00, skip the hall and protect luggage, rest, and dinner." },
-  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Ghibli cover imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Ghibli/Kichijoji." },
+  { id: "asakusa-hall", goal: "Asakusa Engei Hall for Mai", days: ["day20"], status: "Needs Schedule Check", why: "A short yose visit adds rakugo and variety entertainment without taking over the Hakone return day.", blocker: "Check the Nov 11 bill when it is published about one month ahead; special programs can change the normal hours.", fallback: "If the return reaches Shinjuku after 14:00, skip the hall and protect luggage, rest, and dinner." },
+  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Kichijoji provide imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Kichijoji." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Needs Booking", why: "Mai already responded strongly to the visual experience.", blocker: "Timed admission must be booked.", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
 ];
@@ -301,20 +301,21 @@ const cityTintPalette = {
   hiroshima: "#285b96",
   tokyo: "#bc002d",
   nara: "#9a762d",
-  kawaguchiko: "#397b8f"
+  hakone: "#397b8f"
 };
 
 const outsideCityStyles = {
+  day02: { from: "tokyo", to: "osaka" },
   day05: { from: "osaka", to: "osaka" }, // optional Kobe day trip
   day06: { from: "nara", to: "kyoto" },
   day10: { from: "kyoto", to: "kyoto" }, // Mt Hiei day trip
   day11: { from: "kyoto", to: "hiroshima" },
   day13: { from: "hiroshima", to: "hiroshima" }, // Miyajima day trip
   day14: { from: "hiroshima", to: "tokyo" },
-  day17: { from: "tokyo", to: "kawaguchiko" },
-  day18: { from: "kawaguchiko", to: "kawaguchiko" },
-  day19: { from: "kawaguchiko", to: "kawaguchiko" },
-  day20: { from: "kawaguchiko", to: "tokyo" }
+  day17: { from: "tokyo", to: "hakone" },
+  day18: { from: "hakone", to: "hakone" },
+  day19: { from: "hakone", to: "hakone" },
+  day20: { from: "hakone", to: "tokyo" }
 };
 
 const dayWalkingTime = {
@@ -334,7 +335,7 @@ const dayWalkingTime = {
   day15: "~3 hr",
   day16: "~1–2 hr",
   day17: "~1–2 hr",
-  day18: "~1 hr",
+  day18: "~2–3 hr",
   day19: "~4–5 hr",
   day20: "~1–2 hr",
   day21: "~2–3 hr"
@@ -358,7 +359,7 @@ const dayWakeUpTime = {
   day16: "08:30",
   day17: "07:30",
   day18: "08:00",
-  day19: "05:30",
+  day19: "06:30",
   day20: "06:30",
   day21: "07:00"
 };
@@ -366,9 +367,9 @@ const dayWakeUpTime = {
 const vitalEarlyWakeDays = new Set(["day07", "day10", "day11", "day19"]);
 
 const calendarThumbnailIdeas = {
-  day17: "Idea: small bags + first Fuji reveal",
-  day18: "Idea: two bikes + lake + Fuji",
-  day19: "Idea: Mitsutoge summit marker + Fuji",
+  day17: "Idea: small bags + Gora mountain railway",
+  day18: "Idea: Owakudani + ropeway + Lake Ashi",
+  day19: "Idea: Mount Kintoki summit + Fuji",
   day20: "Idea: suitcases reunited + Asakusa yose curtain"
 };
 
@@ -492,7 +493,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day02", "2026-10-24", "First Bite of Osaka", "Land, recover, and let Japan arrive through food and lights.", ["Kansai International Airport", "Hotel Cordia Osaka Hommachi", "Ebisu Bridge Osaka", "Dotonbori Osaka"], "Reach Osaka, rest properly, then cross Ebisu Bridge for one neon photo and one hot snack if the body agrees.", ["Find the nearest useful konbini", "Take the we-made-it photo", "Choose tomorrow's breakfast candidate", "Start the melon passport with a packaged baseline if hunger agrees"], ["A canal reflection", "A food sign bigger than expected", "A dessert too cute for jet lag"], "Mai gets one real first-night Japan moment without pressure.", "Stop while Dotonbori still feels magical."),
+      questDay("day02", "2026-10-24", "Narita, Ghibli, Osaka", "Land in Tokyo, attempt the only viable Ghibli slot, then continue to Osaka.", ["Narita International Airport", "Ghibli Museum Mitaka", "Shinagawa Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, store or forward large luggage, reach the museum for 16:00, then take the Shinkansen to Osaka.", ["Buy the 16:00 museum ticket Sep 10 at 10:00 JST / 03:00 Madrid", "Treat the ticket as delay-risky and non-movable", "Use luggage delivery or station storage rather than taking bags to the museum", "Leave Mitaka promptly after the visit", "Reserve a late Shinkansen seat", "Notify Hotel Cordia of the late arrival"], ["The first Japan train window", "A Ghibli architectural detail", "The late Shinkansen platform"], "Mai gets the museum despite its November closure.", "If the flight or immigration runs late, abandon Ghibli rather than endangering the Osaka transfer."),
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town and reach Shinsekai for blue hour and kushikatsu.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack", "Finish with kushikatsu"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents choose Den Den or Shinsekai—not both."),
       questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
       questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, café time and an optional Kobe dinner.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing and do not add a wider city checklist.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet", "Add Kobe dinner only if it improves the day"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day."),
@@ -542,7 +543,7 @@ const tripData = {
   tokyo: {
     name: "Tokyo",
     baseLabel: "KOKO HOTEL Premier Nihonbashi Hamacho",
-    description: "Tokyo bookends a three-night Kawaguchiko retreat: settle in after Hiroshima, escape to Fuji with small bags, then return for an easy final Tokyo chapter.",
+    description: "Tokyo bookends a three-night Hakone retreat: settle in after Hiroshima, escape to Gora with small bags, then return for an easy final Tokyo chapter.",
     ongoing: [
       {
         title: "Our Tokyo Quest",
@@ -552,7 +553,7 @@ const tripData = {
       {
         title: "Tokyo Snack Dex",
         type: "side",
-        items: ["Depachika food", "Onigiri", "Ramen", "Curry", "Sushi at two price levels", "Yakitori", "Teishoku", "Fuji trail snack", "Taiyaki or ningyo-yaki", "Kissaten toast", "Mystery snack chosen by packaging"]
+        items: ["Depachika food", "Onigiri", "Ramen", "Curry", "Sushi at two price levels", "Yakitori", "Teishoku", "Hakone trail snack", "Taiyaki or ningyo-yaki", "Kissaten toast", "Mystery snack chosen by packaging"]
       },
       {
         title: "Photo Set",
@@ -562,22 +563,22 @@ const tripData = {
     ],
     days: [
       questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", "KOKO HOTEL Premier Nihonbashi Hamacho"], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Score all five categories", "Learn the Tokyo hotel station exit, konbini, and easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
-      questDay("day15", "2026-11-06", "Ghibli or Not Ghibli", "Soft imaginative Tokyo.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Ghibli Museum Mitaka", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "If tickets work, visit Ghibli Museum and walk back through Inokashira Park; otherwise make the park and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the post-museum plan gentle. Wonder uses battery."),
+      questDay("day15", "2026-11-06", "Kichijoji Without the Museum", "Soft imaginative Tokyo while Ghibli Museum is closed.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "Accept the Nov 4–17 museum closure and make the park, cafes and Kichijoji the complete quest.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Do not build the day around a museum that is closed."),
       questDay("day16", "2026-11-07", "Scramble Into Their Tokyo", "Give Dad his Shibuya moment, one Mai-friendly pop-culture stop, then protect the evening with Akko.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "Shibuya Crossing", "Hachiko Statue", "Shibuya PARCO", "Akko meetup · provisional Chofu Station"], "Cross the Scramble, take the Hachiko photo, eat lunch nearby, choose one compact Mai stop, and leave Shibuya by 15:30 for Akko's evening plan.", ["Cross Shibuya Crossing together", "Take Dad's Hachiko or crossing photo", "Choose one rooftop, cafe, or people-watching view", "Give Mai one focused PARCO or character-culture stop", "Leave by 15:30 for the confirmed meetup point", "Bring a small consumable thank-you gift for Akko"], ["Dad in the crossing", "Hachiko or Shibuya street texture", "The relaxed group dinner with Akko"], "Dad gets his Tokyo icon and Mai gets one playful stop without exhausting the social evening.", "Cross once, take the photo, and skip PARCO if the meetup requires an earlier departure."),
-      questDay("day17", "2026-11-08", "First Fuji Evening", "Tokyo intensity gives way to three quiet nights in a Kodachi villa beside Lake Kawaguchiko.", ["Shinjuku Station", "Kawaguchiko Station", "MIYA HOUSE Kodachi A棟"], "Leave the large luggage at KOKO, travel with small bags, taxi from Kawaguchiko Station to the villa after check-in opens, and watch the light change on Fuji.", ["Reserve the highway bus or Fuji Excursion", "Keep essential medication and layers in the small bag", "Taxi from Kawaguchiko Station to the villa (no property shuttle)", "Check in from 16:00; cook or eat nearby for dinner"], ["The first clear Fuji reveal", "Lake light from the terrace or shore", "A quiet arrival meal in the villa kitchen"], "Mai gets a deliberate Fuji escape rather than another complicated transfer chapter.", "Arrival, the view and dinner are the complete parent day—taxi from the station if the bus arrives before 16:00."),
-      questDay("day18", "2026-11-09", "Pedal Around Fuji", "The first active day is an e-bike circuit around the lake, with Mount Tenjoyama as the short bad-cycling fallback.", ["Fujisanbike Studio", "Oishi Park", "Fuji Omuro Sengen Shrine", "Kawaguchi Asama Shrine", "Mt Fuji Panorama Ropeway"], "Complete the planned Kawaguchiko e-bike circuit—or a defined partial circuit if wind or energy says stop—and finish with one bikes-and-Fuji photograph.", ["Taxi or walk from the Kodachi villa to Fujisanbike Studio; do not return to the station", "Check wind, rain and Fuji visibility", "Reach the north shore early", "Mark lunch, toilet and turnaround stops", "Use lights and helmets", "Use the Tenjoyama ropeway/ridge walk as the short non-bike fallback", "Save legs and trail food for tomorrow's summit"], ["Bikes framed beside the lake", "Fuji changing angle around the circuit", "A shrine, red leaves, or local snack stop"], "Mai gets a complete active Fuji day before the summit day.", "For Oishi Park, parents use a taxi from the villa; the Red Line is the budget backup. Choose the ropeway, one museum or villa time instead and reunite for dinner."),
-      questDay("day19", "2026-11-10", "Mitsutoge Summit", "Mitsutoge is today's headline summit, using a prebooked taxi to the mountain-road trailhead and the same-way route after route-specific closure, road and weather checks.", ["Mitsutoge Trailhead", "Mount Mitsutoge", "Itchiku Kubota Art Museum", "Oishi Park"], "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return by the same route with daylight margin.", ["Prebook outbound and return taxis from the villa", "Confirm the chosen route is open", "Check wind, temperature and trail conditions", "Do not use the once-daily bus or substitute the longer station approach", "Carry layers, water and a proper trail meal", "Set a non-negotiable turnaround time", "Confirm tomorrow's reserved Tokyo return and station taxi"], ["Mitsutoge summit marker with Fuji", "Rock, ridge, or trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the bike day.", "Parents taxi to Itchiku Kubota Museum, optionally take the short Red Line hop to Oishi Park, then taxi back to the villa."),
-      questDay("day20", "2026-11-11", "Back to Tokyo, Into the Yose", "Return from Fuji, reunite with the luggage, then give Mai a compact dose of old-school Japanese variety entertainment.", ["MIYA HOUSE Kodachi A棟", "Kawaguchiko Station", "Shinjuku Station", "KOKO HOTEL Premier Nihonbashi Hamacho", "Asakusa Engei Hall"], "Take the protected morning return, recover the large bags, then visit Asakusa Engei Hall for 60–90 minutes only if the transfer lands on time.", ["Taxi from the villa before the reserved departure", "Allow road-delay margin or use the Otsuki rail fallback", "Recover the large luggage", "Check the Asakusa Engei Hall bill and stage times", "Watch a compact rakugo or variety segment with Mai", "Eat an easy Asakusa or hotel-neighborhood dinner"], ["The last Fuji glimpse", "Suitcases reunited", "Asakusa yose curtain or lanterns"], "Mai gets a living traditional entertainment hall while the day still functions as a soft landing.", "If the Fuji return runs late, protect luggage and rest; Asakusa becomes optional."),
-      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Dad may skip teamLab and join the bakery/final meal; nothing else is required.")
+      questDay("day17", "2026-11-08", "Into Hakone", "Tokyo intensity gives way to three nights at a Gora ryokan one minute from the station.", ["Shinjuku Station", "Hakone-Yumoto Station", "Gora Station", "Tokinoyu Setsugetsuka", "Hakone Open-Air Museum"], "Leave large luggage at KOKO, travel with small bags by Romancecar and mountain railway, then use the Open-Air Museum if arrival timing stays comfortable.", ["Reserve the Romancecar to Hakone-Yumoto", "Keep medication and layers in the small bag", "Take the Hakone Tozan Railway to Gora", "Walk one minute from Gora Station to the hotel", "Use only the room bath or a private bath", "Give the museum 90–120 minutes only if there is time before 17:00"], ["The mountain railway", "A sculpture against the hills", "The first private-bath evening"], "Mai gets a mountain retreat whose transport begins at the hotel door.", "Parents remain in Tokyo and depart from Haneda on Nov 10."),
+      questDay("day18", "2026-11-09", "The Hakone Loop", "Cable car, ropeway, volcanic valley, Lake Ashi and shrine form one coherent transport circuit.", ["Gora Station", "Sounzan Station", "Owakudani", "Togendai Station", "Lake Ashi", "Hakone Shrine"], "Start early and complete the classic loop clockwise, using each scenic ride as part of the day rather than arranging hotel shuttles.", ["Check live ropeway and cruise status", "Ride Gora→Sounzan→Owakudani before crowds build", "Pause for the volcanic landscape and black eggs if wanted", "Cruise from Togendai toward Moto-Hakone", "Visit Hakone Shrine without turning the lakeshore into a race", "Take the bus back toward Gora"], ["Ropeway over the valley", "Lake Ashi from the boat", "Shrine gate among cedars"], "The mountain is experienced as a connected landscape, not a set of taxi requests.", "If high transport closes, use Gora Park, the Open-Air Museum and Pola Museum."),
+      questDay("day19", "2026-11-10", "Mount Kintoki", "A real Hakone hike with a famous Fuji-facing summit, reached by scheduled buses through Sengoku.", ["Tokinoyu Setsugetsuka", "Sengoku", "Kintoki Shrine Entrance", "Mount Kintoki", "Haneda Airport"], "Start in the morning, hike the common out-and-back route with roughly four hours of walking, and return with daylight margin.", ["Check mountain weather and trail notices", "Use the sightseeing bus from Gora toward Sengoku", "Connect to the Kintoki trailhead", "Carry layers, water and a proper trail meal", "Turn around if cloud, wind or footing makes the summit poor value", "Return to Gora for dinner and a private bath"], ["Kintoki summit sign with Fuji if visible", "Autumn trail detail", "The first seated post-hike meal"], "Mai gets an unmistakable summit objective after the loop day.", "Parents check out in Tokyo and depart from Haneda on Nov 10; flight number and time remain to be recorded."),
+      questDay("day20", "2026-11-11", "Back to Tokyo, Into the Yose", "Return from Hakone by rail, reunite with the luggage, then give Mai a compact dose of old-school Japanese variety entertainment.", ["Tokinoyu Setsugetsuka", "Gora Station", "Hakone-Yumoto Station", "Shinjuku Station", "KOKO HOTEL Premier Nihonbashi Hamacho", "Asakusa Engei Hall"], "Take the protected morning train return, recover the large bags, then visit Asakusa Engei Hall for 60–90 minutes only if the transfer lands on time.", ["Leave Gora early for Hakone-Yumoto", "Use the reserved Romancecar to Shinjuku", "Recover the large luggage and check in", "Check the Asakusa Engei Hall bill and stage times", "Watch a compact rakugo or variety segment with Mai", "Eat an easy Asakusa or hotel-neighborhood dinner"], ["The last mountain railway view", "Suitcases reunited", "Asakusa yose curtain or lanterns"], "Mai gets a living traditional entertainment hall while the day still functions as a soft landing.", "If the Hakone return runs late, protect luggage and rest; Asakusa becomes optional."),
+      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", ["KOKO HOTEL Premier Nihonbashi Hamacho", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner", "Tokyo Station"], "Visit teamLab at the booked time, make Mai's exact melon-bread shop a real stop, then finish with one celebratory meal and complete packing.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Mom and Dad departed from Haneda on Nov 10; this is a couple-only final day.")
     ]
   }
 };
 
 const dayGoals = {
   day02: {
-    clearPath: "Recover at the hotel, then let one short neon-and-food walk be the whole first night.",
-    mainGoal: "Share one hot snack under the lights at Ebisu Bridge or Dotonbori.",
-    photoHint: "Neon, canal reflection, or the snack in hand."
+    clearPath: "NRT arrival → luggage handoff → 16:00 Ghibli Museum → Shinagawa/Shinkansen → late Osaka check-in.",
+    mainGoal: "Reach the only viable Ghibli slot and still make the protected Osaka transfer.",
+    photoHint: "First Japan train window, museum exterior detail, or late Shinkansen platform."
   },
   day03: {
     clearPath: "Castle near opening → Nippombashi lunch → Den Den → Shinsekai kushikatsu at blue hour.",
@@ -640,9 +641,9 @@ const dayGoals = {
     photoHint: "Open ekiben trays, beautiful wrapper, or train-window lunch."
   },
   day15: {
-    clearPath: "Ghibli timed entry if booked, Inokashira walk, gentle Kichijoji finish.",
-    mainGoal: "Capture one pond, museum, or street detail that feels like a Ghibli frame.",
-    photoHint: "Pond reflection, museum detail, or handmade shop display."
+    clearPath: "Inokashira Park walk, cafe pause, and a gentle Kichijoji finish while Ghibli Museum is closed.",
+    mainGoal: "Capture one pond or street detail that feels like an animated frame.",
+    photoHint: "Pond reflection, handmade shop display, or quiet Kichijoji lane."
   },
   day16: {
     clearPath: "Shibuya Crossing and Hachiko → lunch → one Mai stop → leave by 15:30 for Akko.",
@@ -650,22 +651,22 @@ const dayGoals = {
     photoHint: "Dad in the crossing, Hachiko, or the relaxed group dinner with Akko."
   },
   day17: {
-    clearPath: "Small bags only: Tokyo to Kawaguchiko—taxi to the Kodachi villa after 16:00, watch Fuji, cook or eat, rest.",
-    mainGoal: "Photograph the first Fuji reveal from the villa terrace or lakeshore walk.",
-    photoHint: "Small overnight bags beside a bus window, with the first Fuji silhouette beyond."
+    clearPath: "Small bags only: Romancecar to Hakone-Yumoto, mountain railway to Gora, one-minute walk to Setsugetsuka, optional Open-Air Museum.",
+    mainGoal: "Reach the Gora ryokan without a hotel shuttle and begin with art or a private bath.",
+    photoHint: "Mountain railway, Gora station sign, or sculpture against autumn hills."
   },
   day18: {
-    clearPath: "Taxi or walk to Fujisanbike Studio, then the e-bike circuit; use the partial loop or Mount Tenjoyama only if conditions push back.",
-    mainGoal: "Complete the planned bike circuit—or its agreed partial loop—and take one bikes-and-Fuji finish photo.",
-    photoHint: "Two parked bikes in the foreground, lake across the middle, Fuji or autumn hills behind."
+    clearPath: "Gora cable car → Sounzan → Owakudani → Togendai → Lake Ashi cruise → Hakone Shrine → bus back to Gora.",
+    mainGoal: "Complete the classic Hakone loop without turning the day into disconnected transfers.",
+    photoHint: "Ropeway valley, Lake Ashi from the boat, or shrine gate among cedars."
   },
   day19: {
-    clearPath: "Prebooked taxi from the villa to Mitsutoge trailhead → summit marker → same-way return with a fixed turnaround time.",
-    mainGoal: "Reach the Mitsutoge summit marker safely, take the Fuji summit photograph, and return the same way with daylight margin.",
-    photoHint: "Mitsutoge summit marker in the foreground with Fuji beyond."
+    clearPath: "Scheduled buses through Sengoku → Kintoki trailhead → Mount Kintoki → same-way return with a fixed turnaround time.",
+    mainGoal: "Reach Mount Kintoki safely and return to Gora with daylight margin.",
+    photoHint: "Kintoki summit sign with Fuji beyond, if the mountain is visible."
   },
   day20: {
-    clearPath: "Early Fuji return → luggage recovery → optional 60–90 minute Asakusa Engei Hall visit.",
+    clearPath: "Early Hakone rail return → luggage recovery → optional 60–90 minute Asakusa Engei Hall visit.",
     mainGoal: "Reunite with the luggage, then give Mai a compact yose experience if timing stays comfortable.",
     photoHint: "Suitcases reunited, Asakusa lanterns, or the Engei Hall curtain."
   },
@@ -701,8 +702,8 @@ const sharedDayGroupTypes = new Set(["side", "egg"]);
 
 const legacyDayContext = {
   day02: {
-    summary: "Arrival day is intentionally tiny: land at KIX, get to Osaka, recover, and let Namba or Dotonbori be the first low-pressure taste of Japan.",
-    history: "Osaka grew as Japan's merchant kitchen, and Dotonbori became famous as an entertainment and food district during the early modern period. The huge signs and food culture are not random spectacle; they come from a city long associated with eating well and doing business loudly."
+    summary: "Land at NRT, attempt the 16:00 Ghibli slot, then continue to Osaka by Shinkansen.",
+    history: "The Tokaido corridor has linked Tokyo and Osaka for centuries; the Shinkansen turns the old multi-day journey into the final leg of one long arrival day."
   },
   day03: {
     summary: "The maximum-pop Osaka day moves from the castle reveal through Den Den Town and into Shinsekai's retro-food glow.",
@@ -753,31 +754,31 @@ const legacyDayContext = {
     history: "Japan's station boxed meals turned travel into a way of tasting place. Arriving by Shinkansen compresses landscapes once measured in days of walking into a single seated chapter."
   },
   day15: {
-    summary: "Ghibli is the scarce-ticket anchor, but Inokashira Park and Kichijoji make the day feel like a neighborhood story rather than a museum extraction.",
-    history: "Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. The Ghibli Museum was designed around curiosity and discovery without a checklist."
+    summary: "Ghibli Museum is closed Nov 4–17, so Inokashira Park and Kichijoji become the complete neighborhood story.",
+    history: "Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks; nearby Kichijoji grew into a creative rail neighborhood."
   },
   day16: {
     summary: "Dad's Shibuya Crossing anchors the morning; one Mai-friendly stop follows, then the schedule clears for the evening with Akko.",
     history: "Shibuya grew around a major rail junction into one of Tokyo's defining youth and commercial districts. The crossing is spectacle, but the protected evening with a local friend supplies the lived-in counterpoint."
   },
   day17: {
-    summary: "Everyone leaves Tokyo with small bags for three nights in the confirmed Kodachi villa beside Lake Kawaguchiko.",
-    history: "Lake Kawaguchiko became one of the most accessible Fuji Five Lakes retreats, combining lakeshore views, private-stay villas and routes back to Tokyo."
+    summary: "Mai and Brian take small bags to Hakone and stay beside Gora Station; Mom and Dad remain in Tokyo before their Nov 10 Haneda departure.",
+    history: "Gora became Hakone's rail-accessible mountain base, connecting the Tozan Railway to the cable car, ropeway and wider sightseeing network."
   },
   day18: {
-    summary: "The first active day is an e-bike circuit from Fujisanbike Studio around Kawaguchiko, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow.",
-    history: "Kawaguchiko's circuit is just under 20 kilometers and changes the angle on Fuji throughout the ride, linking shoreline parks, shrines and rest stops."
+    summary: "The classic Hakone loop links cable car, ropeway, Owakudani, Lake Ashi and Hakone Shrine in one coherent day.",
+    history: "Hakone's transport loop crosses volcanic highlands and the old Tokaido landscape, turning the journey itself into the mountain experience."
   }
 };
 
 const dayContext = {
   day02: {
-    summary: "Arrival day stays deliberately small: land at KIX, reach Namba, rest for real, then let one neon-and-food walk be the first chapter of Japan. The goal is not to 'see Osaka' but to recover cleanly—shower, unpack essentials, and cross Ebisu Bridge only if the body agrees. Stop while Dotonbori still feels magical; tomorrow's castle day matters more than squeezing in another district tonight.",
-    timeline: [["Afternoon", "Land at KIX, clear the airport, and travel directly to the Osaka hotel."], ["17:00–19:00", "Check in, shower, unpack only what is needed, and rest."], ["19:00–21:00", "If energy agrees, cross Ebisu Bridge, share one hot Osaka snack, and find the nearest useful konbini."], ["By 21:30", "Return while the lights still feel magical; tomorrow matters more than squeezing in another stop."]],
+    summary: "The nonstop flight reaches Narita around 09:30, creating one possible Ghibli Museum window before Osaka. The 16:00 ticket is date-and-time specific and can be lost to a flight or immigration delay, so forward or store large luggage and keep the route strict. After the museum, go directly to Shinagawa for a reserved Shinkansen and notify Hotel Cordia of the late arrival.",
+    timeline: [["09:30–12:00", "Land at NRT, clear immigration and baggage, and forward large bags to Osaka or place them in secure storage."], ["12:00–15:15", "Travel toward Mitaka with a meal en route and enough buffer for the museum."], ["16:00–18:00", "Use the date-and-time-specific Ghibli Museum ticket; leave promptly when the visit ends."], ["18:00–19:30", "Travel to Shinagawa and collect any stored luggage if applicable."], ["Evening", "Take a reserved Tokaido Shinkansen to Shin-Osaka, continue to Hotel Cordia, and check in late. No Dotonbori plan tonight."]],
     history: [
-      "Osaka became Japan's great merchant city because water routes and warehouses connected the country's rice, goods, and money here. The phrase often translated as “the nation's kitchen” originally described this commercial role before it became shorthand for Osaka's appetite.",
-      "Dotonbori began as a 17th-century canal project and grew into a theater district. Restaurants followed the crowds, and the extravagant signs outside are descendants of that competitive entertainment culture: Osaka announcing, loudly and cheerfully, that pleasure is serious business.",
-      "For a first night after a long flight, that history matters less than the feeling: neon over water, steam from a grill, and the sense that Japan has arrived without demanding a heroic schedule. The canal was built for commerce; tonight it works as a gentle threshold."
+      "Narita opened in 1978 as Tokyo's principal international gateway. Reaching western Tokyo from it crosses much of the metropolis, so the transfer is a real part of the day's time budget.",
+      "The Ghibli Museum was designed around curiosity and discovery rather than a prescribed route. Its annual maintenance closure covers the later Tokyo stay, making this arrival-day slot the only current itinerary opportunity.",
+      "The Tokaido Shinkansen links Tokyo and Osaka in roughly two and a half hours, compressing a historic intercity corridor into the final chapter of a demanding but possible arrival day."
     ]
   },
   day03: {
@@ -895,12 +896,12 @@ const dayContext = {
     ]
   },
   day15: {
-    summary: "Ghibli is the scarce-ticket anchor, but Inokashira Park and Kichijoji make the day feel like a neighborhood story rather than a museum extraction. If tickets work, give the timed visit its full window without scheduling another central-Tokyo attraction. If tickets fail, let the park, café and shotengai browse become the complete quest—wonder uses battery, so keep the post-museum plan gentle.",
-    timeline: [["Morning", "Travel to Mitaka or Kichijoji with generous ticket-time margin."], ["Timed window", "Give the Ghibli Museum its full visit without scheduling another central-Tokyo attraction."], ["Afterward–17:00", "Walk through Inokashira Park and pause at a cafe."], ["17:00–20:00", "Browse one Kichijoji shopping street and eat nearby; if tickets failed, let this become the full day."]],
+    summary: "Ghibli Museum is closed Nov 4–17, so this is deliberately a Kichijoji and Inokashira neighborhood day. The museum attempt moves to arrival day Oct 24 at 16:00, with tickets bought Sep 10 at 10:00 JST / 03:00 Madrid; Oct 25 morning is safer only if the route gains an initial Tokyo night.",
+    timeline: [["Morning", "Travel to Kichijoji without a museum deadline."], ["Late morning–14:00", "Walk Inokashira Park and pause at a cafe."], ["14:00–17:00", "Browse one Kichijoji shopping street, bakery, or small creative shop."], ["Evening", "Eat nearby or return to the hotel; the neighborhood itself is the complete day."]],
     history: [
       "Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. Rail connections transformed nearby Kichijoji into a western neighbourhood where green space, small commerce, music, cafes, and dense residential life meet.",
-      "The Ghibli Museum deliberately avoids a prescribed route. Hayao Miyazaki designed it around curiosity, hand-drawn motion, architecture at a child's scale, and discovery without a checklist.",
-      "That philosophy is the ideal rhythm for the whole day: if tickets work, wonder inside the museum; if not, wonder in the park and shotengai instead. Tokyo is not only skyscrapers—this corner proves the city also lives through ponds, ducks, bakeries, and streets sized for wandering home."
+      "The nearby Ghibli Museum deliberately avoids a prescribed route, but its annual maintenance closure covers this date. Treating that fact as settled prevents a closed attraction from distorting the day.",
+      "Tokyo is not only skyscrapers—this corner proves the city also lives through ponds, ducks, bakeries, and streets sized for wandering home."
     ]
   },
   day16: {
@@ -913,39 +914,39 @@ const dayContext = {
     ]
   },
   day17: {
-    summary: "Everyone begins a three-night Kawaguchiko retreat with small bags while the large luggage stays at KOKO's front desk between the two Tokyo stays. Send or store large luggage, reserve the highway bus or Fuji Excursion, and taxi from Kawaguchiko Station to MIYA HOUSE Kodachi A棟 once check-in opens at 16:00. The three-bedroom villa has a private sauna and kitchen but no meals—plan groceries or a nearby dinner. No further achievement is required after check-in—the view, sauna and first meal are the complete day.",
-    timeline: [["Morning", "Check out of KOKO, leave large bags at the front desk, and take small bags to Shinjuku for the reserved Fuji transfer."], ["Late morning–afternoon", "Take a reserved highway bus or Fuji Excursion from Shinjuku to Kawaguchiko Station."], ["On arrival", "If before 16:00, wait at the station or explore nearby; then taxi to the Kodachi villa (about 10 minutes; roughly 27 minutes on foot)."], ["16:00–17:30", "Check in at MIYA HOUSE Kodachi A棟; walk toward the lakeshore or Fuji Omuro Sengen Shrine for the first Fuji view."], ["Evening", "Cook in the villa kitchen or eat nearby; use the private sauna if wanted. No further achievement is required."]],
+    summary: "Mai and Brian begin the three-night Hakone chapter with small bags while large luggage stays at KOKO. Tokinoyu Setsugetsuka is one minute on foot from Gora Station, removing the hotel-shuttle problem. Verify the booking, room, meals and cancellation terms before cancelling MIYA HOUSE.",
+    timeline: [["Morning", "Check out of KOKO, leave large bags at the front desk, and take small bags to Shinjuku."], ["Late morning–early afternoon", "Ride a reserved Romancecar to Hakone-Yumoto, then the Hakone Tozan Railway to Gora."], ["On arrival", "Walk about one minute from Gora Station to Tokinoyu Setsugetsuka and leave bags or check in."], ["14:00–16:30", "If timing is comfortable, ride one stop to Chokoku-no-Mori and give the Open-Air Museum 90–120 minutes; last entry is 16:30."], ["Evening", "Return to the ryokan for dinner and the room bath or a private bath; do not plan a public-bath visit."]],
     history: [
-      "The Fuji Five Lakes sit along Mt Fuji's northern base in a landscape shaped by lava flows, eruptions, and water collecting in basins below the volcano. Pilgrimage, poetry, and later tourism all treated the lakes as places to inhabit Fuji rather than conquer it.",
-      "Kawaguchiko became especially practical once highway buses and rail links made a multi-night stay feasible from Tokyo without heroic packing. Private villas and small lodges turned the shore into a retreat culture—saunas, home cooking, and repeated views as weather changes.",
-      "Arriving with small bags while large luggage waits in Tokyo is a deliberate design choice: the chapter should feel like escape, not logistics stress. The first evening's story is simply light on water and the relief of stopping."
+      "Hakone developed as a mountain crossing on the old Tokaido road and later as a hot-spring retreat. Railways, cable cars and ropeways now stitch steep terrain together without requiring a car.",
+      "Gora grew around the upper end of the mountain railway. Staying beside its station makes the area's transport network—rather than a hotel shuttle—the organizing system for the visit.",
+      "Setsugetsuka has private open-air baths in its guest rooms, though the room bath may not use hot-spring water. Its three reservable-free private hot-spring baths are first-come, so the room bath remains the dependable private option."
     ]
   },
   day18: {
-    summary: "Complete the Kawaguchiko e-bike circuit as its own win, with Mount Tenjoyama as the compact fallback and Mitsutoge protected for tomorrow. Taxi or walk from the Kodachi villa to Fujisanbike Studio near Kawaguchiko Park Hotel; reconfirm the walk time before committing to foot. Check wind, rain and rental status before collecting bikes; a defined partial loop is a complete victory if conditions push back. Return bikes, eat well, and recover at the same villa—save legs, trail food and attention for the summit day.",
-    timeline: [["09:40", "Taxi or walk from the Kodachi villa to Fujisanbike Studio beside Kawaguchiko Park Hotel."], ["10:00–10:20", "Collect e-bikes; check helmets, locks, batteries and the firm return time."], ["10:20–12:00", "Cross toward the north shore first and ride to the Itchiku/Oishi area while visibility is worth prioritizing."], ["12:00–13:00", "Use Oishi Park as the lunch, toilet and Fuji-view stop."], ["13:00–16:00", "Continue around the west and south shore, or use the bridge/partial-loop exit before fatigue changes the day."], ["By 16:15", "Return the bikes before sunset and well before closing; taxi or walk back to the villa, eat well and recover."]],
+    summary: "The classic Hakone loop gives the mountain chapter a coherent full day: cable car, ropeway, Owakudani, Lake Ashi cruise, Hakone Shrine and bus back toward Gora. Start early and check live service status before leaving because wind or volcanic conditions can interrupt the high route.",
+    timeline: [["08:00–09:00", "Walk to Gora Station and ride the cable car to Sounzan."], ["09:00–11:00", "Take the ropeway to Owakudani, explore the volcanic viewpoint, then continue to Togendai."], ["11:00–13:00", "Cruise Lake Ashi toward Moto-Hakone and have lunch."], ["13:00–15:30", "Walk the cedar-lined lakeshore section and visit Hakone Shrine at a humane pace."], ["15:30–17:00", "Take a scheduled bus back toward Gora; return early enough for dinner and a private bath."]],
     history: [
-      "The official Kawaguchiko town guide describes the lakeside circuit as just under 20 kilometres and recommends cycling as a flexible way to connect viewpoints, museums, parks and shrines. E-bikes lower the barrier enough to make the loop playful rather than athletic.",
-      "Fuji appears at different angles around the shore—sometimes dominant, sometimes hidden by cloud—so the ride becomes a lesson in patience as much as distance. Shrines, flower fields, and snack stops give the circuit cultural texture without turning it into a temple collection.",
-      "Giving the bike day its own victory protects tomorrow's summit psychology: legs, food, and attention remain resources rather than debts. Mount Tenjoyama's ropeway exists as a compact fallback, not a consolation prize."
+      "Owakudani was formed by volcanic activity around the Hakone caldera and still vents sulfurous steam. The ropeway makes the geology legible from above before placing visitors directly inside it.",
+      "Lake Ashi occupies part of the caldera and historically lay beside the Tokaido checkpoint route. Boat travel now joins the volcanic highlands to the old shrine landscape along the water.",
+      "The loop works because every transfer advances the story. If the high route closes, Gora Park, the Open-Air Museum and Pola Museum form a complete low-altitude alternative."
     ]
   },
   day19: {
-    summary: "Mitsutoge is the headline summit objective, using prebooked taxis from the Kodachi villa and the shorter mountain-road trailhead out-and-back route after route-specific closure, road and weather checks. The current partial closure is on the Haha-no-Shirataki approach rather than this route, but recheck in November. Do not use the once-daily bus: it reaches the trailhead at 10:15 and returns at 10:20. Parents keep the same villa and use a single taxi-led north-shore outing while hikers are on the ridge.",
-    timeline: [["Previous evening", "Prebook both taxi legs to 三ツ峠登山口 and reconfirm the chosen route and road are open."], ["06:50–07:20", "Take the prebooked taxi from the villa to the mountain-road trailhead; carry layers, water and food."], ["07:20–12:20", "Climb to the summit and return the same way, obeying the fixed turnaround cutoff."], ["12:30–13:00", "Meet the prebooked return taxi at the trailhead and return for a seated recovery meal."], ["Afternoon–evening", "Recover at the villa, rejoin everyone and confirm tomorrow's Tokyo return taxi."]],
-    slowTimeline: [["09:30", "Take a taxi directly from the villa to Itchiku Kubota Art Museum."], ["Late morning", "If energy is good, take the short Red Line bus hop onward to Oishi Park; otherwise taxi straight back."], ["13:00–14:00", "Taxi back to the villa; use the longer Red Line return only as the budget fallback."], ["Afternoon", "Use the villa kitchen, private sauna or terrace; do not build a second transport chain."], ["Evening", "Reunite for the summit story and final Kawaguchiko dinner."]],
+    summary: "Mount Kintoki is the headline hiking objective, normally a little under two hours each way with a famous Fuji-facing summit. Reach the trailhead by scheduled transport through Sengoku, start in the morning, and use museums as the no-regrets poor-weather substitute. Parents depart from Haneda today.",
+    timeline: [["07:30–08:30", "Eat breakfast, check mountain weather and live transport notices, and leave Gora toward Sengoku."], ["08:30–09:30", "Connect to Kintoki Shrine Entrance or Kintoki-Tozanguchi and begin the common route."], ["09:30–14:00", "Climb, pause at the summit if conditions allow, and return with a fixed turnaround cutoff."], ["14:00–16:00", "Use scheduled buses back through Sengoku to Gora and have a seated recovery meal."], ["Evening", "Recover at Setsugetsuka and confirm tomorrow's Romancecar connection."]],
+    slowTimeline: [["Morning", "Parents check out of their Tokyo hotel with the international-flight buffer required by their departure time."], ["Nov 10", "Travel to Haneda Airport; exact terminal and transfer time will be set after the flight number is recorded."], ["Departure", "Parents fly from Haneda. This date is locked."]],
     history: [
-      "Mitsutoge is a small group of peaks north of Mt Fuji, prized because the summit ridge looks directly toward Fuji rather than standing on it. Climbers and photographers have long used the mountain as a frame for the volcano, especially when autumn air sharpens the view.",
-      "The mountain-road trailhead shortens the ascent enough to make a same-way summit day practical; the longer Mitsutoge Station approach remains outside this plan because it changes the day's risk profile.",
-      "Summit culture here is not about bagging a famous peak list—it is about one unmistakable photograph and the shared story afterward. Parents on the slow lake timeline keep the villa as a second narrative: Oishi Park flowers, Itchiku Kubota's monumental textiles, or simply the sauna while waiting for the hikers' return."
+      "Mount Kintoki rises on Hakone's northern edge and is associated in folklore with the superhuman child Kintaro. Its open summit is famous for looking across toward Mt Fuji when weather cooperates.",
+      "The Sengoku side offers established trailheads and scheduled bus access, making the hike more compatible with a Gora base than a taxi-dependent expedition.",
+      "Summit culture here is not about bagging a famous peak list—it is about one unmistakable photograph and the shared story afterward. Mom and Dad follow a separate Tokyo timeline and depart from Haneda on Nov 10."
     ]
   },
   day20: {
-    summary: "Checkout from the Kodachi villa and a reserved morning return protect the Tokyo landing. Recover the large bags first; if the transfer runs cleanly, take Mai to Asakusa Engei Hall for a compact 60–90 minute taste of rakugo and variety entertainment. This is still a soft landing, so a delayed return automatically cancels the hall rather than creating a race.",
-    timeline: [["07:00–08:15", "Breakfast, one last Fuji look, checkout, and taxi to Kawaguchiko Station 30–45 minutes before the reserved departure."], ["Morning–early afternoon", "Use a departure scheduled to reach Shinjuku by about 14:00 at the latest; use rail via Otsuki when road-delay risk is worse."], ["Early afternoon–15:45", "Travel from Shinjuku to KOKO, recover the large bags, and complete check-in before sightseeing. If Shinjuku arrival is after 14:00, switch to the slow plan."], ["15:45–16:40", "Travel to Asakusa Engei Hall and check the posted bill; the normal night program begins at 16:40."], ["16:40–18:10", "Watch roughly 60–90 minutes of the night program, leaving between acts if energy is fading."], ["After 18:10", "Eat an easy Asakusa or hotel-neighborhood dinner; add no second Asakusa sightseeing circuit."]],
-    slowTimeline: [["07:00–08:15", "Breakfast, checkout, and taxi to Kawaguchiko Station with the same departure margin."], ["Morning–early afternoon", "Use the reserved Shinjuku return or the Otsuki rail fallback."], ["Early afternoon", "Reach KOKO, recover the large bags, check in, and make the hotel the rest base."], ["Evening", "Skip Asakusa and meet the others for dinner near KOKO, or make hotel rest the complete day."]],
+    summary: "Checkout from Setsugetsuka and a reserved morning rail return protect the Tokyo landing. Recover the large bags first; if the transfer runs cleanly, take Mai to Asakusa Engei Hall for a compact 60–90 minute taste of rakugo and variety entertainment.",
+    timeline: [["07:00–08:30", "Breakfast, checkout, walk to Gora Station and descend by the Hakone Tozan Railway."], ["Morning–around noon", "Connect at Hakone-Yumoto to the reserved Romancecar for Shinjuku."], ["Around noon–15:30", "Travel to KOKO, recover the large bags, and complete check-in before sightseeing."], ["15:30–16:40", "Travel to Asakusa Engei Hall and check the posted bill."], ["16:40–18:10", "Watch roughly 60–90 minutes of the night program, leaving between acts if energy is fading."], ["After 18:10", "Eat an easy Asakusa or hotel-neighborhood dinner; add no second Asakusa sightseeing circuit."]],
+    slowTimeline: [["Morning", "Breakfast, checkout and use the same rail route to Shinjuku without adding stops."], ["Early afternoon", "Reach KOKO, recover the large bags, check in, and make the hotel the rest base."], ["Evening", "Skip Asakusa if needed and make hotel rest the complete day."]],
     history: [
-      "Kawaguchiko developed as a Tokyo-accessible resort through both the Fujikyuko railway and the highway-bus network. Those links made multi-night stays normal for city dwellers who wanted mountain air without alpine expedition culture.",
+      "Hakone's mountain railway and Odakyu connection turned a historic hot-spring region into a practical Tokyo retreat without erasing the drama of the climb.",
       "Returning two nights before the flight converts weather or traffic risk into an inconvenience rather than a departure-day emergency. The psychology shifts from 'last chance to see everything' to 'enough time to do laundry, buy one missing item, and sleep.",
       "Tokyo's final hotel chapter is intentionally mundane—suitcases reunited, neighbourhood ramen, early packing—which is how a long trip should end: not in spectacle, but in calm readiness."
     ]
@@ -2266,7 +2267,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Chatei Hatou", type: "cafe", category: "cafe", typeLabel: "Shibuya kissaten · quiet buffer", area: "Day 16 · east of Shibuya Station", price: "¥¥", note: "A serious old-school coffee room hidden close to the Scramble. Use it only as the protected rest buffer before leaving for Akko; skip if the lunch queue consumed the margin.", coordinates: [35.65969, 139.70395] },
     { name: "Yanagiya", type: "sweet", category: "taiyaki", typeLabel: "Taiyaki · hotel-neighborhood must", area: "Ningyocho Amazake Yokocho", price: "¥", note: "One of Tokyo's classic taiyaki names, cooking each crisp fish-shaped cake in an individual iron mold. It is close enough to become a neighborhood ritual, but the line can decide the timing.", coordinates: [35.68574, 139.78284], officialUrl: "https://www.nihonbashi-tokyo.jp/en/shops/" },
     { name: "Shigemori Eishindo", type: "sweet", category: "ningyo-yaki", typeLabel: "Ningyo-yaki · origin-neighborhood pick", area: "Ningyocho / Suitengu", price: "¥", note: "The route-fit place to try the small molded cakes named for Ningyocho. Buy a few to share; save Asakusa's landmark-shaped version for comparison only if that day runs easily.", coordinates: [35.68427, 139.78516], officialUrl: "https://www.ningyocho.or.jp/english/feature/index.html" },
-    { name: "Kimuraya Ningyo-yaki Main Shop", type: "sweet", category: "ningyo-yaki", typeLabel: "Asakusa ningyo-yaki", area: "Day 20 · Senso-ji / Nakamise", price: "¥", note: "Fresh landmark-shaped cakes beside Senso-ji, useful if Asakusa Engei Hall survives the Fuji return. Compare with Ningyocho; do not buy another large souvenir box.", coordinates: [35.71178, 139.79642], officialUrl: "https://e-asakusa.jp/en/spot/2148" },
+    { name: "Kimuraya Ningyo-yaki Main Shop", type: "sweet", category: "ningyo-yaki", typeLabel: "Asakusa ningyo-yaki", area: "Day 20 · Senso-ji / Nakamise", price: "¥", note: "Fresh landmark-shaped cakes beside Senso-ji, useful if Asakusa Engei Hall survives the Hakone return. Compare with Ningyocho; do not buy another large souvenir box.", coordinates: [35.71178, 139.79642], officialUrl: "https://e-asakusa.jp/en/spot/2148" },
     { name: "Tokyo Melonpan Asakusabashi", type: "sweet", category: "melonpan", typeLabel: "Melon bread finale · protected", area: "Day 20/21 · Asakusabashi West Exit", price: "¥", note: "Mai's named Tokyo Melonpan finale, close enough to the hotel to protect without rebuilding the day. Confirm this is her intended branch and check same-day stock before leaving teamLab.", coordinates: [35.69719, 139.78457], officialUrl: "https://tokyo-melonpan.net/" }
   ]
 };
@@ -2721,20 +2722,20 @@ function renderTripRouteMap() {
       <div class="chapter-map-tabs" role="tablist" aria-label="Trip chapters"></div>
       <svg class="route-map-layer" viewBox="50 30 590 355" role="img" aria-labelledby="tripMapTitle tripMapDesc">
         <title id="tripMapTitle">Japan trip route</title>
-        <desc id="tripMapDesc">Colored travel legs connect Osaka, Kyoto, Hiroshima, Tokyo and Kawaguchiko. Hover or focus a leg for its travel time.</desc>
+        <desc id="tripMapDesc">Colored travel legs connect Osaka, Kyoto, Hiroshima, Tokyo and Hakone. Hover or focus a leg for its travel time.</desc>
         <g class="japan-outline" aria-hidden="true">
           <path d="M583.7 98.2L590.5 101.5L598.3 110.2L603.9 113.3L608.6 113.2L625.6 107.4L613.6 119.3L611.4 126L611.9 139.3L615.4 141.6L621.5 140L625.5 141.8L614.4 145.1L610.5 143.4L597.4 144.5L589.3 143.2L578.6 137.9L571.7 138.5L558.2 143.4L552.1 147.5L541.8 158.7L526.6 143.1L514 126.2L502.3 122.7L489 124.8L484.6 115.2L478.9 112.8L474 115.3L471.6 119.5L474.6 126.7L479.7 129.3L486.3 143.4L481.6 143.9L474 138L459.5 145.3L456 145.1L453.8 142.3L454 138.7L461.2 129.3L461.8 123.9L458.9 115L463.4 105.7L465 103.9L471.8 103.5L482.7 99.9L485.2 97.4L484.5 92.8L486.1 88.5L488.9 88.3L495.7 95.9L503.5 100L507.7 101L510.7 99.3L515.9 88.1L527 78.8L530.5 71.3L535.9 65.5L539.4 58.3L540.6 50.6L539.9 42.5L545.2 35.6L553.4 35L566.8 71.1L583.7 98.2ZM128.5 298.7L132.9 301.7L139.5 301.3L141.7 304L140.8 307.3L133.5 312.7L142.4 317L139.4 320.8L141.1 324.1L139.2 326L140.4 329.8L126.4 339.4L113.9 355.7L111.2 362.3L104.7 369.4L98.3 365.7L96.7 367.2L96.7 371.7L83.2 375L89 368.1L90.8 357.5L93.7 357L94.3 354.2L91.3 352.6L86.8 356.4L84.4 361.3L85.3 366.6L82.8 368.9L74.4 361.3L74.5 357.1L78.7 357.3L81.4 352.8L80.1 346.2L84.3 336.1L91.1 334.2L102.4 324.1L99.2 321.5L102 319.8L102.7 316.5L101.8 306.6L99.2 302.4L95.5 303.6L93.5 312L97.4 313.5L95.8 318.4L93.1 318.2L89.4 313.3L79.6 316.7L83 312.4L81.5 306.3L83.5 300.4L85.2 307.2L88.8 310.1L88.6 303.8L83.3 293.8L85.4 290.8L91.1 293.8L92.1 290L108.3 289.4L113.8 284.3L120.9 283.8L126.3 287.9L126.4 295.3L128.5 298.7ZM217.7 310.8L224.5 314.7L220.6 326.9L221.9 328.5L210 331.4L204.4 335.3L200.4 340.8L197.3 332.1L189.8 326.8L179.1 328L172 335.3L167.4 337.1L164.6 341.1L159.1 342.2L155.1 340.2L158.6 336.5L153.3 333.8L154.4 330.9L153.4 328.6L158.5 322.2L156.3 319.9L157.8 316.8L146.9 315.8L166.9 311L174.3 303L179.5 301.3L182.4 308.6L184 309L195 310.4L198 307.3L198.4 303.5L200.9 304.7L208.5 303.8L211.8 304.7L217.7 310.8ZM482.8 157.8L489 159.1L483.7 168.2L479.7 180.2L479.1 184.1L483.5 197.6L482.1 215.3L477.2 226.5L471.2 235.7L463.3 237.5L457.8 243L451.2 253.5L441.2 251.9L435.1 256.3L431.7 262.3L428.3 278.5L423 289.3L420.7 292.5L411.2 298.5L400.9 312.6L399.9 318.5L402.1 331.6L395.3 331.2L388.8 334.1L382 343.4L372.6 344.8L367.3 347.8L365.6 346.5L365 344.7L366.8 343.5L370 334.3L380.5 328L378.8 324.3L374.8 323.1L371 327.5L366.9 329L367.3 334.9L364.3 337.4L361.1 330.7L355.1 329L350.6 331.7L345.4 341.1L340.9 344.5L336.2 345.5L335.3 342.2L339.9 333.9L343.1 333.4L339.7 328.4L335.6 328.1L319.5 339.5L303.9 330.8L290.6 328.4L297.9 326.9L298.5 324.6L292.2 322.3L291.3 319.4L289.4 322.8L287.7 321.7L290.3 313.8L292.2 312.4L290 311L286.3 311.9L278.4 319.9L284.1 331.2L282 334.4L266.9 333.6L248.5 348.7L242 348.8L236.6 344.2L234.1 326.6L237 317.5L244 315.6L249.2 310.4L239.9 306.1L233.9 298.8L220.7 295.3L211.3 298.3L196.8 295.9L187.4 296.9L184.6 294.8L174.3 293.7L169.7 287.9L166.6 287.7L163.4 290L156.2 301.3L148.6 290.4L134.3 288.4L131.2 284.5L126.7 284.3L129.6 275L134.2 272.1L143.3 275.1L174.1 265.2L190.3 257.3L197.2 256.7L206.5 258.8L208 263L224 267.7L257.4 272.4L259.4 274.1L256.9 277.8L258.5 280.9L267.2 285.2L274.2 284.3L281.1 281.2L281.7 273.3L284.8 269.9L308.8 256.8L312.8 250.7L315.1 242.6L320.6 238.1L334.6 238.7L333.9 241.5L318.7 247L320 250.9L318.1 257L322.9 262L325.5 262.5L332.2 258.6L356.1 258.4L367.3 253.7L378.4 244.6L393.8 241.5L402.9 230.4L414.9 221.4L422.1 211.6L427.6 207.2L431 200.7L432.2 192.8L426.6 188.1L432.1 186.6L437.7 180.2L439 170.7L441.8 166.8L452 164.6L455.7 160.2L456.9 155L459.6 153.6L465.3 157.1L462.8 167.2L463.7 169.9L469.9 168.3L473.8 172L477.9 169.8L481.1 163.2L480.5 161.5L469 160.7L470.5 157.1L477.1 150.6L482.8 157.8Z" />
         </g>
         ${makeRouteLegSvg("leg-kyoto-hiroshima", "#7b61b9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time · Himeji stop", 294, 201)}
         ${makeRouteLegSvg("leg-hiroshima-tokyo", "#2b8a78", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 294, 201)}
-        ${makeRouteLegSvg("leg-tokyo-fuji", "#d28732", "M370.3 320.6 Q357 298 345.5 316.4", "4", "Tokyo → Kawaguchiko", "~2 hr", "bus / train", 294, 201)}
-        ${makeRouteLegSvg("leg-fuji-tokyo", "#3a77b8", "M345.5 316.4 Q361 348 370.3 320.6", "5", "Kawaguchiko → Tokyo", "~2 hr", "return to Tokyo", 294, 201)}
+        ${makeRouteLegSvg("leg-tokyo-hakone", "#d28732", "M370.3 320.6 Q363 300 356 323", "4", "Tokyo → Hakone", "~2 hr 15", "Romancecar + mountain railway", 294, 201)}
+        ${makeRouteLegSvg("leg-hakone-tokyo", "#3a77b8", "M356 323 Q365 346 370.3 320.6", "5", "Hakone → Tokyo", "~2 hr 15", "return by rail", 294, 201)}
         ${makeRouteLegSvg("leg-osaka-kyoto", "#e06b8f", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara day", 294, 201)}
         ${makeRouteCitySvg(252.4, 308.9, -9, 25, "end", "Osaka", "Oct 24–28 · 4 nights", "osaka")}
         ${makeRouteCitySvg(263.2, 301.6, 9, -13, "start", "Kyoto", "Oct 28–Nov 2 · 5 nights", "kyoto")}
         ${makeRouteCitySvg(171, 287.2, -9, -13, "end", "Hiroshima", "Nov 2–5 · 3 nights", "hiroshima")}
         ${makeRouteCitySvg(370.3, 320.6, 10, -13, "start", "Tokyo", "KOKO · Nov 5–8 &amp; 11–13", "tokyo-1")}
-        ${makeRouteCitySvg(345.5, 316.4, -9, 25, "end", "Kawaguchiko", "Nov 8–11 · 3 nights", "kawaguchiko")}
+        ${makeRouteCitySvg(356, 323, -9, 25, "end", "Hakone", "Nov 8–11 · 3 nights", "hakone")}
       </svg>
       <p class="trip-map-instruction">Double-click a city label or use the chapter buttons.</p>
     <section class="chapter-map" aria-labelledby="chapterMapTitle">
@@ -3416,7 +3417,7 @@ const mapFrameCenters = {
   hiroshima: [34.3974, 132.4756],
   tokyo: [35.6812, 139.7671],
   kobe: [34.6901, 135.1955],
-  fuji: [35.511, 138.752]
+  hakone: [35.24945, 139.04799]
 };
 
 const overviewMapChapters = [
@@ -3424,7 +3425,7 @@ const overviewMapChapters = [
   { id: "kyoto", label: "Kyoto", cityId: "kyoto", dayIds: ["day07", "day08", "day09", "day10"] },
   { id: "hiroshima", label: "Hiroshima", cityId: "hiroshima", dayIds: ["day11", "day12", "day13"] },
   { id: "tokyo-1", label: "Tokyo 1", cityId: "tokyo", dayIds: ["day14", "day15", "day16"] },
-  { id: "kawaguchiko", label: "Kawaguchiko", cityId: "tokyo", dayIds: ["day17", "day18", "day19"] },
+  { id: "hakone", label: "Hakone", cityId: "tokyo", dayIds: ["day17", "day18", "day19"] },
   { id: "tokyo-2", label: "Tokyo 2", cityId: "tokyo", dayIds: ["day20", "day21"] }
 ];
 
@@ -3433,7 +3434,7 @@ const overviewDayColors = ["#d75f16", "#c7437a", "#285b96", "#397b8f", "#7b61b9"
 const overviewMapViews = {
   kyoto: { center: [34.9858, 135.7588], zoom: 11 },
   "tokyo-1": { center: [35.6812, 139.68], zoom: 11 },
-  kawaguchiko: { center: [35.511, 138.752], zoom: 12 },
+  hakone: { center: [35.24945, 139.04799], zoom: 12 },
   "tokyo-2": { center: [35.6812, 139.7671], zoom: 12 }
 };
 
@@ -3442,6 +3443,10 @@ const overviewMapFitDayIds = {
 };
 
 const placeBackground = {
+  "Narita International Airport": "The current nonstop flight reaches NRT around 09:30 on Oct 24. Allow roughly two hours for immigration and baggage before committing to the cross-Tokyo transfer; a delay can invalidate the date-and-time-specific Ghibli ticket.",
+  "Haneda Airport": "Mom and Dad depart from Haneda on Nov 10; record their exact flight, terminal and hotel departure time. Mai and Brian's current return itinerary also leaves HND at 01:00 on Nov 13, requiring a Nov 12 evening airport transfer.",
+  "Shinagawa Station": "Shinagawa is the preferred Tokaido Shinkansen boarding point after the Ghibli visit because it avoids backtracking through Tokyo Station. Reserve a late train and keep the museum exit disciplined.",
+  "Shin-Osaka Station": "Shin-Osaka is the Tokaido Shinkansen terminus for the arrival-day transfer. Continue to Hommachi and notify Hotel Cordia in advance that check-in will be late.",
   "Kansai International Airport": "KIX sits on an artificial island in Osaka Bay and is the main international gateway for the Kansai region. Treat arrival as logistics first—immigration, bags, IC cards and transit—before the trip's first Japan moment begins in Namba.",
   "Namba Station Osaka": "Namba is one of Osaka's great south-side hubs, linking the Midosuji subway, private railways toward Nara and Kansai Airport, and the dense Namba/Dotonbori entertainment zone. For this trip it is the practical front door to the hotel and first-night food walk.",
   "Namba Osaka": "The Namba hotel base is the reset point between scored tasting missions and evening izakaya runs. Return here for a real break—shower, lie down, stop eating—before heading to Tenma or Shin-Kobe.",
@@ -3478,29 +3483,31 @@ const placeBackground = {
   "Daisho-in Temple": "Daisho-in climbs the hillside behind the town with lanterns, halls and forest atmosphere away from the busiest waterfront. Choose it when energy favors a quieter Buddhist precinct over the ropeway.",
   "Miyajima Ropeway": "The Miyajima ropeway climbs toward Mount Misen for broad Seto Inland Sea views. Altitude is entirely optional—the shrine, food street and forest paths already complete the romantic westward payoff.",
   "Tokyo Station": "Tokyo Station's red-brick Marunouchi side is both a Shinkansen hub and a symbol of Meiji-era modernisation. On arrival and departure days it handles ekiben, luggage and final train logistics rather than sightseeing.",
-  "KOKO HOTEL Premier Nihonbashi Hamacho": "KOKO HOTEL Premier Nihonbashi Hamacho is your confirmed Tokyo base for both stays (Nov 5–8 and Nov 11–13). One minute from Hamacho Station on the Toei Shinjuku Line—direct to Shinjuku for the Fuji bus—and six minutes from Ningyocho on the Hibiya Line. Leave large bags at the front desk between stays during the Kawaguchiko gap.",
+  "KOKO HOTEL Premier Nihonbashi Hamacho": "KOKO HOTEL Premier Nihonbashi Hamacho is your confirmed Tokyo base for both stays (Nov 5–8 and Nov 11–13). One minute from Hamacho Station on the Toei Shinjuku Line—direct to Shinjuku for the Hakone Romancecar connection—and six minutes from Ningyocho on the Hibiya Line. Leave large bags at the front desk between stays during the Hakone gap.",
   "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
   "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
-  "MIYA HOUSE Kodachi A棟": "MIYA HOUSE Kodachi A棟 is the confirmed Kodachi villa for Nov 8–11—a three-bedroom villa with private sauna, kitchen and mountain view. Booking.com 6090376904; check-in from 16:00; no meals included. Taxi to Kawaguchiko Station on arrival and departure days.",
-  "Fujisanbike Studio": "Fujisanbike Studio sits beside Kawaguchiko Park Hotel on the south shore and rents Bridgestone e-bikes for the just-under-20-kilometre lake circuit. Reserve by phone and reconfirm November hours; taxi or walk from the Kodachi villa rather than returning to the station.",
-  "Ghibli Museum Mitaka": "Hayao Miyazaki designed the Ghibli Museum around curiosity, hand-drawn motion and discovery without a checklist. If tickets work, give the timed visit its full window; if not, Inokashira and Kichijoji still complete the day.",
+  "Tokinoyu Setsugetsuka": "Tokinoyu Setsugetsuka is the selected Nov 8–11 Gora ryokan, about one minute on foot from Gora Station. Verify the room, meal plan, price and cancellation terms before cancelling MIYA HOUSE. Every room has a private open-air bath, but the room bath may not be hot-spring water; the three private hot-spring baths are free and first-come.",
+  "Ghibli Museum Mitaka": "Ghibli Museum is closed Nov 4–17. If attempting it on arrival day Oct 24, buy a date-and-time-specific 16:00 ticket on Sep 10 at 10:00 JST / 03:00 Madrid; Oct 25 morning is safer only if an initial Tokyo night is added.",
   "Inokashira Park": "Inokashira Pond supplied water to Edo and later became one of Tokyo's beloved western parks. Ducks, bridges and lakeside paths make it the soft imaginative counterweight to museum time or the full-day fallback.",
   "Kichijoji Sunroad Shopping District": "Kichijoji's covered shotengai and side streets combine cafes, bakeries, music shops and dense residential life. One browse-and-snack loop here keeps the day feeling like a neighbourhood story rather than a museum extraction.",
   "Chofu Station Tokyo": "Chofu is a western Tokyo residential hub and the practical rail access for the friends-day neighbourhood. Treat it as a meeting point, not a destination in itself.",
   "Jindaiji Temple": "Jindaiji traces its foundation to the 8th century and preserves wooded temple lanes and soba tradition on Tokyo's western edge. Use it only if the friends route there—it is an optional parent-paced pause, not a required checklist temple.",
   "Jindai Botanical Gardens": "The botanical gardens beside Jindaiji offer seasonal planting and quiet paths when a gentler outdoor pause fits the friends-day rhythm. Skip if the social route stays entirely in shops and restaurants.",
   "Akko meetup · provisional Chofu Station": "This pin is deliberately provisional: Chofu is only the current planning placeholder. Replace it as soon as Akko confirms the actual meeting point, then leave Shibuya early enough for that real route.",
-  "Shinjuku Station": "Shinjuku is one of the world's busiest rail nodes and the main launch point for the Kawaguchiko highway bus and Fuji Excursion. On Fuji days it is transfer logistics with small bags only; on return days it reunites you with the final Tokyo hotel.",
-  "Kawaguchiko Station": "Kawaguchiko Station is the lakeside hub for buses, local routes and the start of the e-bike circuit. Arrive early enough on Day 17 to settle in before the light changes on Fuji.",
-  "Lake Kawaguchiko": "Lake Kawaguchiko is the most accessible of the Fuji Five Lakes, with shoreline views that shift through the day as weather and angle change. Three nights here turn Fuji from a photograph into a lived-in retreat.",
-  "Oishi Park": "Oishi Park on the lake's north shore is famous for seasonal flower fields framed against Fuji. It is the gentle parent-day anchor while hikers are on Mitsutoge—one viewpoint and café, not a second transport chain.",
-  "Fuji Omuro Sengen Shrine": "This lakeside shrine sits among old cedars and is one of the circuit's quieter cultural stops. It rewards a short pause for atmosphere rather than a long visit.",
-  "Kawaguchi Asama Shrine": "Kawaguchi Asama Shrine is associated with Fuji worship and offers another angle on local ritual along the bike route. A few minutes for the gate and grounds is enough.",
-  "Mt Fuji Panorama Ropeway": "The Panorama Ropeway climbs Mount Tenjoyama for a compact Fuji-and-lake viewpoint when e-bikes are not the right choice. It is the short bad-weather or low-energy fallback—not a second major outing.",
-  "Mitsutoge Trailhead": "The mountain-road trailhead shortens the Mitsutoge ascent enough to make a same-way summit day practical. Prebook taxis both ways and confirm this specific route, road, weather and turnaround time—do not use the once-daily bus or substitute the longer station approach.",
-  "Mount Mitsutoge": "Mitsutoge's summit ridge looks directly toward Fuji rather than standing on it, making the marker photograph the day's headline objective. Start down at the fixed turnaround even if the ridge feels unfinished.",
-  "Itchiku Kubota Art Museum": "Itchiku Kubota's museum displays monumental tsujigahana silk dyeing in a building designed around garden and mountain views. It is the slow-day cultural anchor while hikers are on the mountain.",
+  "Shinjuku Station": "Shinjuku is one of the world's busiest rail nodes and the launch point for the Odakyu Romancecar to Hakone-Yumoto. On Hakone days it is transfer logistics with small bags only; on return day it reconnects you with the final Tokyo hotel.",
+  "Hakone-Yumoto Station": "Hakone-Yumoto is the transfer between the Odakyu line from Shinjuku and Hakone's mountain transport. Change here to the Hakone Tozan Railway for Gora.",
+  "Gora Station": "Gora is the mountain railway terminus and cable-car starting point. Setsugetsuka is about one minute away, which makes scheduled public transport the default for the whole stay.",
+  "Hakone Open-Air Museum": "The Open-Air Museum combines modern sculpture with mountain scenery. It is one Tozan Railway stop from Gora and two minutes on foot from Chokoku-no-Mori Station; allow 90–120 minutes before its 17:00 close.",
+  "Sounzan Station": "Sounzan connects the Hakone Tozan Cable Car to the ropeway. It is the gateway from Gora into the volcanic high route.",
+  "Owakudani": "Owakudani is Hakone's active volcanic valley, known for sulfur vents and black eggs. Check live ropeway status before leaving Gora because wind or volcanic conditions can interrupt service.",
+  "Togendai Station": "Togendai is the western ropeway terminus and Lake Ashi cruise pier, turning the high route into a continuous loop rather than a backtrack.",
+  "Lake Ashi": "Lake Ashi fills part of Hakone's caldera. The sightseeing cruise takes roughly 25–40 minutes depending on the sailing and links Togendai with the shrine side of the lake.",
+  "Hakone Shrine": "Hakone Shrine sits among cedars near Lake Ashi, historically tied to travelers crossing the old Tokaido. Visit after the cruise and return toward Gora by scheduled bus.",
+  "Sengoku": "Sengoku is the practical bus hub for northern Hakone, museums and Mount Kintoki trail access.",
+  "Kintoki Shrine Entrance": "Kintoki Shrine Entrance is one common starting point for Mount Kintoki. Confirm the exact outbound and return bus stops before hike day.",
+  "Mount Kintoki": "Mount Kintoki is a well-known Hakone hike with a Fuji-facing summit when the sky is clear. Allow about four hours of walking plus stops and keep a fixed turnaround time.",
+  "Pola Museum of Art": "Pola Museum pairs a strong modern collection with forest architecture in Sengoku. It is the best poor-weather replacement for Mount Kintoki or a closed high loop.",
   "teamLab Borderless Azabudai Hills": "teamLab Borderless uses moving digital imagery to turn the body into part of the artwork. Go with generous admission margin and without trying to 'find every room'—one memorable space is enough.",
   "Tokyo Melonpan": "Melon bread is a modern Japanese bakery form rather than a single fixed recipe. Mai's chosen specialist branch turns an everyday snack into the trip's final food ritual—confirm stock and branch before the last afternoon.",
   "Final Tokyo Dinner": "The last celebratory meal is deliberately unhurried: name the ekiben and melon-bread champions, eat well, and finish packing with airport margin. Nothing else needs to be added to make the ending complete.",
@@ -3531,7 +3538,7 @@ const placeBackground = {
 
 function dayMapCenter(day) {
   if (day.id === "day05") return mapFrameCenters.kobe;
-  if (["day17", "day18", "day19"].includes(day.id)) return mapFrameCenters.fuji;
+  if (["day17", "day18", "day19"].includes(day.id)) return mapFrameCenters.hakone;
   if (day.id === "day20") return mapFrameCenters.tokyo;
   return mapFrameCenters[state.activeCity] || [36.2048, 138.2529];
 }

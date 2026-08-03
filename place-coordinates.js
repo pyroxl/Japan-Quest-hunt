@@ -1,5 +1,21 @@
 // Generated from itinerary place names for the interactive daily maps.
 window.PLACE_COORDINATES = {
+  "Narita International Airport": [
+    35.772,
+    140.3929
+  ],
+  "Haneda Airport": [
+    35.5494,
+    139.7798
+  ],
+  "Shinagawa Station": [
+    35.6285,
+    139.7388
+  ],
+  "Shin-Osaka Station": [
+    34.7335,
+    135.5002
+  ],
   "Kansai International Airport": [
     34.4342045,
     135.222523
@@ -308,53 +324,61 @@ window.PLACE_COORDINATES = {
     35.6883635,
     139.6990749
   ],
-  "Kawaguchiko Station": [
-    35.4984364,
-    138.7685395
+  "Hakone-Yumoto Station": [
+    35.2333,
+    139.1037
   ],
-  "MIYA HOUSE Kodachi A棟": [
-    35.506874,
-    138.754636
+  "Gora Station": [
+    35.2509,
+    139.0482
   ],
-  "Fujisanbike Studio": [
-    35.5037,
-    138.7616
+  "Tokinoyu Setsugetsuka": [
+    35.249453,
+    139.0479931
   ],
-  "Lake Kawaguchiko": [
-    35.5130603,
-    138.7448243
+  "Hakone Open-Air Museum": [
+    35.2449,
+    139.0514
   ],
-  "Oishi Park": [
-    35.5226,
-    138.7467
+  "Sounzan Station": [
+    35.2467,
+    139.0354
   ],
-  "Fuji Omuro Sengen Shrine": [
-    35.5014,
-    138.746
+  "Owakudani": [
+    35.244,
+    139.02
   ],
-  "Kawaguchi Asama Shrine": [
-    35.5311055,
-    138.7750037
+  "Togendai Station": [
+    35.2376,
+    138.9958
   ],
-  "Mt Fuji Panorama Ropeway": [
-    35.50378,
-    138.7744071
+  "Lake Ashi": [
+    35.204,
+    139.0
   ],
-  "Mitsutoge Trailhead": [
-    35.5528,
-    138.7893
+  "Hakone Shrine": [
+    35.2048,
+    139.025
   ],
-  "Mount Mitsutoge": [
-    35.5492,
-    138.8094
+  "Sengoku": [
+    35.271,
+    139.011
+  ],
+  "Kintoki Shrine Entrance": [
+    35.283,
+    139.007
+  ],
+  "Mount Kintoki": [
+    35.2898,
+    138.9814
+  ],
+  "Pola Museum of Art": [
+    35.2566,
+    139.0128
   ],
   "Asakusa Engei Hall": [
     35.7131,
     139.7934
-  ],
-  "Itchiku Kubota Art Museum": [
-    35.5253486,
-    138.7620866
   ],
   "teamLab Borderless Azabudai Hills": [
     35.6616023,
