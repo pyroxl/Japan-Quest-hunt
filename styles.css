@@ -538,6 +538,17 @@ h3 {
   outline-offset: 2px;
 }
 
+@media (max-width: 720px) {
+  .day-carousel.has-side-navigation {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .day-carousel.has-side-navigation > .carousel-side-jump {
+    display: none;
+  }
+}
+
 .day-carousel.has-top-navigation {
   grid-template-columns: minmax(0, 1fr);
   gap: 8px;
