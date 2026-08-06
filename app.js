@@ -32,7 +32,7 @@ const RESERVATION_COUNTDOWN = [
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
   { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Reserve Shinjuku→Hakone-Yumoto, then use the Hakone Tozan Railway to Gora." },
   { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Reserve Hakone-Yumoto→Shinjuku early enough to reach KOKO around noon." },
-  { name: "Record Setsugetsuka details, then cancel MIYA HOUSE", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed. Record the exact room type, meal plan, price and cancellation terms; only then cancel the Kawaguchiko villa." }
+  { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
 ];
 
 const STAY_HOTEL_BY_DAY = {
@@ -926,7 +926,7 @@ const dayContext = {
     ]
   },
   day17: {
-    summary: "Mai and Brian begin the confirmed three-night Hakone chapter with small bags while large luggage stays at KOKO. Tokinoyu Setsugetsuka is one minute on foot from Gora Station, with 15:00 check-in and 11:00 check-out. The exact room type, meal plan, price and cancellation terms still need to be copied from the reservation before MIYA HOUSE is cancelled.",
+    summary: "Mai and Brian begin the confirmed three-night Hakone chapter with small bags while large luggage stays at KOKO. Tokinoyu Setsugetsuka is one minute on foot from Gora Station, with 15:00 check-in and 11:00 check-out. MIYA HOUSE was cancelled at no cost on Aug 6; the exact Setsugetsuka room type, meal plan, price and cancellation terms still need to be copied from the reservation.",
     timeline: [["08:00–09:00", "Check out of KOKO, leave large bags at the front desk, and take small bags to Shinjuku."], ["Morning–around noon", "Ride a reserved Romancecar to Hakone-Yumoto, then the Hakone Tozan Railway to Gora."], ["Around noon", "Walk about one minute from Gora Station to Tokinoyu Setsugetsuka and leave the small bags before check-in."], ["13:00–15:00", "Ride one stop to Chokoku-no-Mori and give the Open-Air Museum 90–120 minutes."], ["15:00 onward", "Check in, confirm the dinner sitting if meals are included, and use the in-room bath or a private bath; do not plan a public-bath visit."]],
     history: [
       "Hakone developed as a mountain crossing on the old Tokaido road and later as a hot-spring retreat. Railways, cable cars and ropeways now stitch steep terrain together without requiring a car.",
@@ -3499,7 +3499,7 @@ const placeBackground = {
   "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
   "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
-  "Tokinoyu Setsugetsuka": "Tokinoyu Setsugetsuka is the confirmed Nov 8–11 Gora ryokan, about one minute on foot from Gora Station. Check-in is 15:00 and check-out is 11:00. Record the exact room, meal plan, price and cancellation terms before cancelling MIYA HOUSE. Guest-room open-air and half-open-air baths are not hot spring water; the three private hot-spring baths are free, first-come and require no reservation.",
+  "Tokinoyu Setsugetsuka": "Tokinoyu Setsugetsuka is the confirmed Nov 8–11 Gora ryokan, about one minute on foot from Gora Station. Check-in is 15:00 and check-out is 11:00. MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact Setsugetsuka room, meal plan, price and cancellation terms. Guest-room open-air and half-open-air baths are not hot spring water; the three private hot-spring baths are free, first-come and require no reservation.",
   "Ghibli Museum Mitaka": "Ghibli Museum is closed Nov 4–17. If attempting it on arrival day Oct 24, buy a date-and-time-specific 16:00 ticket on Sep 10 at 10:00 JST / 03:00 Madrid; Oct 25 morning is safer only if an initial Tokyo night is added.",
   "Inokashira Park": "Inokashira Pond supplied water to Edo and later became one of Tokyo's beloved western parks. Ducks, bridges and lakeside paths make it the soft imaginative counterweight to museum time or the full-day fallback.",
   "Kichijoji Sunroad Shopping District": "Kichijoji's covered shotengai and side streets combine cafes, bakeries, music shops and dense residential life. One browse-and-snack loop here keeps the day feeling like a neighbourhood story rather than a museum extraction.",
