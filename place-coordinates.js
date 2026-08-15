@@ -276,9 +276,9 @@ window.PLACE_COORDINATES = {
     35.682634,
     139.7648012
   ],
-  "KOKO HOTEL Premier Nihonbashi Hamacho": [
-    35.68722,
-    139.78737
+  "Keio Plaza Hotel Tokyo": [
+    35.69006,
+    139.69264
   ],
   "Ghibli Museum Mitaka": [
     35.6961731,
