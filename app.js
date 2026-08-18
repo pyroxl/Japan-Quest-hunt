@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v159";
+const APP_VERSION = "japan-quest-v160";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -30,9 +30,9 @@ const RESERVATION_COUNTDOWN = [
   { name: "teamLab Borderless", recommendedOn: "2026-09-01", target: "Nov 12 morning", note: "Start checking and buy as soon as November 12 is released.", url: "https://www.teamlab.art/e/tokyo/" },
   { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid. Tickets are date-and-time specific. Nov 4–17 is closed, so Nov 6 is not possible; Oct 25 morning is safer if the first Tokyo night is added.", url: "https://www.ghibli-museum.jp/en/tickets/" },
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
-  { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Reserve Shinjuku→Hakone-Yumoto, then use the Hakone Tozan Railway to Gora." },
+  { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Shinjuku→Hakone-Yumoto, then the Hakone Tozan Railway to Gora.", url: "https://www.odakyu.jp/english/romancecar/" },
   { name: "Book Keio Plaza Tokyo and cancel KOKO Hamacho", recommendedOn: "2026-08-15", target: "Nov 5–10 & Nov 11–13", note: "Parents want Shinjuku for Akko and a hotel-door Haneda bus. Book 2 rooms Nov 5–8, 1 parent room through Nov 10 checkout, and 1 couple room Nov 11–13. Cancel KOKO Premier Nihonbashi Hamacho only after Shinjuku is confirmed.", url: "https://www.keioplaza.com/tokyo/" },
-  { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Reserve Hakone-Yumoto→Shinjuku early enough to reach Keio Plaza around noon." },
+  { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Hakone-Yumoto→Shinjuku early enough to reach the Tokyo hotel around noon.", url: "https://www.odakyu.jp/english/romancecar/" },
   { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
 ];
 
