@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v165";
+const APP_VERSION = "japan-quest-v166";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -19,7 +19,7 @@ const LOCKED_HOTELS = [
   { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
   { dates: "Tokyo · Nov 5–8", note: "BOOKED Expedia itinerary 72078146459705 · Double Room, 1 Bedroom, Non Smoking, City View (High Floor) · in Thu Nov 5 15:00 / out Sun Nov 8 10:00 · cluking213@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
   { dates: "Tokyo · Nov 5–8", note: "CANCELLED on Priceline · trip 112-332-866-27 · hotel conf 1028008322 (+1 more, two rooms) · in Thu Nov 5 15:00 / out Sun Nov 8 11:00 · kingmbrian92@gmail.com", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
-  { dates: "Tokyo · Nov 11–12", note: "BOOK 1 night only · Expedia start Nov 11 / end Nov 12 · checkout 10:00 · 2 travelers, 1 room · skip extra night of Nov 12 · match Double city-view high floor if possible, not Semi-double", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
+  { dates: "Tokyo · Nov 11–12", note: "BOOKED Expedia itinerary 72078148127176 · 1 night · Double Room, 1 Bedroom, Non Smoking · in Wed Nov 11 15:00 / out Thu Nov 12 10:00 · kingmbrian92@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
   { dates: "Tokyo · Nov 11–13", note: "CANCELLED on Priceline · trip 112-329-006-27 · hotel conf 1028006382 (+1 more, two rooms) · in Wed Nov 11 15:00 / out Fri Nov 13 11:00 · Brian King · kingmbrian92@gmail.com", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
   { dates: "Hakone · Nov 8–11", note: "Confirmed · Gora · check-in 15:00 / out 11:00", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/" }
 ];
@@ -34,7 +34,7 @@ const RESERVATION_COUNTDOWN = [
   { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid. Tickets are date-and-time specific. Nov 4–17 is closed, so Nov 6 is not possible; Oct 25 morning is safer if the first Tokyo night is added.", url: "https://www.ghibli-museum.jp/en/tickets/" },
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
   { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Shinjuku→Hakone-Yumoto, then the Hakone Tozan Railway to Gora.", url: "https://www.odakyu.jp/english/romancecar/" },
-  { name: "Book couple return Tokyo room", recommendedOn: "2026-08-18", target: "Nov 11–12", note: "Parents' plan: 1 night only. Expedia dates Nov 11–12 (not the 13th). Checkout APA 10:00 on Nov 12, store large bags, spend the day in Tokyo, retrieve bags, reach HND that evening for the 01:00 Nov 13 flight. Book the same Double city-view as Nov 5–8 if possible—not the 108 sq ft Semi-double. Ask APA to hold bags Nov 8–11 during Hakone, then again on Nov 12 after checkout. Skip Expedia protection if the rate is refundable. Parents still need a twin Nov 5–10.", url: "https://www.expedia.com/trips" },
+  { name: "Confirm parent hotel rooms", recommendedOn: "2026-08-18", target: "Oct 24–Nov 10", note: "Couple coverage is complete at 1 room/night (APA 72078146459705 Nov 5–8, Setsugetsuka Nov 8–11, APA 72078148127176 Nov 11–12). Ask Mom and Dad: second rooms in Osaka/Kyoto/Hiroshima, and their Tokyo twin Nov 5–10 (they stay in Tokyo while you are in Hakone Nov 8–11, then fly Haneda Nov 10).", url: "https://www.expedia.com/trips" },
   { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Hakone-Yumoto→Shinjuku early enough to reach the Tokyo hotel around noon.", url: "https://www.odakyu.jp/english/romancecar/" },
   { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
 ];
