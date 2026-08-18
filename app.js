@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v161";
+const APP_VERSION = "japan-quest-v162";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -17,8 +17,8 @@ const LOCKED_HOTELS = [
   { dates: "Osaka · Oct 24–28", note: "Hommachi · 1 room", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/" },
   { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
   { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
-  { dates: "Tokyo · Nov 5–8 & Nov 11–13", note: "CANCEL · likely Priceline · guest Brian King · +34 614 338 763", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
-  { dates: "Tokyo · Nov 5–10 & Nov 11–13", note: "West Shinjuku target · first new-hotel leg booked; cancel overlapping KOKO nights", name: "Keio Plaza Hotel Tokyo", url: "https://www.keioplaza.com/tokyo/" },
+  { dates: "Tokyo · Nov 5–8", note: "BOOKED Expedia itinerary 72078146459705 · Double Room, 1 Bedroom, Non Smoking, City View (High Floor) · in Thu Nov 5 15:00 / out Sun Nov 8 10:00 · cluking213@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
+  { dates: "Tokyo · Nov 5–8 & Nov 11–13", note: "Priceline confirmation is NOT on the Expedia APA page. Still missing: Priceline trip ID for KOKO Premier Nihonbashi Hamacho. Sign in at priceline.com as cluking213@gmail.com / Brian King / +34 614 338 763, then My Trips. Cancel only Nov 5–8 until the return stay is booked.", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
   { dates: "Hakone · Nov 8–11", note: "Confirmed · Gora · check-in 15:00 / out 11:00", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/" }
 ];
 
@@ -32,7 +32,7 @@ const RESERVATION_COUNTDOWN = [
   { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid. Tickets are date-and-time specific. Nov 4–17 is closed, so Nov 6 is not possible; Oct 25 morning is safer if the first Tokyo night is added.", url: "https://www.ghibli-museum.jp/en/tickets/" },
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
   { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Shinjuku→Hakone-Yumoto, then the Hakone Tozan Railway to Gora.", url: "https://www.odakyu.jp/english/romancecar/" },
-  { name: "Cancel KOKO Hamacho on Priceline", recommendedOn: "2026-08-18", target: "Nov 5–8 first, then Nov 11–13", note: "Booked under Brian King, +34 614 338 763, likely Priceline (check Expedia trips too). Open My Trips, search KOKO / Nihonbashi Hamacho / Nov 5. Cancel only nights already replaced by the new hotel. Keep Nov 11–13 until the return leg is confirmed. Screenshot the cancellation email.", url: "https://www.priceline.com/" },
+  { name: "Cancel KOKO Hamacho on Priceline", recommendedOn: "2026-08-18", target: "Nov 5–8 first, then Nov 11–13", note: "The screenshot is Expedia, not Priceline. APA itinerary 72078146459705 is already saved. Open Gmail for cluking213@gmail.com and search: from:priceline.com (KOKO OR Hamacho OR Nihonbashi). Also sign in at priceline.com → My Trips. Paste the Priceline confirmation / trip ID here once you have it. Cancel only Nov 5–8 until the Nov 11–13 room is booked.", url: "https://www.priceline.com/" },
   { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Hakone-Yumoto→Shinjuku early enough to reach the Tokyo hotel around noon.", url: "https://www.odakyu.jp/english/romancecar/" },
   { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
 ];
