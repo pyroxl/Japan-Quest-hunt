@@ -1,6 +1,6 @@
 # Running Japan Trip Hunt
 
-The itinerary data reflects the current Tokyo–Hakone–Tokyo sequence: Mai and Brian take small bags to Gora Nov 8–11, while the large luggage stays at KOKO, then return to the final Tokyo hotel with two nights of flight buffer.
+The itinerary data reflects the current Tokyo–Hakone–Tokyo sequence: Mai and Brian take small bags to Gora Nov 8–11, return for one Tokyo night (Nov 11–12), then spend Nov 12 moving around the city with bags stored before the 01:00 Haneda flight.
 
 From the trip-planning folder, run:
 
@@ -36,7 +36,7 @@ Daily maps use **Leaflet 1.9.4** (`leaflet.js` and `leaflet.css`) with OpenStree
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v152`, checks for updates on every launch, and falls back to saved files when offline. If an already-open tab still shows the old route or styling:
+The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v167`, checks for updates on every launch, and falls back to saved files when offline. If an already-open tab still shows the old route or styling:
 
 1. Open `https://pyroxl.github.io/Japan-Quest-hunt/reset.html` once, or close all Japan Trip Hunt tabs.
 2. Start the server again.
