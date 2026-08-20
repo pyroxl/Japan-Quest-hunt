@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v166";
+const APP_VERSION = "japan-quest-v167";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -14,27 +14,31 @@ const HOTEL_PLACES = new Set([
 ]);
 
 const LOCKED_HOTELS = [
-  { dates: "Osaka · Oct 24–28", note: "Hommachi · 1 room", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/" },
-  { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
-  { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
-  { dates: "Tokyo · Nov 5–8", note: "BOOKED Expedia itinerary 72078146459705 · Double Room, 1 Bedroom, Non Smoking, City View (High Floor) · in Thu Nov 5 15:00 / out Sun Nov 8 10:00 · cluking213@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
-  { dates: "Tokyo · Nov 5–8", note: "CANCELLED on Priceline · trip 112-332-866-27 · hotel conf 1028008322 (+1 more, two rooms) · in Thu Nov 5 15:00 / out Sun Nov 8 11:00 · kingmbrian92@gmail.com", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
-  { dates: "Tokyo · Nov 11–12", note: "BOOKED Expedia itinerary 72078148127176 · 1 night · Double Room, 1 Bedroom, Non Smoking · in Wed Nov 11 15:00 / out Thu Nov 12 10:00 · kingmbrian92@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
-  { dates: "Tokyo · Nov 11–13", note: "CANCELLED on Priceline · trip 112-329-006-27 · hotel conf 1028006382 (+1 more, two rooms) · in Wed Nov 11 15:00 / out Fri Nov 13 11:00 · Brian King · kingmbrian92@gmail.com", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
-  { dates: "Hakone · Nov 8–11", note: "Confirmed · Gora · check-in 15:00 / out 11:00", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/" }
+  { dates: "Osaka · Oct 24–28", note: "Mai/Brian · Hommachi · 1 room · confirmation not copied yet", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/" },
+  { dates: "Osaka · Oct 24–28", note: "Mom/Dad · res 20261024-15651 · Standard Twin NS · 2 persons · in 15:00 / out 11:00 · pay at hotel ¥136,400 + tax · 4-2-3 Hiranomachi, Chuo-ku", name: "Royal Park Hotel ICONIC Osaka Midosuji", url: "https://www.royalparkhotels.co.jp/en/iconic-osakamidosuji/" },
+  { dates: "Kyoto · Oct 28–Nov 2", note: "Mai/Brian · Karasuma Oike / Sanjo · 1 room · confirmation not copied yet", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
+  { dates: "Kyoto · Oct 28–Nov 2", note: "Mom/Dad · res KinTeyh3fh3f518MONK · Superior Twin NS · in 15:00 / out 11:00 · ¥278,180 · +81 75-251-7111", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
+  { dates: "Hiroshima · Nov 2–5", note: "Mai/Brian · JR Hiroshima Station · 1 room · confirmation not copied yet", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
+  { dates: "Hiroshima · Nov 2–5", note: "Mom/Dad · Cynthia King · Expedia · Standard Small Double NS 18 sqm · 2 adults · in 14:00 / out 12:00 · ¥69,815 · itinerary number not sent", name: "Hotel Granvia Hiroshima", url: "https://www.expedia.com/trips" },
+  { dates: "Tokyo · Nov 5–8", note: "Mai/Brian · BOOKED Expedia 72078146459705 · Double city-view high floor NS · in Thu Nov 5 15:00 / out Sun Nov 8 10:00 · cluking213@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
+  { dates: "Tokyo · Nov 5–10", note: "Mom/Dad · BOOKED Expedia 72078146314926 · Twin NS · 2 persons · in 15:00 / out Nov 10 (APA 10:00) · ¥158,562 at hotel · Haneda that day", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
+  { dates: "Tokyo · Nov 5–8", note: "CANCELLED on Priceline · trip 112-332-866-27 · hotel conf 1028008322 (+1 more, two rooms) · kingmbrian92@gmail.com", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
+  { dates: "Tokyo · Nov 11–12", note: "Mai/Brian · BOOKED Expedia 72078148127176 · 1 night · Double NS · in Wed Nov 11 15:00 / out Thu Nov 12 10:00 · kingmbrian92@gmail.com", name: "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower", url: "https://www.expedia.com/trips" },
+  { dates: "Tokyo · Nov 11–13", note: "CANCELLED on Priceline · trip 112-329-006-27 · hotel conf 1028006382 (+1 more, two rooms) · Brian King · kingmbrian92@gmail.com", name: "KOKO HOTEL Premier Nihonbashi Hamacho", url: "https://www.priceline.com/" },
+  { dates: "Hakone · Nov 8–11", note: "Mai/Brian · Confirmed · Gora · check-in 15:00 / out 11:00", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/" }
 ];
 
 const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
 
 const RESERVATION_COUNTDOWN = [
-  { name: "Parent rooms: Osaka, Kyoto & Hiroshima", recommendedOn: "2026-07-14", target: "Oct 24–Nov 5", note: "Records show only 1 room at each. Reserve now unless Mom and Dad already booked separately." },
+  { name: "Copy couple Osaka/Kyoto/Hiroshima confirmation numbers", recommendedOn: "2026-08-20", target: "Oct 24–Nov 5", note: "Mom and Dad are booked. Still missing Mai/Brian locators for Cordia Osaka, Monterey Kyoto, and Granvia Hiroshima. Optional: Mom’s Granvia Expedia itinerary number (Cynthia King, small double)." },
   { name: "Record ticketed flight details", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", note: "Flights are ticketed. Save both airline locators/e-ticket numbers, operating flight numbers, Heathrow connection and seat assignments." },
   { name: "Gion Corner", recommendedOn: "2026-08-01", target: "Oct 29 at 18:00", note: "Check for the October ticket block and reserve four seats.", url: "https://www.kyoto-gioncorner.com/global/en.html" },
   { name: "teamLab Borderless", recommendedOn: "2026-09-01", target: "Nov 12 morning", note: "Start checking and buy as soon as November 12 is released.", url: "https://www.teamlab.art/e/tokyo/" },
   { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid. Tickets are date-and-time specific. Nov 4–17 is closed, so Nov 6 is not possible; Oct 25 morning is safer if the first Tokyo night is added.", url: "https://www.ghibli-museum.jp/en/tickets/" },
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
   { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Shinjuku→Hakone-Yumoto, then the Hakone Tozan Railway to Gora.", url: "https://www.odakyu.jp/english/romancecar/" },
-  { name: "Confirm parent hotel rooms", recommendedOn: "2026-08-18", target: "Oct 24–Nov 10", note: "Couple coverage is complete at 1 room/night (APA 72078146459705 Nov 5–8, Setsugetsuka Nov 8–11, APA 72078148127176 Nov 11–12). Ask Mom and Dad: second rooms in Osaka/Kyoto/Hiroshima, and their Tokyo twin Nov 5–10 (they stay in Tokyo while you are in Hakone Nov 8–11, then fly Haneda Nov 10).", url: "https://www.expedia.com/trips" },
+  { name: "Ask APA to hold couple bags during Hakone", recommendedOn: "2026-08-20", target: "Nov 8–11", note: "Both parties are at APA Gochome Nov 5–8. Parents stay through Nov 10 (Expedia 72078146314926, twin). Couple returns Nov 11 (72078148127176). Ask the front desk to hold Mai/Brian large bags Nov 8–11, then again after 10:00 checkout on Nov 12." },
   { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Buy later—not during the hotel call. Sales open about one month ahead. Reserve Hakone-Yumoto→Shinjuku early enough to reach the Tokyo hotel around noon.", url: "https://www.odakyu.jp/english/romancecar/" },
   { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
 ];
@@ -3501,9 +3505,9 @@ const placeBackground = {
   "Miyajima Ropeway": "The Miyajima ropeway climbs toward Mount Misen for broad Seto Inland Sea views. Altitude is entirely optional—the shrine, food street and forest paths already complete the romantic westward payoff.",
   "Tokyo Station": "Tokyo Station's red-brick Marunouchi side is both a Shinkansen hub and a symbol of Meiji-era modernisation. On arrival and departure days it handles ekiben, luggage and final train logistics rather than sightseeing.",
   "Keio Plaza Hotel Tokyo": "Keio Plaza Hotel Tokyo is the west-Shinjuku target for both Tokyo stays (couple Nov 5–8 and Nov 11–13; parents through Nov 10 checkout). It is a five-minute walk from Shinjuku Station West Exit: Keio Line direct to Chofu for Akko, Odakyu Romancecar to Hakone, JR Yamanote to Shibuya and Harajuku, and a hotel-door Airport Limousine Bus to Haneda. Leave large bags at the front desk during the Hakone gap. Book this hotel, then cancel KOKO Premier Nihonbashi Hamacho.",
-  "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
-  "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
-  "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
+  "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is Mai and Brian's Hommachi base for Oct 24–28. Mom and Dad are nearby at Royal Park Hotel ICONIC Osaka Midosuji (4-2-3 Hiranomachi, res 20261024-15651), a short walk via Hommachi or Yodoyabashi on the Midosuji Line.",
+  "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the Karasuma Oike / Sanjo base for Oct 28–Nov 2. Two rooms: Mai/Brian (locator not copied yet) and Mom/Dad Superior Twin NS, reservation KinTeyh3fh3f518MONK, ¥278,180, in 15:00 / out 11:00.",
+  "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima sits in JR Hiroshima Station for Nov 2–5. Two rooms: Mai/Brian (locator not copied yet) and Mom/Dad (Cynthia King) on a Standard Small Double, 18 sqm, Expedia, ¥69,815, in 14:00 / out 12:00.",
   "Tokinoyu Setsugetsuka": "Tokinoyu Setsugetsuka is the confirmed Nov 8–11 Gora ryokan, about one minute on foot from Gora Station. Check-in is 15:00 and check-out is 11:00. MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact Setsugetsuka room, meal plan, price and cancellation terms. Guest-room open-air and half-open-air baths are not hot spring water; the three private hot-spring baths are free, first-come and require no reservation.",
   "Ghibli Museum Mitaka": "Ghibli Museum is closed Nov 4–17. If attempting it on arrival day Oct 24, buy a date-and-time-specific 16:00 ticket on Sep 10 at 10:00 JST / 03:00 Madrid; Oct 25 morning is safer only if an initial Tokyo night is added.",
   "Inokashira Park": "Inokashira Pond supplied water to Edo and later became one of Tokyo's beloved western parks. Ducks, bridges and lakeside paths make it the soft imaginative counterweight to museum time or the full-day fallback.",
