@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v152";
+const APP_VERSION = "japan-quest-v159";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -28,12 +28,86 @@ const RESERVATION_COUNTDOWN = [
   { name: "Record ticketed flight details", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", note: "Flights are ticketed. Save both airline locators/e-ticket numbers, operating flight numbers, Heathrow connection and seat assignments." },
   { name: "Gion Corner", recommendedOn: "2026-08-01", target: "Oct 29 at 18:00", note: "Check for the October ticket block and reserve four seats.", url: "https://www.kyoto-gioncorner.com/global/en.html" },
   { name: "teamLab Borderless", recommendedOn: "2026-09-01", target: "Nov 12 morning", note: "Start checking and buy as soon as November 12 is released.", url: "https://www.teamlab.art/e/tokyo/" },
-  { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid. Tickets are date-and-time specific. Nov 4–17 is closed, so Nov 6 is not possible; Oct 25 morning is safer if the first Tokyo night is added.", url: "https://www.ghibli-museum.jp/en/tickets/" },
+  { name: "Ghibli Museum", recommendedOn: "2026-09-10", target: "Oct 24 at 16:00", note: "Buy Sep 10 at 10:00 JST / 03:00 Madrid on the Lawson English site. Only Oct 24 16:00 fits this itinerary. Nov 4–17 is closed; skip Oct 25 unless a Tokyo night is added first.", url: "https://l-tike.com/st1/ghibli-en/sitetop" },
   { name: "Shinkansen reserved seats", recommendedOn: "2026-10-02", target: "Nov 2 & Nov 5", note: "Book Nov 2 seats on Oct 2 and Hiroshima→Tokyo seats on Oct 5." },
   { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Reserve Shinjuku→Hakone-Yumoto, then use the Hakone Tozan Railway to Gora." },
   { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Reserve Hakone-Yumoto→Shinjuku early enough to reach KOKO around noon." },
   { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
 ];
+
+const GHIBLI_TICKET_PREP = {
+  saleDate: "2026-09-10",
+  visitDate: "2026-10-24",
+  museumUrl: "https://www.ghibli-museum.jp/en/tickets/",
+  lawsonEnUrl: "https://l-tike.com/st1/ghibli-en/sitetop",
+  alarmIcsName: "ghibli-museum-sale-madrid.ics"
+};
+
+function ghibliSaleAlarmHref() {
+  const stamp = new Date().toISOString().replaceAll(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const calendar = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "PRODID:-//Japan Trip Hunt//Ghibli Ticket Sale//EN",
+    "BEGIN:VEVENT",
+    "UID:ghibli-museum-sale-2026-09-10@japan-trip-hunt",
+    `DTSTAMP:${stamp}`,
+    "DTSTART:20260910T010000Z",
+    "DTEND:20260910T011500Z",
+    "SUMMARY:Buy Ghibli Museum tickets (Lawson English)",
+    "DESCRIPTION:10:00 JST / 03:00 Madrid. Open https://l-tike.com/st1/ghibli-en/sitetop already logged in. Buy only 24 Oct 2026 16:00. Four adult tickets unless parents skip Mitaka. If 16:00 is gone, stop.",
+    "URL:https://l-tike.com/st1/ghibli-en/sitetop",
+    "BEGIN:VALARM",
+    "TRIGGER:-PT10M",
+    "ACTION:DISPLAY",
+    "DESCRIPTION:Ghibli tickets in 10 minutes",
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR",
+    ""
+  ].join("\r\n");
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(calendar)}`;
+}
+
+function renderGhibliTicketPrep() {
+  const host = document.querySelector("#ghibliTicketBrief");
+  if (!host) return;
+  if (todayIso() > GHIBLI_TICKET_PREP.visitDate) {
+    host.hidden = true;
+    host.innerHTML = "";
+    return;
+  }
+  const saleDay = todayIso() === GHIBLI_TICKET_PREP.saleDate;
+  const afterSale = todayIso() > GHIBLI_TICKET_PREP.saleDate;
+  const heading = saleDay
+    ? "Buy this morning at 03:00 Madrid"
+    : afterSale
+      ? "Keep the voucher and the 16:00 rule"
+      : "Tonight: set up for tomorrow's 03:00 sale";
+  host.hidden = false;
+  host.innerHTML = `
+    <div class="section-heading">
+      <p class="label">Ghibli Museum · Lawson English</p>
+      <h2>Ticket run · Oct 24 16:00</h2>
+    </div>
+    <p class="ghibli-ticket-kicker">${escapeHtml(heading)}</p>
+    <p class="ghibli-ticket-lead">October tickets open <strong>10 Sep 2026 at 10:00 JST / 03:00 Madrid</strong>. Saturday 16:00 is the last entry slot and the only time that fits landing at NRT ~09:30 and still reaching Osaka.</p>
+    <div class="ghibli-ticket-actions">
+      <a class="calendar-all-button" href="${GHIBLI_TICKET_PREP.lawsonEnUrl}" target="_blank" rel="noopener noreferrer">Open Lawson English ↗</a>
+      <a class="calendar-reminder" href="${GHIBLI_TICKET_PREP.museumUrl}" target="_blank" rel="noopener noreferrer">Official museum ticket page ↗</a>
+      <a class="calendar-reminder" href="${ghibliSaleAlarmHref()}" download="${GHIBLI_TICKET_PREP.alarmIcsName}">Add 03:00 Madrid alarm</a>
+    </div>
+    <ol class="ghibli-ticket-steps">
+      <li><strong>Account tonight.</strong> Use the Lawson <em>English</em> overseas site, agree to terms, and stay logged in. Do not use <code>l-tike.com/ghibli</code> — that Japanese page needs a Japanese mobile number.</li>
+      <li><strong>Buy 4 adult tickets</strong> (Mai, Brian, Mom, Dad) at ¥1,000 each, unless parents skip Mitaka; then buy 2. Have the card that can pay overseas charges ready.</li>
+      <li><strong>At 03:00, take only 24 Oct · 16:00.</strong> Enter within one hour of that time. Dates and times cannot be changed. If 16:00 is gone, walk away — 14:00/15:00 is too tight after immigration, and Oct 25 only works if a Tokyo night is added first.</li>
+      <li><strong>Ignore fakes and Ghibli Park.</strong> Start from the museum page, then Lawson English. Klook-style “Ghibli” listings are usually the Aichi park, not Mitaka. Save the voucher from My Page after payment.</li>
+    </ol>
+    <p class="ghibli-ticket-foot">Closed Tuesdays plus the Nov 4–17 maintenance shutdown, so Nov 6 cannot be a museum day. If this sale misses, Inokashira and Kichijoji stay the Day 15 quest.</p>
+  `;
+}
 
 const STAY_HOTEL_BY_DAY = {
   day02: "Hotel Cordia Osaka Hommachi",
@@ -177,7 +251,7 @@ const roadmapGoals = [
   { id: "hakone-return", goal: "Protected Hakone–Tokyo return", days: ["day20"], status: "Needs Booking", why: "A reserved morning rail return avoids highway uncertainty and leaves time for luggage and a soft Tokyo landing.", blocker: "Reserve the Romancecar and allow the Gora-to-Hakone-Yumoto connection margin.", fallback: "Use regular Odakyu services if the preferred Romancecar sells out." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
   { id: "tokyo-story", goal: "Tokyo through Shibuya, friends, Asakusa, teamLab and food", days: ["day14", "day15", "day16", "day20", "day21"], status: "Ready", why: "Each Tokyo day has one distinct anchor, with Dad's Shibuya request and Mai's yose visit protected.", blocker: "", fallback: "Protect Shibuya Crossing, the evening with Akko, and Asakusa Engei Hall; trim shopping first." },
-  { id: "ghibli", goal: "Ghibli Museum arrival-day attempt", days: ["day02"], status: "Needs Booking", why: "The museum is closed Nov 4–17, so the only current itinerary opportunity is Oct 24 after landing.", blocker: "Buy on Sep 10 at 10:00 JST / 03:00 Madrid; a delayed arrival could make even 16:00 risky.", fallback: "Choose Oct 25 morning only if an initial Tokyo night is added; otherwise make Kichijoji and Inokashira the Nov 6 experience." },
+  { id: "ghibli", goal: "Ghibli Museum arrival-day attempt", days: ["day02"], status: "Needs Booking", why: "The museum is closed Nov 4–17, so the only current itinerary opportunity is Oct 24 after landing.", blocker: "Buy on Sep 10 at 10:00 JST / 03:00 Madrid via Lawson English; a delayed arrival could make even 16:00 risky.", fallback: "If 16:00 is gone, skip the museum rather than buying an earlier Oct 24 slot or an Oct 25 ticket that breaks Osaka. Kichijoji on Nov 6 remains the substitute." },
   { id: "shibuya-crossing", goal: "Dad's Shibuya Crossing", days: ["day16"], status: "Ready", why: "It gives Dad's Tokyo request a clear morning anchor without jeopardizing the evening meetup.", blocker: "", fallback: "Cross once, take the Hachiko photo, and skip the mall stop." },
   { id: "friends-day", goal: "Evening with Akko", days: ["day16"], status: "Needs Confirmation", why: "The social evening is the protected capstone, so the Shibuya day ends early enough to travel wherever Akko chooses.", blocker: "Confirm meeting point, time, and whether Yoshi is joining.", fallback: "Leave Shibuya by 15:30 and keep dinner seated and unhurried." },
   { id: "asakusa-hall", goal: "Asakusa Engei Hall for Mai", days: ["day20"], status: "Needs Schedule Check", why: "A short yose visit adds rakugo and variety entertainment without taking over the Hakone return day.", blocker: "Check the Nov 11 bill when it is published about one month ahead; special programs can change the normal hours.", fallback: "If the return reaches Shinjuku after 14:00, skip the hall and protect luggage, rest, and dinner." },
@@ -505,7 +579,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day02", "2026-10-24", "Narita, Ghibli, Osaka", "Land in Tokyo, attempt the only viable Ghibli slot, then continue to Osaka.", ["Narita International Airport", "Ghibli Museum Mitaka", "Shinagawa Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, store or forward large luggage, reach the museum for 16:00, then take the Shinkansen to Osaka.", ["Buy the 16:00 museum ticket Sep 10 at 10:00 JST / 03:00 Madrid", "Treat the ticket as delay-risky and non-movable", "Use luggage delivery or station storage rather than taking bags to the museum", "Leave Mitaka promptly after the visit", "Reserve a late Shinkansen seat", "Notify Hotel Cordia of the late arrival"], ["The first Japan train window", "A Ghibli architectural detail", "The late Shinkansen platform"], "Mai gets the museum despite its November closure.", "If the flight or immigration runs late, abandon Ghibli rather than endangering the Osaka transfer."),
+      questDay("day02", "2026-10-24", "Narita, Ghibli, Osaka", "Land in Tokyo, attempt the only viable Ghibli slot, then continue to Osaka.", ["Narita International Airport", "Ghibli Museum Mitaka", "Shinagawa Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, store or forward large luggage, reach the museum for 16:00, then take the Shinkansen to Osaka.", ["Buy the 16:00 museum ticket Sep 10 at 10:00 JST / 03:00 Madrid on Lawson English", "Treat the ticket as delay-risky and non-movable", "Use luggage delivery or station storage rather than taking bags to the museum", "Leave Mitaka promptly after the visit", "Reserve a late Shinkansen seat", "Notify Hotel Cordia of the late arrival"], ["The first Japan train window", "A Ghibli architectural detail", "The late Shinkansen platform"], "Mai gets the museum despite its November closure.", "If the flight or immigration runs late, abandon Ghibli rather than endangering the Osaka transfer."),
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town and reach Shinsekai for blue hour and kushikatsu.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack", "Finish with kushikatsu"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents choose Den Den or Shinsekai—not both."),
       questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
       questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, café time and an optional Kobe dinner.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing and do not add a wider city checklist.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet", "Add Kobe dinner only if it improves the day"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day."),
@@ -908,7 +982,7 @@ const dayContext = {
     ]
   },
   day15: {
-    summary: "Ghibli Museum is closed Nov 4–17, so this is deliberately a Kichijoji and Inokashira neighborhood day. The museum attempt moves to arrival day Oct 24 at 16:00, with tickets bought Sep 10 at 10:00 JST / 03:00 Madrid; Oct 25 morning is safer only if the route gains an initial Tokyo night.",
+    summary: "Ghibli Museum is closed Nov 4–17, so this is deliberately a Kichijoji and Inokashira neighborhood day. The museum attempt moves to arrival day Oct 24 at 16:00, bought Sep 10 at 10:00 JST / 03:00 Madrid on Lawson English; Oct 25 morning is safer only if the route gains an initial Tokyo night.",
     timeline: [["Morning", "Travel to Kichijoji without a museum deadline."], ["Late morning–14:00", "Walk Inokashira Park and pause at a cafe."], ["14:00–17:00", "Browse one Kichijoji shopping street, bakery, or small creative shop."], ["Evening", "Eat nearby or return to the hotel; the neighborhood itself is the complete day."]],
     history: [
       "Inokashira Pond supplied water to Edo and later became one of Tokyo's early suburban parks. Rail connections transformed nearby Kichijoji into a western neighbourhood where green space, small commerce, music, cafes, and dense residential life meet.",
@@ -2713,6 +2787,7 @@ function renderOverview() {
   document.querySelector("#calendarGrid").innerHTML = "";
 
   renderLockedHotelsPanel();
+  renderGhibliTicketPrep();
   renderTripRouteMap();
   renderCalendar();
   renderTripQuestDashboard();
@@ -3500,7 +3575,7 @@ const placeBackground = {
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
   "Hotel Granvia Hiroshima": "Hotel Granvia Hiroshima is built directly into JR Hiroshima Station—the confirmed base for Nov 2–5. Miyajima ferries, Peace Park taxis and the Tokyo Shinkansen all start from the same building.",
   "Tokinoyu Setsugetsuka": "Tokinoyu Setsugetsuka is the confirmed Nov 8–11 Gora ryokan, about one minute on foot from Gora Station. Check-in is 15:00 and check-out is 11:00. MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact Setsugetsuka room, meal plan, price and cancellation terms. Guest-room open-air and half-open-air baths are not hot spring water; the three private hot-spring baths are free, first-come and require no reservation.",
-  "Ghibli Museum Mitaka": "Ghibli Museum is closed Nov 4–17. If attempting it on arrival day Oct 24, buy a date-and-time-specific 16:00 ticket on Sep 10 at 10:00 JST / 03:00 Madrid; Oct 25 morning is safer only if an initial Tokyo night is added.",
+  "Ghibli Museum Mitaka": "Ghibli Museum is closed Nov 4–17. For arrival day Oct 24, buy a date-and-time-specific 16:00 ticket on Sep 10 at 10:00 JST / 03:00 Madrid via Lawson English (not the Japanese site, not Ghibli Park). Enter within one hour of 16:00. Oct 25 morning is safer only if an initial Tokyo night is added.",
   "Inokashira Park": "Inokashira Pond supplied water to Edo and later became one of Tokyo's beloved western parks. Ducks, bridges and lakeside paths make it the soft imaginative counterweight to museum time or the full-day fallback.",
   "Kichijoji Sunroad Shopping District": "Kichijoji's covered shotengai and side streets combine cafes, bakeries, music shops and dense residential life. One browse-and-snack loop here keeps the day feeling like a neighbourhood story rather than a museum extraction.",
   "Chofu Station Tokyo": "Chofu is a western Tokyo residential hub and the practical rail access for the friends-day neighbourhood. Treat it as a meeting point, not a destination in itself.",
