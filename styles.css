@@ -2239,6 +2239,54 @@ h3 {
   background: color-mix(in srgb, var(--rose) 17%, var(--card));
 }
 
+.ghibli-ticket-brief[hidden] { display: none; }
+
+.ghibli-ticket-brief {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 4px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--rose) 28%, var(--line));
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--rose) 16%, transparent), transparent 46%),
+    color-mix(in srgb, var(--card) 90%, var(--rose));
+}
+
+.ghibli-ticket-brief .section-heading { margin: 0; }
+.ghibli-ticket-kicker {
+  margin: 0;
+  color: #a51d48;
+  font-size: .78rem;
+  font-weight: 900;
+}
+.ghibli-ticket-lead,
+.ghibli-ticket-foot {
+  margin: 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+.ghibli-ticket-lead strong { color: var(--ink); }
+.ghibli-ticket-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ghibli-ticket-steps {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--ink);
+  font-size: .76rem;
+  line-height: 1.42;
+}
+.ghibli-ticket-steps code {
+  font-size: .7rem;
+  word-break: break-all;
+}
+
 @media (max-width: 520px) {
   .locked-hotel-list { grid-template-columns: 1fr; }
 
@@ -2254,6 +2302,8 @@ h3 {
   .reservation-countdown-heading { align-items: flex-start; flex-direction: column; }
   .calendar-all-button { width: 100%; }
   .reservation-countdown-list { grid-template-columns: 1fr; }
+  .ghibli-ticket-brief { padding: 13px; }
+  .ghibli-ticket-actions .calendar-all-button { width: 100%; }
 }
 
 .trip-route-heading {
