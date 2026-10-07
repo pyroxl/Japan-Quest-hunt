@@ -826,6 +826,20 @@ h3 {
   color: var(--muted);
 }
 
+.calendar-day .calendar-walk-in {
+  justify-self: start;
+  width: fit-content;
+  margin-top: 2px;
+  padding: 3px 8px;
+  border: 1px solid color-mix(in srgb, var(--rose) 42%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rose) 14%, var(--card));
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
 .quest-photo.is-bundled {
   position: relative;
 }
@@ -2232,6 +2246,45 @@ h3 {
   font-size: .61rem;
   font-weight: 950;
   white-space: nowrap;
+}
+
+.walk-in-reminders { margin-top: 14px; }
+
+.daily-guide .walk-in-reminder,
+.quest-page .walk-in-reminder,
+.day-front-page .walk-in-reminder {
+  margin-top: 0;
+}
+
+.daily-guide .reservation-countdown-list,
+.quest-page .reservation-countdown-list,
+.day-front-page .reservation-countdown-list {
+  grid-template-columns: 1fr;
+}
+
+.walk-in-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.walk-in-check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--rose);
+}
+
+.reservation-countdown-list li.is-done {
+  opacity: 0.72;
+}
+
+.reservation-countdown-list li.is-done .reservation-title-row > strong {
+  text-decoration: line-through;
 }
 
 .is-urgent .reservation-countdown-pill {

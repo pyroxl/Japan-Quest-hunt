@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v163";
+const APP_VERSION = "japan-quest-v164";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -31,6 +31,18 @@ const RESERVATION_COUNTDOWN = [
   { name: "Hakone outbound Romancecar", recommendedOn: "2026-10-08", target: "Nov 8", note: "Reserve Shinjuku→Hakone-Yumoto, then use the Hakone Tozan Railway to Gora." },
   { name: "Hakone return Romancecar", recommendedOn: "2026-10-11", target: "Nov 11", note: "Reserve Hakone-Yumoto→Shinjuku early enough to reach KOKO around noon." },
   { name: "Record Setsugetsuka reservation details", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "Hakone is confirmed and MIYA HOUSE was cancelled at no cost on Aug 6. Record the exact room type, meal plan, price and cancellation terms; monitor any prepaid MIYA refund through Aug 18." }
+];
+
+const WALK_IN_REMINDERS = [
+  {
+    dayId: "day06",
+    questId: "nara-yomogi",
+    name: "Fresh yomogi mochi in Nara",
+    recommendedOn: "2026-10-28",
+    target: "Oct 28 · Deer to Kyoto",
+    note: "Walk-in only. No reservation number. Get fresh yomogi mochi while you are in Nara, before the train to Kyoto.",
+    checkLabel: "Got the fresh yomogi mochi"
+  }
 ];
 
 const STAY_HOTEL_BY_DAY = {
@@ -506,7 +518,7 @@ const tripData = {
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town and reach Shinsekai for blue hour and kushikatsu.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack", "Finish with kushikatsu"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents choose Den Den or Shinsekai—not both."),
       questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
       questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, café time and an optional Kobe dinner.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing and do not add a wider city checklist.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet", "Add Kobe dinner only if it improves the day"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day."),
-      questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Observe or feed deer without making them the entire day", "Try yomogi mochi or kakinoha-zushi", "Find a cafe near Naramachi", "Make the luggage strategy feel competent"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
+      questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Observe or feed deer without making them the entire day", "Get fresh yomogi mochi in Nara — walk-in, no reservation — or try kakinoha-zushi", "Find a cafe near Naramachi", "Make the luggage strategy feel competent"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
     ]
   },
   kyoto: {
@@ -819,7 +831,7 @@ const dayContext = {
   },
   day06: {
     summary: "Nara becomes the bridge from Osaka to Kyoto: deer open the day, Todai-ji supplies the emotional scale, and luggage never becomes the main character. Travel with day bags only, keep deer encounters playful but brief, and treat entering the Great Buddha Hall as the capstone—not a full Nara checklist. To-ji at dawn on Day 11 is the earned early-arrival bonus; today ends at Kyoto Station or the hotel.",
-    timeline: [["08:00–09:00", "Check out and send or store luggage; travel toward Kintetsu Nara."], ["10:00–12:30", "Walk or taxi through Nara Park toward Todai-ji, keeping deer encounters playful but brief."], ["12:30–15:00", "Eat kakinoha-zushi or mochi, then choose a short Naramachi or cafe pause."], ["15:00–18:00", "Continue to Kyoto. Attempt To-ji only if everyone is luggage-free by about 15:45; otherwise check in and eat near the hotel."]],
+    timeline: [["08:00–09:00", "Check out and send or store luggage; travel toward Kintetsu Nara."], ["10:00–12:30", "Walk or taxi through Nara Park toward Todai-ji, keeping deer encounters playful but brief."], ["12:30–15:00", "Get fresh yomogi mochi in Nara — walk-in, no reservation — then kakinoha-zushi or a short Naramachi cafe pause if you want it."], ["15:00–18:00", "Continue to Kyoto. Attempt To-ji only if everyone is luggage-free by about 15:45; otherwise check in and eat near the hotel."]],
     history: [
       "Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.",
       "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
@@ -1828,6 +1840,8 @@ function makeMainGoalCard(day) {
 function makeDayFrontPage(day) {
   const section = document.createElement("section");
   section.className = "day-front-page";
+  const walkIn = makeWalkInReminderSection(day);
+  if (walkIn) section.appendChild(walkIn);
   const hero = document.createElement("div");
   hero.className = "plan-photo";
   section.appendChild(hero);
@@ -1981,6 +1995,8 @@ async function mountSnackLeagueScorecard(day, host) {
 function makeQuestPage(day) {
   const section = document.createElement("section");
   section.className = "quest-page";
+  const walkIn = makeWalkInReminderSection(day);
+  if (walkIn) section.appendChild(walkIn);
   section.appendChild(makeMainGoalCard(day));
   if (day.id === "day04") {
     const host = document.createElement("div");
@@ -2934,6 +2950,79 @@ function reservationCalendarHref(items) {
   return `data:text/calendar;charset=utf-8,${encodeURIComponent(reservationCalendar(items))}`;
 }
 
+function countdownMeta(isoDate) {
+  const today = Date.parse(`${todayIso()}T00:00:00Z`);
+  const days = Math.ceil((Date.parse(`${isoDate}T00:00:00Z`) - today) / 86400000);
+  const dateObject = new Date(`${isoDate}T00:00:00Z`);
+  const monthLabel = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" }).format(dateObject);
+  const dayLabel = new Intl.DateTimeFormat("en", { day: "2-digit", timeZone: "UTC" }).format(dateObject);
+  return { days, monthLabel, dayLabel };
+}
+
+function walkInReminderItemsHtml(items) {
+  return items.map((item) => {
+    const { days, monthLabel, dayLabel } = countdownMeta(item.recommendedOn);
+    const countdown = days < 0 ? "Passed" : days === 0 ? "Today" : `${days} days`;
+    const done = Boolean(item.questId && state.deckDone[item.questId]);
+    const calendarName = `japan-trip-${item.name.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replaceAll(/^-|-$/g, "")}.ics`;
+    return `<li class="${days >= 0 && days <= 7 ? "is-urgent" : ""}${done ? " is-done" : ""}">
+      <time class="reservation-date-tile" datetime="${item.recommendedOn}"><span>${monthLabel}</span><strong>${dayLabel}</strong></time>
+      <div class="reservation-countdown-copy">
+        <div class="reservation-title-row"><strong>${escapeHtml(item.name)}</strong><span class="reservation-countdown-pill">${countdown}</span></div>
+        <p>${escapeHtml(item.note)}</p>
+        <small>Walk-in · no reservation # · ${escapeHtml(item.target)}</small>
+        ${item.questId ? `<label class="walk-in-check"><input type="checkbox" data-walk-in-quest="${escapeHtml(item.questId)}"${done ? " checked" : ""}> ${escapeHtml(item.checkLabel || "Got it")}</label>` : ""}
+        <a class="calendar-reminder" href="${reservationCalendarHref([item])}" download="${calendarName}" aria-label="Add ${escapeHtml(item.name)} reminder to calendar"><span aria-hidden="true">🗓</span> Add reminder</a>
+      </div>
+    </li>`;
+  }).join("");
+}
+
+function bindWalkInChecks(root) {
+  root.querySelectorAll("input[data-walk-in-quest]").forEach((input) => {
+    if (input.dataset.bound === "true") return;
+    input.dataset.bound = "true";
+    input.addEventListener("change", () => {
+      const questId = input.dataset.walkInQuest;
+      if (!questId) return;
+      if (input.checked) state.deckDone[questId] = true;
+      else delete state.deckDone[questId];
+      saveState();
+      document.querySelectorAll(`input[data-walk-in-quest="${questId}"]`).forEach((peer) => {
+        peer.checked = input.checked;
+        peer.closest("li")?.classList.toggle("is-done", input.checked);
+      });
+    });
+  });
+}
+
+function renderWalkInReminders(list) {
+  const target = list || document.querySelector("#walkInReminderList");
+  if (!target) return;
+  target.innerHTML = walkInReminderItemsHtml(WALK_IN_REMINDERS);
+  bindWalkInChecks(target);
+}
+
+function makeWalkInReminderSection(day) {
+  const items = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id);
+  if (!items.length) return null;
+  const section = document.createElement("section");
+  section.className = "reservation-countdown walk-in-reminder";
+  section.setAttribute("aria-labelledby", `walkIn-${day.id}`);
+  section.innerHTML = `
+    <div class="reservation-countdown-heading">
+      <div>
+        <p class="label">Don't miss today</p>
+        <h3 id="walkIn-${day.id}">Walk-in reminder</h3>
+      </div>
+    </div>
+    <p class="reservation-countdown-intro">No booking number. Do this while you are in Nara.</p>
+    <ul class="reservation-countdown-list">${walkInReminderItemsHtml(items)}</ul>
+  `;
+  bindWalkInChecks(section);
+  return section;
+}
+
 function renderLockedHotelsPanel() {
   const panel = document.querySelector(".locked-hotels-panel");
   const list = panel?.querySelector(".locked-hotel-list");
@@ -2949,6 +3038,7 @@ function renderLockedHotelsPanel() {
     </li>
   `).join("");
   if (addAllButton) addAllButton.href = reservationCalendarHref(RESERVATION_COUNTDOWN);
+  renderWalkInReminders();
   if (reservationList) {
     const today = Date.parse(`${todayIso()}T00:00:00Z`);
     reservationList.innerHTML = RESERVATION_COUNTDOWN.map((item) => {
@@ -3443,6 +3533,7 @@ function renderCalendar() {
         <strong>${formatCalendarDate(day.date)}</strong>
         <span>${day.title.replace(/^Day \d+ - /, "")}</span>
         <span class="calendar-capstone">${capstone || "Not yet defined"}</span>
+        ${WALK_IN_REMINDERS.filter((item) => item.dayId === day.id).map((item) => `<span class="calendar-walk-in">${escapeHtml(item.name)} · walk-in</span>`).join("")}
       `;
       button.addEventListener("click", () => {
         state.activeCity = cityId;
