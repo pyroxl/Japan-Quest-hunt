@@ -8,7 +8,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v164">
+    <link rel="stylesheet" href="styles.css?v165">
   </head>
   <body>
     <div class="app-shell">
@@ -24,21 +24,35 @@
         </button>
       </header>
 
-      <nav class="city-rail" aria-label="Trip cities">
-        <button class="city-chip active" data-city="osaka">Osaka</button>
-        <button class="city-chip" data-city="kyoto">Kyoto</button>
-        <button class="city-chip" data-city="hiroshima">Hiroshima</button>
-        <button class="city-chip" data-city="tokyo">Tokyo</button>
-      </nav>
+      <div class="rail-wrap city-rail-wrap">
+        <nav class="city-rail" aria-label="Trip cities">
+          <button class="city-chip active" data-city="osaka">Osaka</button>
+          <button class="city-chip" data-city="kyoto">Kyoto</button>
+          <button class="city-chip" data-city="hiroshima">Hiroshima</button>
+          <button class="city-chip" data-city="tokyo">Tokyo</button>
+        </nav>
+        <span class="rail-hint" aria-hidden="true">›</span>
+      </div>
 
-      <nav class="day-rail" aria-label="Trip days">
-        <button class="chip active" data-view="overview">Overview</button>
-      </nav>
+      <div class="rail-wrap day-rail-wrap">
+        <nav class="day-rail" aria-label="Trip days">
+          <button class="chip active" data-view="overview">Overview</button>
+        </nav>
+        <span class="rail-hint" aria-hidden="true">›</span>
+      </div>
 
       <main>
         <section class="panel overview-panel" id="overviewPanel">
           <section id="overviewCarouselHost">
             <section class="overview-window" id="calendarView">
+              <section class="open-confirmations" id="openConfirmations" aria-labelledby="openConfirmationsTitle">
+                <div class="section-heading">
+                  <p class="label">Before you leave the room</p>
+                  <h2 id="openConfirmationsTitle">Open confirmations</h2>
+                </div>
+                <p class="helper-copy" id="openConfirmationsIntro"></p>
+                <ul class="open-confirmations-list" id="openConfirmationsList"></ul>
+              </section>
               <div class="section-heading">
                 <p class="label">Trip flow and daily focus</p>
                 <h2>Calendar &amp; Daily Focus</h2>
@@ -97,6 +111,7 @@
                     <div class="progress-ring progress-ring-small" id="cityProgressRing"><strong>0%</strong><span>City chapter</span></div>
                   </div>
                 </div>
+                <ul class="trip-quest-list" id="tripQuestList"></ul>
               </section>
 
               <section class="melon-passport-section" id="melonPassportSection">
@@ -143,7 +158,7 @@
                     </div>
                     <p class="restaurant-party-legend" id="restaurantPartyLegend"></p>
                   </div>
-                  <p class="restaurant-bookings-intro">Four meals are booked: Sankei Club Sun Oct 25 at 17:00 for 5; On-yasai Tue Oct 27 at 20:00 for 5; Tempura Endo Thu Oct 29 at 13:30 for exactly 5; and Kani Doraku Kyoto Fri Oct 30 at 18:00 for 5. Kanawa ekie on Nov 2 is still a live booking but must be cancelled because Mom hates oysters. Use the status controls below for every remaining choice.</p>
+                  <p class="restaurant-bookings-intro" id="restaurantBookingsIntro"></p>
                   <ul class="restaurant-bookings-list" id="restaurantBookingsList"></ul>
                 </section>
                 <div class="city-food-toolbar">
@@ -188,6 +203,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v164"></script>
+    <script src="app.js?v165"></script>
   </body>
 </html>
