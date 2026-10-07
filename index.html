@@ -8,7 +8,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v158">
+    <link rel="stylesheet" href="styles.css?v163">
   </head>
   <body>
     <div class="app-shell">
@@ -125,6 +125,17 @@
                   <span aria-hidden="true">🍙</span>
                   <p id="cityFoodIntroCopy"><strong>What kind of Osaka food sounds good?</strong> Filter the map by local specialty—from takoyaki and kushikatsu to izakayas, noodles, cafés, and conbini.</p>
                 </div>
+                <section class="restaurant-bookings" aria-labelledby="restaurantBookingsTitle">
+                  <div class="restaurant-bookings-heading">
+                    <div>
+                      <p class="label">Tabelog first · track here</p>
+                      <h3 id="restaurantBookingsTitle">Restaurant reservations</h3>
+                    </div>
+                    <p class="restaurant-party-legend" id="restaurantPartyLegend"></p>
+                  </div>
+                  <p class="restaurant-bookings-intro">Four meals are booked: Sankei Club Sun Oct 25 at 17:00 for 5; On-yasai Tue Oct 27 at 20:00 for 5; Tempura Endo Thu Oct 29 at 13:30 for exactly 5; and Kani Doraku Kyoto Fri Oct 30 at 18:00 for 5. Kanawa ekie on Nov 2 is still a live booking but must be cancelled because Mom hates oysters. Use the status controls below for every remaining choice.</p>
+                  <ul class="restaurant-bookings-list" id="restaurantBookingsList"></ul>
+                </section>
                 <div class="city-food-toolbar">
                   <div class="city-food-filters" id="cityFoodFilters" aria-label="Filter food map"></div>
                   <div class="city-food-subfilters" id="cityFoodSubfilters" aria-label="Filter by food subtype" hidden></div>
@@ -167,6 +178,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v158"></script>
+    <script src="app.js?v163"></script>
   </body>
 </html>

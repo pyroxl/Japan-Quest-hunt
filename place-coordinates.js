@@ -280,10 +280,6 @@ window.PLACE_COORDINATES = {
     35.68722,
     139.78737
   ],
-  "Ghibli Museum Mitaka": [
-    35.6961731,
-    139.5706324
-  ],
   "Inokashira Park": [
     35.6962563,
     139.5714873

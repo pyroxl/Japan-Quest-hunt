@@ -3083,8 +3083,115 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .city-food-place h3 { margin-top: 5px; font-size: .96rem; }
 .city-food-place p { margin-top: 6px; color: var(--muted); font-size: .79rem; line-height: 1.42; }
 .city-food-place .city-food-area { margin-top: 2px; color: var(--ink); font-size: .72rem; font-weight: 800; }
+.city-food-distances {
+  display: grid;
+  gap: 3px;
+  margin-top: 8px;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--card) 70%, white);
+  color: var(--ink);
+  font-size: .7rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.city-food-distances span { display: block; }
+.city-food-place.is-reservable { border-left-width: 5px; }
 .city-food-place a { display: inline-block; margin-top: 9px; color: var(--green); font-size: .75rem; font-weight: 900; }
 .city-food-place-links { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.city-food-marker-shell.is-hotel span { background: var(--ink); color: white; }
+.restaurant-bookings {
+  margin: 0 0 14px;
+  padding: 12px 13px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+}
+.restaurant-bookings-heading,
+.restaurant-booking-topline,
+.restaurant-booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.restaurant-bookings-heading h3,
+.restaurant-bookings-heading p,
+.restaurant-booking-topline strong { margin: 0; }
+.restaurant-bookings-heading h3 { font-size: 1.08rem; }
+.restaurant-party-legend,
+.restaurant-bookings-intro {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: .75rem;
+  line-height: 1.4;
+}
+.restaurant-bookings-list {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.restaurant-booking {
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.restaurant-booking.is-chosen { border-color: var(--gold); }
+.restaurant-booking.is-booked { border-color: var(--green); }
+.restaurant-booking.is-cancel_needed { border-color: #c74f45; background: color-mix(in srgb, #c74f45 8%, var(--paper)); }
+.restaurant-booking.is-skip { opacity: .62; }
+.restaurant-booking-slot {
+  margin: 4px 0 0;
+  color: var(--ink);
+  font-size: .72rem;
+  font-weight: 800;
+}
+.restaurant-booking p { margin: 6px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.4; }
+.restaurant-party-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--green);
+  color: white;
+  font-size: .68rem;
+  font-weight: 900;
+}
+.restaurant-booking-actions a,
+.restaurant-booking-actions button,
+.restaurant-booking-actions select,
+.restaurant-booking-actions input[type="text"],
+.restaurant-confirm-label input {
+  font: inherit;
+  font-size: .74rem;
+  font-weight: 800;
+}
+.restaurant-booking-actions button,
+.restaurant-booking-actions select,
+.restaurant-confirm-label input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 4px 8px;
+}
+.restaurant-booking-actions a { color: var(--green); font-weight: 900; }
+.restaurant-family-label,
+.restaurant-status-label,
+.restaurant-confirm-label {
+  display: grid;
+  gap: 4px;
+  color: var(--ink);
+  font-size: .68rem;
+  font-weight: 800;
+}
+.restaurant-family-label { display: inline-flex; align-items: center; gap: 6px; }
+.restaurant-confirm-label { margin-top: 8px; }
+.restaurant-confirm-label input { width: 100%; }
 
 .city-food-place-topline,
 .city-food-place-topline > span {
