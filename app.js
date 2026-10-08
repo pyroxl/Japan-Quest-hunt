@@ -1,5 +1,7 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v173";
+const APP_VERSION = "japan-quest-v174";
+// Brian pastes the Apps Script /exec URL here after he deploys journal/Code.gs.
+var JOURNAL_ENDPOINT = "";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
 const TEAMLAB_GUIDE_URL = "https://tlba.teamlab.art/tyob10";
 const TEAMLAB_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo")}`;
@@ -54,6 +56,10 @@ const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
 const PHOTO_STORE = "photos";
+const JOURNAL_QUEUE_STORE = "journalQueue";
+const JOURNAL_CACHE_STORE = "journalCache";
+const JOURNAL_PREFS_KEY = "japanQuestJournal";
+const JOURNAL_NAMES = ["Brian", "Mai", "Mom", "Dad", "Paul"];
 
 const HOTEL_PLACES = new Set([
   "Hotel Cordia Osaka Hommachi",
@@ -574,7 +580,7 @@ const tripData = {
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town, and be at Sankei Club at 17:00.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents can skip Den Den. Still reach Sankei Club in Shinsekai at 17:00."),
       questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
       questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, and café time. Dinner is On-yasai in Osaka at 20:00.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing. Return to Osaka for the booked On-yasai dinner.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day. Dinner is still On-yasai at 20:00."),
-      questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Keep the deer stop short", "Try kakinoha-zushi if you want it", "Find a cafe near Naramachi"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if luggage or legs become the story.")
+      questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Keep the deer stop short", "Try kakinoha-zushi if you want it", "Find a cafe near Naramachi"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if legs become the story. The bags stay in the Kintetsu-Nara lockers until you leave.")
     ]
   },
   kyoto: {
@@ -673,7 +679,7 @@ const dayGoals = {
     photoHint: "Ropeway window, harbor panorama, or garden terrace."
   },
   day06: {
-    clearPath: "Deer and Todai-ji as the Nara bridge, then Kyoto check-in without luggage chaos.",
+    clearPath: "Carry every bag to Kintetsu-Nara, use the coin lockers, see Todai-ji, then collect the bags for Kyoto.",
     mainGoal: "Stand inside Todai-ji's Great Buddha Hall together.",
     photoHint: "The Buddha hall interior, a deer moment, or old Naramachi lane."
   },
@@ -815,8 +821,8 @@ const dayContext = {
     ]
   },
   day06: {
-    summary: "Use Nara as the bridge from Osaka to Kyoto. Keep the deer stop short. Enter Todai-ji's Great Buddha Hall. Buy fresh yomogi mochi before the train. To-ji is not on this day. To-ji is an optional dawn stop on Day 11 only. End at Hotel Monterey Kyoto.",
-    timeline: [["08:00–09:00", "Check out of Hotel Cordia Osaka Hommachi. Send or store the luggage. [luggage service and deadline — needs confirmation]. Go to Kintetsu Nara with day bags only."], ["10:00–12:30", "Walk or take a taxi through Nara Park to Todai-ji. Keep the deer stop short."], ["12:30–15:00", "Buy fresh yomogi mochi. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]. Add kakinoha-zushi or a short Naramachi café only if you want it."], ["15:00–18:00", "Go to Kyoto. Check in at Hotel Monterey Kyoto. Do not go to To-ji today."]],
+    summary: "Use Nara as the bridge from Osaka to Kyoto. Carry all luggage to Kintetsu-Nara and store it in the coin lockers. Keep the deer stop short. Enter Todai-ji's Great Buddha Hall. Buy fresh yomogi mochi before the train. Collect the bags, then go to Hotel Monterey Kyoto. To-ji is not on this day.",
+    timeline: [["08:00–09:00", "Check out of Hotel Cordia Osaka Hommachi. Take all luggage on the Kintetsu train to Kintetsu-Nara. Arrive before 10:00. The large lockers fill in the morning."], ["At Kintetsu-Nara", "Go out through the West ticket gate. Turn left to the coin-locker room. It has 23 extra-large lockers. An extra-large locker costs about ¥800 to ¥1,500 for one day. Pay with coins or an IC card. Suica and ICOCA work. Some lockers take IC cards only. Take a photo of the locker number. Then use the East gate side, Exit 2, for Nara Park and Todai-ji."], ["If the lockers are full", "Use the Tourist Information Centre in the Kintetsu building. It is at Exit 3, 1F. It holds bags from 09:00 to 16:00. It takes the last bag at 14:00. Space is limited."], ["10:00–12:30", "Walk or take a taxi through Nara Park to Todai-ji. Keep the deer stop short."], ["12:30–15:00", "Buy fresh yomogi mochi. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]. Add kakinoha-zushi or a short Naramachi café only if you want it."], ["15:00–18:00", "Return to the West gate lockers. Collect the bags. Take the Kintetsu Kyoto Line to Kyoto Station. Check in at Hotel Monterey Kyoto. Do not go to To-ji today."]],
     history: [
       "Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.",
       "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
@@ -1000,6 +1006,7 @@ const dayRail = document.querySelector(".day-rail");
 const overviewPanel = document.querySelector("#overviewPanel");
 const dayPanel = document.querySelector("#dayPanel");
 const todayPanel = document.querySelector("#todayPanel");
+const journalPanel = document.querySelector("#journalPanel");
 const ticketsPanel = document.querySelector("#ticketsPanel");
 const foodPanel = document.querySelector("#foodPanel");
 const tripCalendar = document.querySelector("#tripCalendar");
@@ -1008,6 +1015,7 @@ let daysShowsDay = false;
 let foodListOpen = false;
 let grokToastTimer = 0;
 const state = loadState();
+state.theme = "light";
 applyTodayTarget();
 
 function defaultState() {
@@ -1028,7 +1036,7 @@ function defaultState() {
     overviewWindows: {},
     foodMapLeftPageReady: false,
     overviewMapChapter: "osaka",
-    theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+    theme: "light",
     activeCity: "osaka",
     reservations: {
       familyOf8Id: "",
@@ -1142,15 +1150,11 @@ function saveState() {
   document.querySelector("#saveStatus").textContent = "Saved on this phone";
 }
 
-function applyTheme(theme = state.theme) {
-  const resolvedTheme = theme === "dark" ? "dark" : "light";
-  state.theme = resolvedTheme;
-  document.body.dataset.theme = resolvedTheme;
-  document.documentElement.style.colorScheme = resolvedTheme;
-  const toggle = document.querySelector("#themeToggle");
-  const isDark = resolvedTheme === "dark";
-  if (toggle) toggle.setAttribute("aria-pressed", String(isDark));
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", isDark ? "#171418" : "#fff0f6");
+function applyTheme() {
+  state.theme = "light";
+  document.body.dataset.theme = "light";
+  document.documentElement.style.colorScheme = "light";
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#fff0f6");
 }
 
 function itemId(scope, groupIndex, itemIndex) {
@@ -1326,23 +1330,27 @@ async function calendarThumbnailImage(dayId) {
 
 function openPhotoDb() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(PHOTO_DB_NAME, 1);
+    const request = indexedDB.open(PHOTO_DB_NAME, 2);
     request.onupgradeneeded = () => {
       const db = request.result;
-      const store = db.createObjectStore(PHOTO_STORE, { keyPath: "id", autoIncrement: true });
-      store.createIndex("taskId", "taskId", { unique: false });
-      store.createIndex("cityId", "cityId", { unique: false });
+      if (!db.objectStoreNames.contains(PHOTO_STORE)) {
+        const store = db.createObjectStore(PHOTO_STORE, { keyPath: "id", autoIncrement: true });
+        store.createIndex("taskId", "taskId", { unique: false });
+        store.createIndex("cityId", "cityId", { unique: false });
+      }
+      if (!db.objectStoreNames.contains(JOURNAL_QUEUE_STORE)) db.createObjectStore(JOURNAL_QUEUE_STORE, { keyPath: "clientId" });
+      if (!db.objectStoreNames.contains(JOURNAL_CACHE_STORE)) db.createObjectStore(JOURNAL_CACHE_STORE, { keyPath: "dayId" });
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 }
 
-function withPhotoStore(mode, action) {
+function withStore(storeName, mode, action) {
   return openPhotoDb().then((db) =>
     new Promise((resolve, reject) => {
-      const transaction = db.transaction(PHOTO_STORE, mode);
-      const store = transaction.objectStore(PHOTO_STORE);
+      const transaction = db.transaction(storeName, mode);
+      const store = transaction.objectStore(storeName);
       const result = action(store);
       transaction.oncomplete = () => {
         db.close();
@@ -1354,6 +1362,10 @@ function withPhotoStore(mode, action) {
       };
     })
   );
+}
+
+function withPhotoStore(mode, action) {
+  return withStore(PHOTO_STORE, mode, action);
 }
 
 function storeRequest(request) {
@@ -1372,7 +1384,11 @@ async function getAllPhotos() {
 }
 
 async function addPhoto(photo) {
-  return withPhotoStore("readwrite", (store) => store.add(photo));
+  return withPhotoStore("readwrite", (store) => storeRequest(store.add(photo)));
+}
+
+async function putPhoto(photo) {
+  return withPhotoStore("readwrite", (store) => storeRequest(store.put(photo)));
 }
 
 async function removePhoto(id) {
@@ -1406,6 +1422,7 @@ async function renderPhotosForTask(taskId, container, onPhotosChange) {
     deleteButton.textContent = "Remove";
     deleteButton.addEventListener("click", async () => {
       await removePhoto(photo.id);
+      if (photo.clientId) await removeJournalQueueItem(photo.clientId);
       await renderPhotosForTask(taskId, container, onPhotosChange);
       await renderAlbum();
       if (taskId.endsWith(".photo.thumbnail") || taskId.endsWith(".photo.capstone")) renderCalendar();
@@ -1421,7 +1438,9 @@ async function handlePhotoFiles(files, task, container) {
   for (const file of Array.from(files || [])) {
     if (!file.type.startsWith("image/")) continue;
     const dataUrl = await fileToDataUrl(file);
-    await addPhoto({
+    const createdAt = new Date().toISOString();
+    const clientId = journalClientId();
+    const photoId = await addPhoto({
       taskId: task.id,
       cityId: task.cityId || state.activeCity,
       dayId: task.dayId || "",
@@ -1429,9 +1448,20 @@ async function handlePhotoFiles(files, task, container) {
       caption: task.text,
       slot: task.slot || "quest",
       dataUrl,
-      createdAt: new Date().toISOString()
+      createdAt,
+      clientId,
+      driveFileId: ""
+    });
+    await enqueueJournalPhoto({
+      clientId,
+      photoId,
+      dayId: task.dayId || "",
+      caption: task.text,
+      createdAt,
+      author: readJournalPrefs().author || ""
     });
   }
+  void flushJournalQueue();
   await renderPhotosForTask(task.id, container);
   await renderAlbum();
   if (task.id.endsWith(".photo.thumbnail") || task.id.endsWith(".photo.capstone")) renderCalendar();
@@ -2354,7 +2384,7 @@ const DAY_MUST_DOS = {
     { marker: "info", label: "No Kobe dinner", detail: "Do not add a Kobe dinner. Dinner is On-yasai in Osaka at 20:00." }
   ],
   day06: [
-    { marker: "needs-confirmation", label: "Luggage", detail: "Send or store the large bags before Nara. [luggage service and deadline — needs confirmation]. Travel with day bags." },
+    { marker: "info", label: "Luggage", detail: "Carry the big bags to Kintetsu-Nara Station. Store them in the coin lockers by the West ticket gate. The room has 23 extra-large lockers. Pay about ¥800 to ¥1,500 with coins or an IC card. Take a photo of the locker number. If the lockers are full, use the Tourist Information Centre at Exit 3, 1F. It holds bags from 09:00 to 16:00 and takes the last bag at 14:00. Collect the bags before the Kintetsu train to Kyoto." },
     { marker: "needs-confirmation", label: "Fresh yomogi mochi", detail: "Buy it in Nara before the train to Kyoto. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]." },
     { marker: "info", label: "Not To-ji", detail: "Do not go to To-ji today. To-ji is an optional dawn stop on Day 11 only. Check in at Hotel Monterey Kyoto." }
   ],
@@ -4311,7 +4341,7 @@ const placeBackground = {
   "Shin-Kobe Station": "Shin-Kobe is the Shinkansen station on Kobe's northern slope, immediately below the Nunobiki ropeway. It is the cleanest access point for the selected romantic outing without turning Kobe into a multi-district checklist.",
   "Nunobiki Ropeway": "The Nunobiki ropeway climbs from behind Shin-Kobe in minutes, opening broad views over the city, port and inland mountains. The ride itself is part of the payoff—pause at the window rather than treating it as pure transport.",
   "Kobe Nunobiki Herb Gardens": "Terraced herb and flower gardens sit above the upper ropeway station with café terraces and seasonal planting. One garden segment plus a seated pause is enough; the harbor view does the emotional work.",
-  "Kintetsu Nara Station": "Kintetsu Nara brings you directly into the park-side east of the city, closer to Todai-ji than JR Nara. It is the practical arrival point for the Osaka-to-Kyoto bridge day with day bags only.",
+  "Kintetsu Nara Station": "Kintetsu-Nara is closer to Todai-ji than JR Nara. Store the big bags in the coin-locker room by the West ticket gate. Then use East gate Exit 2 for Nara Park and Todai-ji. Collect the bags at the West gate before the train to Kyoto.",
   "Nara Park": "Nara Park preserves a landscape where deer, temples and open grass have coexisted for centuries. Keep deer encounters playful and brief—they open the day, but Todai-ji's scale is the capstone.",
   "Todai-ji Temple": "Todai-ji's Great Buddha Hall houses one of the world's largest bronze Buddha images, cast in the 8th century during political and epidemic anxiety. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
   "Naramachi": "Naramachi preserves merchant-lane townhouses and small shops south of the park. A short café or shopfront pause here transitions the day from sacred Nara toward Kyoto without adding another major sight.",
@@ -4602,7 +4632,10 @@ function makeDailyPhotoCard(day) {
     slotCard.append(controls, photos);
     grid.appendChild(slotCard);
   });
-  content.appendChild(grid);
+  const journal = document.createElement("section");
+  journal.className = "day-journal";
+  content.append(journal, grid);
+  mountDayJournal(journal, day);
   return card;
 }
 
@@ -5247,9 +5280,8 @@ function placeScreenFilters(name) {
 
 function showSection(name) {
   document.body.dataset.section = name;
-  const titles = { today: "Today", days: "Days", tickets: "Tickets", food: "Food", overview: "Overview" };
-  const title = document.querySelector("#appHeaderTitle");
-  if (title) title.textContent = titles[name] || "Japan Trip Hunt";
+  const dateLabel = document.querySelector("#headerCalendarDate");
+  if (dateLabel) dateLabel.textContent = headerDateLabel();
   document.querySelectorAll("#appMenu button[data-section]").forEach((button) => {
     const on = button.dataset.section === name;
     button.classList.toggle("active", on);
@@ -5258,6 +5290,7 @@ function showSection(name) {
   });
   placeScreenFilters(name);
   todayPanel?.classList.toggle("hidden", name !== "today");
+  journalPanel?.classList.toggle("hidden", name !== "journal");
   ticketsPanel?.classList.toggle("hidden", name !== "tickets");
   foodPanel?.classList.toggle("hidden", name !== "food");
   overviewPanel.classList.toggle("hidden", name !== "overview");
@@ -5285,6 +5318,7 @@ function showSection(name) {
     renderDay(found.day);
   }
   if (name === "days" && !viewingDay) renderTripCalendar();
+  if (name === "journal") renderJournalSettings();
   window.scrollTo({ top: 0, behavior: "auto" });
 }
 
@@ -5368,11 +5402,6 @@ dayRail.addEventListener("click", (event) => {
     showDay(activeCity().days.find((day) => day.id === view));
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-document.querySelector("#themeToggle")?.addEventListener("click", () => {
-  applyTheme(state.theme === "dark" ? "light" : "dark");
-  saveState();
 });
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
@@ -5469,8 +5498,444 @@ document.querySelector("#foodListToggle")?.addEventListener("click", () => {
   syncFoodList();
 });
 
+function headerDateLabel() {
+  const iso = japanTodayIso();
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+function readJournalPrefs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(JOURNAL_PREFS_KEY) || "{}");
+    return {
+      author: saved.author || "",
+      passcode: saved.passcode || "",
+      lastSync: saved.lastSync || "",
+      notes: saved.notes || {}
+    };
+  } catch {
+    return { author: "", passcode: "", lastSync: "", notes: {} };
+  }
+}
+
+function writeJournalPrefs(prefs) {
+  localStorage.setItem(JOURNAL_PREFS_KEY, JSON.stringify(prefs));
+}
+
+function journalClientId() {
+  if (window.crypto?.randomUUID) return crypto.randomUUID();
+  return `photo-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function journalQueueAll() {
+  return withStore(JOURNAL_QUEUE_STORE, "readonly", (store) => storeRequest(store.getAll()));
+}
+
+function putJournalQueueItem(item) {
+  return withStore(JOURNAL_QUEUE_STORE, "readwrite", (store) => storeRequest(store.put(item)));
+}
+
+function removeJournalQueueItem(clientId) {
+  return withStore(JOURNAL_QUEUE_STORE, "readwrite", (store) => storeRequest(store.delete(clientId)));
+}
+
+function readJournalCache(dayId) {
+  return withStore(JOURNAL_CACHE_STORE, "readonly", (store) => storeRequest(store.get(dayId)));
+}
+
+function writeJournalCache(record) {
+  return withStore(JOURNAL_CACHE_STORE, "readwrite", (store) => storeRequest(store.put(record)));
+}
+
+async function enqueueJournalPhoto(item) {
+  await putJournalQueueItem({
+    clientId: item.clientId,
+    photoId: item.photoId,
+    dayId: item.dayId,
+    caption: item.caption || "",
+    createdAt: item.createdAt,
+    author: item.author || "",
+    status: "pending",
+    attempts: 0,
+    lastError: ""
+  });
+  renderJournalStatus();
+}
+
+function journalConfigured() {
+  return Boolean(String(JOURNAL_ENDPOINT || "").trim());
+}
+
+async function journalPost(payload) {
+  const prefs = readJournalPrefs();
+  const response = await fetch(JOURNAL_ENDPOINT, {
+    method: "POST",
+    body: JSON.stringify({ ...payload, passcode: prefs.passcode })
+  });
+  const data = await response.json();
+  if (!response.ok || !data.ok) throw new Error(data.error || "Journal sync failed.");
+  return data;
+}
+
+function markJournalSynced() {
+  const prefs = readJournalPrefs();
+  prefs.lastSync = new Date().toISOString();
+  writeJournalPrefs(prefs);
+  renderJournalStatus();
+}
+
+function downscaleJpeg(dataUrl, maxEdge, quality) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const scale = Math.min(1, maxEdge / Math.max(image.width, image.height, 1));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", quality).split(",")[1]);
+    };
+    image.onerror = () => reject(new Error("The photo could not be prepared."));
+    image.src = dataUrl;
+  });
+}
+
+let journalSyncing = false;
+
+async function flushJournalQueue() {
+  if (journalSyncing || !journalConfigured()) return;
+  const prefs = readJournalPrefs();
+  if (!prefs.author || !prefs.passcode) return;
+  journalSyncing = true;
+  try {
+    const items = await journalQueueAll();
+    let synced = false;
+    for (const item of items) {
+      if (item.status === "synced") continue;
+      try {
+        const photos = await getAllPhotos();
+        const photo = photos.find((entry) => entry.clientId === item.clientId || entry.id === item.photoId);
+        if (!photo?.dataUrl) continue;
+        const author = item.author || prefs.author;
+        const day = findDay(item.dayId || photo.dayId);
+        const image = await downscaleJpeg(photo.dataUrl, 2048, 0.85);
+        const thumb = await downscaleJpeg(photo.dataUrl, 400, 0.7);
+        const result = await journalPost({
+          action: "uploadPhoto",
+          dayId: item.dayId || photo.dayId,
+          date: day?.day.date || "",
+          author,
+          caption: item.caption || photo.caption || "",
+          clientId: item.clientId,
+          createdAt: item.createdAt || photo.createdAt,
+          image,
+          thumb
+        });
+        photo.driveFileId = result.fileId;
+        await putPhoto(photo);
+        item.status = "synced";
+        item.fileId = result.fileId;
+        item.lastError = "";
+        await putJournalQueueItem(item);
+        synced = true;
+      } catch (error) {
+        item.status = "pending";
+        item.attempts = (item.attempts || 0) + 1;
+        item.lastError = error.message || "Upload failed.";
+        await putJournalQueueItem(item);
+      }
+    }
+    if (synced) markJournalSynced();
+  } finally {
+    journalSyncing = false;
+    renderJournalStatus();
+  }
+}
+
+async function syncJournalNote(dayId) {
+  if (!journalConfigured()) return;
+  const prefs = readJournalPrefs();
+  if (!prefs.author || !prefs.passcode) return;
+  const day = findDay(dayId);
+  await journalPost({
+    action: "saveNote",
+    dayId,
+    date: day?.day.date || "",
+    author: prefs.author,
+    text: prefs.notes[dayId] || ""
+  });
+  markJournalSynced();
+}
+
+function journalThumbSrc(photo) {
+  const thumb = photo.thumb || "";
+  if (!thumb) return "";
+  if (thumb.startsWith("data:")) return thumb;
+  return `data:image/jpeg;base64,${thumb}`;
+}
+
+function renderFamilyJournal(host, day, record) {
+  const list = host.querySelector(".family-journal-list");
+  if (!list) return;
+  const author = readJournalPrefs().author;
+  const notes = (record?.notes || []).filter((note) => note.author !== author && note.note);
+  const photos = (record?.photos || []).filter((photo) => photo.author !== author);
+  list.replaceChildren();
+  if (!notes.length && !photos.length) {
+    const empty = document.createElement("p");
+    empty.className = "family-empty";
+    empty.textContent = "No family notes for this day yet.";
+    list.appendChild(empty);
+    return;
+  }
+  notes.forEach((note) => {
+    const block = document.createElement("article");
+    block.className = "family-note";
+    const name = document.createElement("strong");
+    name.textContent = note.author;
+    const text = document.createElement("p");
+    text.textContent = note.note;
+    block.append(name, text);
+    list.appendChild(block);
+  });
+  photos.forEach((photo) => {
+    const block = document.createElement("article");
+    block.className = "family-photo";
+    const name = document.createElement("strong");
+    name.textContent = photo.author;
+    block.appendChild(name);
+    const src = journalThumbSrc(photo);
+    if (src) {
+      const image = document.createElement("img");
+      image.alt = photo.caption || `${photo.author} photo`;
+      image.src = src;
+      block.appendChild(image);
+    }
+    if (photo.caption) {
+      const caption = document.createElement("p");
+      caption.textContent = photo.caption;
+      block.appendChild(caption);
+    }
+    list.appendChild(block);
+  });
+}
+
+async function refreshDayJournal(day, host) {
+  const cached = await readJournalCache(day.id).catch(() => null);
+  if (host.isConnected && cached) renderFamilyJournal(host, day, cached);
+  if (!journalConfigured() || !readJournalPrefs().passcode) return;
+  try {
+    const data = await journalPost({ action: "list", dayId: day.id });
+    const record = { dayId: day.id, notes: data.notes || [], photos: data.photos || [], fetchedAt: new Date().toISOString() };
+    await writeJournalCache(record);
+    if (host.isConnected) renderFamilyJournal(host, day, record);
+    markJournalSynced();
+  } catch {
+    if (host.isConnected && cached) renderFamilyJournal(host, day, cached);
+  }
+}
+
+function mountDayJournal(host, day) {
+  const prefs = readJournalPrefs();
+  host.innerHTML = `
+    <p class="journal-label">Journal</p>
+    <label class="journal-field">What happened today?
+      <textarea class="journal-note" maxlength="4000"></textarea>
+    </label>
+    <p class="journal-sync-line"></p>
+    <div class="family-journal-list"></div>
+  `;
+  const note = host.querySelector(".journal-note");
+  note.value = prefs.notes[day.id] || "";
+  let timer = 0;
+  const saveLocal = () => {
+    const next = readJournalPrefs();
+    next.notes[day.id] = note.value;
+    writeJournalPrefs(next);
+    host.querySelector(".journal-sync-line").textContent = "Saved on this phone.";
+  };
+  note.addEventListener("input", () => {
+    saveLocal();
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      syncJournalNote(day.id).then(() => {
+        if (host.isConnected) host.querySelector(".journal-sync-line").textContent = "Saved for the family.";
+      }).catch(() => {
+        if (host.isConnected) host.querySelector(".journal-sync-line").textContent = "Saved on this phone. Sync will retry.";
+      });
+    }, 500);
+  });
+  refreshDayJournal(day, host);
+}
+
+async function waitingPhotoCount() {
+  const items = await journalQueueAll().catch(() => []);
+  return items.filter((item) => item.status !== "synced").length;
+}
+
+function renderJournalStatus() {
+  const status = document.querySelector("#journalStatus");
+  if (!status) return;
+  const prefs = readJournalPrefs();
+  waitingPhotoCount().then((count) => {
+    const lines = [];
+    if (!journalConfigured()) lines.push("Journal sync is not set up yet.");
+    lines.push(count === 1 ? "1 photo waiting to upload." : `${count} photos waiting to upload.`);
+    lines.push(prefs.lastSync ? `Last sync: ${new Date(prefs.lastSync).toLocaleString()}.` : "No sync yet.");
+    lines.push(prefs.passcode ? "Passcode saved on this phone." : "No passcode saved.");
+    status.textContent = lines.join(" ");
+  });
+}
+
+function renderJournalSettings() {
+  if (!journalPanel) return;
+  const prefs = readJournalPrefs();
+  const known = JOURNAL_NAMES.includes(prefs.author);
+  journalPanel.innerHTML = `
+    <div class="section-heading"><p class="label">Shared memory</p><h2>Family journal</h2></div>
+    <p class="journal-setup-note" id="journalStatus"></p>
+    <label class="journal-field">Your name
+      <select id="journalAuthor">
+        <option value="">Choose a name</option>
+        ${JOURNAL_NAMES.map((name) => `<option${name === prefs.author ? " selected" : ""}>${name}</option>`).join("")}
+        <option value="custom"${prefs.author && !known ? " selected" : ""}>Custom</option>
+      </select>
+    </label>
+    <label class="journal-field" id="journalCustomWrap">Custom name
+      <input id="journalCustomName" type="text" maxlength="40" value="${escapeHtml(known ? "" : prefs.author)}">
+    </label>
+    <label class="journal-field">Family passcode
+      <input id="journalPasscode" type="password" autocomplete="current-password" maxlength="80">
+    </label>
+    <div class="journal-actions">
+      <button type="button" id="journalSave">Save on this phone</button>
+      <button type="button" id="journalSyncNow">Sync now</button>
+      <button type="button" id="journalBackup">Save all photos</button>
+    </div>
+    <p class="journal-waiting" id="journalBackupStatus"></p>
+  `;
+  const customWrap = journalPanel.querySelector("#journalCustomWrap");
+  const authorSelect = journalPanel.querySelector("#journalAuthor");
+  const toggleCustom = () => { customWrap.hidden = authorSelect.value !== "custom"; };
+  authorSelect.addEventListener("change", toggleCustom);
+  toggleCustom();
+  journalPanel.querySelector("#journalSave").addEventListener("click", () => {
+    const next = readJournalPrefs();
+    const selected = authorSelect.value;
+    const custom = journalPanel.querySelector("#journalCustomName").value.trim();
+    next.author = selected === "custom" ? custom : selected;
+    const typed = journalPanel.querySelector("#journalPasscode").value;
+    if (typed) next.passcode = typed;
+    writeJournalPrefs(next);
+    journalPanel.querySelector("#journalPasscode").value = "";
+    renderJournalStatus();
+    void flushJournalQueue();
+  });
+  journalPanel.querySelector("#journalSyncNow").addEventListener("click", () => { void flushJournalQueue(); });
+  journalPanel.querySelector("#journalBackup").addEventListener("click", () => { void downloadAllPhotos(); });
+  renderJournalStatus();
+}
+
+function dataUrlBytes(dataUrl) {
+  const b64 = String(dataUrl).split(",")[1] || "";
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
+}
+
+function crc32(bytes) {
+  let crc = -1;
+  for (let index = 0; index < bytes.length; index += 1) {
+    crc ^= bytes[index];
+    for (let bit = 0; bit < 8; bit += 1) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+  }
+  return (~crc) >>> 0;
+}
+
+function zipStore(files) {
+  const encoder = new TextEncoder();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  files.forEach((file) => {
+    const name = encoder.encode(file.name);
+    const data = file.data;
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + name.length);
+    const view = new DataView(local.buffer);
+    view.setUint32(0, 0x04034b50, true);
+    view.setUint16(4, 20, true);
+    view.setUint16(6, 0x0800, true);
+    view.setUint32(14, crc, true);
+    view.setUint32(18, data.length, true);
+    view.setUint32(22, data.length, true);
+    view.setUint16(26, name.length, true);
+    local.set(name, 30);
+    parts.push(local, data);
+    const cen = new Uint8Array(46 + name.length);
+    const cenView = new DataView(cen.buffer);
+    cenView.setUint32(0, 0x02014b50, true);
+    cenView.setUint16(4, 20, true);
+    cenView.setUint16(6, 20, true);
+    cenView.setUint16(8, 0x0800, true);
+    cenView.setUint32(16, crc, true);
+    cenView.setUint32(20, data.length, true);
+    cenView.setUint32(24, data.length, true);
+    cenView.setUint16(28, name.length, true);
+    cenView.setUint32(42, offset, true);
+    cen.set(name, 46);
+    central.push(cen);
+    offset += local.length + data.length;
+  });
+  const centralSize = central.reduce((sum, part) => sum + part.length, 0);
+  const eocd = new Uint8Array(22);
+  const eocdView = new DataView(eocd.buffer);
+  eocdView.setUint32(0, 0x06054b50, true);
+  eocdView.setUint16(8, files.length, true);
+  eocdView.setUint16(10, files.length, true);
+  eocdView.setUint32(12, centralSize, true);
+  eocdView.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, eocd], { type: "application/zip" });
+}
+
+async function downloadAllPhotos() {
+  const status = document.querySelector("#journalBackupStatus");
+  const photos = await getAllPhotos().catch(() => []);
+  if (!photos.length) {
+    if (status) status.textContent = "No photos are saved on this phone.";
+    return;
+  }
+  const files = photos.map((photo, index) => ({
+    name: `${photo.dayId || "photo"}-${index + 1}.jpg`,
+    data: dataUrlBytes(photo.dataUrl)
+  }));
+  const url = URL.createObjectURL(zipStore(files));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "japan-trip-photos.zip";
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+  if (status) status.textContent = `Saved ${photos.length} photos into one zip file.`;
+}
+
+function startJournalSync() {
+  void flushJournalQueue();
+  window.addEventListener("online", () => { void flushJournalQueue(); });
+  window.setInterval(() => { void flushJournalQueue(); }, 3 * 60 * 1000);
+}
+
+document.querySelector("#headerCalendar")?.addEventListener("click", () => {
+  if (document.body.dataset.section === "days" && !daysShowsDay) showSection("today");
+  else {
+    daysShowsDay = false;
+    showSection("days");
+  }
+});
+
 applyTheme();
 renderNav();
 resetOverviewToCalendar();
 saveState();
 showSection("today");
+startJournalSync();

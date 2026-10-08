@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --paper: #fff0f6;
   --ink: #34222a;
   --muted: #80636f;
@@ -89,7 +89,7 @@ body[data-city="hiroshima"] {
 }
 
 html {
-  color-scheme: light dark;
+  color-scheme: light;
   background-color: var(--paper);
 }
 
@@ -142,13 +142,35 @@ select {
   border-bottom: 1px solid var(--line);
 }
 
-.app-header h1 {
+.header-calendar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: calc(100% - 48px);
   margin: 0;
-  min-width: 0;
-  overflow: hidden;
-  font-size: 1.05rem;
+  padding: 0 8px 0 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
   font-weight: 850;
-  line-height: 1.1;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.header-calendar svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+.header-calendar span {
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -169,6 +191,7 @@ select {
 }
 
 .menu-button:focus-visible,
+.header-calendar:focus-visible,
 .app-menu button:focus-visible {
   outline: 2px solid var(--green);
   outline-offset: 2px;
@@ -225,7 +248,7 @@ select {
 }
 
 .app-menu button[aria-current="page"] {
-  background: var(--green);
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: #fff;
 }
 
@@ -236,7 +259,6 @@ select {
   border-top: 1px solid var(--line);
 }
 
-.app-menu #themeToggle[aria-pressed="true"],
 .app-menu #archiveToggle[aria-pressed="true"] {
   background: color-mix(in srgb, var(--green) 18%, var(--card));
 }
@@ -433,7 +455,7 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 9px 12px;
-  background: linear-gradient(135deg, var(--green), var(--rose));
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: white;
   font-weight: 900;
   cursor: pointer;
@@ -595,9 +617,9 @@ h3 {
 
 .city-chip.active,
 .chip.active {
-  border-color: rgba(199, 67, 122, 0.42);
-  background: linear-gradient(135deg, var(--green), var(--rose));
-  color: white;
+  border-color: transparent;
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
+  color: #fff;
 }
 
 .city-chip.snap-armed { box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.76); }
@@ -1205,7 +1227,7 @@ h3 {
 
 .main-complete,
 .deal-button {
-  background: linear-gradient(135deg, var(--green), var(--rose));
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: white;
 }
 
@@ -1706,7 +1728,7 @@ h3 {
 
 .overview-switch button.active {
   border-color: rgba(199, 67, 122, 0.42);
-  background: linear-gradient(135deg, var(--green), var(--rose));
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: white;
 }
 
@@ -1930,7 +1952,7 @@ h3 {
 }
 
 .calendar-day.is-today {
-  background: linear-gradient(135deg, var(--green), var(--rose));
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: white;
 }
 
@@ -2166,7 +2188,7 @@ h3 {
 }
 
 .timeline-tabs button[aria-selected="true"] {
-  background: linear-gradient(135deg, var(--green), var(--rose));
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: white;
   box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 14%, transparent);
 }
@@ -2622,7 +2644,7 @@ body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,2
   cursor: pointer;
 }
 .chapter-map-tabs button { flex: 0 0 auto; min-height: 34px; padding: 6px 9px; border-radius: 8px; font-size: .72rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,.12); }
-.chapter-map-tabs button.active { border-color: var(--rose); background: var(--rose); color: white; }
+.chapter-map-tabs button.active { border-color: transparent; background: color-mix(in srgb, var(--green) 70%, #1c0f14); color: #fff; }
 .overview-leaflet-map { width: 100%; height: 100%; overflow: hidden; background: #dfecef; color: #22332c; z-index: 0; }
 .overview-map-marker-shell.leaflet-div-icon,
 .day-map-marker-shell.leaflet-div-icon {
@@ -2956,7 +2978,7 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .map-actions a {
   justify-content: center;
   padding: 10px;
-  background: linear-gradient(135deg, var(--green), var(--rose));
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
   color: white;
   font-weight: 900;
 }
@@ -4131,8 +4153,8 @@ body[data-theme="dark"] .calendar-status.status-conditional {
 
 .overview-page-chip.active,
 .day-page-chip.active {
-  background: linear-gradient(135deg, var(--green), var(--rose));
-  color: white;
+  background: color-mix(in srgb, var(--green) 70%, #1c0f14);
+  color: #fff;
   border-color: transparent;
 }
 
@@ -4825,6 +4847,111 @@ body[data-theme="dark"] .trip-date.is-today {
   min-height: 0;
   overflow: hidden;
   visibility: hidden;
+}
+
+.day-journal,
+.journal-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.day-journal {
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+}
+
+.day-journal h3,
+.journal-panel h2 {
+  margin: 0;
+}
+
+.journal-label,
+.journal-waiting,
+.journal-sync-line,
+.journal-setup-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.journal-field {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.journal-field input,
+.journal-field select,
+.journal-note {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+}
+
+.journal-note {
+  min-height: 96px;
+  padding: 8px;
+}
+
+.journal-field input,
+.journal-field select {
+  min-height: 44px;
+  padding: 8px;
+}
+
+.journal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.journal-actions button,
+.journal-save {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.family-note,
+.family-photo {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.family-note strong,
+.family-photo strong {
+  font-size: 0.86rem;
+}
+
+.family-photo img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.family-empty {
+  margin: 0;
+  color: var(--muted);
 }
 
 @media (max-width: 700px) {
