@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v172";
+const APP_VERSION = "japan-quest-v173";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
 const TEAMLAB_GUIDE_URL = "https://tlba.teamlab.art/tyob10";
 const TEAMLAB_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo")}`;
@@ -1002,7 +1002,9 @@ const dayPanel = document.querySelector("#dayPanel");
 const todayPanel = document.querySelector("#todayPanel");
 const ticketsPanel = document.querySelector("#ticketsPanel");
 const foodPanel = document.querySelector("#foodPanel");
+const tripCalendar = document.querySelector("#tripCalendar");
 let showArchive = false;
+let daysShowsDay = false;
 let foodListOpen = false;
 let grokToastTimer = 0;
 const state = loadState();
@@ -4775,7 +4777,19 @@ function mountDayView(host, day) {
 }
 
 function renderDay(day) {
-  mountDayView(dayPanel, day);
+  dayPanel.innerHTML = "";
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "calendar-back";
+  back.textContent = "Calendar";
+  back.addEventListener("click", () => {
+    daysShowsDay = false;
+    showSection("days");
+  });
+  dayPanel.appendChild(back);
+  const host = document.createElement("div");
+  dayPanel.appendChild(host);
+  mountDayView(host, day);
 }
 
 function markScrollableRails() {
@@ -5029,6 +5043,161 @@ function renderTickets() {
   ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Tickets</h2></div><p class="helper-copy">Booking references and travel documents are here. An unbooked journey shows Not booked.</p>${cards.map(ticketCardHtml).join("")}`;
 }
 
+const TRIP_CALENDAR_START = "2026-10-23";
+const TRIP_CALENDAR_END = "2026-11-13";
+const CALENDAR_CITIES = {
+  osaka: { name: "Osaka", mark: "Osaka" },
+  kyoto: { name: "Kyoto", mark: "Kyoto" },
+  hiroshima: { name: "Hiroshima", mark: "Hiro" },
+  tokyo: { name: "Tokyo", mark: "Tokyo" },
+  hakone: { name: "Hakone", mark: "Hakone" }
+};
+
+function isoParts(iso) {
+  const [year, month, day] = iso.split("-").map(Number);
+  return { year, month, day };
+}
+
+function shiftIso(iso, days) {
+  const { year, month, day } = isoParts(iso);
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+  const nextMonth = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const nextDay = String(date.getUTCDate()).padStart(2, "0");
+  return `${date.getUTCFullYear()}-${nextMonth}-${nextDay}`;
+}
+
+function mondayIndex(iso) {
+  const { year, month, day } = isoParts(iso);
+  return (new Date(Date.UTC(year, month - 1, day)).getUTCDay() + 6) % 7;
+}
+
+function calendarMonthLabel(iso) {
+  const { year, month, day } = isoParts(iso);
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", { month: "long", timeZone: "UTC" });
+}
+
+function spokenDate(iso) {
+  const { year, month, day } = isoParts(iso);
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
+}
+
+function stayCityForDay(day) {
+  const hotel = STAY_HOTEL_BY_DAY[day.id] || "";
+  if (hotel.includes("Setsugetsuka")) return "hakone";
+  if (hotel.includes("Monterey")) return "kyoto";
+  if (hotel.includes("Cordia")) return "osaka";
+  if (hotel.includes("Granvia")) return "hiroshima";
+  if (hotel.includes("APA")) return "tokyo";
+  return "";
+}
+
+function tripDateCell(iso, today, beforeTrip, duringTrip) {
+  const inRange = iso >= TRIP_CALENDAR_START && iso <= TRIP_CALENDAR_END;
+  const row = tripRows().find((entry) => entry.day.date === iso);
+  const cityId = row ? stayCityForDay(row.day) : "";
+  const city = CALENDAR_CITIES[cityId];
+  const cell = document.createElement(row ? "button" : "span");
+  cell.className = "trip-date";
+  if (!inRange) cell.classList.add("is-outside");
+  if (duringTrip && iso === today) cell.classList.add("is-today");
+  if (row && state.openDayId === row.day.id) cell.classList.add("is-selected");
+  if (beforeTrip && iso === TRIP_CALENDAR_START) cell.classList.add("is-start");
+  if (cityId) cell.dataset.city = cityId;
+  if (row) {
+    cell.type = "button";
+    cell.dataset.day = row.day.id;
+    cell.setAttribute("aria-pressed", String(state.openDayId === row.day.id));
+    cell.setAttribute("aria-label", `${spokenDate(iso)}, ${city ? city.name : ""}. Open this day.`);
+    cell.addEventListener("click", () => showDay(row.day));
+  } else if (inRange) {
+    const note = iso === TRIP_CALENDAR_START ? " Trip start." : iso === TRIP_CALENDAR_END ? " Trip end." : "";
+    cell.setAttribute("aria-label", `${spokenDate(iso)}.${note}`);
+  } else cell.setAttribute("aria-hidden", "true");
+  const isToday = duringTrip && iso === today;
+  if (isToday) cell.setAttribute("aria-current", "date");
+  if (inRange) {
+    const band = document.createElement("span");
+    band.className = cityId ? "trip-date-band" : "trip-date-band is-neutral";
+    band.setAttribute("aria-hidden", "true");
+    cell.appendChild(band);
+  }
+  const number = document.createElement("span");
+  number.className = "trip-date-num";
+  number.textContent = String(Number(iso.slice(8)));
+  cell.appendChild(number);
+  const mark = document.createElement("span");
+  mark.className = "trip-date-city";
+  if (isToday) mark.textContent = "TODAY";
+  else if (city) mark.textContent = city.mark;
+  else if (beforeTrip && iso === TRIP_CALENDAR_START) mark.textContent = "Start";
+  else if (inRange && iso === TRIP_CALENDAR_END) mark.textContent = "End";
+  if (mark.textContent) cell.appendChild(mark);
+  if (isToday && row) {
+    cell.setAttribute("aria-label", `Today. ${spokenDate(iso)}, ${city ? city.name : ""}. Open this day.`);
+  } else if (isToday && inRange) {
+    const note = iso === TRIP_CALENDAR_START ? " Trip start." : iso === TRIP_CALENDAR_END ? " Trip end." : "";
+    cell.setAttribute("aria-label", `Today. ${spokenDate(iso)}.${note}`);
+  }
+  return cell;
+}
+
+function renderTripCalendar() {
+  if (!tripCalendar) return;
+  const today = japanTodayIso();
+  const beforeTrip = today < TRIP_CALENDAR_START;
+  const duringTrip = today >= TRIP_CALENDAR_START && today <= TRIP_CALENDAR_END;
+  tripCalendar.replaceChildren();
+  if (beforeTrip) {
+    const days = daysUntilTrip();
+    const line = document.createElement("p");
+    line.className = "today-countdown";
+    line.textContent = days === 1 ? "The trip starts in 1 day." : `The trip starts in ${days} days.`;
+    tripCalendar.appendChild(line);
+  }
+  const board = document.createElement("div");
+  board.className = "trip-calendar-board";
+  const weekdays = document.createElement("div");
+  weekdays.className = "trip-calendar-weekdays";
+  weekdays.setAttribute("aria-hidden", "true");
+  ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((label) => {
+    const span = document.createElement("span");
+    span.textContent = label;
+    weekdays.appendChild(span);
+  });
+  board.appendChild(weekdays);
+  const gridStart = shiftIso(TRIP_CALENDAR_START, -mondayIndex(TRIP_CALENDAR_START));
+  const gridEnd = shiftIso(TRIP_CALENDAR_END, 6 - mondayIndex(TRIP_CALENDAR_END));
+  let previousLabel = "";
+  for (let weekStart = gridStart; weekStart <= gridEnd; weekStart = shiftIso(weekStart, 7)) {
+    const dates = Array.from({ length: 7 }, (_, index) => shiftIso(weekStart, index));
+    const first = calendarMonthLabel(dates[0]);
+    const last = calendarMonthLabel(dates[6]);
+    const label = first === last ? first : `${first} – ${last}`;
+    if (label !== previousLabel) {
+      const heading = document.createElement("p");
+      heading.className = "trip-calendar-month";
+      heading.textContent = label;
+      board.appendChild(heading);
+      previousLabel = label;
+    }
+    const week = document.createElement("div");
+    week.className = "trip-calendar-week";
+    dates.forEach((iso) => week.appendChild(tripDateCell(iso, today, beforeTrip, duringTrip)));
+    board.appendChild(week);
+  }
+  const legend = document.createElement("ul");
+  legend.className = "trip-calendar-legend";
+  Object.entries(CALENDAR_CITIES).forEach(([id, city]) => {
+    const item = document.createElement("li");
+    const dot = document.createElement("i");
+    dot.dataset.city = id;
+    dot.setAttribute("aria-hidden", "true");
+    item.append(dot, city.name);
+    legend.appendChild(item);
+  });
+  tripCalendar.append(board, legend);
+}
+
 function renderToday() {
   if (!todayPanel) return;
   const selected = landingSelection();
@@ -5041,6 +5210,18 @@ function renderToday() {
     line.textContent = days === 1 ? "The trip starts in 1 day." : `The trip starts in ${days} days.`;
     todayPanel.appendChild(line);
   }
+  const jump = document.createElement("p");
+  jump.className = "today-calendar-jump";
+  const calendarButton = document.createElement("button");
+  calendarButton.type = "button";
+  calendarButton.className = "today-calendar-link";
+  calendarButton.textContent = "Calendar";
+  calendarButton.addEventListener("click", () => {
+    daysShowsDay = false;
+    showSection("days");
+  });
+  jump.appendChild(calendarButton);
+  todayPanel.appendChild(jump);
   const host = document.createElement("div");
   todayPanel.appendChild(host);
   mountDayView(host, day);
@@ -5051,12 +5232,10 @@ function placeScreenFilters(name) {
   const cityWrap = document.querySelector(".city-rail-wrap");
   const dayWrap = document.querySelector(".day-rail-wrap");
   const stash = document.querySelector("#filterStash");
-  const daysHost = document.querySelector("#daysFilters");
   const foodHost = document.querySelector("#foodFilters");
   const overviewHost = document.querySelector("#overviewFilters");
   if (!cityWrap || !dayWrap || !stash) return;
-  if (name === "days" && daysHost) daysHost.append(cityWrap, dayWrap);
-  else if (name === "food" && foodHost) {
+  if (name === "food" && foodHost) {
     foodHost.append(cityWrap);
     stash.append(dayWrap);
   } else if (name === "overview" && overviewHost) {
@@ -5082,7 +5261,9 @@ function showSection(name) {
   ticketsPanel?.classList.toggle("hidden", name !== "tickets");
   foodPanel?.classList.toggle("hidden", name !== "food");
   overviewPanel.classList.toggle("hidden", name !== "overview");
-  dayPanel.classList.toggle("hidden", name !== "days" || !state.openDayId);
+  const viewingDay = name === "days" && daysShowsDay && Boolean(findDay(state.openDayId));
+  dayPanel.classList.toggle("hidden", !viewingDay);
+  tripCalendar?.classList.toggle("hidden", name !== "days" || viewingDay);
   if (name === "today") renderToday();
   if (name === "tickets") renderTickets();
   if (name === "food") {
@@ -5096,16 +5277,14 @@ function showSection(name) {
     renderOverview();
     renderStats();
   }
-  if (name === "days" && state.openDayId) {
+  if (name === "days" && viewingDay) {
     const found = findDay(state.openDayId);
-    if (found) {
-      state.activeCity = found.cityId;
-      document.body.dataset.city = found.cityId;
-      renderNav();
-      dayPanel.classList.remove("hidden");
-      renderDay(found.day);
-    }
+    state.activeCity = found.cityId;
+    document.body.dataset.city = found.cityId;
+    renderNav();
+    renderDay(found.day);
   }
+  if (name === "days" && !viewingDay) renderTripCalendar();
   window.scrollTo({ top: 0, behavior: "auto" });
 }
 
@@ -5118,6 +5297,7 @@ function showDay(day) {
   const found = findDay(day.id);
   if (found) state.activeCity = found.cityId;
   state.openDayId = day.id;
+  daysShowsDay = true;
   saveState();
   showSection("days");
 }
@@ -5244,11 +5424,7 @@ menuButton?.addEventListener("click", () => {
 appMenu?.addEventListener("click", (event) => {
   const sectionButton = event.target.closest("button[data-section]");
   if (!sectionButton) return;
-  if (sectionButton.dataset.section === "days" && !state.openDayId) {
-    const selected = landingSelection();
-    state.openDayId = selected.day.id;
-    state.activeCity = selected.cityId;
-  }
+  if (sectionButton.dataset.section === "days") daysShowsDay = false;
   closeMenu(false);
   showSection(sectionButton.dataset.section);
 });
