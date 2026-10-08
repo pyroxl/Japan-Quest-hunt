@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v165";
+const APP_VERSION = "japan-quest-v166";
 const PREVIOUS_STORAGE_KEY = "tokyoQuestHunt.v3";
 const OLD_STORAGE_KEY = "tokyoQuestHunt.v2";
 const PHOTO_DB_NAME = "japanQuestPhotos";
@@ -33,7 +33,7 @@ const RESERVATION_COUNTDOWN = [
   { id: "setsugetsuka-record", name: "Record Setsugetsuka reservation details", attention: "needs-confirmation", recommendedOn: "2026-08-03", target: "Nov 8–11", note: "The stay is confirmed. MIYA HOUSE was cancelled at no cost on Aug 6. Record [room type — needs confirmation], [meal plan — needs confirmation], [price — needs confirmation], and [cancellation terms — needs confirmation]." },
   { id: "himeji-tickets", name: "Himeji Castle and Koko-en", attention: "not-booked", recommendedOn: "2026-10-07", target: "Nov 2 · 4 people", note: "Not booked. [Himeji Castle and Koko-en combo — not booked] for 4 people on Nov 2." },
   { id: "menami", name: "Menami obanzai", attention: "not-booked", recommendedOn: "2026-10-07", target: "Sat Oct 31", note: "Not booked. Preferred Day 9 dinner. Book Menami for Sat Oct 31 if you choose it. Kinmata is the other option. Do not book both." },
-  { id: "kanawa-cancel", name: "Cancel Kanawa ekie", attention: "decision", recommendedOn: "2026-10-07", target: "Mon Nov 2 · 18:30 · 4", note: "The booking is still live. TableCheck WFSXPK. [cancel Kanawa — decision needed] because Mom hates oysters." },
+  { id: "hiroshima-dinner", name: "Pick a non-oyster Hiroshima dinner", attention: "decision", recommendedOn: "2026-10-07", target: "Mon Nov 2 · party of 4", note: "Kanawa ekie is cancelled. Pick a non-oyster Hiroshima dinner for Nov 2 (party of 4). Not booked. Ideas already noted: Kuraya or Suishin if you book a dinner, or walk-in okonomiyaki at Reichan in the station. None of these is booked." },
   { id: "koko-return", name: "KOKO stay Nov 11–13", attention: "decision", recommendedOn: "2026-10-07", target: "Nov 11–13", note: "The Nov 5–8 booking is unchanged. [KOKO stay Nov 11–13 — needs confirmation]." }
 ];
 
@@ -813,8 +813,8 @@ const dayContext = {
     ]
   },
   day11: {
-    summary: "The westward chapter opens with an optional no-delay To-ji dawn and Himeji's white keep, then reaches Hiroshima without turning the transfer into an endurance test. To-ji is thirty free minutes only if bags are handled and Himeji arrival stays before opening; otherwise leave directly from Kyoto Station. Choose castle interior or exterior focus, allow Koko-en or lunch margin, collect ekiben, and eat okonomiyaki in Hiroshima only if energy remains.",
-    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:00–09:00", "Go to Kyoto Station. Take the westbound train. [train number — not booked]. [car — not booked]. [seat — not booked]. Use To-ji's free grounds only if someone is already awake and the train still leaves on time. [luggage forwarding service and deadline — needs confirmation]."], ["09:00–12:30", "Approach Himeji Castle. Choose the interior or the exterior route. [Himeji Castle and Koko-en combo — not booked] for 4 people."], ["12:30–15:00", "Visit Koko-en or rest over lunch. Then buy ekiben. Score each box on packaging, regional character, variety, flavor, and train happiness."], ["18:30", "Kanawa ekie is still a live booking for 4 at 18:30. TableCheck WFSXPK. [cancel Kanawa — decision needed]. If you cancel, eat Hiroshima-style okonomiyaki only if you still have energy. Check in at Hotel Granvia Hiroshima."]],
+    summary: "The westward chapter opens with an optional no-delay To-ji dawn and Himeji's white keep, then reaches Hiroshima without turning the transfer into an endurance test. To-ji is thirty free minutes only if bags are handled and Himeji arrival stays before opening; otherwise leave directly from Kyoto Station. Choose castle interior or exterior focus, allow Koko-en or lunch margin, collect ekiben, and check in. Kanawa ekie is cancelled. Pick a non-oyster Hiroshima dinner for 4. It is not booked.",
+    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:00–09:00", "Go to Kyoto Station. Take the westbound train. [train number — not booked]. [car — not booked]. [seat — not booked]. Use To-ji's free grounds only if someone is already awake and the train still leaves on time. [luggage forwarding service and deadline — needs confirmation]."], ["09:00–12:30", "Approach Himeji Castle. Choose the interior or the exterior route. [Himeji Castle and Koko-en combo — not booked] for 4 people."], ["12:30–15:00", "Visit Koko-en or rest over lunch. Then buy ekiben. Score each box on packaging, regional character, variety, flavor, and train happiness."], ["Evening", "Check in at Hotel Granvia Hiroshima. Kanawa ekie is cancelled. Pick a non-oyster Hiroshima dinner for Nov 2 (party of 4). Not booked. Ideas already noted: Kuraya or Suishin if you book a dinner, or walk-in okonomiyaki at Reichan in the station. None of these is booked."]],
     history: [
       "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
       "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
@@ -982,9 +982,9 @@ function defaultState() {
           notes: "Horigotatsu. Shop 075-211-0671. Phone on file is Hotel Monterey 075-251-7111. Cancel by 2026-10-30 00:00."
         },
         "kanawa-ekie": {
-          status: "cancel_needed",
-          confirmation: "TableCheck WFSXPK · Mon Nov 2 18:30 · 4 × ¥4,620",
-          notes: "Cancel this reservation: Mom hates oysters."
+          status: "cancelled",
+          confirmation: "Cancelled. TableCheck WFSXPK was cancelled.",
+          notes: "Already cancelled. Do not treat this as a live booking."
         }
       }
     }
@@ -2128,7 +2128,7 @@ const RESTAURANT_BOOKINGS = [
   { id: "kani-doraku", name: "Kani Doraku Kyoto Honten", city: "kyoto", slot: "Fri Oct 30 · 18:00 · 5 people", dayIds: ["day08"], strength: "Booked", why: "HotPepper SE0767510. 光華 course ¥7,590, 9 dishes, horigotatsu non-smoking. After Arashiyama; walk from Hotel Monterey. Shop 075-211-0671. Phone on file is the hotel. Cancel by 2026-10-30 00:00.", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", officialUrl: "https://kanikyoto.owst.jp/", defaultStatus: "booked", confirmation: "SE0767510 · Fri Oct 30 18:00 · 5 · 光華 ¥7590" },
   { id: "menami", name: "Menami", city: "kyoto", slot: "Sat Oct 31 dinner idea", dayIds: ["day09"], strength: "Considering", why: "Protected obanzai dinner on the Pontocho/Kiyamachi side. Choose Menami or Kinmata, not both.", tabelogUrl: "https://tabelog.com/kyoto/A2601/A260201/26001266/", officialUrl: "https://www.menami.jp/menu1" },
   { id: "kinmata", name: "Kinmata", city: "kyoto", slot: "Sat Oct 31 dinner idea", dayIds: ["day09"], strength: "Considering", why: "Optional kyo-kaiseki splurge. Tiny historic machiya; confirm they can take the party size.", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26000452/", officialUrl: "https://www.kinmata.com/en/" },
-  { id: "kanawa-ekie", name: "Kanawa ekie", city: "hiroshima", slot: "Mon Nov 2 · 18:30 · 4 people", dayIds: ["day11"], strength: "Booked · cancel now", why: "TableCheck WFSXPK. Four oyster sets at ¥4,620 each. This is still a live booking, but the itinerary says to cancel it because Mom hates oysters and use Hiroshima-style okonomiyaki instead.", officialUrl: "https://www.kanawa.co.jp/kanawaekie/1000", defaultStatus: "cancel_needed", confirmation: "TableCheck WFSXPK · Mon Nov 2 18:30 · 4 × ¥4,620" },
+  { id: "kanawa-ekie", name: "Kanawa ekie", city: "hiroshima", slot: "Mon Nov 2 · was 18:30 · 4 people", dayIds: ["day11"], strength: "Cancelled", why: "Cancelled. TableCheck WFSXPK is not a live booking. Pick a non-oyster Hiroshima dinner for Nov 2 (party of 4). Not booked.", officialUrl: "https://www.kanawa.co.jp/kanawaekie/1000", defaultStatus: "cancelled", confirmation: "Cancelled. TableCheck WFSXPK was cancelled." },
   { id: "kanawa", name: "Oyster Ship Kanawa Seto", city: "hiroshima", slot: "Tue Nov 3 dinner idea — skip", dayIds: ["day12"], strength: "Skip", why: "Mom hates oysters. Do not replace the cancelled station booking with another full oyster meal.", tabelogUrl: "https://tabelog.com/hiroshima/A3401/A340116/34000041/", officialUrl: "https://www.kanawa.co.jp/en/seto", defaultStatus: "skip" },
   { id: "kani-shin", name: "Hiroshima Kani Shin", city: "hiroshima", slot: "Wed Nov 4 dinner — skip", dayIds: ["day13"], strength: "Skip", why: "Crab is booked at Kani Doraku Kyoto. Do not stack a second crab kaiseki.", tabelogUrl: "https://tabelog.com/en/hiroshima/A3401/A340114/34033069/", defaultStatus: "skip" },
   { id: "manten", name: "Manten Sushi Nihonbashi", city: "tokyo", slot: "Thu Nov 12 dinner idea", dayIds: ["day21"], strength: "Considering", why: "Reservable omakase near the hotel. Parents have already flown; override the party if extra guests join.", tabelogUrl: "https://tabelog.com/en/tokyo/A1302/A130202/13166422/", officialUrl: "https://www.manten-sushi.com/" },
@@ -2185,14 +2185,17 @@ function defaultPartySize(booking) {
 
 function reservationRecord(booking) {
   const stored = state.reservations?.items?.[booking.id] || {};
+  let status = stored.status || booking.defaultStatus || "open";
   let confirmation = stored.confirmation || booking.confirmation || "";
   const staleEndo = confirmation === "Booked · Thu Oct 29 13:30 · Gion course · 5 · confirmation number pending";
   if (booking.id === "endo" && (staleEndo || !confirmation.trim())) confirmation = booking.confirmation;
-  return {
-    status: stored.status || booking.defaultStatus || "open",
-    confirmation,
-    notes: stored.notes || booking.notes || ""
-  };
+  let notes = stored.notes || booking.notes || "";
+  if (booking.id === "kanawa-ekie") {
+    status = "cancelled";
+    confirmation = "Cancelled. TableCheck WFSXPK was cancelled.";
+    notes = "Already cancelled. Do not treat this as a live booking.";
+  }
+  return { status, confirmation, notes };
 }
 
 function setReservationRecord(bookingId, patch) {
@@ -2207,6 +2210,7 @@ const ATTENTION_LABEL = {
   "not-booked": "Not booked",
   decision: "Decision needed",
   done: "Done",
+  cancelled: "Cancelled",
   info: "Noted"
 };
 
@@ -2279,7 +2283,8 @@ const DAY_MUST_DOS = {
     { marker: "needs-confirmation", label: "Luggage", detail: "[luggage forwarding service and deadline — needs confirmation]." },
     { marker: "not-booked", label: "Himeji tickets", detail: "[Himeji Castle and Koko-en combo — not booked] for 4 people on Nov 2." },
     { marker: "info", label: "To-ji", detail: "To-ji is optional and only at dawn. Use it only if someone is already awake and the train still leaves on time." },
-    { marker: "info", label: "Ekiben scores", detail: "Score each box on five lines: packaging, regional character, variety, flavor, and train happiness. Write the scores in today's note. There is no separate scorecard screen." }
+    { marker: "info", label: "Ekiben scores", detail: "Score each box on five lines: packaging, regional character, variety, flavor, and train happiness. Write the scores in today's note. There is no separate scorecard screen." },
+    { marker: "decision", label: "Hiroshima dinner", detail: "Pick a non-oyster Hiroshima dinner for Nov 2 (party of 4). Not booked. Kanawa ekie is cancelled. Ideas already noted: Kuraya or Suishin if you book a dinner, or walk-in okonomiyaki at Reichan in the station. None of these is booked." }
   ],
   day12: [
     { marker: "info", label: "No extra sights", detail: "Do the museum first. Take a quiet break. See the Dome as the light softens. Do not add Shukkeien." }
@@ -2338,6 +2343,7 @@ function attentionFlag(marker) {
 
 function bookingAttention(booking, record) {
   if (record.status === "skip") return null;
+  if (record.status === "cancelled") return ["cancelled"];
   if (record.status === "cancel_needed") return ["decision"];
   if (record.status === "booked") {
     const text = `${record.confirmation || ""} ${booking.confirmation || ""}`;
@@ -2353,7 +2359,7 @@ const MUST_DO_DECISION_BOOKINGS = new Set(["edobori", "shibato", "menami", "kinm
 function bookingMustDo(booking) {
   if (booking.id === "setsugetsuka-meals") return null;
   const record = reservationRecord(booking);
-  if (record.status === "skip") return null;
+  if (record.status === "skip" || record.status === "cancelled") return null;
   const promoted = record.status === "booked" || record.status === "chosen" || record.status === "cancel_needed" || MUST_DO_DECISION_BOOKINGS.has(booking.id);
   if (!promoted) return null;
   const markers = bookingAttention(booking, record);
@@ -2361,7 +2367,6 @@ function bookingMustDo(booking) {
   const party = defaultPartySize(booking);
   const confirm = record.confirmation || booking.confirmation || "[confirmation number — needs confirmation]";
   let detail = `${booking.slot}. Party of ${party}. ${confirm}.`;
-  if (booking.id === "kanawa-ekie") detail = `This booking is still live. Cancel it if Mom will not eat oysters. ${confirm}. Party of ${party}.`;
   if (booking.id === "endo") detail = `Be there at 13:30. Party of 5. Booked by Mom. ${confirm}.`;
   if (booking.id === "edobori" || booking.id === "shibato") detail += " Choose one lunch, not both.";
   if (booking.id === "menami") detail += " This is the preferred Sat Oct 31 dinner. Do not also book Kinmata.";
@@ -2587,7 +2592,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "7-Eleven Heart-in ekie Hiroshima Shinkansen Exit", type: "conbini", category: "conbini", typeLabel: "Closest station 7-Eleven", area: "Hotel Granvia · inside ekie", price: "¥", note: "The lowest-effort supply stop beside the station-connected hotel. Use it for breakfast, drinks or the Shinkansen morning; this branch is outside the ticket gates.", coordinates: [34.39805, 132.47535], officialUrl: "https://www.sn-hiroshima.co.jp/pages/127/" },
     { name: "FamilyMart Hiroshima Station North Exit", type: "conbini", category: "conbini", typeLabel: "Closest FamilyMart", area: "Hotel Granvia · north exit", price: "¥", note: "A useful street-level backup on the north side of the station for an ATM, breakfast or late supplies without crossing through the whole station.", coordinates: [34.39925, 132.47578], officialUrl: "https://store.family.co.jp/points/35382" },
     { name: "Lawson Hiroshima TV", type: "conbini", category: "conbini", typeLabel: "Closest useful Lawson", area: "Hotel Granvia · ~4 min north", price: "¥", note: "The practical Lawson comparison just beyond the Shinkansen exit. Choose it only when you want the different chain; the station 7-Eleven is easier.", coordinates: [34.40018, 132.4771], officialUrl: "https://www.lawson.co.jp/company/fc/seminar/seminar/068451.html" },
-    { name: "Reichan ekie Hiroshima", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · arrival-night pick", area: "Day 11 · Hiroshima Station ekie 1F", price: "¥¥", note: "The zero-detour introduction to layered Hiroshima okonomiyaki after Himeji. It is walk-in only and often queues, so eat early or switch to another ekie option if arrival energy is low.", coordinates: [34.3977, 132.47545], officialUrl: "https://www.o-reichan.jp/shop.htm" },
+    { name: "Reichan ekie Hiroshima", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · walk-in idea", area: "Day 11 · Hiroshima Station ekie 1F", price: "¥¥", note: "Walk-in only. One idea for the Nov 2 dinner. It is not booked. It often queues, so eat early or choose another place if arrival energy is low.", coordinates: [34.3977, 132.47545], officialUrl: "https://www.o-reichan.jp/shop.htm" },
     { name: "Nagata-ya", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · Peace Park option", area: "Day 12 · across from Peace Park", price: "¥¥", note: "A tourist-friendly classic about ten seconds from the park. Keep it as an optional early lunch or dinner; a long queue is the signal to protect the memorial day and move on.", coordinates: [34.39328, 132.45357], officialUrl: "https://nagataya-okonomi.com/" },
     { name: "Hiroshima Kani Shin", type: "restaurant", category: "kani", typeLabel: "Crab kaiseki · skip", area: "Day 13 evening · Fukuro-machi", price: "¥¥¥¥", note: "Skip this formal crab dinner because the trip's dedicated crab meal is already booked at Kani Doraku Kyoto.", coordinates: [34.3928, 132.4569], officialUrl: "https://tabelog.com/en/hiroshima/A3401/A340114/34033069/", tabelogUrl: "https://tabelog.com/en/hiroshima/A3401/A340114/34033069/", slotDays: ["day13"], reserve: "yes" },
     { name: "Oyster Ship Kanawa Seto", type: "restaurant", category: "oysters", typeLabel: "Hiroshima oysters · skip", area: "Day 12 · Motoyasu River / Peace Park", price: "¥¥¥", note: "Skip this full oyster meal because Mom hates oysters. Anyone who wants one can share a small grilled-oyster tasting on Miyajima instead.", coordinates: [34.39316, 132.45322], officialUrl: "https://www.kanawa.co.jp/en/seto", tabelogUrl: "https://tabelog.com/hiroshima/A3401/A340116/34000041/", slotDays: ["day12"], reserve: "check" },
@@ -2763,7 +2768,7 @@ function renderRestaurantBookings() {
   }
   const bookingsIntro = document.querySelector("#restaurantBookingsIntro");
   if (bookingsIntro) {
-    bookingsIntro.innerHTML = highlightPlaceholders("Booked meals: Sankei Club, Sun Oct 25, 17:00, 5 people, Resty 468118574. On-yasai, Tue Oct 27, 20:00, 5 people, Ebica 468119458. Endo, Thu Oct 29, 13:30, 5 people. [Endo confirmation number — pending, do not chase]. Kani Doraku, Fri Oct 30, 18:00, 5 people, SE0767510. Kanawa ekie, Mon Nov 2, 18:30, 4 people, is still live. TableCheck WFSXPK. [cancel Kanawa — decision needed]. Not booked means there is no reservation. Chosen means buy this one now. Booked means the confirmation is saved. Cancel means a live booking you may cancel. Skip means do not book.");
+    bookingsIntro.innerHTML = highlightPlaceholders("Booked meals: Sankei Club, Sun Oct 25, 17:00, 5 people, Resty 468118574. On-yasai, Tue Oct 27, 20:00, 5 people, Ebica 468119458. Endo, Thu Oct 29, 13:30, 5 people. [Endo confirmation number — pending, do not chase]. Kani Doraku, Fri Oct 30, 18:00, 5 people, SE0767510. Kanawa ekie is cancelled. Pick a non-oyster Hiroshima dinner for Nov 2 (party of 4). Not booked. Ideas already noted: Kuraya or Suishin if you book a dinner, or walk-in okonomiyaki at Reichan in the station. Not booked means there is no reservation. Chosen means buy this one now. Booked means the confirmation is saved. Cancel means a live booking you may cancel. Skip means do not book. Cancelled means the reservation is already cancelled.");
   }
   const bookings = RESTAURANT_BOOKINGS.filter((item) => item.city === state.activeCity);
   const cityPlaces = CITY_FOOD_MAP_PROTOTYPE[state.activeCity] || [];
@@ -2788,22 +2793,23 @@ function renderRestaurantBookings() {
       <p>${highlightPlaceholders(booking.why)}</p>
       ${hotelLine ? `<details class="booking-distances"><summary>Distances</summary><p class="city-food-distances">${escapeHtml(hotelLine)}${sightLines.length ? `<br>${sightLines.map((line) => escapeHtml(line)).join("<br>")}` : ""}</p></details>` : ""}
       <div class="restaurant-booking-actions">
-        ${bookHref ? `<a href="${escapeHtml(bookHref)}" target="_blank" rel="noopener">${booking.tabelogUrl ? "Book on Tabelog" : "Official / hotel"} ↗</a>` : ""}
+        ${bookHref && record.status !== "cancelled" ? `<a href="${escapeHtml(bookHref)}" target="_blank" rel="noopener">${booking.tabelogUrl ? "Book on Tabelog" : "Official / hotel"} ↗</a>` : ""}
         ${booking.confirmUrl ? `<a href="${escapeHtml(booking.confirmUrl)}" target="_blank" rel="noopener">Open confirmation ↗</a>` : ""}
         ${place ? `<button type="button" data-focus-place="${escapeHtml(place.name)}">Show on map</button>` : ""}
         <label class="restaurant-status-label">Status
-          <select data-booking-status="${booking.id}">
+          <select data-booking-status="${booking.id}"${record.status === "cancelled" ? " disabled" : ""}>
             <option value="open"${record.status === "open" ? " selected" : ""}>Not booked — no reservation yet</option>
             <option value="chosen"${record.status === "chosen" ? " selected" : ""}>Chosen — book this one now</option>
             <option value="booked"${record.status === "booked" ? " selected" : ""}>Booked — confirmation saved</option>
             <option value="cancel_needed"${record.status === "cancel_needed" ? " selected" : ""}>Cancel — live booking to cancel</option>
             <option value="skip"${record.status === "skip" ? " selected" : ""}>Skip — do not book</option>
+            <option value="cancelled"${record.status === "cancelled" ? " selected" : ""}>Cancelled — reservation is cancelled</option>
           </select>
         </label>
         ${booking.city === "osaka" || booking.city === "kyoto" ? `<label class="restaurant-family-label"><input type="checkbox" data-family-eight="${booking.id}"${isFamily ? " checked" : ""}> Family of 8 — only if this meal is for 8</label>` : ""}
       </div>
       <label class="restaurant-confirm-label">Confirmation number
-        <input type="text" data-booking-note="${booking.id}" value="${escapeHtml(record.confirmation || record.notes)}" placeholder="[confirmation number — needs confirmation]">
+        <input type="text" data-booking-note="${booking.id}" value="${escapeHtml(record.confirmation || record.notes)}" placeholder="[confirmation number — needs confirmation]"${record.status === "cancelled" ? " disabled" : ""}>
       </label>
     `;
     list.appendChild(item);

@@ -3254,7 +3254,8 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .restaurant-booking.is-chosen { border-color: var(--gold); }
 .restaurant-booking.is-booked { border-color: var(--green); }
 .restaurant-booking.is-cancel_needed { border-color: #c74f45; background: color-mix(in srgb, #c74f45 8%, var(--paper)); }
-.restaurant-booking.is-skip { opacity: .62; }
+.restaurant-booking.is-skip,
+.restaurant-booking.is-cancelled { opacity: .72; }
 .restaurant-booking-slot {
   margin: 4px 0 0;
   color: var(--ink);
@@ -3995,6 +3996,12 @@ body[data-theme="dark"] .calendar-status.status-conditional {
   background: #9f1239;
   color: #fff;
   border-color: #9f1239;
+}
+
+.confirm-flag-cancelled {
+  background: #44403c;
+  color: #fff;
+  border-color: #44403c;
 }
 
 .confirm-flag-booked,
