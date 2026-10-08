@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v171";
+const APP_VERSION = "japan-quest-v172";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
 const TEAMLAB_GUIDE_URL = "https://tlba.teamlab.art/tyob10";
 const TEAMLAB_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo")}`;
@@ -1652,14 +1652,14 @@ function renderQuestDeck(day) {
 
 function dailyGuide(day) {
   const context = dayContext[day.id] || { summary: day.theme, timeline: [], history: ["Background notes can be added here later."] };
-  const status = dayAttentionStatus(day);
   const timelineMarkup = (timeline) => timeline.map(([time, activity]) => `<li><time>${escapeHtml(time)}</time><span>${renderGuideHtml(activity)}</span></li>`).join("");
   const slowTimeline = Array.isArray(context.slowTimeline) ? context.slowTimeline : [];
   const hasSlowTimeline = slowTimeline.length > 0;
+  const hasBookedTime = mustDoItems(day.id).some((item) => (item.markers || [item.marker]).includes("booked"));
   const card = document.createElement("section");
   card.className = "daily-guide";
   card.innerHTML = `
-    <div class="daily-guide-heading"><p class="label">Today's clear path</p><span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${status}</span></div>
+    <div class="daily-guide-heading"><p class="label">Today's clear path</p></div>
     <h3>${dayClearPath(day)}</h3>
     <section class="context-block merged-summary">
       <h4>Quick Summary</h4>
@@ -1675,7 +1675,7 @@ function dailyGuide(day) {
       </div>
       <div data-timeline-panel="main" role="tabpanel"><ol class="day-timeline">${timelineMarkup(context.timeline)}</ol></div>
       ${hasSlowTimeline ? `<div data-timeline-panel="slow" role="tabpanel" hidden><ol class="day-timeline slow-day-timeline">${timelineMarkup(slowTimeline)}</ol></div>` : ""}
-      <p class="timeline-note">${openMustDos(day.id).some((item) => (item.markers || []).includes("booked") || item.marker === "booked") || mustDoItems(day.id).some((item) => (item.markers || [item.marker]).includes("booked")) ? "Booked times in Must-do are fixed. Other times here are pacing windows. Move only the pacing windows." : "These times are pacing windows, not reservations. Move them around tickets, transport, weather, and energy."}</p>
+      <p class="timeline-note">${hasBookedTime ? "Booked times in this plan are fixed. Other times here are pacing windows. Move only the pacing windows." : "These times are pacing windows, not reservations. Move them around tickets, transport, weather, and energy."}</p>
     </section>
     ${context.evening ? `<section class="context-block evening-flex-block">
       <h4>Evening Flexibility</h4>
@@ -1797,19 +1797,20 @@ function makeMainGoalCard(day) {
 function makeDayFrontPage(day) {
   const section = document.createElement("section");
   section.className = "day-front-page";
-  section.insertAdjacentHTML("beforeend", askGrokButton(day.id));
   if (day.id === "day21") {
     const airport = document.createElement("section");
     airport.className = "today-card airport-tonight";
     airport.innerHTML = `<h3>Airport tonight</h3>${renderGuideHtml(AIRPORT_TONIGHT_NOTE)}`;
     section.appendChild(airport);
   }
-  section.appendChild(renderMustDoBlock(day));
   const hero = document.createElement("div");
   hero.className = "plan-photo";
   section.appendChild(hero);
   populatePlanPhoto(day, hero);
   section.appendChild(dailyGuide(day));
+  section.insertAdjacentHTML("beforeend", askGrokButton(day.id));
+  const openItemsRow = renderDayOpenItems(day);
+  if (openItemsRow) section.appendChild(openItemsRow);
   return section;
 }
 
@@ -2529,6 +2530,12 @@ function copyTextToClipboard(text) {
 }
 
 document.addEventListener("click", (event) => {
+  const openDay = event.target.closest?.("button[data-open-day]");
+  if (openDay) {
+    const found = findDay(openDay.dataset.openDay);
+    if (found) showDay(found.day);
+    return;
+  }
   const ask = event.target.closest?.("button[data-ask-day]");
   if (ask) {
     const found = findDay(ask.dataset.askDay);
@@ -2621,89 +2628,136 @@ function openMustDos(dayId) {
   return mustDoItems(dayId).filter(itemIsOpen);
 }
 
-function allOpenConfirmations() {
-  const rows = [];
+function openItemNoteKey(detail) {
+  return String(detail || "").replace(/\s+/g, " ").trim();
+}
+
+function openItems() {
+  const items = [];
+  const byNote = new Map();
+  const add = (item) => {
+    const noteKey = openItemNoteKey(item.detail);
+    const existing = noteKey ? byNote.get(noteKey) : null;
+    if (existing) {
+      existing.dayIds = [...new Set([...existing.dayIds, ...(item.dayIds || [])])];
+      return existing;
+    }
+    const row = {
+      id: item.id,
+      group: item.group,
+      label: item.label,
+      when: item.when || "",
+      detail: item.detail,
+      dayIds: [...new Set(item.dayIds || [])]
+    };
+    items.push(row);
+    if (noteKey) byNote.set(noteKey, row);
+    return row;
+  };
+  RESERVATION_COUNTDOWN.forEach((item) => {
+    if (item.attention !== "not-booked" && item.attention !== "needs-confirmation") return;
+    add({
+      id: item.id,
+      group: item.attention === "not-booked" ? "to-book" : "awaiting",
+      label: item.name,
+      when: item.target,
+      detail: item.note,
+      dayIds: COUNTDOWN_DAY_IDS[item.id] || []
+    });
+  });
   Object.values(tripData).forEach((city) => {
     city.days.forEach((day) => {
-      openMustDos(day.id).forEach((item) => {
-        rows.push({ ...item, scope: `${day.short} · ${day.title.replace(/^Day \d+ - /, "")}` });
+      mustDoItems(day.id).forEach((item) => {
+        const markers = item.markers || [item.marker];
+        const toBook = markers.includes("not-booked");
+        const awaiting = markers.includes("needs-confirmation") || markers.includes("decision");
+        if (!toBook && !awaiting) return;
+        add({
+          id: item.id,
+          group: toBook ? "to-book" : "awaiting",
+          label: item.label,
+          when: day.short,
+          detail: item.detail,
+          dayIds: [day.id]
+        });
       });
     });
   });
-  TRIP_OPEN_ITEMS.forEach((item) => rows.push({ ...item, markers: [item.marker] }));
-  return rows;
+  TRIP_OPEN_ITEMS.forEach((item, index) => {
+    add({
+      id: item.id || `trip-open-${index}`,
+      group: item.marker === "not-booked" ? "to-book" : "awaiting",
+      label: item.label,
+      when: item.scope,
+      detail: item.detail,
+      dayIds: item.dayIds || []
+    });
+  });
+  return items;
 }
 
-function dayAttentionStatus(day) {
-  const markers = new Set(openMustDos(day.id).flatMap((item) => item.markers || [item.marker]));
-  const statuses = roadmapGoals.filter((goal) => goal.days.includes(day.id)).map(roadmapStatus);
-  if (markers.has("not-booked")) statuses.push("Needs Booking");
-  if (markers.has("decision")) statuses.push("Decision needed");
-  if (markers.has("needs-confirmation")) statuses.push("Needs Confirmation");
-  const priority = ["Needs Booking", "Decision needed", "Needs Confirmation", "Needs Route Checks", "Needs Schedule Check", "Needs Name", "Conditional", "Ready", "Completed"];
-  return priority.find((candidate) => statuses.includes(candidate)) || "Ready";
-}
-
-function renderMustDoBlock(day) {
-  const items = mustDoItems(day.id).filter((item) => showArchive || item.marker !== "done");
-  const section = document.createElement("section");
-  section.className = "must-do-block";
-  const status = dayAttentionStatus(day);
-  section.innerHTML = `
-    <div class="must-do-heading">
-      <div>
-        <p class="label">Do not skip</p>
-        <h3>Must-do</h3>
-      </div>
-      <span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${escapeHtml(status)}</span>
-    </div>
-    <ul class="must-do-list">
+function renderDayOpenItems(day) {
+  const items = openMustDos(day.id);
+  if (!items.length) return null;
+  const details = document.createElement("details");
+  details.className = "day-open-items";
+  details.innerHTML = `
+    <summary>Open items for this day (${items.length})</summary>
+    <ul>
       ${items.map((item) => `
-        <li class="must-do-item is-${item.marker}">
-          <div class="must-do-item-top">
-            <strong>${escapeHtml(item.label)}</strong>
-            <span class="must-do-flags">${(item.markers || [item.marker]).filter((marker) => marker !== "info").map(attentionFlag).join("")}</span>
-          </div>
+        <li>
+          <strong>${escapeHtml(item.label)}</strong>
           <p>${collapsedNoteHtml(item.detail, "Details")}</p>
         </li>
       `).join("")}
     </ul>
   `;
-  return section;
+  return details;
+}
+
+function openItemDayButtons(dayIds) {
+  return dayIds.map((dayId) => {
+    const found = findDay(dayId);
+    if (!found) return "";
+    return `<button type="button" class="open-item-day" data-open-day="${escapeHtml(dayId)}">${escapeHtml(found.day.short)}</button>`;
+  }).join("");
 }
 
 function renderOpenConfirmations() {
   const list = document.querySelector("#openConfirmationsList");
   const intro = document.querySelector("#openConfirmationsIntro");
   if (!list) return;
-  const rows = allOpenConfirmations();
+  const items = openItems();
   if (intro) {
-    intro.innerHTML = rows.length
-      ? collapsedNoteHtml(`${rows.length} items are still open. A bracket means the fact is unknown. Do not guess a train, a shop, or a confirmation number.`, "More")
+    intro.textContent = items.length
+      ? "To book and awaiting confirmation are listed once. Open the day for that item's details."
       : "Nothing on this list is still open.";
   }
-  const groups = [];
-  rows.forEach((row) => {
-    const last = groups.at(-1);
-    if (!last || last.scope !== row.scope) groups.push({ scope: row.scope, items: [row] });
-    else last.items.push(row);
-  });
-  list.innerHTML = groups.map((group) => `
-    <li class="open-confirmation-group">
-      <h3>${escapeHtml(group.scope)}</h3>
-      <ul>
-        ${group.items.map((item) => `
-          <li>
-            <div class="must-do-item-top">
-              <strong>${escapeHtml(item.label)}</strong>
-              ${(item.markers || [item.marker]).filter((marker) => marker !== "info").map(attentionFlag).join("")}
-            </div>
-            <p>${collapsedNoteHtml(item.detail, "Details")}</p>
-          </li>
-        `).join("")}
-      </ul>
-    </li>
-  `).join("");
+  const groups = [
+    ["to-book", "To book"],
+    ["awaiting", "Awaiting confirmation"]
+  ];
+  list.innerHTML = groups.map(([groupId, title]) => {
+    const rows = items.filter((item) => item.group === groupId);
+    if (!rows.length) return "";
+    return `
+      <li class="open-confirmation-group">
+        <h3>${title}</h3>
+        <ul>
+          ${rows.map((item) => `
+            <li>
+              <div class="must-do-item-top">
+                <strong>${escapeHtml(item.label)}</strong>
+                ${openItemDayButtons(item.dayIds)}
+              </div>
+              <p class="ticket-meta">${escapeHtml(item.when)}</p>
+              <p>${collapsedNoteHtml(item.detail, "Details")}</p>
+            </li>
+          `).join("")}
+        </ul>
+      </li>
+    `;
+  }).join("");
 }
 
 function hotelDistanceLine(place, cityId) {
@@ -4593,6 +4647,12 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
     requestAnimationFrame(() => carousel.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }));
   }
   let pageButtons = [];
+  const pager = document.createElement("div");
+  pager.className = carouselId === "overview" ? "overview-page-chips" : "day-page-chips";
+  pager.setAttribute("role", "tablist");
+  pager.setAttribute("aria-label", carouselId === "overview" ? "Overview pages" : "Day pages");
+  let paging = false;
+  let settleTimer;
   function updateControls() {
     const previousIndex = (currentIndex - 1 + windows.length) % windows.length;
     const nextIndex = (currentIndex + 1) % windows.length;
@@ -4607,20 +4667,36 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
       button.setAttribute("aria-selected", String(index === currentIndex));
     });
     windows.forEach((window, index) => window.classList.toggle("is-active", index === currentIndex));
+    const pageButton = pageButtons[currentIndex];
+    if (pageButton && pager.scrollWidth > pager.clientWidth + 4) {
+      const left = pageButton.offsetLeft;
+      const right = left + pageButton.offsetWidth;
+      if (left < pager.scrollLeft) pager.scrollTo({ left: Math.max(0, left - 8), behavior: "auto" });
+      else if (right > pager.scrollLeft + pager.clientWidth) pager.scrollTo({ left: right - pager.clientWidth + 8, behavior: "auto" });
+    }
   }
   function goTo(index, behavior = "smooth") {
     const previousIndex = currentIndex;
     currentIndex = Math.max(0, Math.min(index, maxIndex));
+    paging = true;
+    clearTimeout(settleTimer);
     viewport.scrollTo({ left: windowLeft(currentIndex), behavior });
     state[storageGroup] = state[storageGroup] || {};
     state[storageGroup][carouselId] = currentIndex;
     saveState();
     updateControls();
     if (previousIndex !== currentIndex) bringWindowToTop(currentIndex);
+    settleTimer = setTimeout(() => {
+      paging = false;
+      const left = windowLeft(currentIndex);
+      if (Math.abs(viewport.scrollLeft - left) > 2) viewport.scrollTo({ left, behavior: "auto" });
+    }, behavior === "auto" ? 60 : 420);
   }
   viewport.addEventListener("scroll", () => {
+    if (paging) return;
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(() => {
+      if (paging) return;
       const nextIndex = closestWindowIndex();
       if (nextIndex !== currentIndex) {
         currentIndex = Math.max(0, Math.min(nextIndex, maxIndex));
@@ -4659,36 +4735,35 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   previousButton.addEventListener("click", () => goTo((currentIndex - 1 + windows.length) % windows.length));
   nextButton.addEventListener("click", () => goTo((currentIndex + 1) % windows.length));
 
+  pageButtons = labels.map((label, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = carouselId === "overview" ? "overview-page-chip" : "day-page-chip";
+    button.setAttribute("role", "tab");
+    button.textContent = label;
+    button.addEventListener("click", () => goTo(index));
+    pager.appendChild(button);
+    return button;
+  });
+
   if (carouselId === "overview") {
     const navigation = document.createElement("nav");
     navigation.className = "overview-carousel-navigation";
     navigation.setAttribute("aria-label", "Overview pages");
-    const pager = document.createElement("div");
-    pager.className = "overview-page-chips";
-    pager.setAttribute("role", "tablist");
-    pageButtons = labels.map((label, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "overview-page-chip";
-      button.textContent = label;
-      button.addEventListener("click", () => goTo(index));
-      pager.appendChild(button);
-      return button;
-    });
     navigation.append(previousButton, nextButton);
     carousel.classList.add("has-top-navigation", "is-paged");
     carousel.classList.remove("has-side-navigation");
     carousel.append(pager, navigation, viewport);
   } else {
-    carousel.append(previousButton, viewport, nextButton);
+    carousel.append(pager, previousButton, viewport, nextButton);
   }
   updateControls();
   requestAnimationFrame(() => goTo(currentIndex, "auto"));
   return carousel;
 }
 
-function renderDay(day) {
-  dayPanel.innerHTML = `
+function mountDayView(host, day) {
+  host.innerHTML = `
     <div class="day-title">
       <p>${day.short}</p>
       <h2>${day.title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
@@ -4696,7 +4771,11 @@ function renderDay(day) {
     </div>
   `;
   const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
-  dayPanel.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Photos"]));
+  host.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Photos"]));
+}
+
+function renderDay(day) {
+  mountDayView(dayPanel, day);
 }
 
 function markScrollableRails() {
@@ -4809,11 +4888,18 @@ function daysUntilTrip() {
 const COUNTDOWN_DAY_IDS = {
   "himeji-tickets": ["day11"],
   "romancecar-out": ["day17"],
+  "romancecar-back": ["day20"],
   teamlab: ["day21"],
   "setsugetsuka-record": ["day17", "day18", "day19"],
   kyoya: ["day09"],
-  "koko-return": ["day14", "day15", "day16", "day17", "day20", "day21"]
+  "koko-return": ["day14", "day15", "day16", "day17", "day20", "day21"],
+  "shinkansen-oct24": ["day02"],
+  "shinkansen-nov2": ["day11"],
+  "shinkansen-nov5": ["day14"],
+  "flight-locators": ["day02"]
 };
+
+const TICKET_JOURNEY_IDS = new Set(["flight-locators", "shinkansen-oct24", "shinkansen-nov2", "shinkansen-nov5", "romancecar-back"]);
 
 function noteMapUrl(text) {
   const match = String(text || "").match(/\{\{link:(https:\/\/www\.google\.com\/maps\/search\/\?[^|}]+)\|/);
@@ -4869,36 +4955,6 @@ function walletCards() {
   return cards;
 }
 
-function stillToBookRows() {
-  const rows = [];
-  const seen = new Set();
-  const add = (label, when, detail) => {
-    const key = label.toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
-    rows.push({ label, when, detail: summaryParts(detail).lead });
-  };
-  RESERVATION_COUNTDOWN.forEach((item) => {
-    if (item.attention === "not-booked") add(item.name, item.target, item.note);
-  });
-  allOpenConfirmations().forEach((item) => {
-    if (!(item.markers || [item.marker]).includes("not-booked")) return;
-    add(item.label, item.scope || "", item.detail);
-  });
-  return rows;
-}
-
-function nextTimelineRows(day, phase) {
-  const timeline = dayContext[day.id]?.timeline || [];
-  if (phase !== "today") return timeline.slice(0, 3);
-  const now = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date());
-  const upcoming = timeline.filter(([time]) => {
-    const start = (String(time).match(/(\d{1,2}:\d{2})/) || [])[1];
-    return !start || start >= now;
-  });
-  return (upcoming.length ? upcoming : timeline.slice(-3)).slice(0, 3);
-}
-
 function askGrokButton(dayId) {
   return `<button type="button" class="ask-grok" data-ask-day="${escapeHtml(dayId)}">Ask Grok Bot</button>`;
 }
@@ -4941,47 +4997,53 @@ function showGrokToast() {
 }
 
 function ticketCardHtml(card) {
-  const copies = card.codes.map((code) => copyCodeButton(code)).join(" ");
+  const copies = (card.codes || []).map((code) => copyCodeButton(code)).join(" ");
+  const map = card.map ? ` <a class="guide-link" href="${escapeHtml(card.map)}" target="_blank" rel="noopener noreferrer">Open the map</a>` : "";
+  const status = card.status ? `<p class="ticket-meta">${escapeHtml(card.status)}</p>` : "";
   return `<article class="ticket-card">
     <h3>${escapeHtml(card.name)}</h3>
     <p class="ticket-meta">${escapeHtml(card.when)}${card.party ? ` · ${escapeHtml(card.party)}` : ""}</p>
-    <div class="ticket-links">${copies || "<span>No confirmation number yet.</span>"} <a class="guide-link" href="${escapeHtml(card.map)}" target="_blank" rel="noopener noreferrer">Open the map</a></div>
+    ${status}
+    <div class="ticket-links">${copies || "<span>No confirmation number yet.</span>"}${map}</div>
     ${collapsedNoteHtml(card.note, "More")}
   </article>`;
 }
 
+function unbookedJourneyCards() {
+  const booked = new Set(walletCards().map((card) => card.id));
+  return openItems().filter((item) => TICKET_JOURNEY_IDS.has(item.id) && !booked.has(item.id)).map((item) => ({
+    id: item.id,
+    name: item.label,
+    when: item.when,
+    party: "",
+    codes: noteCopyCodes(item.detail),
+    note: item.detail,
+    map: noteMapUrl(item.detail),
+    status: item.group === "to-book" ? "Not booked" : "Awaiting confirmation"
+  }));
+}
+
 function renderTickets() {
   if (!ticketsPanel) return;
-  const cards = walletCards();
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Booked only</p><h2>Tickets</h2></div><p class="helper-copy">Each card is one booked item. Open More for the full note.</p>${cards.map(ticketCardHtml).join("")}`;
+  const cards = [...walletCards(), ...unbookedJourneyCards()];
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Tickets</h2></div><p class="helper-copy">Booking references and travel documents are here. An unbooked journey shows Not booked.</p>${cards.map(ticketCardHtml).join("")}`;
 }
 
 function renderToday() {
   if (!todayPanel) return;
   const selected = landingSelection();
-  const { day, cityId, cityName, phase } = selected;
-  const hotel = STAY_HOTEL_BY_DAY[day.id] || "";
-  const path = dayGoals[day.id]?.clearPath || "";
-  const upcoming = nextTimelineRows(day, phase);
-  const meals = RESTAURANT_BOOKINGS.filter((booking) => booking.dayIds.includes(day.id)).map((booking) => ({ booking, record: reservationRecord(booking) })).filter(({ record }) => record.status === "booked" || record.status === "chosen" || record.status === "walk_in");
-  const ticketMatches = walletCards().filter((card) => card.dayIds.includes(day.id) && !meals.some(({ booking }) => booking.name === card.name || card.codes.some((code) => (booking.why || "").includes(code))));
-  const countdown = phase === "before" ? daysUntilTrip() : 0;
-  const still = phase === "before" ? stillToBookRows() : [];
-  todayPanel.innerHTML = `
-    <article class="today-card">
-      <p class="today-kicker">${phase === "before" ? `The trip starts in ${countdown} days. First plan:` : phase === "after" ? "The trip has ended. Last plan:" : "Today"}</p>
-      <h2>${escapeHtml(day.title)}</h2>
-      <p class="ticket-meta">${escapeHtml(day.short)} · ${escapeHtml(cityName)}</p>
-      <p class="today-path">${escapeHtml(path)}</p>
-      <p class="ticket-meta">Hotel: ${escapeHtml(hotel)}</p>
-      <ol class="today-timeline">${upcoming.map(([time, activity]) => `<li><strong>${escapeHtml(time)}</strong> ${renderGuideHtml(activity)}</li>`).join("")}</ol>
-      ${meals.map(({ booking }) => `<section><h3>${escapeHtml(booking.name)}</h3><p class="ticket-meta">${escapeHtml(booking.slot)} · ${defaultPartySize(booking)} people</p>${collapsedNoteHtml(booking.why, "Details")}</section>`).join("")}
-      ${ticketMatches.map((card) => `<section><h3>${escapeHtml(card.name)}</h3><p class="ticket-meta">${escapeHtml(card.when)}</p><div class="ticket-links">${card.codes.map((code) => copyCodeButton(code)).join(" ")}</div></section>`).join("")}
-      ${askGrokButton(day.id)}
-    </article>
-    ${day.id === "day21" ? `<section class="today-card"><h2>Airport tonight</h2>${renderGuideHtml(AIRPORT_TONIGHT_NOTE)}</section>` : ""}
-    ${still.length ? `<section class="today-card"><h2>Still to book</h2><ul class="today-timeline">${still.map((row) => `<li><strong>${escapeHtml(row.label)}</strong> ${escapeHtml(row.when)}. ${highlightPlaceholders(row.detail)}</li>`).join("")}</ul></section>` : ""}
-  `;
+  const { day, cityId, phase } = selected;
+  todayPanel.innerHTML = "";
+  if (phase === "before") {
+    const days = daysUntilTrip();
+    const line = document.createElement("p");
+    line.className = "today-countdown";
+    line.textContent = days === 1 ? "The trip starts in 1 day." : `The trip starts in ${days} days.`;
+    todayPanel.appendChild(line);
+  }
+  const host = document.createElement("div");
+  todayPanel.appendChild(host);
+  mountDayView(host, day);
   todayPanel.dataset.cityId = cityId;
 }
 
