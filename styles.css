@@ -4493,6 +4493,174 @@ body[data-section="overview"] .day-rail-wrap {
   margin-bottom: 8px;
 }
 
+.today-calendar-jump {
+  margin: 0 0 8px;
+}
+
+.calendar-back,
+.today-calendar-link {
+  min-height: 40px;
+  padding: 0 2px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.calendar-back {
+  margin: 0 0 8px;
+}
+
+.trip-calendar-board {
+  display: grid;
+  gap: 4px;
+}
+
+.trip-calendar-weekdays,
+.trip-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.trip-calendar-weekdays span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+.trip-calendar-month {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 850;
+}
+
+.trip-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 48px;
+  padding: 2px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+}
+
+button.trip-date {
+  cursor: pointer;
+}
+
+.trip-date-num {
+  font-size: 0.95rem;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.trip-date-city {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  max-width: 100%;
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.trip-date.is-selected .trip-date-city {
+  color: inherit;
+}
+
+.trip-date-city i,
+.trip-calendar-legend i {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--city, currentColor);
+}
+
+.trip-date[data-city="osaka"],
+.trip-calendar-legend i[data-city="osaka"] { --city: #d75f16; }
+
+.trip-date[data-city="kyoto"],
+.trip-calendar-legend i[data-city="kyoto"] { --city: #c7437a; }
+
+.trip-date[data-city="hiroshima"],
+.trip-calendar-legend i[data-city="hiroshima"] { --city: #285b96; }
+
+.trip-date[data-city="tokyo"],
+.trip-calendar-legend i[data-city="tokyo"] { --city: #bc002d; }
+
+.trip-date[data-city="hakone"],
+.trip-calendar-legend i[data-city="hakone"] { --city: #2f7d4a; }
+
+.trip-date.is-outside {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.trip-date.is-start {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--gold) 24%, var(--card));
+}
+
+.trip-date.is-today {
+  box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+.trip-date.is-selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.trip-date.is-today.is-selected {
+  box-shadow: inset 0 0 0 3px var(--gold);
+}
+
+.trip-date:focus-visible,
+.calendar-back:focus-visible,
+.today-calendar-link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.trip-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.trip-calendar-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .today-timeline {
   margin: 0;
   padding-left: 1.1rem;
