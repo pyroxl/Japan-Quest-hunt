@@ -5302,18 +5302,6 @@ function renderToday() {
     line.textContent = days === 1 ? "The trip starts in 1 day." : `The trip starts in ${days} days.`;
     todayPanel.appendChild(line);
   }
-  const jump = document.createElement("p");
-  jump.className = "today-calendar-jump";
-  const calendarButton = document.createElement("button");
-  calendarButton.type = "button";
-  calendarButton.className = "today-calendar-link";
-  calendarButton.textContent = "Calendar";
-  calendarButton.addEventListener("click", () => {
-    daysShowsDay = false;
-    showSection("days");
-  });
-  jump.appendChild(calendarButton);
-  todayPanel.appendChild(jump);
   const host = document.createElement("div");
   todayPanel.appendChild(host);
   mountDayView(host, day);
