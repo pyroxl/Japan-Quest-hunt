@@ -124,7 +124,150 @@ select {
   width: min(100%, 980px);
   min-height: 100svh;
   margin: 0 auto;
-  padding: max(18px, env(safe-area-inset-top)) 14px calc(128px + env(safe-area-inset-bottom));
+  padding: 0 14px calc(128px + env(safe-area-inset-bottom));
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: calc(48px + env(safe-area-inset-top));
+  margin: 0 -14px 10px;
+  padding: env(safe-area-inset-top) 8px 0 14px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.app-header h1 {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.05rem;
+  font-weight: 850;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.menu-button:focus-visible,
+.app-menu button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+.menu-icon {
+  display: grid;
+  gap: 5px;
+  width: 18px;
+}
+
+.menu-icon span {
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.app-menu {
+  position: absolute;
+  top: 100%;
+  right: 8px;
+  z-index: 41;
+  display: grid;
+  gap: 4px;
+  width: min(260px, calc(100vw - 16px));
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.app-menu[hidden] {
+  display: none;
+}
+
+.app-menu nav {
+  display: grid;
+  gap: 4px;
+}
+
+.app-menu button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.app-menu button[aria-current="page"] {
+  background: var(--green);
+  color: #fff;
+}
+
+.app-menu hr {
+  width: 100%;
+  margin: 4px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.app-menu #themeToggle[aria-pressed="true"],
+.app-menu #archiveToggle[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--green) 18%, var(--card));
+}
+
+#filterStash {
+  display: none;
+}
+
+.screen-filters {
+  display: grid;
+  gap: 6px;
+  margin: 2px 0 12px;
+}
+
+.screen-filters:empty {
+  display: none;
+}
+
+.screen-filters .rail-wrap {
+  margin: 0;
+}
+
+.screen-filters .city-rail,
+.screen-filters .day-rail {
+  padding: 0 2px 2px 0;
+}
+
+.screen-filters .city-chip,
+.screen-filters .chip {
+  min-height: 36px;
+  padding: 6px 12px;
 }
 
 .hero {
