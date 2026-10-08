@@ -8,7 +8,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v169">
+    <link rel="stylesheet" href="styles.css?v170">
   </head>
   <body>
     <div class="app-shell">
@@ -35,14 +35,25 @@
       </div>
 
       <div class="rail-wrap day-rail-wrap">
-        <nav class="day-rail" aria-label="Trip days">
-          <button class="chip active" data-view="overview">Overview</button>
-        </nav>
+        <nav class="day-rail" aria-label="Trip days"></nav>
         <span class="rail-hint" aria-hidden="true">›</span>
       </div>
 
+      <nav class="section-tabs" aria-label="Main sections">
+        <button type="button" class="section-tab active" data-section="today" aria-pressed="true">Today</button>
+        <button type="button" class="section-tab" data-section="days" aria-pressed="false">Days</button>
+        <button type="button" class="section-tab" data-section="tickets" aria-pressed="false">Tickets</button>
+        <button type="button" class="section-tab" data-section="food" aria-pressed="false">Food</button>
+        <button type="button" class="section-tab" data-section="overview" aria-pressed="false">Overview</button>
+        <button type="button" class="section-tab archive-toggle" id="archiveToggle" aria-pressed="false">Show skipped</button>
+      </nav>
+
       <main>
-        <section class="panel overview-panel" id="overviewPanel">
+        <section class="panel today-panel" id="todayPanel" aria-live="polite"></section>
+        <p class="days-hint" id="daysHint">Choose a day above.</p>
+        <section class="panel tickets-panel hidden" id="ticketsPanel" aria-live="polite"></section>
+        <section class="panel food-panel hidden" id="foodPanel"></section>
+        <section class="panel overview-panel hidden" id="overviewPanel">
           <section id="overviewCarouselHost">
             <section class="overview-window" id="calendarView">
               <section class="open-confirmations" id="openConfirmations" aria-labelledby="openConfirmationsTitle">
@@ -176,7 +187,8 @@
                       <span><i class="is-sweet">★</i> Sweets</span>
                     </div>
                   </div>
-                  <div class="city-food-list" id="cityFoodList"></div>
+                  <button type="button" class="food-list-toggle" id="foodListToggle" aria-expanded="false" aria-controls="cityFoodList">Show place list</button>
+                  <div class="city-food-list is-collapsed" id="cityFoodList"></div>
                 </div>
               </section>
             </section>
@@ -199,10 +211,11 @@
       <footer class="bottom-bar">
         <span id="saveStatus">Saved on this phone</span>
       </footer>
+      <p class="grok-toast" id="grokToast" role="status" hidden>Copied, paste it into Grok Bot</p>
     </div>
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v169"></script>
+    <script src="app.js?v170"></script>
   </body>
 </html>

@@ -276,9 +276,13 @@ window.PLACE_COORDINATES = {
     35.682634,
     139.7648012
   ],
-  "KOKO HOTEL Premier Nihonbashi Hamacho": [
-    35.68722,
-    139.78737
+  "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower": [
+    35.68987,
+    139.68344
+  ],
+  "Shimbashi Station": [
+    35.666195,
+    139.758495
   ],
   "Inokashira Park": [
     35.6962563,
