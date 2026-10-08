@@ -2343,6 +2343,15 @@ h3 {
   text-decoration: line-through;
 }
 
+.reservation-countdown-list li.is-booked {
+  opacity: 1;
+}
+
+.reservation-countdown-list li.is-booked .reservation-countdown-pill {
+  color: #14532d;
+  background: color-mix(in srgb, #14532d 12%, var(--card));
+}
+
 .is-urgent .reservation-countdown-pill {
   color: #a51d48;
   background: color-mix(in srgb, var(--rose) 17%, var(--card));
@@ -4021,6 +4030,52 @@ body[data-theme="dark"] .calendar-status.status-conditional {
   border-radius: 4px;
 }
 
+.confirm-code {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0;
+  vertical-align: middle;
+}
+
+.confirm-code-value {
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.copy-code,
+.guide-action,
+.guide-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.guide-action,
+.guide-link {
+  min-width: 44px;
+  background: var(--green);
+  color: #fff;
+}
+
+.copy-code.is-copied {
+  background: #14532d;
+  color: #fff;
+  border-color: #14532d;
+}
+
 .open-confirmations,
 .must-do-block {
   padding: 14px;
@@ -4152,6 +4207,25 @@ body[data-theme="dark"] .must-do-block {
 body[data-theme="dark"] .confirm-placeholder {
   background: #78350f;
   color: #fff7ed;
+}
+
+body[data-theme="dark"] .copy-code {
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+body[data-theme="dark"] .guide-action,
+body[data-theme="dark"] .guide-link {
+  background: var(--green);
+  color: #1a1014;
+}
+
+body[data-theme="dark"] .copy-code.is-copied,
+body[data-theme="dark"] .reservation-countdown-list li.is-booked .reservation-countdown-pill {
+  background: #14532d;
+  color: #fff;
+  border-color: #14532d;
 }
 
 body[data-theme="dark"] .must-do-item,
