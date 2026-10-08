@@ -4235,3 +4235,178 @@ body[data-theme="dark"] .overview-page-chip {
   background: var(--card);
   color: var(--ink);
 }
+
+.section-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -14px 12px;
+  padding: 8px 14px;
+  background: color-mix(in srgb, var(--paper) 94%, white);
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--ink) 6%, transparent);
+  scrollbar-width: none;
+}
+
+.section-tab {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.section-tab.active,
+.archive-toggle[aria-pressed="true"] {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.days-hint {
+  display: none;
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+body[data-section="days"] .days-hint {
+  display: block;
+}
+
+body[data-section="days"]:has(#dayPanel:not(.hidden)) .days-hint {
+  display: none;
+}
+
+body[data-section="today"] .city-rail-wrap,
+body[data-section="today"] .day-rail-wrap,
+body[data-section="tickets"] .city-rail-wrap,
+body[data-section="tickets"] .day-rail-wrap,
+body[data-section="food"] .day-rail-wrap,
+body[data-section="overview"] .day-rail-wrap {
+  display: none;
+}
+
+.today-card,
+.ticket-card {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.today-card h2,
+.ticket-card h3,
+.today-path {
+  margin-bottom: 0;
+}
+
+.today-kicker,
+.ticket-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.today-timeline {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.today-timeline li {
+  margin: 0 0 6px;
+}
+
+.ask-grok,
+.food-list-toggle {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.ask-grok {
+  width: 100%;
+}
+
+.ticket-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.note-more {
+  margin-top: 4px;
+}
+
+.note-more summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--green);
+  font-weight: 850;
+}
+
+.note-rest {
+  margin-top: 4px;
+}
+
+.city-food-list.is-collapsed {
+  display: none;
+}
+
+.grok-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  z-index: 40;
+  transform: translateX(-50%);
+  max-width: min(92vw, 360px);
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.grok-toast[hidden] {
+  display: none;
+}
+
+.day-carousel.is-paged .day-window:not(.is-active) {
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+@media (max-width: 700px) {
+  h1 {
+    font-size: 1.7rem;
+  }
+
+  .hero {
+    gap: 8px;
+    padding: 4px 4px 8px;
+  }
+}
