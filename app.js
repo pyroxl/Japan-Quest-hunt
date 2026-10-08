@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v175";
+const APP_VERSION = "japan-quest-v176";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -1435,6 +1435,41 @@ async function renderPhotosForTask(taskId, container, onPhotosChange) {
   if (onPhotosChange) await onPhotosChange();
 }
 
+function galleryAllowsMultiple(task) {
+  return !task?.slot || task.slot === "extra" || task.slot === "quest";
+}
+
+function makePhotoPickers({ id, multiple = false, onChange }) {
+  const pickers = document.createElement("div");
+  pickers.className = "photo-pickers";
+  const gallery = document.createElement("input");
+  const camera = document.createElement("input");
+  const galleryLabel = document.createElement("label");
+  const cameraLabel = document.createElement("label");
+  gallery.id = `${id}.gallery`;
+  gallery.type = "file";
+  gallery.accept = "image/*";
+  gallery.multiple = Boolean(multiple);
+  camera.id = `${id}.camera`;
+  camera.type = "file";
+  camera.accept = "image/*";
+  camera.setAttribute("capture", "environment");
+  galleryLabel.className = "photo-button";
+  galleryLabel.htmlFor = gallery.id;
+  galleryLabel.textContent = "Choose from gallery";
+  cameraLabel.className = "photo-button";
+  cameraLabel.htmlFor = camera.id;
+  cameraLabel.textContent = "Take photo";
+  [gallery, camera].forEach((input) => {
+    input.addEventListener("change", async (event) => {
+      await onChange(event.target.files);
+      event.target.value = "";
+    });
+  });
+  pickers.append(galleryLabel, cameraLabel, gallery, camera);
+  return pickers;
+}
+
 async function handlePhotoFiles(files, task, container) {
   for (const file of Array.from(files || [])) {
     if (!file.type.startsWith("image/")) continue;
@@ -1468,27 +1503,19 @@ async function handlePhotoFiles(files, task, container) {
   if (task.id.endsWith(".photo.thumbnail") || task.id.endsWith(".photo.capstone")) renderCalendar();
 }
 
-function makePhotoControls(task, buttonText = "Add Photo", onPhotosChange) {
+function makePhotoControls(task, _buttonText = "Add Photo", onPhotosChange) {
   const controls = document.createElement("div");
-  const button = document.createElement("label");
-  const fileInput = document.createElement("input");
   const photos = document.createElement("div");
-  const photoId = `${task.id}.photo`;
   controls.className = "photo-controls";
-  button.className = "photo-button";
-  button.htmlFor = photoId;
-  button.textContent = buttonText;
-  fileInput.id = photoId;
-  fileInput.type = "file";
-  fileInput.accept = "image/*";
-  fileInput.multiple = true;
   photos.className = "quest-photos";
-  fileInput.addEventListener("change", async (event) => {
-    await handlePhotoFiles(event.target.files, task, photos);
-    event.target.value = "";
-    if (onPhotosChange) await onPhotosChange();
-  });
-  controls.append(button, fileInput);
+  controls.appendChild(makePhotoPickers({
+    id: task.id,
+    multiple: galleryAllowsMultiple(task),
+    onChange: async (files) => {
+      await handlePhotoFiles(files, task, photos);
+      if (onPhotosChange) await onPhotosChange();
+    }
+  }));
   renderPhotosForTask(task.id, photos, onPhotosChange);
   return { controls, photos };
 }
@@ -1919,7 +1946,7 @@ async function buildSnackLeagueScorecard(day, refresh) {
       cityId: findDay(day.id)?.cityId || state.activeCity
     };
     if (photos[0]) {
-      photoWrap.innerHTML = `<img src="${photos[0].dataUrl}" alt="${escapeHtml(title)}"><button type="button">Replace photo</button>`;
+      photoWrap.innerHTML = `<img src="${photos[0].dataUrl}" alt="${escapeHtml(title)}">`;
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "melon-remove";
@@ -1930,22 +1957,18 @@ async function buildSnackLeagueScorecard(day, refresh) {
         renderAlbum();
       });
       photoWrap.appendChild(remove);
-    } else {
-      photoWrap.innerHTML = `<button type="button">Add required photo</button>`;
     }
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.hidden = true;
-    photoWrap.querySelector("button").addEventListener("click", () => input.click());
-    input.addEventListener("change", async () => {
-      if (!input.files?.[0]) return;
-      await Promise.all(photos.map((photo) => removePhoto(photo.id)));
-      await handlePhotoFiles(input.files, photoTask, document.createElement("div"));
-      refresh();
-      renderAlbum();
-    });
-    photoWrap.appendChild(input);
+    photoWrap.appendChild(makePhotoPickers({
+      id: photoTask.id,
+      multiple: false,
+      onChange: async (files) => {
+        if (!files?.[0]) return;
+        await Promise.all(photos.map((photo) => removePhoto(photo.id)));
+        await handlePhotoFiles(files, photoTask, document.createElement("div"));
+        refresh();
+        renderAlbum();
+      }
+    }));
 
     const fields = document.createElement("div");
     fields.className = "melon-fields";
@@ -2020,8 +2043,9 @@ async function renderMelonPassport() {
     card.innerHTML = `<div class="melon-stamp"><span>${complete ? "✓" : index + 1}</span></div><h3>${title}</h3><p>${description}</p>`;
     const photoWrap = document.createElement("div");
     photoWrap.className = "melon-photo";
+    const melonTask = { id: `melon.${id}`, text: title, slot: "melon", dayTitle: "Melon Bread Passport" };
     if (photos[0]) {
-      photoWrap.innerHTML = `<img src="${photos[0].dataUrl}" alt="${title}"><button type="button">Replace photo</button>`;
+      photoWrap.innerHTML = `<img src="${photos[0].dataUrl}" alt="${title}">`;
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "melon-remove";
@@ -2032,22 +2056,18 @@ async function renderMelonPassport() {
         renderAlbum();
       });
       photoWrap.appendChild(remove);
-    } else {
-      photoWrap.innerHTML = `<button type="button">Add required photo</button>`;
     }
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.hidden = true;
-    photoWrap.querySelector("button").addEventListener("click", () => input.click());
-    input.addEventListener("change", async () => {
-      if (!input.files?.[0]) return;
-      await Promise.all(photos.map((photo) => removePhoto(photo.id)));
-      await handlePhotoFiles(input.files, { id: `melon.${id}`, text: title, slot: "melon", dayTitle: "Melon Bread Passport" }, document.createElement("div"));
-      renderMelonPassport();
-      renderAlbum();
-    });
-    photoWrap.appendChild(input);
+    photoWrap.appendChild(makePhotoPickers({
+      id: melonTask.id,
+      multiple: false,
+      onChange: async (files) => {
+        if (!files?.[0]) return;
+        await Promise.all(photos.map((photo) => removePhoto(photo.id)));
+        await handlePhotoFiles(files, melonTask, document.createElement("div"));
+        renderMelonPassport();
+        renderAlbum();
+      }
+    }));
     const fields = document.createElement("div");
     fields.className = "melon-fields";
     fields.innerHTML = `<label>Mai's score <select><option value="">Choose 1–10</option>${Array.from({ length: 10 }, (_, scoreIndex) => `<option value="${scoreIndex + 1}" ${Number(saved.score) === scoreIndex + 1 ? "selected" : ""}>${scoreIndex + 1}</option>`).join("")}</select></label><label>Verdict <input type="text" maxlength="80" value="${escapeHtml(saved.verdict)}" placeholder="Crispy, fluffy, worth a repeat…"></label>`;
@@ -5567,11 +5587,12 @@ function journalConfigured() {
   return Boolean(String(JOURNAL_ENDPOINT || "").trim());
 }
 
-async function journalPost(payload) {
+async function journalPost(payload, options = {}) {
   const prefs = readJournalPrefs();
   const response = await fetch(JOURNAL_ENDPOINT, {
     method: "POST",
-    body: JSON.stringify({ ...payload, passcode: prefs.passcode })
+    body: JSON.stringify({ ...payload, passcode: prefs.passcode }),
+    keepalive: Boolean(options.keepalive)
   });
   const data = await response.json();
   if (!response.ok || !data.ok) throw new Error(data.error || "Journal sync failed.");
@@ -5653,18 +5674,20 @@ async function flushJournalQueue() {
   }
 }
 
-async function syncJournalNote(dayId) {
+async function syncJournalNote(dayId, options = {}) {
   if (!journalConfigured()) return;
   const prefs = readJournalPrefs();
   if (!prefs.author || !prefs.passcode) return;
+  const text = prefs.notes[dayId] || "";
+  if (!text.trim() && !options.allowEmpty) return;
   const day = findDay(dayId);
   await journalPost({
     action: "saveNote",
     dayId,
     date: day?.day.date || "",
     author: prefs.author,
-    text: prefs.notes[dayId] || ""
-  });
+    text
+  }, options);
   markJournalSynced();
 }
 
@@ -5740,18 +5763,58 @@ function renderFamilyJournal(host, day, record) {
   });
 }
 
+function authorServerNote(record) {
+  const author = readJournalPrefs().author;
+  if (!author) return "";
+  const row = (record?.notes || []).find((note) => note.author === author);
+  return row?.note || "";
+}
+
+function rememberJournalNote(dayId, text) {
+  const next = readJournalPrefs();
+  next.notes[dayId] = text;
+  writeJournalPrefs(next);
+}
+
+function setJournalSyncStatus(host, text) {
+  const line = host.querySelector(".journal-sync-line");
+  if (line) line.textContent = text;
+}
+
+const journalNoteHosts = new Set();
+
+function flushVisibleJournalNotes(options = {}) {
+  journalNoteHosts.forEach((host) => {
+    if (!host.isConnected) {
+      journalNoteHosts.delete(host);
+      return;
+    }
+    if (host.closest(".hidden")) return;
+    void host.__journalNote?.flush(options);
+  });
+}
+
 async function refreshDayJournal(day, host) {
+  const entry = host.__journalNote;
   const cached = await readJournalCache(day.id).catch(() => null);
-  if (host.isConnected && cached) renderFamilyJournal(host, day, cached);
-  if (!journalConfigured() || !readJournalPrefs().passcode) return;
+  if (host.isConnected && cached) {
+    renderFamilyJournal(host, day, cached);
+    entry?.applyRemote(authorServerNote(cached), { authoritative: false });
+  }
+  if (!journalConfigured() || !readJournalPrefs().passcode) {
+    entry?.applyRemote("", { failed: true });
+    return;
+  }
   try {
     const data = await journalPost({ action: "list", dayId: day.id });
     const record = { dayId: day.id, notes: data.notes || [], photos: data.photos || [], fetchedAt: new Date().toISOString() };
     await writeJournalCache(record);
     if (host.isConnected) renderFamilyJournal(host, day, record);
+    entry?.applyRemote(authorServerNote(record), { authoritative: true });
     markJournalSynced();
   } catch {
     if (host.isConnected && cached) renderFamilyJournal(host, day, cached);
+    entry?.applyRemote("", { failed: true });
   }
 }
 
@@ -5762,29 +5825,111 @@ function mountDayJournal(host, day) {
     <label class="journal-field">What happened today?
       <textarea class="journal-note" maxlength="4000"></textarea>
     </label>
-    <p class="journal-sync-line"></p>
+    <p class="journal-sync-line" aria-live="polite"></p>
     <div class="family-journal-list"></div>
   `;
   const note = host.querySelector(".journal-note");
   note.value = prefs.notes[day.id] || "";
-  let timer = 0;
-  const saveLocal = () => {
-    const next = readJournalPrefs();
-    next.notes[day.id] = note.value;
-    writeJournalPrefs(next);
-    host.querySelector(".journal-sync-line").textContent = "Saved on this phone.";
+  const entry = {
+    userEdited: false,
+    hydrated: false,
+    serverHadNote: false,
+    blockEmptySync: true,
+    lastSynced: null,
+    timer: 0,
+    applyRemote(remote, options = {}) {
+      if (!host.isConnected) return;
+      if (options.failed) {
+        entry.hydrated = true;
+        entry.blockEmptySync = true;
+        if (note.value.trim()) void entry.flush();
+        else if (!navigator.onLine) setJournalSyncStatus(host, "Will sync when online");
+        return;
+      }
+      if (!options.authoritative) {
+        if (!entry.userEdited && !note.value.trim() && String(remote || "").trim()) {
+          note.value = remote;
+          rememberJournalNote(day.id, remote);
+        }
+        return;
+      }
+      const text = String(remote || "");
+      entry.serverHadNote = Boolean(text.trim());
+      entry.hydrated = true;
+      if (!entry.userEdited && text.trim()) {
+        note.value = text;
+        rememberJournalNote(day.id, text);
+        entry.lastSynced = text;
+        entry.blockEmptySync = true;
+        setJournalSyncStatus(host, "Saved");
+        return;
+      }
+      if (entry.userEdited && !note.value.trim() && text.trim()) {
+        note.value = text;
+        rememberJournalNote(day.id, text);
+        entry.lastSynced = text;
+        entry.userEdited = false;
+        entry.blockEmptySync = true;
+        setJournalSyncStatus(host, "Saved");
+        return;
+      }
+      entry.blockEmptySync = !entry.userEdited || !note.value.trim();
+      entry.lastSynced = entry.userEdited ? null : text;
+      if (!entry.userEdited && !text.trim() && note.value.trim()) {
+        void entry.flush();
+        return;
+      }
+      if (entry.userEdited && note.value.trim() && note.value !== text) {
+        void entry.flush();
+        return;
+      }
+      if (note.value.trim()) setJournalSyncStatus(host, navigator.onLine ? "Saved" : "Will sync when online");
+    },
+    async flush(options = {}) {
+      window.clearTimeout(entry.timer);
+      if (!host.isConnected || !entry.hydrated) return;
+      const text = note.value;
+      rememberJournalNote(day.id, text);
+      if (text === entry.lastSynced) {
+        if (host.isConnected && (text.trim() || entry.lastSynced === "")) setJournalSyncStatus(host, "Saved");
+        return;
+      }
+      if (!text.trim() && entry.blockEmptySync) return;
+      if (!navigator.onLine) {
+        setJournalSyncStatus(host, "Will sync when online");
+        return;
+      }
+      const current = readJournalPrefs();
+      if (!journalConfigured() || !current.author || !current.passcode) {
+        setJournalSyncStatus(host, "Saved");
+        return;
+      }
+      setJournalSyncStatus(host, "Saving…");
+      try {
+        await syncJournalNote(day.id, { keepalive: Boolean(options.keepalive), allowEmpty: text.trim() === "" });
+        entry.lastSynced = text;
+        entry.serverHadNote = Boolean(text.trim());
+        if (host.isConnected) setJournalSyncStatus(host, "Saved");
+      } catch {
+        if (host.isConnected) setJournalSyncStatus(host, "Will sync when online");
+      }
+    }
   };
+  host.__journalNote = entry;
+  journalNoteHosts.add(host);
   note.addEventListener("input", () => {
-    saveLocal();
-    window.clearTimeout(timer);
-    timer = window.setTimeout(() => {
-      syncJournalNote(day.id).then(() => {
-        if (host.isConnected) host.querySelector(".journal-sync-line").textContent = "Saved for the family.";
-      }).catch(() => {
-        if (host.isConnected) host.querySelector(".journal-sync-line").textContent = "Saved on this phone. Sync will retry.";
-      });
-    }, 500);
+    entry.userEdited = true;
+    if (entry.hydrated) entry.blockEmptySync = false;
+    rememberJournalNote(day.id, note.value);
+    window.clearTimeout(entry.timer);
+    if (!navigator.onLine) {
+      setJournalSyncStatus(host, "Will sync when online");
+      return;
+    }
+    setJournalSyncStatus(host, "Saving…");
+    entry.timer = window.setTimeout(() => { void entry.flush(); }, 1500);
   });
+  note.addEventListener("blur", () => { void entry.flush(); });
   refreshDayJournal(day, host);
 }
 
@@ -5941,7 +6086,14 @@ async function downloadAllPhotos() {
 
 function startJournalSync() {
   void flushJournalQueue();
-  window.addEventListener("online", () => { void flushJournalQueue(); });
+  window.addEventListener("online", () => {
+    void flushJournalQueue();
+    flushVisibleJournalNotes();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flushVisibleJournalNotes({ keepalive: true });
+  });
+  window.addEventListener("pagehide", () => flushVisibleJournalNotes({ keepalive: true }));
   window.setInterval(() => { void flushJournalQueue(); }, 3 * 60 * 1000);
 }
 

@@ -3633,12 +3633,29 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
   color: var(--muted);
 }
 
-.photo-controls input {
+.photo-pickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.photo-pickers .photo-button {
+  min-height: 44px;
+  padding: 8px 12px;
+}
+
+.photo-controls input,
+.photo-pickers input {
   position: absolute;
   width: 1px;
   height: 1px;
   opacity: 0;
   pointer-events: none;
+}
+
+.melon-photo .photo-pickers {
+  grid-column: 1 / -1;
 }
 
 .quest-photos,
@@ -4875,6 +4892,12 @@ body[data-theme="dark"] .trip-date.is-today {
   margin: 0;
   color: var(--muted);
   font-size: 0.86rem;
+}
+
+.journal-sync-line {
+  min-height: 1.2em;
+  color: var(--ink);
+  font-weight: 650;
 }
 
 .journal-field {
