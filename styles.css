@@ -124,7 +124,7 @@ select {
   width: min(100%, 980px);
   min-height: 100svh;
   margin: 0 auto;
-  padding: 0 14px calc(128px + env(safe-area-inset-bottom));
+  padding: 0 14px calc(120px + env(safe-area-inset-bottom));
 }
 
 .app-header {
@@ -142,13 +142,53 @@ select {
   border-bottom: 1px solid var(--line);
 }
 
+.header-leading {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.header-day-step {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+}
+
+.header-day-step[hidden] {
+  display: none;
+}
+
+.header-day-step button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.header-day-step button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 .header-calendar {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   min-width: 40px;
   min-height: 40px;
-  max-width: calc(100% - 48px);
+  max-width: calc(100% - 88px);
   margin: 0;
   padding: 0 8px 0 0;
   border: 0;
@@ -192,6 +232,8 @@ select {
 
 .menu-button:focus-visible,
 .header-calendar:focus-visible,
+.header-day-step button:focus-visible,
+.tab-bar button:focus-visible,
 .app-menu button:focus-visible {
   outline: 2px solid var(--green);
   outline-offset: 2px;
@@ -3764,18 +3806,79 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .bottom-bar {
   position: fixed;
   right: 0;
-  bottom: 0;
+  bottom: calc(78px + env(safe-area-inset-bottom));
   left: 0;
+  z-index: 44;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
   width: min(100%, 980px);
   margin: 0 auto;
-  padding: 12px 14px max(12px, env(safe-area-inset-bottom));
+  padding: 2px 14px 0;
+  border-top: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.tab-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 45;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  background: rgba(255, 240, 246, 0.92);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 250, 252, 0.97);
+}
+
+.tab-bar button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 56px;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.tab-bar button svg {
+  width: 26px;
+  height: 26px;
+}
+
+.tab-bar button[aria-current="page"] {
+  background: color-mix(in srgb, var(--rose) 34%, #fff);
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.not-booked-journeys {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.not-booked-journeys h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.not-booked-journeys[hidden] {
+  display: none;
 }
 
 .text-button {

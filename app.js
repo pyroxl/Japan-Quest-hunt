@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v176";
+const APP_VERSION = "japan-quest-v177";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -1869,8 +1869,6 @@ function makeDayFrontPage(day) {
   populatePlanPhoto(day, hero);
   section.appendChild(dailyGuide(day));
   section.insertAdjacentHTML("beforeend", askGrokButton(day.id));
-  const openItemsRow = renderDayOpenItems(day);
-  if (openItemsRow) section.appendChild(openItemsRow);
   return section;
 }
 
@@ -2749,25 +2747,6 @@ function openItems() {
   return items;
 }
 
-function renderDayOpenItems(day) {
-  const items = openMustDos(day.id);
-  if (!items.length) return null;
-  const details = document.createElement("details");
-  details.className = "day-open-items";
-  details.innerHTML = `
-    <summary>Open items for this day (${items.length})</summary>
-    <ul>
-      ${items.map((item) => `
-        <li>
-          <strong>${escapeHtml(item.label)}</strong>
-          <p>${collapsedNoteHtml(item.detail, "Details")}</p>
-        </li>
-      `).join("")}
-    </ul>
-  `;
-  return details;
-}
-
 function openItemDayButtons(dayIds) {
   return dayIds.map((dayId) => {
     const found = findDay(dayId);
@@ -2780,10 +2759,12 @@ function renderOpenConfirmations() {
   const list = document.querySelector("#openConfirmationsList");
   const intro = document.querySelector("#openConfirmationsIntro");
   if (!list) return;
-  const items = openItems();
+  const journeyCards = unbookedJourneyCards().filter((card) => card.status === "Not booked");
+  const journeyIds = new Set(journeyCards.map((card) => card.id));
+  const items = openItems().filter((item) => !journeyIds.has(item.id));
   if (intro) {
-    intro.textContent = items.length
-      ? "To book and awaiting confirmation are listed once. Open the day for that item's details."
+    intro.textContent = items.length || journeyCards.length
+      ? "To book and awaiting confirmation are listed once. Not booked journeys are below. Open the day for that item's details."
       : "Nothing on this list is still open.";
   }
   const groups = [
@@ -2811,6 +2792,12 @@ function renderOpenConfirmations() {
       </li>
     `;
   }).join("");
+  const journeyHost = document.querySelector("#notBookedJourneys");
+  const journeyList = document.querySelector("#notBookedJourneysList");
+  if (journeyHost && journeyList) {
+    journeyHost.hidden = journeyCards.length === 0;
+    journeyList.innerHTML = journeyCards.map(ticketCardHtml).join("");
+  }
 }
 
 function hotelDistanceLine(place, cityId) {
@@ -4827,7 +4814,7 @@ function mountDayView(host, day) {
     </div>
   `;
   const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
-  host.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Photos"]));
+  host.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Journal"]));
 }
 
 function renderDay(day) {
@@ -5093,8 +5080,8 @@ function unbookedJourneyCards() {
 
 function renderTickets() {
   if (!ticketsPanel) return;
-  const cards = [...walletCards(), ...unbookedJourneyCards()];
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Tickets</h2></div><p class="helper-copy">Booking references and travel documents are here. An unbooked journey shows Not booked.</p>${cards.map(ticketCardHtml).join("")}`;
+  const cards = walletCards();
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div><p class="helper-copy">Booked tickets and confirmation numbers are here.</p>${cards.map(ticketCardHtml).join("")}`;
 }
 
 const TRIP_CALENDAR_START = "2026-10-23";
@@ -5201,6 +5188,10 @@ function renderTripCalendar() {
   const beforeTrip = today < TRIP_CALENDAR_START;
   const duringTrip = today >= TRIP_CALENDAR_START && today <= TRIP_CALENDAR_END;
   tripCalendar.replaceChildren();
+  const storyHeading = document.createElement("div");
+  storyHeading.className = "section-heading";
+  storyHeading.innerHTML = `<p class="label">The whole trip</p><h2>Story</h2>`;
+  tripCalendar.appendChild(storyHeading);
   if (beforeTrip) {
     const days = daysUntilTrip();
     const line = document.createElement("p");
@@ -5252,12 +5243,59 @@ function renderTripCalendar() {
   tripCalendar.append(board, legend);
 }
 
+let todayBrowseId = "";
+
+function todayBrowseRow() {
+  const rows = tripRows();
+  if (todayBrowseId) {
+    const found = rows.find((row) => row.day.id === todayBrowseId);
+    if (found) return { ...found, phase: landingSelection().phase };
+  }
+  return landingSelection();
+}
+
+function stepTodayDay(delta) {
+  const rows = tripRows();
+  const current = todayBrowseRow();
+  const index = rows.findIndex((row) => row.day.id === current.day.id);
+  const next = rows[index + delta];
+  if (!next) return;
+  todayBrowseId = next.day.id;
+  state.activeCity = next.cityId;
+  showSection("today");
+}
+
+function updateHeaderDayStep() {
+  const step = document.querySelector("#headerDayStep");
+  const onToday = document.body.dataset.section === "today";
+  if (step) step.hidden = !onToday;
+  if (!onToday) return;
+  const rows = tripRows();
+  const index = rows.findIndex((row) => row.day.id === todayBrowseRow().day.id);
+  const previous = document.querySelector("#headerPrevDay");
+  const next = document.querySelector("#headerNextDay");
+  if (previous) previous.disabled = index <= 0;
+  if (next) next.disabled = index < 0 || index >= rows.length - 1;
+}
+
+function updateTabBar() {
+  const section = document.body.dataset.section;
+  const tab = section === "today" ? "today" : section === "days" ? "story" : section === "tickets" ? "wallet" : "";
+  document.querySelectorAll(".tab-bar button").forEach((button) => {
+    const on = button.dataset.tab === tab;
+    button.classList.toggle("active", on);
+    if (on) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
+}
+
 function renderToday() {
   if (!todayPanel) return;
-  const selected = landingSelection();
-  const { day, cityId, phase } = selected;
+  const landed = landingSelection();
+  const selected = todayBrowseRow();
+  const { day, cityId } = selected;
   todayPanel.innerHTML = "";
-  if (phase === "before") {
+  if (landed.phase === "before") {
     const days = daysUntilTrip();
     const line = document.createElement("p");
     line.className = "today-countdown";
@@ -5304,11 +5342,16 @@ function showSection(name) {
   const dateLabel = document.querySelector("#headerCalendarDate");
   if (dateLabel) dateLabel.textContent = headerDateLabel();
   document.querySelectorAll("#appMenu button[data-section]").forEach((button) => {
-    const on = button.dataset.section === name;
+    const overviewPage = button.dataset.overview;
+    const on = button.dataset.section === name && (
+      name !== "overview" || overviewPage === String(state.overviewWindows?.overview ?? 0)
+    );
     button.classList.toggle("active", on);
     if (on) button.setAttribute("aria-current", "page");
     else button.removeAttribute("aria-current");
   });
+  updateTabBar();
+  updateHeaderDayStep();
   placeScreenFilters(name);
   todayPanel?.classList.toggle("hidden", name !== "today");
   journalPanel?.classList.toggle("hidden", name !== "journal");
@@ -5474,10 +5517,29 @@ menuButton?.addEventListener("click", () => {
 appMenu?.addEventListener("click", (event) => {
   const sectionButton = event.target.closest("button[data-section]");
   if (!sectionButton) return;
+  if (sectionButton.dataset.overview != null) {
+    state.overviewWindows = state.overviewWindows || {};
+    state.overviewWindows.overview = Number(sectionButton.dataset.overview);
+    state.foodMapLeftPageReady = true;
+  }
   if (sectionButton.dataset.section === "days") daysShowsDay = false;
   closeMenu(false);
   showSection(sectionButton.dataset.section);
 });
+
+document.querySelector(".tab-bar")?.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-tab]");
+  if (!button) return;
+  closeMenu(false);
+  if (button.dataset.tab === "today") showSection("today");
+  else if (button.dataset.tab === "story") {
+    daysShowsDay = false;
+    showSection("days");
+  } else if (button.dataset.tab === "wallet") showSection("tickets");
+});
+
+document.querySelector("#headerPrevDay")?.addEventListener("click", () => stepTodayDay(-1));
+document.querySelector("#headerNextDay")?.addEventListener("click", () => stepTodayDay(1));
 
 document.querySelector("#archiveToggle")?.addEventListener("click", () => {
   const archive = document.querySelector("#archiveToggle");
