@@ -124,7 +124,7 @@ select {
   width: min(100%, 980px);
   min-height: 100svh;
   margin: 0 auto;
-  padding: 0 14px calc(128px + env(safe-area-inset-bottom));
+  padding: 0 14px calc(132px + env(safe-area-inset-bottom));
 }
 
 .app-header {
@@ -135,11 +135,56 @@ select {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  height: calc(48px + env(safe-area-inset-top));
+  height: calc(56px + env(safe-area-inset-top));
   margin: 0 -14px 10px;
   padding: env(safe-area-inset-top) 8px 0 14px;
   background: var(--paper);
   border-bottom: 1px solid var(--line);
+}
+
+.header-leading {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.header-day-step {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.header-day-step[hidden] {
+  display: none;
+}
+
+.header-day-step button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0 2px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.header-day-step button:disabled {
+  background: #f3ecef;
+  color: #6f6168;
+  border-color: rgba(80, 60, 70, 0.22);
+  opacity: 1;
+  cursor: default;
 }
 
 .header-calendar {
@@ -148,7 +193,7 @@ select {
   gap: 6px;
   min-width: 40px;
   min-height: 40px;
-  max-width: calc(100% - 48px);
+  max-width: calc(100% - 104px);
   margin: 0;
   padding: 0 8px 0 0;
   border: 0;
@@ -192,6 +237,8 @@ select {
 
 .menu-button:focus-visible,
 .header-calendar:focus-visible,
+.header-day-step button:focus-visible,
+.tab-bar button:focus-visible,
 .app-menu button:focus-visible {
   outline: 2px solid var(--green);
   outline-offset: 2px;
@@ -3761,21 +3808,81 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
   color: var(--ink);
 }
 
-.bottom-bar {
+.app-dock {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
+  z-index: 45;
+  width: min(100%, 980px);
+  margin: 0 auto;
+  background: var(--paper);
+}
+
+.bottom-bar {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  width: min(100%, 980px);
-  margin: 0 auto;
-  padding: 12px 14px max(12px, env(safe-area-inset-bottom));
+  min-height: 28px;
+  margin: 0;
+  padding: 4px 14px;
   border-top: 1px solid var(--line);
-  background: rgba(255, 240, 246, 0.92);
-  backdrop-filter: blur(14px);
+  background: var(--paper);
+  pointer-events: none;
+}
+
+.tab-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.tab-bar button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 56px;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.tab-bar button svg {
+  width: 26px;
+  height: 26px;
+}
+
+.tab-bar button[aria-current="page"] {
+  background: color-mix(in srgb, var(--rose) 34%, #fff);
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.not-booked-journeys {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.not-booked-journeys h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.not-booked-journeys[hidden] {
+  display: none;
 }
 
 .text-button {
@@ -4532,13 +4639,9 @@ body[data-section="overview"] .day-rail-wrap {
   margin-bottom: 8px;
 }
 
-.today-calendar-jump {
-  margin: 0 0 8px;
-}
-
-.calendar-back,
-.today-calendar-link {
+.calendar-back {
   min-height: 40px;
+  margin: 0 0 8px;
   padding: 0 2px;
   border: 0;
   background: transparent;
@@ -4548,10 +4651,6 @@ body[data-section="overview"] .day-rail-wrap {
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
-}
-
-.calendar-back {
-  margin: 0 0 8px;
 }
 
 .trip-calendar-board {
@@ -4727,8 +4826,7 @@ body[data-theme="dark"] .trip-date.is-today {
 }
 
 .trip-date:focus-visible,
-.calendar-back:focus-visible,
-.today-calendar-link:focus-visible {
+.calendar-back:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
@@ -4842,8 +4940,8 @@ body[data-theme="dark"] .trip-date.is-today {
 .grok-toast {
   position: fixed;
   left: 50%;
-  bottom: calc(76px + env(safe-area-inset-bottom));
-  z-index: 40;
+  bottom: calc(112px + env(safe-area-inset-bottom));
+  z-index: 46;
   transform: translateX(-50%);
   max-width: min(92vw, 360px);
   margin: 0;
