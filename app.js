@@ -5113,24 +5113,30 @@ function tripDateCell(iso, today, beforeTrip, duringTrip) {
     const note = iso === TRIP_CALENDAR_START ? " Trip start." : iso === TRIP_CALENDAR_END ? " Trip end." : "";
     cell.setAttribute("aria-label", `${spokenDate(iso)}.${note}`);
   } else cell.setAttribute("aria-hidden", "true");
-  if (duringTrip && iso === today) cell.setAttribute("aria-current", "date");
+  const isToday = duringTrip && iso === today;
+  if (isToday) cell.setAttribute("aria-current", "date");
+  if (inRange) {
+    const band = document.createElement("span");
+    band.className = cityId ? "trip-date-band" : "trip-date-band is-neutral";
+    band.setAttribute("aria-hidden", "true");
+    cell.appendChild(band);
+  }
   const number = document.createElement("span");
   number.className = "trip-date-num";
   number.textContent = String(Number(iso.slice(8)));
   cell.appendChild(number);
   const mark = document.createElement("span");
   mark.className = "trip-date-city";
-  if (city) {
-    const dot = document.createElement("i");
-    dot.setAttribute("aria-hidden", "true");
-    mark.append(dot, city.mark);
-    cell.appendChild(mark);
-  } else if (beforeTrip && iso === TRIP_CALENDAR_START) {
-    mark.textContent = "Start";
-    cell.appendChild(mark);
-  } else if (inRange && iso === TRIP_CALENDAR_END) {
-    mark.textContent = "End";
-    cell.appendChild(mark);
+  if (isToday) mark.textContent = "TODAY";
+  else if (city) mark.textContent = city.mark;
+  else if (beforeTrip && iso === TRIP_CALENDAR_START) mark.textContent = "Start";
+  else if (inRange && iso === TRIP_CALENDAR_END) mark.textContent = "End";
+  if (mark.textContent) cell.appendChild(mark);
+  if (isToday && row) {
+    cell.setAttribute("aria-label", `Today. ${spokenDate(iso)}, ${city ? city.name : ""}. Open this day.`);
+  } else if (isToday && inRange) {
+    const note = iso === TRIP_CALENDAR_START ? " Trip start." : iso === TRIP_CALENDAR_END ? " Trip end." : "";
+    cell.setAttribute("aria-label", `Today. ${spokenDate(iso)}.${note}`);
   }
   return cell;
 }
