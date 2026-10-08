@@ -1652,14 +1652,14 @@ function renderQuestDeck(day) {
 
 function dailyGuide(day) {
   const context = dayContext[day.id] || { summary: day.theme, timeline: [], history: ["Background notes can be added here later."] };
-  const status = dayAttentionStatus(day);
   const timelineMarkup = (timeline) => timeline.map(([time, activity]) => `<li><time>${escapeHtml(time)}</time><span>${renderGuideHtml(activity)}</span></li>`).join("");
   const slowTimeline = Array.isArray(context.slowTimeline) ? context.slowTimeline : [];
   const hasSlowTimeline = slowTimeline.length > 0;
+  const hasBookedTime = mustDoItems(day.id).some((item) => (item.markers || [item.marker]).includes("booked"));
   const card = document.createElement("section");
   card.className = "daily-guide";
   card.innerHTML = `
-    <div class="daily-guide-heading"><p class="label">Today's clear path</p><span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${status}</span></div>
+    <div class="daily-guide-heading"><p class="label">Today's clear path</p></div>
     <h3>${dayClearPath(day)}</h3>
     <section class="context-block merged-summary">
       <h4>Quick Summary</h4>
@@ -1675,7 +1675,7 @@ function dailyGuide(day) {
       </div>
       <div data-timeline-panel="main" role="tabpanel"><ol class="day-timeline">${timelineMarkup(context.timeline)}</ol></div>
       ${hasSlowTimeline ? `<div data-timeline-panel="slow" role="tabpanel" hidden><ol class="day-timeline slow-day-timeline">${timelineMarkup(slowTimeline)}</ol></div>` : ""}
-      <p class="timeline-note">${openMustDos(day.id).some((item) => (item.markers || []).includes("booked") || item.marker === "booked") || mustDoItems(day.id).some((item) => (item.markers || [item.marker]).includes("booked")) ? "Booked times in Must-do are fixed. Other times here are pacing windows. Move only the pacing windows." : "These times are pacing windows, not reservations. Move them around tickets, transport, weather, and energy."}</p>
+      <p class="timeline-note">${hasBookedTime ? "Booked times in this plan are fixed. Other times here are pacing windows. Move only the pacing windows." : "These times are pacing windows, not reservations. Move them around tickets, transport, weather, and energy."}</p>
     </section>
     ${context.evening ? `<section class="context-block evening-flex-block">
       <h4>Evening Flexibility</h4>
@@ -1797,19 +1797,20 @@ function makeMainGoalCard(day) {
 function makeDayFrontPage(day) {
   const section = document.createElement("section");
   section.className = "day-front-page";
-  section.insertAdjacentHTML("beforeend", askGrokButton(day.id));
   if (day.id === "day21") {
     const airport = document.createElement("section");
     airport.className = "today-card airport-tonight";
     airport.innerHTML = `<h3>Airport tonight</h3>${renderGuideHtml(AIRPORT_TONIGHT_NOTE)}`;
     section.appendChild(airport);
   }
-  section.appendChild(renderMustDoBlock(day));
   const hero = document.createElement("div");
   hero.className = "plan-photo";
   section.appendChild(hero);
   populatePlanPhoto(day, hero);
   section.appendChild(dailyGuide(day));
+  section.insertAdjacentHTML("beforeend", askGrokButton(day.id));
+  const openItemsRow = renderDayOpenItems(day);
+  if (openItemsRow) section.appendChild(openItemsRow);
   return section;
 }
 
@@ -2695,42 +2696,23 @@ function openItems() {
   return items;
 }
 
-function dayAttentionStatus(day) {
-  const markers = new Set(openMustDos(day.id).flatMap((item) => item.markers || [item.marker]));
-  const statuses = roadmapGoals.filter((goal) => goal.days.includes(day.id)).map(roadmapStatus);
-  if (markers.has("not-booked")) statuses.push("Needs Booking");
-  if (markers.has("decision")) statuses.push("Decision needed");
-  if (markers.has("needs-confirmation")) statuses.push("Needs Confirmation");
-  const priority = ["Needs Booking", "Decision needed", "Needs Confirmation", "Needs Route Checks", "Needs Schedule Check", "Needs Name", "Conditional", "Ready", "Completed"];
-  return priority.find((candidate) => statuses.includes(candidate)) || "Ready";
-}
-
-function renderMustDoBlock(day) {
-  const items = mustDoItems(day.id).filter((item) => showArchive || item.marker !== "done");
-  const section = document.createElement("section");
-  section.className = "must-do-block";
-  const status = dayAttentionStatus(day);
-  section.innerHTML = `
-    <div class="must-do-heading">
-      <div>
-        <p class="label">Do not skip</p>
-        <h3>Must-do</h3>
-      </div>
-      <span class="status-pill status-${status.toLowerCase().replaceAll(" ", "-")}">${escapeHtml(status)}</span>
-    </div>
-    <ul class="must-do-list">
+function renderDayOpenItems(day) {
+  const items = openMustDos(day.id);
+  if (!items.length) return null;
+  const details = document.createElement("details");
+  details.className = "day-open-items";
+  details.innerHTML = `
+    <summary>Open items for this day (${items.length})</summary>
+    <ul>
       ${items.map((item) => `
-        <li class="must-do-item is-${item.marker}">
-          <div class="must-do-item-top">
-            <strong>${escapeHtml(item.label)}</strong>
-            <span class="must-do-flags">${(item.markers || [item.marker]).filter((marker) => marker !== "info").map(attentionFlag).join("")}</span>
-          </div>
+        <li>
+          <strong>${escapeHtml(item.label)}</strong>
           <p>${collapsedNoteHtml(item.detail, "Details")}</p>
         </li>
       `).join("")}
     </ul>
   `;
-  return section;
+  return details;
 }
 
 function openItemDayButtons(dayIds) {
