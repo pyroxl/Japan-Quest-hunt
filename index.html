@@ -8,52 +8,54 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v170">
+    <link rel="stylesheet" href="styles.css?v171">
   </head>
   <body>
     <div class="app-shell">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">Mai and me | Japan chapter</p>
-          <h1>Japan Trip Hunt</h1>
-          <p class="lede">Plan photos, melon-bread trophies, ekiben rounds, daily-life missions, hidden eggs, maps, and albums across the whole route.</p>
-        </div>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-          <span aria-hidden="true">☾</span>
-          <span class="theme-toggle-label">Dark</span>
+      <header class="app-header">
+        <h1 id="appHeaderTitle">Today</h1>
+        <button type="button" class="menu-button" id="menuButton" aria-label="Menu" aria-haspopup="true" aria-expanded="false" aria-controls="appMenu">
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
+        <div class="app-menu" id="appMenu" hidden>
+          <nav aria-label="Main sections">
+            <button type="button" data-section="today" aria-current="page">Today</button>
+            <button type="button" data-section="days">Days</button>
+            <button type="button" data-section="tickets">Tickets</button>
+            <button type="button" data-section="food">Food</button>
+            <button type="button" data-section="overview">Overview</button>
+          </nav>
+          <hr>
+          <button type="button" id="themeToggle" aria-pressed="false">Dark mode</button>
+          <button type="button" id="archiveToggle" aria-pressed="false">Show skipped</button>
+        </div>
       </header>
 
-      <div class="rail-wrap city-rail-wrap">
-        <nav class="city-rail" aria-label="Trip cities">
-          <button class="city-chip active" data-city="osaka">Osaka</button>
-          <button class="city-chip" data-city="kyoto">Kyoto</button>
-          <button class="city-chip" data-city="hiroshima">Hiroshima</button>
-          <button class="city-chip" data-city="tokyo">Tokyo</button>
-        </nav>
-        <span class="rail-hint" aria-hidden="true">›</span>
-      </div>
+      <div id="filterStash" hidden>
+        <div class="rail-wrap city-rail-wrap">
+          <nav class="city-rail" aria-label="Trip cities">
+            <button class="city-chip active" data-city="osaka">Osaka</button>
+            <button class="city-chip" data-city="kyoto">Kyoto</button>
+            <button class="city-chip" data-city="hiroshima">Hiroshima</button>
+            <button class="city-chip" data-city="tokyo">Tokyo</button>
+          </nav>
+          <span class="rail-hint" aria-hidden="true">›</span>
+        </div>
 
-      <div class="rail-wrap day-rail-wrap">
-        <nav class="day-rail" aria-label="Trip days"></nav>
-        <span class="rail-hint" aria-hidden="true">›</span>
+        <div class="rail-wrap day-rail-wrap">
+          <nav class="day-rail" aria-label="Trip days"></nav>
+          <span class="rail-hint" aria-hidden="true">›</span>
+        </div>
       </div>
-
-      <nav class="section-tabs" aria-label="Main sections">
-        <button type="button" class="section-tab active" data-section="today" aria-pressed="true">Today</button>
-        <button type="button" class="section-tab" data-section="days" aria-pressed="false">Days</button>
-        <button type="button" class="section-tab" data-section="tickets" aria-pressed="false">Tickets</button>
-        <button type="button" class="section-tab" data-section="food" aria-pressed="false">Food</button>
-        <button type="button" class="section-tab" data-section="overview" aria-pressed="false">Overview</button>
-        <button type="button" class="section-tab archive-toggle" id="archiveToggle" aria-pressed="false">Show skipped</button>
-      </nav>
 
       <main>
         <section class="panel today-panel" id="todayPanel" aria-live="polite"></section>
-        <p class="days-hint" id="daysHint">Choose a day above.</p>
+        <div class="screen-filters" id="daysFilters"></div>
+        <p class="days-hint" id="daysHint">Choose a day.</p>
         <section class="panel tickets-panel hidden" id="ticketsPanel" aria-live="polite"></section>
-        <section class="panel food-panel hidden" id="foodPanel"></section>
+        <section class="panel food-panel hidden" id="foodPanel"><div class="screen-filters" id="foodFilters"></div></section>
         <section class="panel overview-panel hidden" id="overviewPanel">
+          <div class="screen-filters" id="overviewFilters"></div>
           <section id="overviewCarouselHost">
             <section class="overview-window" id="calendarView">
               <section class="open-confirmations" id="openConfirmations" aria-labelledby="openConfirmationsTitle">
@@ -216,6 +218,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v170"></script>
+    <script src="app.js?v171"></script>
   </body>
 </html>
