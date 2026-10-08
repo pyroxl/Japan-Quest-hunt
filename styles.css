@@ -4928,6 +4928,29 @@ body[data-theme="dark"] .trip-date.is-today {
   cursor: pointer;
 }
 
+.daily-recap {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gold) 14%, var(--card));
+  color: var(--ink);
+}
+
+.daily-recap h3 {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.daily-recap p {
+  margin: 0;
+  font-weight: 500;
+  white-space: pre-wrap;
+}
+
 .family-note,
 .family-photo {
   display: grid;
