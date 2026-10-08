@@ -1,7 +1,7 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v174";
-// Brian pastes the Apps Script /exec URL here after he deploys journal/Code.gs.
-var JOURNAL_ENDPOINT = "";
+const APP_VERSION = "japan-quest-v175";
+// Apps Script web app. The family passcode stays in Script Properties, not in this file.
+var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
 const TEAMLAB_GUIDE_URL = "https://tlba.teamlab.art/tyob10";
 const TEAMLAB_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo")}`;
@@ -60,6 +60,7 @@ const JOURNAL_QUEUE_STORE = "journalQueue";
 const JOURNAL_CACHE_STORE = "journalCache";
 const JOURNAL_PREFS_KEY = "japanQuestJournal";
 const JOURNAL_NAMES = ["Brian", "Mai", "Mom", "Dad", "Paul"];
+const TRIP_GUIDE_AUTHOR = "Trip Guide";
 
 const HOTEL_PLACES = new Set([
   "Hotel Cordia Osaka Hommachi",
@@ -5674,18 +5675,37 @@ function journalThumbSrc(photo) {
   return `data:image/jpeg;base64,${thumb}`;
 }
 
+function renderDailyRecap(list, notes) {
+  if (!notes.length) return;
+  const card = document.createElement("article");
+  card.className = "daily-recap";
+  const title = document.createElement("h3");
+  title.textContent = "Daily recap";
+  card.appendChild(title);
+  notes.forEach((note) => {
+    const text = document.createElement("p");
+    text.textContent = note.note;
+    card.appendChild(text);
+  });
+  list.appendChild(card);
+}
+
 function renderFamilyJournal(host, day, record) {
   const list = host.querySelector(".family-journal-list");
   if (!list) return;
   const author = readJournalPrefs().author;
-  const notes = (record?.notes || []).filter((note) => note.author !== author && note.note);
+  const recapNotes = (record?.notes || []).filter((note) => note.author === TRIP_GUIDE_AUTHOR && note.note);
+  const notes = (record?.notes || []).filter((note) => note.author !== author && note.author !== TRIP_GUIDE_AUTHOR && note.note);
   const photos = (record?.photos || []).filter((photo) => photo.author !== author);
   list.replaceChildren();
+  renderDailyRecap(list, recapNotes);
   if (!notes.length && !photos.length) {
-    const empty = document.createElement("p");
-    empty.className = "family-empty";
-    empty.textContent = "No family notes for this day yet.";
-    list.appendChild(empty);
+    if (!recapNotes.length) {
+      const empty = document.createElement("p");
+      empty.className = "family-empty";
+      empty.textContent = "No family notes for this day yet.";
+      list.appendChild(empty);
+    }
     return;
   }
   notes.forEach((note) => {
