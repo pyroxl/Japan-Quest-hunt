@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#fff0f6">
-    <meta name="color-scheme" content="light">
+    <meta name="color-scheme" content="only light">
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v179">
+    <link rel="stylesheet" href="styles.css?v182">
   </head>
   <body>
     <div class="app-shell">
@@ -254,10 +254,14 @@
       </nav>
       </div>
       <p class="grok-toast" id="grokToast" role="status" hidden>Copied, paste it into Grok Bot</p>
+      <div class="ticket-viewer" id="ticketViewer" hidden>
+        <button type="button" id="ticketViewerClose">Close</button>
+        <img id="ticketViewerImage" alt="QR ticket">
+      </div>
     </div>
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v179"></script>
+    <script src="app.js?v182"></script>
   </body>
 </html>

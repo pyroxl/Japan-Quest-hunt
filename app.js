@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v179";
+const APP_VERSION = "japan-quest-v182";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -1159,7 +1159,7 @@ function saveState() {
 function applyTheme() {
   state.theme = "light";
   document.body.dataset.theme = "light";
-  document.documentElement.style.colorScheme = "light";
+  document.documentElement.style.colorScheme = "only light";
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#fff0f6");
 }
 
@@ -3608,11 +3608,11 @@ function renderTripRouteMap() {
         <g class="japan-outline" aria-hidden="true">
           <path d="M583.7 98.2L590.5 101.5L598.3 110.2L603.9 113.3L608.6 113.2L625.6 107.4L613.6 119.3L611.4 126L611.9 139.3L615.4 141.6L621.5 140L625.5 141.8L614.4 145.1L610.5 143.4L597.4 144.5L589.3 143.2L578.6 137.9L571.7 138.5L558.2 143.4L552.1 147.5L541.8 158.7L526.6 143.1L514 126.2L502.3 122.7L489 124.8L484.6 115.2L478.9 112.8L474 115.3L471.6 119.5L474.6 126.7L479.7 129.3L486.3 143.4L481.6 143.9L474 138L459.5 145.3L456 145.1L453.8 142.3L454 138.7L461.2 129.3L461.8 123.9L458.9 115L463.4 105.7L465 103.9L471.8 103.5L482.7 99.9L485.2 97.4L484.5 92.8L486.1 88.5L488.9 88.3L495.7 95.9L503.5 100L507.7 101L510.7 99.3L515.9 88.1L527 78.8L530.5 71.3L535.9 65.5L539.4 58.3L540.6 50.6L539.9 42.5L545.2 35.6L553.4 35L566.8 71.1L583.7 98.2ZM128.5 298.7L132.9 301.7L139.5 301.3L141.7 304L140.8 307.3L133.5 312.7L142.4 317L139.4 320.8L141.1 324.1L139.2 326L140.4 329.8L126.4 339.4L113.9 355.7L111.2 362.3L104.7 369.4L98.3 365.7L96.7 367.2L96.7 371.7L83.2 375L89 368.1L90.8 357.5L93.7 357L94.3 354.2L91.3 352.6L86.8 356.4L84.4 361.3L85.3 366.6L82.8 368.9L74.4 361.3L74.5 357.1L78.7 357.3L81.4 352.8L80.1 346.2L84.3 336.1L91.1 334.2L102.4 324.1L99.2 321.5L102 319.8L102.7 316.5L101.8 306.6L99.2 302.4L95.5 303.6L93.5 312L97.4 313.5L95.8 318.4L93.1 318.2L89.4 313.3L79.6 316.7L83 312.4L81.5 306.3L83.5 300.4L85.2 307.2L88.8 310.1L88.6 303.8L83.3 293.8L85.4 290.8L91.1 293.8L92.1 290L108.3 289.4L113.8 284.3L120.9 283.8L126.3 287.9L126.4 295.3L128.5 298.7ZM217.7 310.8L224.5 314.7L220.6 326.9L221.9 328.5L210 331.4L204.4 335.3L200.4 340.8L197.3 332.1L189.8 326.8L179.1 328L172 335.3L167.4 337.1L164.6 341.1L159.1 342.2L155.1 340.2L158.6 336.5L153.3 333.8L154.4 330.9L153.4 328.6L158.5 322.2L156.3 319.9L157.8 316.8L146.9 315.8L166.9 311L174.3 303L179.5 301.3L182.4 308.6L184 309L195 310.4L198 307.3L198.4 303.5L200.9 304.7L208.5 303.8L211.8 304.7L217.7 310.8ZM482.8 157.8L489 159.1L483.7 168.2L479.7 180.2L479.1 184.1L483.5 197.6L482.1 215.3L477.2 226.5L471.2 235.7L463.3 237.5L457.8 243L451.2 253.5L441.2 251.9L435.1 256.3L431.7 262.3L428.3 278.5L423 289.3L420.7 292.5L411.2 298.5L400.9 312.6L399.9 318.5L402.1 331.6L395.3 331.2L388.8 334.1L382 343.4L372.6 344.8L367.3 347.8L365.6 346.5L365 344.7L366.8 343.5L370 334.3L380.5 328L378.8 324.3L374.8 323.1L371 327.5L366.9 329L367.3 334.9L364.3 337.4L361.1 330.7L355.1 329L350.6 331.7L345.4 341.1L340.9 344.5L336.2 345.5L335.3 342.2L339.9 333.9L343.1 333.4L339.7 328.4L335.6 328.1L319.5 339.5L303.9 330.8L290.6 328.4L297.9 326.9L298.5 324.6L292.2 322.3L291.3 319.4L289.4 322.8L287.7 321.7L290.3 313.8L292.2 312.4L290 311L286.3 311.9L278.4 319.9L284.1 331.2L282 334.4L266.9 333.6L248.5 348.7L242 348.8L236.6 344.2L234.1 326.6L237 317.5L244 315.6L249.2 310.4L239.9 306.1L233.9 298.8L220.7 295.3L211.3 298.3L196.8 295.9L187.4 296.9L184.6 294.8L174.3 293.7L169.7 287.9L166.6 287.7L163.4 290L156.2 301.3L148.6 290.4L134.3 288.4L131.2 284.5L126.7 284.3L129.6 275L134.2 272.1L143.3 275.1L174.1 265.2L190.3 257.3L197.2 256.7L206.5 258.8L208 263L224 267.7L257.4 272.4L259.4 274.1L256.9 277.8L258.5 280.9L267.2 285.2L274.2 284.3L281.1 281.2L281.7 273.3L284.8 269.9L308.8 256.8L312.8 250.7L315.1 242.6L320.6 238.1L334.6 238.7L333.9 241.5L318.7 247L320 250.9L318.1 257L322.9 262L325.5 262.5L332.2 258.6L356.1 258.4L367.3 253.7L378.4 244.6L393.8 241.5L402.9 230.4L414.9 221.4L422.1 211.6L427.6 207.2L431 200.7L432.2 192.8L426.6 188.1L432.1 186.6L437.7 180.2L439 170.7L441.8 166.8L452 164.6L455.7 160.2L456.9 155L459.6 153.6L465.3 157.1L462.8 167.2L463.7 169.9L469.9 168.3L473.8 172L477.9 169.8L481.1 163.2L480.5 161.5L469 160.7L470.5 157.1L477.1 150.6L482.8 157.8Z" />
         </g>
-        ${makeRouteLegSvg("leg-kyoto-hiroshima", "#7b61b9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time · Himeji stop", 214, 236)}
-        ${makeRouteLegSvg("leg-hiroshima-tokyo", "#2b8a78", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 268, 196)}
-        ${makeRouteLegSvg("leg-tokyo-hakone", "#d28732", "M370.3 320.6 Q363 300 356 323", "4", "Tokyo → Hakone", "~2 hr 15", "Romancecar + mountain railway", 430, 286)}
-        ${makeRouteLegSvg("leg-hakone-tokyo", "#3a77b8", "M356 323 Q365 346 370.3 320.6", "5", "Hakone → Tokyo", "~2 hr 15", "return by rail", 430, 368)}
-        ${makeRouteLegSvg("leg-osaka-kyoto", "#e06b8f", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara day", 196, 268)}
+        ${makeRouteLegSvg("leg-kyoto-hiroshima", "#7059a9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time · Himeji stop", 214, 236)}
+        ${makeRouteLegSvg("leg-hiroshima-tokyo", "#247364", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 268, 196)}
+        ${makeRouteLegSvg("leg-tokyo-hakone", "#8d5b22", "M370.3 320.6 Q363 300 356 323", "4", "Tokyo → Hakone", "~2 hr 15", "Romancecar + mountain railway", 430, 286)}
+        ${makeRouteLegSvg("leg-hakone-tokyo", "#3369a3", "M356 323 Q365 346 370.3 320.6", "5", "Hakone → Tokyo", "~2 hr 15", "return by rail", 430, 368)}
+        ${makeRouteLegSvg("leg-osaka-kyoto", "#a04d66", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara day", 196, 268)}
         ${makeRouteCitySvg(252.4, 308.9, -18, 34, "end", "Osaka", "Oct 24–28 · 4 nights", "osaka")}
         ${makeRouteCitySvg(263.2, 301.6, 16, -20, "start", "Kyoto", "Oct 28–Nov 2 · 5 nights", "kyoto")}
         ${makeRouteCitySvg(171, 287.2, -16, -20, "end", "Hiroshima", "Nov 2–5 · 3 nights", "hiroshima")}
@@ -4324,7 +4324,7 @@ const overviewMapChapters = [
   { id: "tokyo-2", label: "Tokyo 2", cityId: "tokyo", dayIds: ["day20", "day21"] }
 ];
 
-const overviewDayColors = ["#d75f16", "#c7437a", "#285b96", "#397b8f", "#7b61b9"];
+const overviewDayColors = ["#9f4610", "#a63866", "#285b96", "#206954", "#7059a9"];
 
 const overviewMapViews = {
   kyoto: { center: [34.9858, 135.7588], zoom: 11 },
@@ -5151,13 +5151,34 @@ function walletBookings() {
   ];
 }
 
+const WALLET_TYPE_LABEL = {
+  flight: "Flight",
+  train: "Train",
+  hotel: "Hotel",
+  ticket: "Attraction",
+  meal: "Restaurant"
+};
+
+const WALLET_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "flight", label: "Flights" },
+  { id: "train", label: "Trains" },
+  { id: "hotel", label: "Hotels" },
+  { id: "ticket", label: "Attractions" },
+  { id: "meal", label: "Restaurants" }
+];
+
+let walletTypeFilter = "all";
+
 function walletCardHtml(item, featured) {
   const code = item.code ? copyCodeButton(item.code) : "";
+  const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
   return `<article class="${featured ? "next-stop" : "wallet-card"}">
     ${featured ? `<p class="wallet-kicker">Next stop</p><p class="wallet-countdown">${escapeHtml(item.countdown || "")}</p>` : ""}
     <div class="wallet-card-row">
       ${walletIcon(item.kind)}
       <div>
+        <p class="wallet-type">${escapeHtml(type)}</p>
         <h3>${escapeHtml(item.title)}</h3>
         <p class="ticket-meta">${escapeHtml(item.when)}</p>
         <p class="wallet-route">${escapeHtml(item.route)}</p>
@@ -5169,22 +5190,351 @@ function walletCardHtml(item, featured) {
   </article>`;
 }
 
+const MY_TICKET_KEY = "japanQuestMyTickets";
+const MY_TICKET_DB = "japanQuestMyTickets";
+const MY_TICKET_STORE = "images";
+const SMARTEX_TICKET_HOST = "shinkansen2.jr-central.co.jp";
+const SMARTEX_TICKET_PATH = "/RSV_P/ClientServiceQR-Ticket";
+let myTicketStatus = "";
+
+function openMyTicketDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(MY_TICKET_DB, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(MY_TICKET_STORE)) db.createObjectStore(MY_TICKET_STORE, { keyPath: "id" });
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function withMyTicketStore(mode, action) {
+  return openMyTicketDb().then((db) => new Promise((resolve, reject) => {
+    const transaction = db.transaction(MY_TICKET_STORE, mode);
+    const result = action(transaction.objectStore(MY_TICKET_STORE));
+    transaction.oncomplete = () => {
+      db.close();
+      resolve(result);
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  }));
+}
+
+function readMyTickets() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(MY_TICKET_KEY) || "[]");
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeMyTickets(items) {
+  localStorage.setItem(MY_TICKET_KEY, JSON.stringify(items));
+}
+
+function readMyTicketImage(id) {
+  return withMyTicketStore("readonly", (store) => storeRequest(store.get(id)));
+}
+
+function writeMyTicketImage(record) {
+  return withMyTicketStore("readwrite", (store) => storeRequest(store.put(record)));
+}
+
+function deleteMyTicketImage(id) {
+  return withMyTicketStore("readwrite", (store) => storeRequest(store.delete(id)));
+}
+
+function clearMyTicketImages() {
+  return withMyTicketStore("readwrite", (store) => storeRequest(store.clear()));
+}
+
+function isMyTicketUrl(value) {
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password) return false;
+    if (url.hostname === "example.com") return true;
+    return url.hostname === SMARTEX_TICKET_HOST && url.pathname.startsWith(SMARTEX_TICKET_PATH);
+  } catch {
+    return false;
+  }
+}
+
+function ticketDateFromLabel(label) {
+  const iso = String(label || "").match(/\b(20\d{2}-\d{2}-\d{2})\b/);
+  if (iso) return iso[1];
+  const months = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+  const named = String(label || "").match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2})\b/i);
+  if (!named) return "";
+  const month = months[named[1].toLowerCase()];
+  const day = Number(named[2]);
+  if (!month || day < 1 || day > 31) return "";
+  return `2026-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+function newMyTicketId() {
+  return `ticket-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function parseMyTicketLine(line, fallbackLabel) {
+  const match = String(line || "").match(/https:\/\/\S+/);
+  if (!match) return null;
+  const url = match[0].replace(/[),.;]+$/, "");
+  const before = line.slice(0, match.index).trim().replace(/[|]\s*$/, "").trim();
+  return { url, label: before || fallbackLabel || "" };
+}
+
+function sortMyTickets(items) {
+  const today = japanTodayIso();
+  return items.slice().sort((a, b) => {
+    const aToday = a.date === today ? 0 : 1;
+    const bToday = b.date === today ? 0 : 1;
+    if (aToday !== bToday) return aToday - bToday;
+    if (a.date && b.date && a.date !== b.date) return a.date.localeCompare(b.date);
+    if (a.date && !b.date) return -1;
+    if (!a.date && b.date) return 1;
+    return (a.addedAt || 0) - (b.addedAt || 0);
+  });
+}
+
+function compressTicketImage(file) {
+  return fileToDataUrl(file).then((dataUrl) => new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const scale = Math.min(1, 1400 / Math.max(image.width, image.height, 1));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      const context = canvas.getContext("2d");
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.92));
+    };
+    image.onerror = () => reject(new Error("The image could not be saved."));
+    image.src = dataUrl;
+  }));
+}
+
+function myTicketCardHtml(ticket) {
+  const today = ticket.date && ticket.date === japanTodayIso();
+  const label = ticket.label || (ticket.kind === "image" ? "QR image" : "QR-ticket link");
+  const body = ticket.kind === "link"
+    ? `<a class="my-ticket-open" href="${escapeHtml(ticket.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a>`
+    : `<button type="button" class="my-ticket-open" data-show-ticket="${escapeHtml(ticket.id)}"><img alt=""></button>`;
+  return `<article class="my-ticket${today ? " is-today" : ""}">
+    ${today ? `<p class="wallet-kicker">Today</p>` : ""}
+    <h3>${escapeHtml(label)}</h3>
+    ${body}
+    <button type="button" class="my-ticket-delete" data-delete-ticket="${escapeHtml(ticket.id)}">Delete</button>
+  </article>`;
+}
+
+function myTicketsHtml() {
+  const tickets = sortMyTickets(readMyTickets());
+  const list = tickets.length
+    ? tickets.map(myTicketCardHtml).join("")
+    : `<p class="my-ticket-empty">No tickets on this phone.</p>`;
+  const clear = tickets.length
+    ? `<button type="button" class="my-ticket-clear" data-clear-tickets>Clear all my tickets</button>`
+    : "";
+  return `<section class="my-tickets" id="myTickets" aria-labelledby="myTicketsTitle">
+    <h3 id="myTicketsTitle" class="wallet-section">My tickets</h3>
+    <p class="my-ticket-note">Saved only on this phone. Not shared.</p>
+    <p class="my-ticket-help">Paste one SmartEX QR-ticket link on each line. Add a label for one link. Choose a QR image from your photo library.</p>
+    <form id="myTicketForm">
+      <label>Label
+        <input name="label" maxlength="120" autocomplete="off" placeholder="Oct 24 Tokyo to Shin-Osaka, Car 6 Seat 9-D">
+      </label>
+      <label>Links
+        <textarea name="links" rows="4" placeholder="One link on each line."></textarea>
+      </label>
+      <button type="submit" class="my-ticket-save">Save links</button>
+    </form>
+    <label class="my-ticket-file">Choose QR image
+      <input id="myTicketImage" type="file" accept="image/*">
+    </label>
+    <p class="my-ticket-status" id="myTicketStatus" role="status">${escapeHtml(myTicketStatus)}</p>
+    <div id="myTicketList">${list}</div>
+    ${clear}
+  </section>`;
+}
+
+async function hydrateMyTicketImages() {
+  const buttons = [...(ticketsPanel?.querySelectorAll("[data-show-ticket]") || [])];
+  await Promise.all(buttons.map(async (button) => {
+    const record = await readMyTicketImage(button.dataset.showTicket).catch(() => null);
+    const image = button.querySelector("img");
+    if (!image || !button.isConnected || !record?.dataUrl) return;
+    image.src = record.dataUrl;
+  }));
+}
+
+function walletDayLabel(iso) {
+  const { year, month, day } = isoParts(iso);
+  const text = new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC"
+  }).replace(",", "");
+  const row = tripRows().find((entry) => entry.day.date === iso);
+  if (!row) return text;
+  return `${text} · Day ${Number(row.day.id.replace("day", ""))}`;
+}
+
+function walletDayGroups(items) {
+  const groups = [];
+  items.forEach((item) => {
+    const iso = String(item.at).slice(0, 10);
+    let group = groups.find((entry) => entry.iso === iso);
+    if (!group) {
+      group = { iso, items: [] };
+      groups.push(group);
+    }
+    group.items.push(item);
+  });
+  groups.sort((a, b) => a.iso.localeCompare(b.iso));
+  groups.forEach((group) => group.items.sort((a, b) => a.atMs - b.atMs));
+  return groups;
+}
+
+function walletGroupsHtml(items) {
+  if (!items.length) return "";
+  return walletDayGroups(items).map((group) => `<h3 class="wallet-day">${escapeHtml(walletDayLabel(group.iso))}</h3>${group.items.map((item) => walletCardHtml(item, false)).join("")}`).join("");
+}
+
+function walletFiltersHtml() {
+  const chips = WALLET_FILTERS.map((filter) => {
+    const on = filter.id === walletTypeFilter;
+    return `<button type="button" data-wallet-filter="${filter.id}" aria-pressed="${on}">${filter.label}</button>`;
+  }).join("");
+  return `<div class="wallet-filters" role="group" aria-label="Ticket types">${chips}</div>`;
+}
+
 function renderTickets() {
   if (!ticketsPanel) return;
   const now = japanNowMs();
   const items = walletBookings()
     .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
     .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
-  const upcoming = items.filter((item) => item.atMs >= now);
-  const past = items.filter((item) => item.atMs < now);
-  const next = upcoming[0];
-  const nextHtml = next
-    ? walletCardHtml({ ...next, countdown: walletCountdown(next.atMs, now) }, true)
+  const matches = walletTypeFilter === "all" ? items : items.filter((item) => item.kind === walletTypeFilter);
+  const upcoming = matches.filter((item) => item.atMs >= now);
+  const past = matches.filter((item) => item.atMs < now);
+  const nextSource = items.filter((item) => item.atMs >= now)[0];
+  const nextHtml = nextSource
+    ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
-  const section = (label, rows) => rows.length
-    ? `<h3 class="wallet-section">${label}</h3>${rows.map((item) => walletCardHtml(item, false)).join("")}`
+  const done = past.length
+    ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
     : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${section("Upcoming", upcoming.slice(next ? 1 : 0))}${section("Past", past)}`;
+  const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
+  void hydrateMyTicketImages();
+}
+
+async function saveMyTicketLinks(label, rawText) {
+  const lines = String(rawText || "").split(/\n/).map((line) => line.trim()).filter(Boolean);
+  if (!lines.length) {
+    myTicketStatus = "Paste a link.";
+    renderTickets();
+    return;
+  }
+  const fallback = lines.length === 1 ? label.trim() : "";
+  const parsed = lines.map((line) => parseMyTicketLine(line, fallback)).filter(Boolean);
+  const valid = parsed.filter((item) => isMyTicketUrl(item.url));
+  if (!valid.length) {
+    myTicketStatus = "Use a SmartEX QR-ticket link. The link must start with https.";
+    renderTickets();
+    return;
+  }
+  const items = readMyTickets();
+  const now = Date.now();
+  valid.forEach((item, index) => {
+    const text = item.label.trim();
+    items.push({
+      id: newMyTicketId(),
+      kind: "link",
+      label: text,
+      url: item.url,
+      date: ticketDateFromLabel(text),
+      addedAt: now + index
+    });
+  });
+  writeMyTickets(items);
+  const skipped = lines.length - valid.length;
+  myTicketStatus = skipped
+    ? "Some links are saved. Check the other lines."
+    : valid.length === 1 ? "The link is saved." : `${valid.length} links are saved.`;
+  renderTickets();
+}
+
+async function saveMyTicketImage(file, label) {
+  if (!file || !String(file.type || "").startsWith("image/")) {
+    myTicketStatus = "Choose an image from your photo library.";
+    renderTickets();
+    return;
+  }
+  const id = newMyTicketId();
+  const dataUrl = await compressTicketImage(file);
+  await writeMyTicketImage({ id, dataUrl });
+  const text = label.trim();
+  const items = readMyTickets();
+  items.push({
+    id,
+    kind: "image",
+    label: text,
+    url: "",
+    date: ticketDateFromLabel(text),
+    addedAt: Date.now()
+  });
+  try {
+    writeMyTickets(items);
+  } catch (error) {
+    await deleteMyTicketImage(id).catch(() => {});
+    throw error;
+  }
+  myTicketStatus = "The image is saved.";
+  renderTickets();
+}
+
+async function deleteMyTicket(id) {
+  const items = readMyTickets();
+  const ticket = items.find((item) => item.id === id);
+  writeMyTickets(items.filter((item) => item.id !== id));
+  if (ticket?.kind === "image") await deleteMyTicketImage(id).catch(() => {});
+  myTicketStatus = "The ticket is deleted.";
+  renderTickets();
+}
+
+async function clearMyTickets() {
+  if (!readMyTickets().length) return;
+  if (!window.confirm("Delete all tickets on this phone?")) return;
+  writeMyTickets([]);
+  await clearMyTicketImages().catch(() => {});
+  myTicketStatus = "All tickets on this phone are deleted.";
+  renderTickets();
+}
+
+async function showMyTicketImage(id) {
+  const viewer = document.querySelector("#ticketViewer");
+  const image = document.querySelector("#ticketViewerImage");
+  const record = await readMyTicketImage(id).catch(() => null);
+  if (!viewer || !image || !record?.dataUrl) return;
+  image.src = record.dataUrl;
+  viewer.hidden = false;
+  document.querySelector("#ticketViewerClose")?.focus();
+}
+
+function closeMyTicketImage() {
+  const viewer = document.querySelector("#ticketViewer");
+  const image = document.querySelector("#ticketViewerImage");
+  if (viewer) viewer.hidden = true;
+  if (image) image.removeAttribute("src");
 }
 
 const TRIP_CALENDAR_START = "2026-10-23";
@@ -5482,11 +5832,11 @@ function renderStoryMap() {
         <g class="japan-outline" aria-hidden="true">
           <path d="M583.7 98.2L590.5 101.5L598.3 110.2L603.9 113.3L608.6 113.2L625.6 107.4L613.6 119.3L611.4 126L611.9 139.3L615.4 141.6L621.5 140L625.5 141.8L614.4 145.1L610.5 143.4L597.4 144.5L589.3 143.2L578.6 137.9L571.7 138.5L558.2 143.4L552.1 147.5L541.8 158.7L526.6 143.1L514 126.2L502.3 122.7L489 124.8L484.6 115.2L478.9 112.8L474 115.3L471.6 119.5L474.6 126.7L479.7 129.3L486.3 143.4L481.6 143.9L474 138L459.5 145.3L456 145.1L453.8 142.3L454 138.7L461.2 129.3L461.8 123.9L458.9 115L463.4 105.7L465 103.9L471.8 103.5L482.7 99.9L485.2 97.4L484.5 92.8L486.1 88.5L488.9 88.3L495.7 95.9L503.5 100L507.7 101L510.7 99.3L515.9 88.1L527 78.8L530.5 71.3L535.9 65.5L539.4 58.3L540.6 50.6L539.9 42.5L545.2 35.6L553.4 35L566.8 71.1L583.7 98.2ZM128.5 298.7L132.9 301.7L139.5 301.3L141.7 304L140.8 307.3L133.5 312.7L142.4 317L139.4 320.8L141.1 324.1L139.2 326L140.4 329.8L126.4 339.4L113.9 355.7L111.2 362.3L104.7 369.4L98.3 365.7L96.7 367.2L96.7 371.7L83.2 375L89 368.1L90.8 357.5L93.7 357L94.3 354.2L91.3 352.6L86.8 356.4L84.4 361.3L85.3 366.6L82.8 368.9L74.4 361.3L74.5 357.1L78.7 357.3L81.4 352.8L80.1 346.2L84.3 336.1L91.1 334.2L102.4 324.1L99.2 321.5L102 319.8L102.7 316.5L101.8 306.6L99.2 302.4L95.5 303.6L93.5 312L97.4 313.5L95.8 318.4L93.1 318.2L89.4 313.3L79.6 316.7L83 312.4L81.5 306.3L83.5 300.4L85.2 307.2L88.8 310.1L88.6 303.8L83.3 293.8L85.4 290.8L91.1 293.8L92.1 290L108.3 289.4L113.8 284.3L120.9 283.8L126.3 287.9L126.4 295.3L128.5 298.7ZM217.7 310.8L224.5 314.7L220.6 326.9L221.9 328.5L210 331.4L204.4 335.3L200.4 340.8L197.3 332.1L189.8 326.8L179.1 328L172 335.3L167.4 337.1L164.6 341.1L159.1 342.2L155.1 340.2L158.6 336.5L153.3 333.8L154.4 330.9L153.4 328.6L158.5 322.2L156.3 319.9L157.8 316.8L146.9 315.8L166.9 311L174.3 303L179.5 301.3L182.4 308.6L184 309L195 310.4L198 307.3L198.4 303.5L200.9 304.7L208.5 303.8L211.8 304.7L217.7 310.8ZM482.8 157.8L489 159.1L483.7 168.2L479.7 180.2L479.1 184.1L483.5 197.6L482.1 215.3L477.2 226.5L471.2 235.7L463.3 237.5L457.8 243L451.2 253.5L441.2 251.9L435.1 256.3L431.7 262.3L428.3 278.5L423 289.3L420.7 292.5L411.2 298.5L400.9 312.6L399.9 318.5L402.1 331.6L395.3 331.2L388.8 334.1L382 343.4L372.6 344.8L367.3 347.8L365.6 346.5L365 344.7L366.8 343.5L370 334.3L380.5 328L378.8 324.3L374.8 323.1L371 327.5L366.9 329L367.3 334.9L364.3 337.4L361.1 330.7L355.1 329L350.6 331.7L345.4 341.1L340.9 344.5L336.2 345.5L335.3 342.2L339.9 333.9L343.1 333.4L339.7 328.4L335.6 328.1L319.5 339.5L303.9 330.8L290.6 328.4L297.9 326.9L298.5 324.6L292.2 322.3L291.3 319.4L289.4 322.8L287.7 321.7L290.3 313.8L292.2 312.4L290 311L286.3 311.9L278.4 319.9L284.1 331.2L282 334.4L266.9 333.6L248.5 348.7L242 348.8L236.6 344.2L234.1 326.6L237 317.5L244 315.6L249.2 310.4L239.9 306.1L233.9 298.8L220.7 295.3L211.3 298.3L196.8 295.9L187.4 296.9L184.6 294.8L174.3 293.7L169.7 287.9L166.6 287.7L163.4 290L156.2 301.3L148.6 290.4L134.3 288.4L131.2 284.5L126.7 284.3L129.6 275L134.2 272.1L143.3 275.1L174.1 265.2L190.3 257.3L197.2 256.7L206.5 258.8L208 263L224 267.7L257.4 272.4L259.4 274.1L256.9 277.8L258.5 280.9L267.2 285.2L274.2 284.3L281.1 281.2L281.7 273.3L284.8 269.9L308.8 256.8L312.8 250.7L315.1 242.6L320.6 238.1L334.6 238.7L333.9 241.5L318.7 247L320 250.9L318.1 257L322.9 262L325.5 262.5L332.2 258.6L356.1 258.4L367.3 253.7L378.4 244.6L393.8 241.5L402.9 230.4L414.9 221.4L422.1 211.6L427.6 207.2L431 200.7L432.2 192.8L426.6 188.1L432.1 186.6L437.7 180.2L439 170.7L441.8 166.8L452 164.6L455.7 160.2L456.9 155L459.6 153.6L465.3 157.1L462.8 167.2L463.7 169.9L469.9 168.3L473.8 172L477.9 169.8L481.1 163.2L480.5 161.5L469 160.7L470.5 157.1L477.1 150.6L482.8 157.8Z" />
         </g>
-        ${makeRouteLegSvg("story-leg-kyoto-hiroshima", "#7b61b9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time", 214, 236)}
-        ${makeRouteLegSvg("story-leg-hiroshima-tokyo", "#2b8a78", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 268, 196)}
-        ${makeRouteLegSvg("story-leg-tokyo-hakone", "#d28732", "M370.3 320.6 Q363 300 356 323", "4", "Tokyo → Hakone", "~2 hr 15", "Romancecar", 430, 286)}
-        ${makeRouteLegSvg("story-leg-hakone-tokyo", "#3a77b8", "M356 323 Q365 346 370.3 320.6", "5", "Hakone → Tokyo", "~2 hr 15", "return by rail", 430, 368)}
-        ${makeRouteLegSvg("story-leg-osaka-kyoto", "#e06b8f", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara", 196, 268)}
+        ${makeRouteLegSvg("story-leg-kyoto-hiroshima", "#7059a9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time", 214, 236)}
+        ${makeRouteLegSvg("story-leg-hiroshima-tokyo", "#247364", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 268, 196)}
+        ${makeRouteLegSvg("story-leg-tokyo-hakone", "#8d5b22", "M370.3 320.6 Q363 300 356 323", "4", "Tokyo → Hakone", "~2 hr 15", "Romancecar", 430, 286)}
+        ${makeRouteLegSvg("story-leg-hakone-tokyo", "#3369a3", "M356 323 Q365 346 370.3 320.6", "5", "Hakone → Tokyo", "~2 hr 15", "return by rail", 430, 368)}
+        ${makeRouteLegSvg("story-leg-osaka-kyoto", "#a04d66", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara", 196, 268)}
         ${makeRouteCitySvg(252.4, 308.9, -18, 34, "end", "Osaka", "Oct 24–27", "osaka", "day02")}
         ${makeRouteCitySvg(263.2, 301.6, 16, -20, "start", "Kyoto", "Oct 28–Nov 1", "kyoto", "day07")}
         ${makeRouteCitySvg(171, 287.2, -16, -20, "end", "Hiroshima", "Nov 2–4", "hiroshima", "day11")}
@@ -6491,6 +6841,59 @@ document.querySelector("#headerCalendar")?.addEventListener("click", () => {
   daysShowsDay = false;
   storyView = "calendar";
   showSection("days");
+});
+
+ticketsPanel?.addEventListener("submit", (event) => {
+  const form = event.target.closest("#myTicketForm");
+  if (!form) return;
+  event.preventDefault();
+  const data = new FormData(form);
+  void saveMyTicketLinks(String(data.get("label") || ""), String(data.get("links") || "")).catch(() => {
+    myTicketStatus = "The link could not be saved.";
+    renderTickets();
+  });
+});
+
+ticketsPanel?.addEventListener("change", (event) => {
+  const input = event.target.closest("#myTicketImage");
+  if (!input) return;
+  const file = input.files?.[0];
+  const label = ticketsPanel.querySelector("#myTicketForm [name=label]")?.value || "";
+  void saveMyTicketImage(file, label).catch(() => {
+    myTicketStatus = "The image could not be saved.";
+    renderTickets();
+  });
+});
+
+ticketsPanel?.addEventListener("click", (event) => {
+  const filter = event.target.closest("[data-wallet-filter]");
+  if (filter) {
+    walletTypeFilter = filter.dataset.walletFilter;
+    renderTickets();
+    return;
+  }
+  const deleteButton = event.target.closest("[data-delete-ticket]");
+  if (deleteButton) {
+    void deleteMyTicket(deleteButton.dataset.deleteTicket);
+    return;
+  }
+  const clearButton = event.target.closest("[data-clear-tickets]");
+  if (clearButton) {
+    void clearMyTickets();
+    return;
+  }
+  const showButton = event.target.closest("[data-show-ticket]");
+  if (showButton) void showMyTicketImage(showButton.dataset.showTicket);
+});
+
+document.querySelector("#ticketViewerClose")?.addEventListener("click", closeMyTicketImage);
+document.querySelector("#ticketViewer")?.addEventListener("click", (event) => {
+  if (event.target.id === "ticketViewer") closeMyTicketImage();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && document.querySelector("#ticketViewer") && !document.querySelector("#ticketViewer").hidden) {
+    closeMyTicketImage();
+  }
 });
 
 storyShell?.addEventListener("click", (event) => {
