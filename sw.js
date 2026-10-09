@@ -1,9 +1,9 @@
-const CACHE_NAME = "japan-quest-v182";
+const CACHE_NAME = "japan-quest-v183";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v182",
-  "./app.js?v182",
+  "./styles.css?v183",
+  "./app.js?v183",
   "./leaflet.css",
   "./leaflet.js",
   "./place-coordinates.js",
@@ -38,10 +38,16 @@ const APP_FILES = [
   "./capstones/day21.jpg"
 ];
 
+function isShellFile(url) {
+  const name = url.pathname.split("/").pop() || "index.html";
+  return name === "index.html" || name === "app.js" || name === "styles.css" || name === "sw.js";
+}
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(APP_FILES))
+      .catch(() => {})
       .then(() => self.skipWaiting())
   );
 });
@@ -54,15 +60,22 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+});
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+  const shell = isShellFile(url);
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, shell ? { cache: "no-store" } : undefined)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
         return response;
       })
       .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
