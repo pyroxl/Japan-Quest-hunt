@@ -8,7 +8,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v178">
+    <link rel="stylesheet" href="styles.css?v179">
   </head>
   <body>
     <div class="app-shell">
@@ -59,7 +59,18 @@
         <section class="panel today-panel" id="todayPanel" aria-live="polite"></section>
         <div class="screen-filters" id="daysFilters"></div>
         <p class="days-hint" id="daysHint">Choose a day.</p>
-        <section class="trip-calendar hidden" id="tripCalendar" aria-label="Trip calendar"></section>
+        <section class="story-shell hidden" id="storyShell" aria-label="Story">
+          <div class="story-switch" role="tablist" aria-label="Story views">
+            <button type="button" role="tab" id="storyTabDays" data-story="days" aria-controls="storyDays">Days</button>
+            <button type="button" role="tab" id="storyTabCalendar" data-story="calendar" aria-controls="tripCalendar">Calendar</button>
+            <button type="button" role="tab" id="storyTabPhotos" data-story="photos" aria-controls="storyPhotos">Photos</button>
+            <button type="button" role="tab" id="storyTabMap" data-story="map" aria-controls="storyMap">Map</button>
+          </div>
+          <div class="story-pane" id="storyDays" role="tabpanel" aria-labelledby="storyTabDays"></div>
+          <section class="trip-calendar story-pane" id="tripCalendar" role="tabpanel" aria-labelledby="storyTabCalendar" hidden></section>
+          <div class="story-pane" id="storyPhotos" role="tabpanel" aria-labelledby="storyTabPhotos" hidden></div>
+          <div class="story-pane" id="storyMap" role="tabpanel" aria-labelledby="storyTabMap" hidden></div>
+        </section>
         <section class="panel tickets-panel hidden" id="ticketsPanel" aria-live="polite"></section>
         <section class="panel food-panel hidden" id="foodPanel"><div class="screen-filters" id="foodFilters"></div></section>
         <section class="panel overview-panel hidden" id="overviewPanel">
@@ -247,6 +258,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v178"></script>
+    <script src="app.js?v179"></script>
   </body>
 </html>

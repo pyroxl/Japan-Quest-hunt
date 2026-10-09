@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v178";
+const APP_VERSION = "japan-quest-v179";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -1014,8 +1014,10 @@ const journalPanel = document.querySelector("#journalPanel");
 const ticketsPanel = document.querySelector("#ticketsPanel");
 const foodPanel = document.querySelector("#foodPanel");
 const tripCalendar = document.querySelector("#tripCalendar");
+const storyShell = document.querySelector("#storyShell");
 let showArchive = false;
 let daysShowsDay = false;
+let storyView = "days";
 let foodListOpen = false;
 let grokToastTimer = 0;
 const state = loadState();
@@ -3969,12 +3971,15 @@ function makeRouteLegSvg(id, color, path, number, title, duration, note, labelX,
   </g>`;
 }
 
-function makeRouteCitySvg(pinX, pinY, nameX, nameY, anchor, city, dates, chapterId) {
+function makeRouteCitySvg(pinX, pinY, nameX, nameY, anchor, city, dates, chapterId, openDayId) {
   const nameWidth = city.length * 7 + 14;
   const nameLeft = anchor === "end" ? pinX + nameX - nameWidth : pinX + nameX - 7;
+  const trigger = openDayId
+    ? `data-story-city-day="${openDayId}" aria-label="${city}, ${dates}. Open the first day."`
+    : `data-chapter="${chapterId}" aria-label="${city}, ${dates}. Double-click to open its chapter map."`;
   return `<g class="route-city">
     <circle class="route-city-pin" cx="${pinX}" cy="${pinY}" r="7" />
-    <g class="route-city-trigger" data-chapter="${chapterId}" tabindex="0" role="button" aria-label="${city}, ${dates}. Double-click to open its chapter map.">
+    <g class="route-city-trigger" ${trigger} tabindex="0" role="button">
       <rect class="route-city-name-hit" x="${nameLeft}" y="${pinY + nameY - 15}" width="${nameWidth}" height="21" rx="5" />
       <text class="route-city-name" x="${pinX + nameX}" y="${pinY + nameY}" text-anchor="${anchor}">${city}</text>
       <g class="route-city-callout" transform="translate(294 201)">
@@ -4826,7 +4831,7 @@ function renderDay(day) {
   const back = document.createElement("button");
   back.type = "button";
   back.className = "calendar-back";
-  back.textContent = "Calendar";
+  back.textContent = "Story";
   back.addEventListener("click", () => {
     daysShowsDay = false;
     showSection("days");
@@ -5083,10 +5088,103 @@ function unbookedJourneyCards() {
   }));
 }
 
+function japanNowMs() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tokyo",
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).formatToParts(new Date());
+  const get = (type) => parts.find((part) => part.type === type)?.value || "00";
+  return Date.parse(`${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:00+09:00`);
+}
+
+function walletCountdown(targetMs, nowMs) {
+  const minutes = Math.max(0, Math.round((targetMs - nowMs) / 60000));
+  const days = Math.floor(minutes / 1440);
+  if (days >= 1) return days === 1 ? "in 1 day" : `in ${days} days`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours >= 1 && rest) return `in ${hours} h ${rest} min`;
+  if (hours >= 1) return `in ${hours} h`;
+  if (minutes <= 1) return "in 1 min";
+  return `in ${minutes} min`;
+}
+
+function walletIcon(kind) {
+  const paths = {
+    flight: `<path d="M3 12h8l7-5v10l-7-5H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11 12v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    train: `<rect x="6" y="3" width="12" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 12h12M8 20l-2 2M16 20l2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    hotel: `<path d="M4 18V9m0 9h16M8 18v-4h8v4M8 9V6h8v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+    meal: `<path d="M8 3v8a2 2 0 0 0 4 0V3M10 11v10M16 3c2 2 2 5 2 7s-2 3-2 3v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    ticket: `<path d="M4 8a2 2 0 0 0 2-2h12a2 2 0 0 0 2 2v2a2 2 0 0 1 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" fill="none" stroke="currentColor" stroke-width="2"/>`
+  };
+  return `<span class="wallet-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${paths[kind] || paths.ticket}</svg></span>`;
+}
+
+function walletBookings() {
+  return [
+    { id: "flight-out", kind: "flight", at: "2026-10-23T12:30:00+02:00", title: "JL7088 to Tokyo", when: "Fri Oct 23 · 12:30", route: "Madrid → Narita", detail: "Choose seats at online check-in.", code: "A3II92", how: "Show the boarding pass in the airline app." },
+    { id: "shinkansen-oct24", kind: "train", at: "2026-10-24T14:00:00+09:00", title: "Nozomi 261", when: "Sat Oct 24 · 14:00", route: "Tokyo Station → Shin-Osaka", detail: "Car 6 · seats 9-D, 9-E, 10-D, 10-E · 4 people", code: "2005", how: SHINKANSEN_BOARDING },
+    { id: "cordia", kind: "hotel", at: "2026-10-24T16:30:00+09:00", title: "Hotel Cordia Osaka Hommachi", when: "Sat Oct 24 · after 16:30", route: "Hommachi, Osaka", detail: "1 room", code: "", how: "Check in after the train. Call the hotel if you arrive late." },
+    { id: "sankei-club", kind: "meal", at: "2026-10-25T17:00:00+09:00", title: "Sankei Club", when: "Sun Oct 25 · 17:00", route: "Shinsekai, Osaka", detail: "5 people", code: "468118574", how: "Give this number at the restaurant." },
+    { id: "onyasai", kind: "meal", at: "2026-10-27T20:00:00+09:00", title: "Shabushabu On-yasai", when: "Tue Oct 27 · 20:00", route: "Sennichimae, Osaka", detail: "5 people", code: "468119458", how: "Give this number at the restaurant." },
+    { id: "monterey", kind: "hotel", at: "2026-10-28T18:00:00+09:00", title: "Hotel Monterey Kyoto", when: "Wed Oct 28 · on arrival", route: "Kyoto", detail: "1 room", code: "", how: "Check in when you arrive from Nara." },
+    { id: "endo", kind: "meal", at: "2026-10-29T13:30:00+09:00", title: "Tempura Yasaka Endo", when: "Thu Oct 29 · 13:30", route: "Gion, Kyoto", detail: "5 people", code: "", how: "Mom booked this lunch. Do not chase the number." },
+    { id: "kani-doraku", kind: "meal", at: "2026-10-30T18:00:00+09:00", title: "Kani Doraku Kyoto", when: "Fri Oct 30 · 18:00", route: "Kyoto", detail: "5 people", code: "SE0767510", how: "Give this number at the restaurant." },
+    { id: "kyoya", kind: "meal", at: "2026-10-31T18:30:00+09:00", title: "Kyoya", when: "Sat Oct 31 · 18:30", route: "Yanaginobamba, Kyoto", detail: "5 people · seats only", code: "FP4YF2QHPJ", how: "Give this number at the restaurant." },
+    { id: "shinkansen-nov2", kind: "train", at: "2026-11-02T08:01:00+09:00", title: "Hikari 733", when: "Mon Nov 2 · 08:01", route: "Kyoto → Himeji", detail: "Car 6 · seats 17-D, 17-E, 18-D, 18-E · 4 people", code: "2000", how: SHINKANSEN_BOARDING },
+    { id: "himeji-tickets", kind: "ticket", at: "2026-11-02T09:30:00+09:00", title: "Himeji Castle", when: "Mon Nov 2 · 09:30", route: "Himeji Castle", detail: "4 adults", code: "SHLMXW4R", how: "Mom shows the live ticket on her phone at the gate." },
+    { id: "shinkansen-himeji", kind: "train", at: "2026-11-02T14:46:00+09:00", title: "Nozomi 69", when: "Mon Nov 2 · 14:46", route: "Himeji → Hiroshima", detail: "Car 14 · seats 6-D, 6-E, 7-D, 7-E · 4 people", code: "2004", how: SHINKANSEN_BOARDING },
+    { id: "granvia", kind: "hotel", at: "2026-11-02T16:00:00+09:00", title: "Hotel Granvia Hiroshima", when: "Mon Nov 2 · 16:00", route: "Hiroshima Station", detail: "1 room", code: "", how: "Check in at about 16:00." },
+    { id: "suishin-main", kind: "meal", at: "2026-11-03T18:00:00+09:00", title: "Suishin", when: "Tue Nov 3 · 18:00", route: "Tatemachi, Hiroshima", detail: "4 guests · table only", code: "XJCU9T", how: "Give this number at the restaurant." },
+    { id: "shinkansen-nov5", kind: "train", at: "2026-11-05T10:03:00+09:00", title: "Nozomi 90", when: "Thu Nov 5 · 10:03", route: "Hiroshima → Tokyo", detail: "Car 6 · seats 5-D, 5-E, 6-D, 6-E · 4 people", code: "2007", how: SHINKANSEN_BOARDING },
+    { id: "apa-nov5", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishishinjuku", when: "Thu Nov 5 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 3 nights", code: "72078146459705", how: "Show this number at check-in." },
+    { id: "romancecar-out", kind: "train", at: "2026-11-08T10:00:00+09:00", title: "Super Hakone 9", when: "Sun Nov 8 · 10:00", route: "Shinjuku → Hakone-Yumoto", detail: "Car 5 · seats 8A, 8B · 2 adults", code: "00081", how: "Show this booking on your phone." },
+    { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Sun Nov 8 · 15:00", route: "Gora, Hakone", detail: "2 adults · 3 nights", code: "6890781811", how: "Check in from 15:00 to 19:30. Show this number." },
+    { id: "apa-nov11", kind: "hotel", at: "2026-11-11T15:00:00+09:00", title: "APA Nishishinjuku", when: "Wed Nov 11 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 1 night", code: "72078148127176", how: "Show this number at check-in." },
+    { id: "teamlab", kind: "ticket", at: "2026-11-12T12:30:00+09:00", title: "teamLab Borderless", when: "Thu Nov 12 · 12:30", route: "Azabudai Hills, Tokyo", detail: "2 adults", code: "A4WAUKWPLYPR-0001", how: "Open the ticket from the teamLab email." },
+    { id: "flight-back", kind: "flight", at: "2026-11-13T01:00:00+09:00", title: "BA4609 to London", when: "Fri Nov 13 · 01:00", route: "Haneda → London", detail: "Then IB3645 leaves London at 08:45.", code: "A3II92", how: "Show the boarding pass in the airline app." }
+  ];
+}
+
+function walletCardHtml(item, featured) {
+  const code = item.code ? copyCodeButton(item.code) : "";
+  return `<article class="${featured ? "next-stop" : "wallet-card"}">
+    ${featured ? `<p class="wallet-kicker">Next stop</p><p class="wallet-countdown">${escapeHtml(item.countdown || "")}</p>` : ""}
+    <div class="wallet-card-row">
+      ${walletIcon(item.kind)}
+      <div>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p class="ticket-meta">${escapeHtml(item.when)}</p>
+        <p class="wallet-route">${escapeHtml(item.route)}</p>
+        ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
+        ${code ? `<div class="ticket-links">${code}</div>` : ""}
+        <p class="wallet-how">${escapeHtml(item.how)}</p>
+      </div>
+    </div>
+  </article>`;
+}
+
 function renderTickets() {
   if (!ticketsPanel) return;
-  const cards = walletCards();
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div><p class="helper-copy">Booked tickets and confirmation numbers are here.</p>${cards.map(ticketCardHtml).join("")}`;
+  const now = japanNowMs();
+  const items = walletBookings()
+    .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
+    .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
+  const upcoming = items.filter((item) => item.atMs >= now);
+  const past = items.filter((item) => item.atMs < now);
+  const next = upcoming[0];
+  const nextHtml = next
+    ? walletCardHtml({ ...next, countdown: walletCountdown(next.atMs, now) }, true)
+    : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
+  const section = (label, rows) => rows.length
+    ? `<h3 class="wallet-section">${label}</h3>${rows.map((item) => walletCardHtml(item, false)).join("")}`
+    : "";
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${section("Upcoming", upcoming.slice(next ? 1 : 0))}${section("Past", past)}`;
 }
 
 const TRIP_CALENDAR_START = "2026-10-23";
@@ -5187,16 +5285,248 @@ function tripDateCell(iso, today, beforeTrip, duringTrip) {
   return cell;
 }
 
+const STORY_CHAPTERS = [
+  { name: "Osaka", city: "osaka", dayIds: ["day02", "day03", "day04", "day05"] },
+  { name: "Nara / Kyoto", city: "kyoto", dayIds: ["day06", "day07", "day08", "day09", "day10"] },
+  { name: "Himeji / Hiroshima", city: "hiroshima", dayIds: ["day11", "day12", "day13"] },
+  { name: "Tokyo", city: "tokyo", dayIds: ["day14", "day15", "day16"] },
+  { name: "Hakone", city: "hakone", dayIds: ["day17", "day18", "day19"] },
+  { name: "Tokyo", city: "tokyo", dayIds: ["day20", "day21"] }
+];
+
+const STORY_MARK_LABEL = { train: "Booked train", meal: "Booked meal", ticket: "Booked ticket" };
+
+function storyMarkIcon(kind) {
+  const paths = {
+    train: `<rect x="6" y="3" width="12" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 12h12M8 20l-2 2M16 20l2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    meal: `<path d="M8 3v8a2 2 0 0 0 4 0V3M10 11v10M16 3c2 2 2 5 2 7s-2 3-2 3v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
+    ticket: `<path d="M4 8a2 2 0 0 0 2-2h12a2 2 0 0 0 2 2v2a2 2 0 0 1 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" fill="none" stroke="currentColor" stroke-width="2"/>`
+  };
+  return `<span class="story-icon" aria-label="${STORY_MARK_LABEL[kind]}"><svg viewBox="0 0 24 24" aria-hidden="true">${paths[kind]}</svg></span>`;
+}
+
+function storyMarks(dayId) {
+  const marks = [];
+  const trains = ["shinkansen-oct24", "shinkansen-nov2", "shinkansen-himeji", "shinkansen-nov5", "romancecar-out"];
+  if (trains.some((id) => (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("train");
+  const meal = RESTAURANT_BOOKINGS.some((booking) => booking.id !== "setsugetsuka-meals" && booking.dayIds.includes(dayId) && reservationRecord(booking).status === "booked");
+  if (meal) marks.push("meal");
+  const tickets = ["himeji-tickets", "teamlab"];
+  if (dayId === "day02" || tickets.some((id) => (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("ticket");
+  return marks;
+}
+
+function storyDayTitle(day) {
+  return day.title.replace(/^Day \d+\s*-\s*/, "");
+}
+
+function storyTravelCard(card) {
+  const marks = (card.marks || []).map(storyMarkIcon).join("");
+  return `<article class="story-card is-travel" data-city="travel">
+    <span class="story-card-band" aria-hidden="true"></span>
+    <div class="story-card-body">
+      <p class="story-card-meta">${escapeHtml(card.when)}</p>
+      <h3>${escapeHtml(card.title)}</h3>
+      <p class="story-summary">${escapeHtml(card.summary)}</p>
+      ${marks ? `<p class="story-icons">${marks}</p>` : ""}
+    </div>
+  </article>`;
+}
+
+function storyDayCard(day, today, snippet) {
+  const number = Number(day.id.replace("day", ""));
+  const past = day.date < today;
+  const marks = storyMarks(day.id).map(storyMarkIcon).join("");
+  const photo = bundledPlanPhotoUrl(day.id);
+  const journal = past && snippet ? `<p class="story-journal"><span>Journal</span> ${escapeHtml(snippet)}</p>` : "";
+  return `<button type="button" class="story-card${day.date === today ? " is-today" : ""}" data-city="${escapeHtml(stayCityForDay(day) || "travel")}" data-story-day="${escapeHtml(day.id)}">
+    <span class="story-card-band" aria-hidden="true"></span>
+    ${photo ? `<img src="${escapeHtml(photo)}" alt="">` : ""}
+    <span class="story-card-body">
+      <span class="story-card-meta">Day ${number} · ${escapeHtml(day.short)}</span>
+      <span class="story-card-title">${escapeHtml(storyDayTitle(day))}</span>
+      <span class="story-summary">${escapeHtml(day.theme)}</span>
+      ${marks ? `<span class="story-icons">${marks}</span>` : ""}
+      ${journal}
+    </span>
+  </button>`;
+}
+
+function storyChapterHtml(name, city, cards) {
+  return `<h3 class="story-chapter" data-city="${escapeHtml(city)}"><i aria-hidden="true"></i>${escapeHtml(name)}</h3>${cards}`;
+}
+
+function storyDaysHtml(snippets) {
+  const today = japanTodayIso();
+  const byId = Object.fromEntries(tripRows().map((row) => [row.day.id, row.day]));
+  const travelOut = storyTravelCard({
+    when: "Fri Oct 23",
+    title: "Fly to Japan",
+    summary: "JL7088 leaves Madrid at 12:30.",
+    marks: ["ticket"]
+  });
+  const travelHome = storyTravelCard({
+    when: "Fri Nov 13",
+    title: "Fly home",
+    summary: "BA4609 leaves Haneda at 01:00.",
+    marks: ["ticket"]
+  });
+  const chapters = STORY_CHAPTERS.map((chapter) => {
+    const cards = chapter.dayIds.map((dayId) => storyDayCard(byId[dayId], today, snippets[dayId] || "")).join("");
+    return storyChapterHtml(chapter.name, chapter.city, cards);
+  }).join("");
+  return `${storyChapterHtml("To Japan", "travel", travelOut)}${chapters}${storyChapterHtml("Home", "travel", travelHome)}`;
+}
+
+async function storyJournalSnippets() {
+  const snippets = {};
+  const today = japanTodayIso();
+  const prefs = readJournalPrefs();
+  tripRows().forEach((row) => {
+    if (row.day.date >= today) return;
+    const line = String(prefs.notes?.[row.day.id] || "").trim().split("\n")[0];
+    if (line) snippets[row.day.id] = line.slice(0, 160);
+  });
+  await Promise.all(tripRows().map(async (row) => {
+    if (row.day.date >= today || snippets[row.day.id]) return;
+    const cached = await readJournalCache(row.day.id).catch(() => null);
+    const note = (cached?.notes || []).map((item) => item.note).find((text) => String(text || "").trim());
+    if (note) snippets[row.day.id] = String(note).trim().split("\n")[0].slice(0, 160);
+    else if (cached?.photos?.length) snippets[row.day.id] = "A photo is saved for this day.";
+  }));
+  return snippets;
+}
+
+let storyDaysToken = 0;
+
+function renderStoryDays() {
+  const host = document.querySelector("#storyDays");
+  if (!host) return;
+  host.innerHTML = storyDaysHtml({});
+  const token = ++storyDaysToken;
+  storyJournalSnippets().then((snippets) => {
+    if (token !== storyDaysToken || !host.isConnected) return;
+    if (!Object.values(snippets).some(Boolean)) return;
+    host.innerHTML = storyDaysHtml(snippets);
+  }).catch(() => {});
+}
+
+let storyPhotosToken = 0;
+
+async function renderStoryPhotos() {
+  const host = document.querySelector("#storyPhotos");
+  if (!host) return;
+  const token = ++storyPhotosToken;
+  const prefs = readJournalPrefs();
+  if (!journalConfigured() || !prefs.passcode) {
+    host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+    return;
+  }
+  host.innerHTML = `<p class="story-empty">Loading photos.</p>`;
+  try {
+    const data = await journalPost({ action: "list" });
+    if (token !== storyPhotosToken || !host.isConnected) return;
+    const photos = (data.photos || []).filter((photo) => photo.fileId || photo.thumbFileId);
+    if (!photos.length) {
+      host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+      return;
+    }
+    const withThumbs = await Promise.all(photos.map(async (photo) => {
+      if (photo.thumb) return photo;
+      const fileId = photo.thumbFileId || photo.fileId;
+      try {
+        const thumb = await journalPost({ action: "thumb", fileId });
+        return { ...photo, thumb: thumb.thumb || "" };
+      } catch {
+        return photo;
+      }
+    }));
+    if (token !== storyPhotosToken || !host.isConnected) return;
+    const groups = new Map();
+    withThumbs.forEach((photo) => {
+      const key = photo.dayId || "other";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(photo);
+    });
+    const order = tripRows().map((row) => row.day.id);
+    const keys = [...groups.keys()].sort((a, b) => {
+      const ai = order.indexOf(a);
+      const bi = order.indexOf(b);
+      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+    });
+    host.innerHTML = keys.map((dayId) => {
+      const found = findDay(dayId);
+      const label = found ? `${found.day.short} · Day ${Number(dayId.replace("day", ""))}` : "Other days";
+      const cells = groups.get(dayId).map((photo) => {
+        const src = journalThumbSrc(photo);
+        if (!src) return "";
+        const open = found ? ` data-story-day="${escapeHtml(dayId)}"` : "";
+        const tag = found ? "button" : "span";
+        return `<${tag} type="button" class="story-photo"${open}><img src="${src}" alt="${escapeHtml(photo.caption || "Journal photo")}"></${tag}>`;
+      }).join("");
+      return `<section class="story-photo-day"><h3>${escapeHtml(label)}</h3><div class="story-photo-grid">${cells}</div></section>`;
+    }).join("");
+    if (!host.querySelector("img")) host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+  } catch {
+    if (token === storyPhotosToken && host.isConnected) host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+  }
+}
+
+function renderStoryMap() {
+  const host = document.querySelector("#storyMap");
+  if (!host) return;
+  host.innerHTML = `
+    <p class="helper-copy">Tap a city to open its first day.</p>
+    <div class="story-map-frame">
+      <svg class="route-map-layer" viewBox="70 120 470 280" role="img" aria-label="Trip route from Osaka to Tokyo">
+        <g class="japan-outline" aria-hidden="true">
+          <path d="M583.7 98.2L590.5 101.5L598.3 110.2L603.9 113.3L608.6 113.2L625.6 107.4L613.6 119.3L611.4 126L611.9 139.3L615.4 141.6L621.5 140L625.5 141.8L614.4 145.1L610.5 143.4L597.4 144.5L589.3 143.2L578.6 137.9L571.7 138.5L558.2 143.4L552.1 147.5L541.8 158.7L526.6 143.1L514 126.2L502.3 122.7L489 124.8L484.6 115.2L478.9 112.8L474 115.3L471.6 119.5L474.6 126.7L479.7 129.3L486.3 143.4L481.6 143.9L474 138L459.5 145.3L456 145.1L453.8 142.3L454 138.7L461.2 129.3L461.8 123.9L458.9 115L463.4 105.7L465 103.9L471.8 103.5L482.7 99.9L485.2 97.4L484.5 92.8L486.1 88.5L488.9 88.3L495.7 95.9L503.5 100L507.7 101L510.7 99.3L515.9 88.1L527 78.8L530.5 71.3L535.9 65.5L539.4 58.3L540.6 50.6L539.9 42.5L545.2 35.6L553.4 35L566.8 71.1L583.7 98.2ZM128.5 298.7L132.9 301.7L139.5 301.3L141.7 304L140.8 307.3L133.5 312.7L142.4 317L139.4 320.8L141.1 324.1L139.2 326L140.4 329.8L126.4 339.4L113.9 355.7L111.2 362.3L104.7 369.4L98.3 365.7L96.7 367.2L96.7 371.7L83.2 375L89 368.1L90.8 357.5L93.7 357L94.3 354.2L91.3 352.6L86.8 356.4L84.4 361.3L85.3 366.6L82.8 368.9L74.4 361.3L74.5 357.1L78.7 357.3L81.4 352.8L80.1 346.2L84.3 336.1L91.1 334.2L102.4 324.1L99.2 321.5L102 319.8L102.7 316.5L101.8 306.6L99.2 302.4L95.5 303.6L93.5 312L97.4 313.5L95.8 318.4L93.1 318.2L89.4 313.3L79.6 316.7L83 312.4L81.5 306.3L83.5 300.4L85.2 307.2L88.8 310.1L88.6 303.8L83.3 293.8L85.4 290.8L91.1 293.8L92.1 290L108.3 289.4L113.8 284.3L120.9 283.8L126.3 287.9L126.4 295.3L128.5 298.7ZM217.7 310.8L224.5 314.7L220.6 326.9L221.9 328.5L210 331.4L204.4 335.3L200.4 340.8L197.3 332.1L189.8 326.8L179.1 328L172 335.3L167.4 337.1L164.6 341.1L159.1 342.2L155.1 340.2L158.6 336.5L153.3 333.8L154.4 330.9L153.4 328.6L158.5 322.2L156.3 319.9L157.8 316.8L146.9 315.8L166.9 311L174.3 303L179.5 301.3L182.4 308.6L184 309L195 310.4L198 307.3L198.4 303.5L200.9 304.7L208.5 303.8L211.8 304.7L217.7 310.8ZM482.8 157.8L489 159.1L483.7 168.2L479.7 180.2L479.1 184.1L483.5 197.6L482.1 215.3L477.2 226.5L471.2 235.7L463.3 237.5L457.8 243L451.2 253.5L441.2 251.9L435.1 256.3L431.7 262.3L428.3 278.5L423 289.3L420.7 292.5L411.2 298.5L400.9 312.6L399.9 318.5L402.1 331.6L395.3 331.2L388.8 334.1L382 343.4L372.6 344.8L367.3 347.8L365.6 346.5L365 344.7L366.8 343.5L370 334.3L380.5 328L378.8 324.3L374.8 323.1L371 327.5L366.9 329L367.3 334.9L364.3 337.4L361.1 330.7L355.1 329L350.6 331.7L345.4 341.1L340.9 344.5L336.2 345.5L335.3 342.2L339.9 333.9L343.1 333.4L339.7 328.4L335.6 328.1L319.5 339.5L303.9 330.8L290.6 328.4L297.9 326.9L298.5 324.6L292.2 322.3L291.3 319.4L289.4 322.8L287.7 321.7L290.3 313.8L292.2 312.4L290 311L286.3 311.9L278.4 319.9L284.1 331.2L282 334.4L266.9 333.6L248.5 348.7L242 348.8L236.6 344.2L234.1 326.6L237 317.5L244 315.6L249.2 310.4L239.9 306.1L233.9 298.8L220.7 295.3L211.3 298.3L196.8 295.9L187.4 296.9L184.6 294.8L174.3 293.7L169.7 287.9L166.6 287.7L163.4 290L156.2 301.3L148.6 290.4L134.3 288.4L131.2 284.5L126.7 284.3L129.6 275L134.2 272.1L143.3 275.1L174.1 265.2L190.3 257.3L197.2 256.7L206.5 258.8L208 263L224 267.7L257.4 272.4L259.4 274.1L256.9 277.8L258.5 280.9L267.2 285.2L274.2 284.3L281.1 281.2L281.7 273.3L284.8 269.9L308.8 256.8L312.8 250.7L315.1 242.6L320.6 238.1L334.6 238.7L333.9 241.5L318.7 247L320 250.9L318.1 257L322.9 262L325.5 262.5L332.2 258.6L356.1 258.4L367.3 253.7L378.4 244.6L393.8 241.5L402.9 230.4L414.9 221.4L422.1 211.6L427.6 207.2L431 200.7L432.2 192.8L426.6 188.1L432.1 186.6L437.7 180.2L439 170.7L441.8 166.8L452 164.6L455.7 160.2L456.9 155L459.6 153.6L465.3 157.1L462.8 167.2L463.7 169.9L469.9 168.3L473.8 172L477.9 169.8L481.1 163.2L480.5 161.5L469 160.7L470.5 157.1L477.1 150.6L482.8 157.8Z" />
+        </g>
+        ${makeRouteLegSvg("story-leg-kyoto-hiroshima", "#7b61b9", "M263.2 301.6 Q221 262 171 287.2", "2", "Kyoto → Hiroshima", "~1 hr 45", "train time", 214, 236)}
+        ${makeRouteLegSvg("story-leg-hiroshima-tokyo", "#2b8a78", "M171 287.2 Q273 220 370.3 320.6", "3", "Hiroshima → Tokyo", "~4 hr", "Shinkansen", 268, 196)}
+        ${makeRouteLegSvg("story-leg-tokyo-hakone", "#d28732", "M370.3 320.6 Q363 300 356 323", "4", "Tokyo → Hakone", "~2 hr 15", "Romancecar", 430, 286)}
+        ${makeRouteLegSvg("story-leg-hakone-tokyo", "#3a77b8", "M356 323 Q365 346 370.3 320.6", "5", "Hakone → Tokyo", "~2 hr 15", "return by rail", 430, 368)}
+        ${makeRouteLegSvg("story-leg-osaka-kyoto", "#e06b8f", "M252.4 308.9 Q250 279 263.2 301.6", "1", "Osaka → Kyoto", "~30 min", "via Nara", 196, 268)}
+        ${makeRouteCitySvg(252.4, 308.9, -18, 34, "end", "Osaka", "Oct 24–27", "osaka", "day02")}
+        ${makeRouteCitySvg(263.2, 301.6, 16, -20, "start", "Kyoto", "Oct 28–Nov 1", "kyoto", "day07")}
+        ${makeRouteCitySvg(171, 287.2, -16, -20, "end", "Hiroshima", "Nov 2–4", "hiroshima", "day11")}
+        ${makeRouteCitySvg(370.3, 320.6, 18, -20, "start", "Tokyo", "Nov 5–7", "tokyo-1", "day14")}
+        ${makeRouteCitySvg(356, 323, -14, 36, "end", "Hakone", "Nov 8–10", "hakone", "day17")}
+      </svg>
+    </div>
+    <div class="story-map-cities">
+      <button type="button" data-story-city-day="day02">Osaka</button>
+      <button type="button" data-story-city-day="day07">Kyoto</button>
+      <button type="button" data-story-city-day="day11">Hiroshima</button>
+      <button type="button" data-story-city-day="day14">Tokyo</button>
+      <button type="button" data-story-city-day="day17">Hakone</button>
+      <button type="button" data-story-city-day="day20" aria-label="Tokyo return, open Nov 11">Tokyo return</button>
+    </div>`;
+}
+
+function renderStory() {
+  if (!storyShell) return;
+  storyShell.querySelectorAll("[data-story]").forEach((button) => {
+    const on = button.dataset.story === storyView;
+    button.setAttribute("aria-selected", String(on));
+    button.tabIndex = on ? 0 : -1;
+  });
+  document.querySelector("#storyDays")?.toggleAttribute("hidden", storyView !== "days");
+  tripCalendar?.toggleAttribute("hidden", storyView !== "calendar");
+  document.querySelector("#storyPhotos")?.toggleAttribute("hidden", storyView !== "photos");
+  document.querySelector("#storyMap")?.toggleAttribute("hidden", storyView !== "map");
+  if (storyView === "days") renderStoryDays();
+  if (storyView === "calendar") renderTripCalendar();
+  if (storyView === "photos") void renderStoryPhotos();
+  if (storyView === "map") renderStoryMap();
+}
+
 function renderTripCalendar() {
   if (!tripCalendar) return;
   const today = japanTodayIso();
   const beforeTrip = today < TRIP_CALENDAR_START;
   const duringTrip = today >= TRIP_CALENDAR_START && today <= TRIP_CALENDAR_END;
   tripCalendar.replaceChildren();
-  const storyHeading = document.createElement("div");
-  storyHeading.className = "section-heading";
-  storyHeading.innerHTML = `<p class="label">The whole trip</p><h2>Story</h2>`;
-  tripCalendar.appendChild(storyHeading);
   if (beforeTrip) {
     const days = daysUntilTrip();
     const line = document.createElement("p");
@@ -5353,7 +5683,7 @@ function showSection(name) {
   overviewPanel.classList.toggle("hidden", name !== "overview");
   const viewingDay = name === "days" && daysShowsDay && Boolean(findDay(state.openDayId));
   dayPanel.classList.toggle("hidden", !viewingDay);
-  tripCalendar?.classList.toggle("hidden", name !== "days" || viewingDay);
+  storyShell?.classList.toggle("hidden", name !== "days" || viewingDay);
   if (name === "today") renderToday();
   if (name === "tickets") renderTickets();
   if (name === "food") {
@@ -5374,7 +5704,7 @@ function showSection(name) {
     renderNav();
     renderDay(found.day);
   }
-  if (name === "days" && !viewingDay) renderTripCalendar();
+  if (name === "days" && !viewingDay) renderStory();
   if (name === "journal") renderJournalSettings();
   window.scrollTo({ top: 0, behavior: "auto" });
 }
@@ -6153,11 +6483,27 @@ function startJournalSync() {
 }
 
 document.querySelector("#headerCalendar")?.addEventListener("click", () => {
-  if (document.body.dataset.section === "days" && !daysShowsDay) showSection("today");
-  else {
-    daysShowsDay = false;
-    showSection("days");
+  const onCalendar = document.body.dataset.section === "days" && !daysShowsDay && storyView === "calendar";
+  if (onCalendar) {
+    showSection("today");
+    return;
   }
+  daysShowsDay = false;
+  storyView = "calendar";
+  showSection("days");
+});
+
+storyShell?.addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-story]");
+  if (tab) {
+    storyView = tab.dataset.story;
+    renderStory();
+    return;
+  }
+  const dayId = event.target.closest("[data-story-day], [data-story-city-day]")?.dataset.storyDay
+    || event.target.closest("[data-story-city-day]")?.dataset.storyCityDay;
+  const found = dayId ? findDay(dayId) : null;
+  if (found) showDay(found.day);
 });
 
 applyTheme();
