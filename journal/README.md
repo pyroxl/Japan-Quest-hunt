@@ -22,7 +22,7 @@ This folder is the Google Apps Script that stores family notes and photos in Bri
 16. Click **Authorize access**. Allow the script to use Google Drive and Google Sheets.
 17. Copy the **Web app** URL. The URL ends in `/exec`.
 18. Open `app.js` in this repo. Set `JOURNAL_ENDPOINT` to that URL.
-19. Publish the site again so each phone loads `app.js?v185`.
+19. Publish the site again so each phone loads `app.js?v186`.
 
 The first successful call creates the Drive folder `Japan Trip Journal 2026`, one subfolder per trip day, and the Google Sheet `Japan Trip Journal notes`.
 
