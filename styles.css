@@ -1,14 +1,14 @@
 :root {
-  color-scheme: light;
+  color-scheme: only light;
   --paper: #fff0f6;
   --ink: #34222a;
-  --muted: #80636f;
+  --muted: #715862;
   --line: rgba(135, 58, 86, 0.18);
   --card: rgba(255, 250, 252, 0.9);
-  --green: #c7437a;
-  --teal: #8d4f9f;
-  --rose: #e777a8;
-  --gold: #c98f37;
+  --green: #a63866;
+  --teal: #814891;
+  --rose: #8e4967;
+  --gold: #7b5822;
   --shadow: 0 16px 40px rgba(111, 51, 73, 0.16);
   --glow-one: rgba(255, 179, 210, 0.5);
   --glow-two: rgba(255, 221, 153, 0.34);
@@ -19,13 +19,13 @@
 body[data-city="osaka"] {
   --paper: #fff4e6;
   --ink: #372318;
-  --muted: #82614a;
+  --muted: #775944;
   --line: rgba(178, 83, 22, 0.2);
   --card: rgba(255, 250, 244, 0.91);
-  --green: #d75f16;
-  --teal: #9b4d1c;
-  --rose: #f28a2e;
-  --gold: #c9952d;
+  --green: #9f4610;
+  --teal: #964b1b;
+  --rose: #8c501b;
+  --gold: #78591b;
   --shadow: 0 16px 40px rgba(127, 63, 22, 0.16);
   --glow-one: rgba(255, 168, 88, 0.52);
   --glow-two: rgba(255, 214, 125, 0.38);
@@ -36,13 +36,13 @@ body[data-city="osaka"] {
 body[data-city="kyoto"] {
   --paper: #fff0f6;
   --ink: #34222a;
-  --muted: #80636f;
+  --muted: #715862;
   --line: rgba(135, 58, 86, 0.18);
   --card: rgba(255, 250, 252, 0.9);
-  --green: #c7437a;
-  --teal: #8d4f9f;
-  --rose: #e777a8;
-  --gold: #c98f37;
+  --green: #a63866;
+  --teal: #814891;
+  --rose: #8e4967;
+  --gold: #7b5822;
   --shadow: 0 16px 40px rgba(111, 51, 73, 0.16);
   --glow-one: rgba(255, 179, 210, 0.5);
   --glow-two: rgba(255, 221, 153, 0.34);
@@ -53,13 +53,13 @@ body[data-city="kyoto"] {
 body[data-city="tokyo"] {
   --paper: #fffafa;
   --ink: #301f22;
-  --muted: #765f63;
+  --muted: #6f595d;
   --line: rgba(188, 0, 45, 0.18);
   --card: rgba(255, 255, 255, 0.92);
   --green: #bc002d;
   --teal: #8d001f;
-  --rose: #e0445f;
-  --gold: #c7a15d;
+  --rose: #aa3448;
+  --gold: #735d36;
   --shadow: 0 16px 40px rgba(120, 0, 25, 0.13);
   --glow-one: rgba(188, 0, 45, 0.18);
   --glow-two: rgba(255, 255, 255, 0.7);
@@ -70,13 +70,13 @@ body[data-city="tokyo"] {
 body[data-city="hiroshima"] {
   --paper: #f5f8ff;
   --ink: #202b3f;
-  --muted: #647089;
+  --muted: #566076;
   --line: rgba(35, 77, 135, 0.2);
   --card: rgba(251, 253, 255, 0.93);
   --green: #285b96;
-  --teal: #397c82;
-  --rose: #d45b68;
-  --gold: #b8903f;
+  --teal: #2f676c;
+  --rose: #9c434d;
+  --gold: #755b28;
   --shadow: 0 16px 40px rgba(35, 65, 110, 0.14);
   --glow-one: rgba(91, 149, 203, 0.28);
   --glow-two: rgba(244, 189, 164, 0.3);
@@ -89,12 +89,13 @@ body[data-city="hiroshima"] {
 }
 
 html {
-  color-scheme: light;
+  color-scheme: only light;
   background-color: var(--paper);
 }
 
 body {
   margin: 0;
+  color-scheme: only light;
   background-color: var(--paper);
   background:
     radial-gradient(circle at 18% 8%, var(--glow-one), transparent 30%),
@@ -118,6 +119,12 @@ textarea,
 select {
   background-color: var(--card);
   color: var(--ink);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
 }
 
 .app-shell {
@@ -562,7 +569,6 @@ h3 {
   background: #9a3412;
   border-radius: 6px;
 }
-
 
 .city-chip,
 .chip,
@@ -1230,7 +1236,6 @@ h3 {
 }
 
 .main-complete:disabled {
-  opacity: 0.55;
   cursor: not-allowed;
   background: rgba(255, 255, 255, 0.7);
   color: var(--muted);
@@ -1870,7 +1875,7 @@ h3 {
   z-index: 3;
   width: min(190px, 82%);
   height: auto;
-  color: #285b96;
+  color: #14365c;
   pointer-events: none;
   filter: drop-shadow(0 2px 4px rgba(40, 91, 150, 0.24));
   transform: translateX(-50%);
@@ -1966,6 +1971,10 @@ h3 {
   line-height: 1.25;
 }
 
+.calendar-day .confirm-flag {
+  color: #fff;
+}
+
 .calendar-day[data-city="osaka"] {
   border-color: rgba(215, 95, 22, 0.3);
 }
@@ -1995,7 +2004,7 @@ h3 {
 }
 
 .calendar-day.is-transit-day .calendar-shinkansen {
-  color: color-mix(in srgb, var(--outside-to) 72%, #285b96);
+  color: #14365c;
 }
 
 .calendar-day.is-today {
@@ -2517,7 +2526,7 @@ h3 {
 .reservation-title-row > a { color: var(--ink); font-size: .8rem; font-weight: 950; line-height: 1.25; }
 .reservation-title-row > a { text-decoration-color: color-mix(in srgb, var(--green) 45%, transparent); }
 .reservation-countdown-copy p { margin: 5px 0 0; color: var(--muted); font-size: .7rem; line-height: 1.38; }
-.reservation-countdown-copy small { margin-top: 5px; color: var(--ink); font-size: .65rem; font-weight: 800; opacity: .72; }
+.reservation-countdown-copy small { margin-top: 5px; color: var(--muted); font-size: .65rem; font-weight: 800; }
 
 .reservation-countdown-pill {
   flex: 0 0 auto;
@@ -2562,7 +2571,7 @@ h3 {
 }
 
 .reservation-countdown-list li.is-done {
-  opacity: 0.72;
+  color: var(--muted);
 }
 
 .reservation-countdown-list li.is-done .reservation-title-row > strong {
@@ -2672,11 +2681,6 @@ h3 {
   .trip-map-instruction { right: 6px; bottom: 5px; max-width: calc(100% - 12px); }
 }
 
-body[data-theme="dark"] .trip-route-map-frame { background: linear-gradient(160deg, #101b1c, #172827); }
-body[data-theme="dark"] .japan-outline { fill: rgba(98, 151, 124, .18); stroke: #d9ece3; }
-body[data-theme="dark"] .route-city-name { fill: #f4fbf7; stroke: #101b1c; }
-body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,227,.2); background: rgba(16,27,28,.9); color: #d9ece3; }
-
 .chapter-map { position: absolute; inset: 0; display: none; z-index: 3; background: #dfecef; }
 .trip-route-map-frame.is-chapter-open .chapter-map { display: block; }
 .chapter-map-tabs { position: relative; z-index: 5; display: flex; gap: 6px; overflow-x: auto; padding: 8px 8px 6px; scrollbar-width: thin; }
@@ -2708,17 +2712,13 @@ body[data-theme="dark"] .trip-map-instruction { border: 1px solid rgba(217,236,2
 
 .place-list .is-hotel-stop .map-pin-key.is-hotel-pin {
   border-radius: 8px;
-  background: linear-gradient(155deg, #e8c547, #8b6914);
+  background: #6a4e0c;
   color: #fffdf5;
 }
 
 .place-list .is-hotel-stop.is-map-focused {
   border-color: #b8860b;
   box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.35);
-}
-
-body[data-theme="dark"] .place-list .is-hotel-stop {
-  background: linear-gradient(135deg, rgba(201, 162, 39, 0.18), color-mix(in srgb, var(--card) 92%, var(--ink) 8%));
 }
 
 .overview-map-marker-shell .map-marker-activity-core {
@@ -2763,8 +2763,8 @@ body[data-theme="dark"] .place-list .is-hotel-stop {
   height: 36px;
   border: 3px solid #fff8e7;
   border-radius: 10px 10px 4px 4px;
-  background-color: #c9a227;
-  background-image: linear-gradient(155deg, #f0d060 0%, #c9a227 45%, #8b6914 100%);
+  background-color: #6a4e0c;
+  background-image: none;
   color: #fffdf5;
   box-shadow: 0 4px 10px rgba(92, 58, 8, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
@@ -2810,10 +2810,6 @@ body[data-theme="dark"] .place-list .is-hotel-stop {
 .chapter-map-day-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--day-color); }
 .chapter-map-day.is-highlighted { border-color: var(--rose); box-shadow: 0 0 0 2px color-mix(in srgb, var(--rose), transparent 76%); }
 .chapter-map-day.is-armed { background: color-mix(in srgb, var(--rose), var(--card) 90%); }
-
-body[data-theme="dark"] .chapter-map-tabs button, body[data-theme="dark"] .chapter-map-day { background: color-mix(in srgb, var(--card) 94%, var(--ink) 6%); }
-body[data-theme="dark"] .chapter-map-tabs button.active { background: var(--rose); }
-body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-map { background: #172827; }
 
 @media (max-width: 620px) {
   .trip-route-map-frame:not(.is-mobile-fullscreen) { padding-top: 86px; }
@@ -2957,6 +2953,7 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .day-map-marker-shell .map-marker-activity-core::after { position: absolute; left: 50%; bottom: -6px; width: 9px; height: 9px; border-right: 3px solid white; border-bottom: 3px solid white; background: inherit; content: ""; transform: translateX(-50%) rotate(45deg); }
 .day-map-marker-shell.is-highlighted .map-marker-activity-core { background: var(--rose); scale: 1.28; }
 .leaflet-tooltip { border-color: var(--rose); color: #22332c; font-family: inherit; }
+.leaflet-attribution-flag { display: none !important; }
 .leaflet-control-attribution { font-size: 9px; }
 
 .place-list {
@@ -3122,7 +3119,7 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 
 .city-food-filters button {
   --mochi: #f7bfd1;
-  --mochi-deep: #c54f79;
+  --mochi-deep: #9a3e5f;
   --mochi-wash: #fff0f5;
   position: relative;
   display: grid;
@@ -3144,10 +3141,10 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
   transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease, background .18s ease;
 }
 
-.city-food-filters button[data-food-type="restaurant"] { --mochi: #ffbcaa; --mochi-deep: #d75f45; --mochi-wash: #fff1ec; }
-.city-food-filters button[data-food-type="cafe"] { --mochi: #d7b18c; --mochi-deep: #8b5a34; --mochi-wash: #fbf3eb; }
-.city-food-filters button[data-food-type="conbini"] { --mochi: #aee6ce; --mochi-deep: #24775f; --mochi-wash: #ebfaf4; }
-.city-food-filters button[data-food-type="sweet"] { --mochi: #f6abc8; --mochi-deep: #bd3f72; --mochi-wash: #fff0f6; }
+.city-food-filters button[data-food-type="restaurant"] { --mochi: #ffbcaa; --mochi-deep: #9a4431; --mochi-wash: #fff1ec; }
+.city-food-filters button[data-food-type="cafe"] { --mochi: #d7b18c; --mochi-deep: #835531; --mochi-wash: #fbf3eb; }
+.city-food-filters button[data-food-type="conbini"] { --mochi: #aee6ce; --mochi-deep: #206954; --mochi-wash: #ebfaf4; }
+.city-food-filters button[data-food-type="sweet"] { --mochi: #f6abc8; --mochi-deep: #a23662; --mochi-wash: #fff0f6; }
 
 .city-food-filters button:hover,
 .city-food-filters button:focus-visible {
@@ -3490,7 +3487,7 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .restaurant-booking.is-booked { border-color: var(--green); }
 .restaurant-booking.is-cancel_needed { border-color: #c74f45; background: color-mix(in srgb, #c74f45 8%, var(--paper)); }
 .restaurant-booking.is-skip,
-.restaurant-booking.is-cancelled { opacity: .72; }
+.restaurant-booking.is-cancelled { color: var(--muted); }
 .restaurant-booking-slot {
   margin: 4px 0 0;
   color: var(--ink);
@@ -3865,8 +3862,8 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 }
 
 .tab-bar button[aria-current="page"] {
-  background: color-mix(in srgb, var(--rose) 34%, #fff);
-  color: var(--ink);
+  background: #fff6ee;
+  color: #1c0f14;
   font-weight: 850;
 }
 
@@ -3888,232 +3885,6 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 .text-button {
   padding: 10px 12px;
   font-weight: 800;
-}
-
-/* Dark mode uses deeper city accents and opaque surfaces so pastel navigation
-   and calendar cards retain contrast without losing their route colours. */
-body[data-theme="dark"] {
-  --paper: #171418;
-  --ink: #f7edf1;
-  --muted: #c5adb7;
-  --line: rgba(255, 226, 238, 0.17);
-  --card: rgba(39, 32, 37, 0.96);
-  --green: #f28ab4;
-  --teal: #d7a1e5;
-  --rose: #ff9fc7;
-  --gold: #e9bd70;
-  --shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
-  --glow-one: rgba(199, 67, 122, 0.2);
-  --glow-two: rgba(201, 143, 55, 0.12);
-  --wash-one: rgba(199, 67, 122, 0.1);
-  --wash-two: rgba(141, 79, 159, 0.09);
-}
-
-body[data-theme="dark"][data-city="osaka"] {
-  --paper: #1a1511;
-  --card: rgba(45, 35, 27, 0.96);
-  --green: #ff9a5d;
-  --teal: #efaa7d;
-  --rose: #ffad66;
-  --gold: #ebc36d;
-  --glow-one: rgba(215, 95, 22, 0.2);
-  --glow-two: rgba(201, 149, 45, 0.12);
-}
-
-body[data-theme="dark"][data-city="hiroshima"] {
-  --paper: #111821;
-  --card: rgba(28, 39, 53, 0.96);
-  --green: #82b9f3;
-  --teal: #78c2c8;
-  --rose: #f18b96;
-  --gold: #dfbd72;
-  --glow-one: rgba(40, 91, 150, 0.24);
-  --glow-two: rgba(57, 124, 130, 0.12);
-}
-
-body[data-theme="dark"][data-city="tokyo"] {
-  --paper: #181315;
-  --card: rgba(42, 31, 35, 0.96);
-  --green: #ff718f;
-  --teal: #ff91a7;
-  --rose: #ff91a7;
-  --gold: #e6c27e;
-  --glow-one: rgba(188, 0, 45, 0.22);
-  --glow-two: rgba(199, 161, 93, 0.1);
-}
-
-body[data-theme="dark"] .quick-sidebar,
-body[data-theme="dark"] .city-chip,
-body[data-theme="dark"] .chip,
-body[data-theme="dark"] .text-button,
-body[data-theme="dark"] .carousel-side-jump,
-body[data-theme="dark"] .coverage-summary,
-body[data-theme="dark"] .melon-progress,
-body[data-theme="dark"] .discovery-group,
-body[data-theme="dark"] .stat,
-body[data-theme="dark"] .today-pill,
-body[data-theme="dark"] .melon-fields select,
-body[data-theme="dark"] .melon-fields input,
-body[data-theme="dark"] .melon-leaderboard,
-body[data-theme="dark"] .award-card textarea,
-body[data-theme="dark"] .overview-switch button {
-  background: color-mix(in srgb, var(--card) 94%, var(--ink) 6%);
-}
-
-body[data-theme="dark"] .score-orb,
-body[data-theme="dark"] .deck-card {
-  background: linear-gradient(155deg, color-mix(in srgb, var(--card) 88%, var(--ink) 12%), var(--card));
-}
-
-body[data-theme="dark"] .bottom-bar {
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-}
-
-body[data-theme="dark"] .chip.is-outside-city,
-body[data-theme="dark"] .calendar-day.is-outside-city {
-  background: color-mix(in srgb, var(--outside-city-color) 28%, var(--card));
-}
-
-body[data-theme="dark"] .chip.is-transit-day,
-body[data-theme="dark"] .calendar-day.is-transit-day {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--outside-from) 30%, var(--card)) 0%,
-    color-mix(in srgb, var(--outside-from) 30%, var(--card)) 49.5%,
-    color-mix(in srgb, var(--outside-to) 30%, var(--card)) 50.5%,
-    color-mix(in srgb, var(--outside-to) 30%, var(--card)) 100%);
-}
-
-body[data-theme="dark"] .calendar-photo {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--green) 24%, var(--card)),
-    color-mix(in srgb, var(--gold) 20%, var(--card)));
-}
-
-body[data-theme="dark"] .calendar-day.is-outside-city .calendar-photo:not(.has-photo) {
-  background: color-mix(in srgb, var(--outside-city-color) 22%, var(--card));
-}
-
-body[data-theme="dark"] .calendar-day.is-transit-day .calendar-photo:not(.has-photo) {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--outside-from) 24%, var(--card)) 0%,
-    color-mix(in srgb, var(--outside-from) 24%, var(--card)) 49.5%,
-    color-mix(in srgb, var(--outside-to) 24%, var(--card)) 50.5%,
-    color-mix(in srgb, var(--outside-to) 24%, var(--card)) 100%);
-}
-
-body[data-theme="dark"] .calendar-shinkansen {
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
-}
-
-body[data-theme="dark"] .coverage-summary.has-gap {
-  background: #3a201f;
-}
-
-body[data-theme="dark"] .daily-guide {
-  background: var(--card);
-  color: var(--ink);
-}
-
-body[data-theme="dark"] .daily-guide .context-block,
-body[data-theme="dark"] .timeline-tabs,
-body[data-theme="dark"] .plan-photo,
-body[data-theme="dark"] .low-energy-drawer,
-body[data-theme="dark"] .roadmap-blocker,
-body[data-theme="dark"] .roadmap-fallback {
-  background: color-mix(in srgb, var(--card) 88%, var(--ink) 12%);
-}
-
-body[data-theme="dark"] .daily-guide h3,
-body[data-theme="dark"] .daily-guide h4,
-body[data-theme="dark"] .daily-guide strong,
-body[data-theme="dark"] .day-timeline span,
-body[data-theme="dark"] .history-story p,
-body[data-theme="dark"] .context-block.merged-summary .summary-body {
-  color: var(--ink);
-}
-
-body[data-theme="dark"] .map-place-background {
-  background: color-mix(in srgb, var(--card) 88%, var(--ink) 12%);
-}
-
-body[data-theme="dark"] .day-timeline li::before {
-  background: var(--card);
-}
-
-body[data-theme="dark"] .photo-button,
-body[data-theme="dark"] .photo-delete,
-body[data-theme="dark"] .melon-photo button,
-body[data-theme="dark"] .deck-actions button,
-body[data-theme="dark"] .roadmap-open,
-body[data-theme="dark"] .quest-library summary,
-body[data-theme="dark"] .planning-alerts summary,
-body[data-theme="dark"] .collapsible-summary,
-body[data-theme="dark"] .discovery-group > summary {
-  border-color: var(--line);
-  background: color-mix(in srgb, var(--card) 82%, var(--ink) 18%);
-  color: var(--ink);
-}
-
-body[data-theme="dark"] .quest-library,
-body[data-theme="dark"] .planning-alerts,
-body[data-theme="dark"] .quest-library p,
-body[data-theme="dark"] .planning-alerts article,
-body[data-theme="dark"] .daily-photo-slot,
-body[data-theme="dark"] .city-review-block {
-  background: color-mix(in srgb, var(--card) 92%, var(--ink) 8%);
-  color: var(--ink);
-}
-
-body[data-theme="dark"] input,
-body[data-theme="dark"] textarea,
-body[data-theme="dark"] select,
-body[data-theme="dark"] .main-goal-writing textarea,
-body[data-theme="dark"] .review-output {
-  border-color: var(--line);
-  background-color: color-mix(in srgb, var(--card) 84%, var(--ink) 16%);
-  color: var(--ink);
-  caret-color: var(--rose);
-}
-
-body[data-theme="dark"] input::placeholder,
-body[data-theme="dark"] textarea::placeholder {
-  color: var(--muted);
-  opacity: 1;
-}
-
-body[data-theme="dark"] select option {
-  background: var(--paper);
-  color: var(--ink);
-}
-
-body[data-theme="dark"] .deck-actions [data-action="found"],
-body[data-theme="dark"] .melon-photo button:first-of-type {
-  background: color-mix(in srgb, var(--green) 22%, var(--card));
-  color: var(--ink);
-}
-
-body[data-theme="dark"] .main-complete.is-complete {
-  background: color-mix(in srgb, #22c55e 20%, var(--card));
-  color: #9aefb8;
-}
-
-body[data-theme="dark"] .status-ready,
-body[data-theme="dark"] .status-completed,
-body[data-theme="dark"] .calendar-status.status-ready,
-body[data-theme="dark"] .calendar-status.status-completed {
-  color: #83dda8;
-}
-
-body[data-theme="dark"] .status-needs-booking,
-body[data-theme="dark"] .calendar-status.status-needs-booking {
-  color: #f5c574;
-}
-
-body[data-theme="dark"] .status-needs-confirmation,
-body[data-theme="dark"] .status-conditional,
-body[data-theme="dark"] .calendar-status.status-needs-confirmation,
-body[data-theme="dark"] .calendar-status.status-conditional {
-  color: #c7a7ff;
 }
 
 @media (max-width: 540px) {
@@ -4326,6 +4097,12 @@ body[data-theme="dark"] .calendar-status.status-conditional {
   border-color: #44403c;
 }
 
+.confirm-flag-info {
+  background: #3f3f46;
+  color: #fff;
+  border-color: #3f3f46;
+}
+
 .confirm-flag-booked,
 .confirm-flag-done,
 .status-ready,
@@ -4377,7 +4154,11 @@ body[data-theme="dark"] .calendar-status.status-conditional {
 }
 
 .guide-action,
-.guide-link {
+.guide-link,
+a.guide-action,
+a.guide-link,
+.restaurant-booking-actions a.guide-action,
+.restaurant-booking-actions a.guide-link {
   min-width: 44px;
   background: var(--green);
   color: #fff;
@@ -4511,46 +4292,6 @@ body[data-theme="dark"] .calendar-status.status-conditional {
   font-weight: 800;
 }
 
-body[data-theme="dark"] .open-confirmations,
-body[data-theme="dark"] .must-do-block {
-  background: #2a2118;
-  color: var(--ink);
-}
-
-body[data-theme="dark"] .confirm-placeholder {
-  background: #78350f;
-  color: #fff7ed;
-}
-
-body[data-theme="dark"] .copy-code {
-  background: var(--card);
-  color: var(--ink);
-  border-color: var(--line);
-}
-
-body[data-theme="dark"] .guide-action,
-body[data-theme="dark"] .guide-link {
-  background: var(--green);
-  color: #1a1014;
-}
-
-body[data-theme="dark"] .copy-code.is-copied,
-body[data-theme="dark"] .reservation-countdown-list li.is-booked .reservation-countdown-pill {
-  background: #14532d;
-  color: #fff;
-  border-color: #14532d;
-}
-
-body[data-theme="dark"] .must-do-item,
-body[data-theme="dark"] .open-confirmation-group,
-body[data-theme="dark"] .trip-quest-list > li,
-body[data-theme="dark"] .overview-page-chip,
-body[data-theme="dark"] .day-page-chip,
-body[data-theme="dark"] .open-item-day {
-  background: var(--card);
-  color: var(--ink);
-}
-
 .section-tabs {
   position: sticky;
   top: 0;
@@ -4593,7 +4334,7 @@ body[data-theme="dark"] .open-item-day {
 }
 
 body[data-section="days"] .days-hint {
-  display: block;
+  display: none;
 }
 
 body[data-section="days"]:has(#dayPanel:not(.hidden)) .days-hint {
@@ -4640,9 +4381,9 @@ body[data-section="overview"] .day-rail-wrap {
 }
 
 .calendar-back {
-  min-height: 40px;
+  min-height: 44px;
   margin: 0 0 8px;
-  padding: 0 2px;
+  padding: 10px 4px;
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -4762,7 +4503,6 @@ button.trip-date {
   border-color: transparent;
   background: transparent;
   color: var(--muted);
-  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -4772,7 +4512,7 @@ button.trip-date {
 }
 
 .trip-date.is-start .trip-date-city {
-  color: #8a5a00;
+  color: #6a4500;
   font-weight: 900;
 }
 
@@ -4783,7 +4523,7 @@ button.trip-date {
 }
 
 .trip-date.is-today .trip-date-city {
-  color: #8a5a00;
+  color: #6a4500;
   font-size: 0.56rem;
   font-weight: 900;
   letter-spacing: 0.04em;
@@ -4804,25 +4544,6 @@ button.trip-date {
 
 .trip-date.is-today.is-selected .trip-date-city {
   color: #ffe08a;
-}
-
-body[data-theme="dark"] .trip-date-band.is-neutral {
-  background: #8d949c;
-}
-
-body[data-theme="dark"] .trip-date.is-start {
-  border-color: #ffc94a;
-  background: color-mix(in srgb, #ffc94a 24%, var(--card));
-}
-
-body[data-theme="dark"] .trip-date.is-start .trip-date-city,
-body[data-theme="dark"] .trip-date.is-today .trip-date-city {
-  color: #ffe08a;
-}
-
-body[data-theme="dark"] .trip-date.is-today {
-  border-color: #ffc94a;
-  box-shadow: 0 0 0 1px #ffc94a, 0 0 16px rgba(255, 201, 74, 0.95);
 }
 
 .trip-date:focus-visible,
@@ -5107,4 +4828,495 @@ body[data-theme="dark"] .trip-date.is-today {
     gap: 8px;
     padding: 4px 4px 8px;
   }
+}
+
+.story-switch {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.story-switch button {
+  min-height: 44px;
+  padding: 6px 2px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.story-switch button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--rose) 34%, #fff);
+  color: var(--ink);
+}
+
+.story-pane[hidden] {
+  display: none;
+}
+
+.story-chapter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 8px;
+  font-size: 1rem;
+}
+
+.story-chapter i {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--city, #6f6168);
+}
+
+.story-chapter[data-city="osaka"],
+.story-card[data-city="osaka"] { --city: #ef6c00; }
+.story-chapter[data-city="kyoto"],
+.story-card[data-city="kyoto"] { --city: #d81b60; }
+.story-chapter[data-city="hiroshima"],
+.story-card[data-city="hiroshima"] { --city: #1565c0; }
+.story-chapter[data-city="tokyo"],
+.story-card[data-city="tokyo"] { --city: #d50000; }
+.story-chapter[data-city="hakone"],
+.story-card[data-city="hakone"] { --city: #2e7d32; }
+.story-chapter[data-city="travel"],
+.story-card[data-city="travel"] { --city: #6f6168; }
+
+.story-card {
+  display: grid;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+
+button.story-card {
+  cursor: pointer;
+}
+
+.story-card.is-today {
+  border: 3px solid #1c0f14;
+}
+
+.story-card-band {
+  display: block;
+  height: 8px;
+  background: var(--city, #6f6168);
+}
+
+.story-card img {
+  display: block;
+  width: 100%;
+  height: 148px;
+  object-fit: cover;
+}
+
+.story-card-body {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.story-card-meta,
+.story-summary,
+.story-journal,
+.story-empty,
+.wallet-how,
+.wallet-route {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.story-card-title,
+.story-card h3,
+.wallet-card h3,
+.next-stop h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.story-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.story-icons {
+  display: flex;
+  gap: 8px;
+  margin: 2px 0 0;
+}
+
+.story-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--city, var(--ink)) 16%, #fff);
+  color: var(--ink);
+}
+
+.story-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.story-journal span {
+  margin-right: 6px;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.story-empty {
+  margin: 8px 0 16px;
+}
+
+.story-photo-day {
+  margin: 0 0 16px;
+}
+
+.story-photo-day h3 {
+  margin: 0 0 8px;
+}
+
+.story-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.story-photo {
+  display: block;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f3ecef;
+}
+
+.story-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.story-map-frame {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(160deg, #f7fcfd, #e7f4f6);
+}
+
+.story-map-frame .route-map-layer {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.story-map-cities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.story-map-cities button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+.wallet-section {
+  margin: 16px 0 8px;
+  font-size: 1rem;
+}
+
+.next-stop,
+.wallet-card {
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.next-stop {
+  border: 2px solid #1c0f14;
+}
+
+.wallet-kicker {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wallet-countdown {
+  margin: 2px 0 8px;
+  color: var(--ink);
+  font-size: 1.45rem;
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.wallet-card-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.wallet-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--rose) 34%, #fff);
+  color: var(--ink);
+}
+
+.wallet-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.wallet-how {
+  margin-top: 4px;
+}
+
+.wallet-type {
+  margin: 0 0 2px;
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wallet-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.wallet-filters button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.wallet-filters button[aria-pressed="true"] {
+  background: #1c0f14;
+  color: #fff6ee;
+}
+
+.wallet-day {
+  margin: 14px 0 8px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.wallet-done {
+  margin: 8px 0 16px;
+}
+
+.wallet-done summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.my-tickets {
+  margin: 4px 0 18px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.my-ticket-note,
+.my-ticket-help,
+.my-ticket-status,
+.my-ticket-empty {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.my-ticket-note {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.my-tickets label {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.my-tickets input,
+.my-tickets textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+}
+
+.my-tickets textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.my-ticket-save,
+.my-ticket-file,
+.my-ticket-open,
+.my-ticket-delete,
+.my-ticket-clear,
+.ticket-viewer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.my-ticket-save,
+.my-ticket-file {
+  width: 100%;
+  margin: 0 0 8px;
+  background: color-mix(in srgb, var(--rose) 34%, #fff);
+}
+
+.my-ticket-file {
+  position: relative;
+}
+
+.my-ticket-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.my-ticket {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.my-ticket.is-today {
+  border: 3px solid #1c0f14;
+}
+
+.my-ticket h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.my-ticket-open {
+  width: 100%;
+}
+
+.my-ticket-open img {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.my-ticket-delete,
+.my-ticket-clear {
+  justify-self: start;
+}
+
+.ticket-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  background: #fff;
+}
+
+.ticket-viewer[hidden] {
+  display: none;
+}
+
+.ticket-viewer img {
+  width: auto;
+  max-width: 100%;
+  max-height: calc(100% - 60px);
+  object-fit: contain;
+  background: #fff;
 }
