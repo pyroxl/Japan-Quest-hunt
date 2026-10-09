@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v187";
+const APP_VERSION = "japan-quest-v188";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -1029,7 +1029,6 @@ let showArchive = false;
 let daysShowsDay = false;
 let storyView = "days";
 let foodListOpen = false;
-let grokToastTimer = 0;
 const state = loadState();
 state.theme = "light";
 applyTodayTarget();
@@ -1940,7 +1939,6 @@ function makeDayFrontPage(day) {
   section.appendChild(hero);
   populatePlanPhoto(day, hero);
   section.appendChild(dailyGuide(day));
-  section.insertAdjacentHTML("beforeend", askGrokButton(day.id));
   return section;
 }
 
@@ -2699,14 +2697,6 @@ document.addEventListener("click", (event) => {
   if (openDay) {
     const found = findDay(openDay.dataset.openDay);
     if (found) showDay(found.day);
-    return;
-  }
-  const ask = event.target.closest?.("button[data-ask-day]");
-  if (ask) {
-    const found = findDay(ask.dataset.askDay);
-    if (!found) return;
-    const cityName = tripData[found.cityId]?.name || "";
-    copyTextToClipboard(grokPrompt(found.day, cityName)).then((ok) => { if (ok) showGrokToast(); });
     return;
   }
   const showTicket = event.target.closest?.("[data-show-ticket]");
@@ -5183,47 +5173,6 @@ function walletCards() {
     });
   });
   return cards;
-}
-
-function askGrokButton(dayId) {
-  return `<button type="button" class="ask-grok" data-ask-day="${escapeHtml(dayId)}">Ask Grok Bot</button>`;
-}
-
-function grokPrompt(day, cityName) {
-  const context = dayContext[day.id] || {};
-  const goals = dayGoals[day.id] || {};
-  const hotel = STAY_HOTEL_BY_DAY[day.id] || "";
-  const bookings = RESTAURANT_BOOKINGS.filter((booking) => booking.dayIds.includes(day.id)).map((booking) => {
-    const record = reservationRecord(booking);
-    return `${booking.name}. Status: ${record.status}. ${booking.slot}. ${plainGuideText(booking.why)}`;
-  });
-  RESERVATION_COUNTDOWN.forEach((item) => {
-    if (!(COUNTDOWN_DAY_IDS[item.id] || []).includes(day.id)) return;
-    bookings.push(`${item.name}. ${item.target}. ${plainGuideText(item.note)}`);
-  });
-  return [
-    "Japan Trip Hunt context",
-    `Trip day: ${day.title}`,
-    `Date: ${day.date}`,
-    `City: ${cityName}`,
-    `Hotel: ${hotel}`,
-    `Party: ${DAY_PARTY[day.id] || ""}`,
-    `Clear path: ${goals.clearPath || ""}`,
-    "Plan:",
-    ...(context.timeline || []).map(([time, activity]) => `${time} — ${plainGuideText(activity)}`),
-    "Bookings:",
-    ...(bookings.length ? bookings : ["None saved for this day."]),
-    "Diet: Mai avoids sliced meat. Mai avoids whole-cut meat. Ground meat is fine. Mom hates oysters. Choose non-smoking restaurants only.",
-    "Question: "
-  ].join("\n");
-}
-
-function showGrokToast() {
-  const toast = document.querySelector("#grokToast");
-  if (!toast) return;
-  toast.hidden = false;
-  window.clearTimeout(grokToastTimer);
-  grokToastTimer = window.setTimeout(() => { toast.hidden = true; }, 2500);
 }
 
 function ticketCardHtml(card) {
