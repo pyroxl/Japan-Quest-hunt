@@ -5360,29 +5360,44 @@ function savedTicketsForBooking(bookingId) {
   return readMyTickets().filter((ticket) => ticket.bookingId === bookingId);
 }
 
+function ticketHasPicture(ticket) {
+  return ticket.kind === "image" || ticket.hasImage === true;
+}
+
 function walletReadyHtml() {
-  const savedIds = new Set(
-    readMyTickets().map((ticket) => ticket.bookingId).filter((id) => QR_TICKET_IDS.has(id))
-  );
-  return `<p class="wallet-ready">Saved on this phone: ${savedIds.size} of ${QR_TICKET_IDS.size} QR tickets</p>`;
+  const ready = [...QR_TICKET_IDS].filter((id) => {
+    const tickets = savedTicketsForBooking(id);
+    return tickets.length > 0 && tickets.every(ticketHasPicture);
+  }).length;
+  return `<p class="wallet-ready">Ready offline: ${ready} of ${QR_TICKET_IDS.size}</p>`;
+}
+
+function ticketOpenControl(ticket) {
+  const seat = ticket.seat ? ` ${ticket.seat}` : "";
+  if (ticketHasPicture(ticket)) {
+    return `<button type="button" class="day-ticket-open" data-show-ticket="${escapeHtml(ticket.id)}">Open ticket${escapeHtml(seat)}</button>`;
+  }
+  if (ticket.url) {
+    return `<a class="day-ticket-open" href="${escapeHtml(ticket.url)}" target="_blank" rel="noopener noreferrer">Open ticket${escapeHtml(seat)}</a>`;
+  }
+  return "";
 }
 
 function walletPhoneStatusHtml(item) {
   if (!QR_TICKET_IDS.has(item.id)) return "";
-  if (savedTicketsForBooking(item.id).length) {
-    return `<p class="wallet-saved"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Saved on this phone</p>`;
+  const tickets = savedTicketsForBooking(item.id);
+  if (!tickets.length) {
+    return `<p class="wallet-missing">Not saved yet</p><button type="button" class="wallet-add-ticket" data-add-ticket="${escapeHtml(item.id)}">Add ticket</button>`;
   }
-  return `<p class="wallet-missing">Not saved yet</p><button type="button" class="wallet-add-ticket" data-add-ticket="${escapeHtml(item.id)}">Add ticket</button>`;
+  const opens = tickets.map(ticketOpenControl).join("");
+  if (tickets.every(ticketHasPicture)) {
+    return `<p class="wallet-saved"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Ready offline</p>${opens}`;
+  }
+  return `<p class="wallet-missing">Saved, needs picture</p>${opens}`;
 }
 
 function dayTicketOpenHtml(item) {
-  return savedTicketsForBooking(item.id).map((saved) => {
-    const seat = saved.seat ? ` ${saved.seat}` : "";
-    if (saved.kind === "link") {
-      return `<a class="day-ticket-open" href="${escapeHtml(saved.url)}" target="_blank" rel="noopener noreferrer">Open ticket${escapeHtml(seat)}</a>`;
-    }
-    return `<button type="button" class="day-ticket-open" data-show-ticket="${escapeHtml(saved.id)}">Open ticket${escapeHtml(seat)}</button>`;
-  }).join("");
+  return savedTicketsForBooking(item.id).map(ticketOpenControl).join("");
 }
 
 function dayTicketsHtml(day) {
@@ -5561,16 +5576,37 @@ function compressTicketImage(file) {
   }));
 }
 
+function qrGuideHtml(ticket) {
+  return `<div class="qr-guide" id="qrGuide-${escapeHtml(ticket.id)}" hidden>
+    <ol>
+      <li>Connect to Wi-Fi.</li>
+      <li>Tap Open ticket page.</li>
+      <li>Take a screenshot of the QR code.</li>
+      <li>Come back and tap Choose screenshot.</li>
+    </ol>
+    <a class="day-ticket-open" href="${escapeHtml(ticket.url)}" target="_blank" rel="noopener noreferrer">Open ticket page</a>
+    <label class="my-ticket-file">Choose screenshot
+      <input type="file" accept="image/*" data-qr-file="${escapeHtml(ticket.id)}">
+    </label>
+  </div>`;
+}
+
 function myTicketCardHtml(ticket) {
   const today = ticket.date && ticket.date === japanTodayIso();
   const label = ticket.label || (ticket.kind === "image" ? "QR image" : "QR-ticket link");
-  const body = ticket.kind === "link"
-    ? `<a class="my-ticket-open" href="${escapeHtml(ticket.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a>`
-    : `<button type="button" class="my-ticket-open" data-show-ticket="${escapeHtml(ticket.id)}"><img alt=""></button>`;
+  const picture = ticketHasPicture(ticket)
+    ? `<p class="wallet-saved">Ready offline</p><button type="button" class="my-ticket-open" data-show-ticket="${escapeHtml(ticket.id)}"><img alt="Saved QR picture"></button>`
+    : "";
+  const linkOnly = ticket.url && !ticketHasPicture(ticket)
+    ? `<p class="ticket-offline-missing">Not offline yet</p>
+      <a class="my-ticket-open" href="${escapeHtml(ticket.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a>
+      <button type="button" class="my-ticket-save" data-save-qr="${escapeHtml(ticket.id)}">Save QR picture</button>
+      ${qrGuideHtml(ticket)}`
+    : "";
   return `<article class="my-ticket${today ? " is-today" : ""}">
     ${today ? `<p class="wallet-kicker">Today</p>` : ""}
     <h3>${escapeHtml(label)}</h3>
-    ${body}
+    ${picture}${linkOnly}
     <button type="button" class="my-ticket-delete" data-delete-ticket="${escapeHtml(ticket.id)}">Delete</button>
   </article>`;
 }
@@ -5616,7 +5652,7 @@ function myTicketsHtml() {
     <label class="my-ticket-file">Choose QR image
       <input id="myTicketImage" type="file" accept="image/*">
     </label>
-    <p class="my-ticket-status" id="myTicketStatus" role="status">${escapeHtml(myTicketStatus)}</p>
+    <p class="my-ticket-status${myTicketStatus.includes("Next:") ? " my-ticket-next" : ""}" id="myTicketStatus" role="status">${escapeHtml(myTicketStatus)}</p>
     <div id="myTicketList">${list}</div>
     ${clear}
   </section>`;
@@ -5791,9 +5827,10 @@ function saveEmailTickets() {
   });
   writeMyTickets(items);
   emailPasteDraft = "";
-  myTicketStatus = skipped
+  const savedLine = skipped
     ? `${saved} tickets are saved. ${skipped} ${skipped === 1 ? "duplicate is" : "duplicates are"} skipped.`
     : `${saved} ${saved === 1 ? "ticket is" : "tickets are"} saved.`;
+  myTicketStatus = `${savedLine} Next: save a QR picture for each ticket so it works without internet.`;
   renderTickets();
 }
 
@@ -5856,6 +5893,28 @@ async function saveMyTicketLinks(label, rawText) {
   renderTickets();
 }
 
+async function attachTicketScreenshot(id, file) {
+  if (!file || !String(file.type || "").startsWith("image/")) {
+    myTicketStatus = "Choose a screenshot.";
+    renderTickets();
+    return;
+  }
+  const items = readMyTickets();
+  const ticket = items.find((item) => item.id === id);
+  if (!ticket) return;
+  const dataUrl = await compressTicketImage(file);
+  await writeMyTicketImage({ id, dataUrl });
+  ticket.hasImage = true;
+  try {
+    writeMyTickets(items);
+  } catch (error) {
+    await deleteMyTicketImage(id).catch(() => {});
+    throw error;
+  }
+  myTicketStatus = "The QR picture is saved on this phone.";
+  renderTickets();
+}
+
 async function saveMyTicketImage(file, label) {
   if (!file || !String(file.type || "").startsWith("image/")) {
     myTicketStatus = "Choose an image from your photo library.";
@@ -5892,7 +5951,7 @@ async function deleteMyTicket(id) {
   const items = readMyTickets();
   const ticket = items.find((item) => item.id === id);
   writeMyTickets(items.filter((item) => item.id !== id));
-  if (ticket?.kind === "image") await deleteMyTicketImage(id).catch(() => {});
+  if (ticket?.kind === "image" || ticket?.hasImage) await deleteMyTicketImage(id).catch(() => {});
   myTicketStatus = "The ticket is deleted.";
   renderTickets();
 }
@@ -5907,11 +5966,26 @@ async function clearMyTickets() {
 }
 
 async function showMyTicketImage(id) {
+  const ticket = readMyTickets().find((item) => item.id === id);
   const viewer = document.querySelector("#ticketViewer");
   const image = document.querySelector("#ticketViewerImage");
+  const link = document.querySelector("#ticketViewerLink");
   const record = await readMyTicketImage(id).catch(() => null);
-  if (!viewer || !image || !record?.dataUrl) return;
+  if (!record?.dataUrl) {
+    if (ticket?.url) window.open(ticket.url, "_blank", "noopener,noreferrer");
+    return;
+  }
+  if (!viewer || !image) return;
   image.src = record.dataUrl;
+  if (link) {
+    if (ticket?.url) {
+      link.href = ticket.url;
+      link.hidden = false;
+    } else {
+      link.hidden = true;
+      link.removeAttribute("href");
+    }
+  }
   viewer.hidden = false;
   document.querySelector("#ticketViewerClose")?.focus();
 }
@@ -5919,8 +5993,13 @@ async function showMyTicketImage(id) {
 function closeMyTicketImage() {
   const viewer = document.querySelector("#ticketViewer");
   const image = document.querySelector("#ticketViewerImage");
+  const link = document.querySelector("#ticketViewerLink");
   if (viewer) viewer.hidden = true;
   if (image) image.removeAttribute("src");
+  if (link) {
+    link.hidden = true;
+    link.removeAttribute("href");
+  }
 }
 
 const TRIP_CALENDAR_START = "2026-10-23";
@@ -7377,6 +7456,15 @@ ticketsPanel?.addEventListener("submit", (event) => {
 });
 
 ticketsPanel?.addEventListener("change", (event) => {
+  const qrFile = event.target.closest("[data-qr-file]");
+  if (qrFile) {
+    const file = qrFile.files?.[0];
+    void attachTicketScreenshot(qrFile.dataset.qrFile, file).catch(() => {
+      myTicketStatus = "The image could not be saved.";
+      renderTickets();
+    });
+    return;
+  }
   const input = event.target.closest("#myTicketImage");
   if (!input) return;
   const file = input.files?.[0];
@@ -7413,6 +7501,12 @@ ticketsPanel?.addEventListener("click", (event) => {
   if (filter) {
     walletTypeFilter = filter.dataset.walletFilter;
     renderTickets();
+    return;
+  }
+  const saveQr = event.target.closest("[data-save-qr]");
+  if (saveQr) {
+    const guide = ticketsPanel.querySelector(`#qrGuide-${CSS.escape(saveQr.dataset.saveQr)}`);
+    if (guide) guide.hidden = !guide.hidden;
     return;
   }
   const deleteButton = event.target.closest("[data-delete-ticket]");
