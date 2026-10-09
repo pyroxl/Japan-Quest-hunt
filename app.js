@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v186";
+const APP_VERSION = "japan-quest-v187";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -93,7 +93,7 @@ const HOTEL_SITE_BY_BOOKING = {
 
 const RESERVATION_COUNTDOWN = [
   { id: "parent-rooms", name: "Parent rooms: Osaka, Kyoto & Hiroshima", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 24–Nov 5", note: "Hotels are confirmed. The saved record is 1 room at Cordia, 1 room at Monterey, and 1 room at Granvia. [extra parent rooms — needs confirmation] only if Mom and Dad are not in that room. Their Tokyo hotel is a separate gap." },
-  { id: "flight-locators", name: "Record ticketed flight details", attention: "needs-confirmation", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", note: FLIGHT_NOTE },
+  { id: "flight-locators", name: "Record ticketed flight details", done: true, attention: "done", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", note: FLIGHT_NOTE },
   { id: "teamlab", name: "teamLab Borderless", done: true, attention: "booked", recommendedOn: "2026-09-01", target: "Nov 12 · 12:30–13:00", note: TEAMLAB_NOTE, url: TEAMLAB_GUIDE_URL },
   { id: "shinkansen-oct24", name: "Nozomi 261 Tokyo to Shin-Osaka", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Sat Oct 24 · 14:00", note: SHINKANSEN_OCT24 },
   { id: "shinkansen-nov2", name: "Hikari 733 Kyoto to Himeji", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 08:01", note: SHINKANSEN_NOV2 },
@@ -1270,6 +1270,10 @@ const dailyPhotoSlots = [
 
 const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"]);
 
+const planPhotoCredits = {
+  day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0."
+};
+
 const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
   day03: "capstones/day03.webp",
@@ -1319,9 +1323,15 @@ function populatePlanPhoto(day, container) {
   }
   container.className = "plan-photo";
   const img = document.createElement("img");
-  img.alt = `${day.title} plan photo`;
+  img.alt = planPhotoCredits[day.id] || `${day.title} plan photo`;
   img.src = url;
   container.appendChild(img);
+  if (planPhotoCredits[day.id]) {
+    const credit = document.createElement("p");
+    credit.className = "plan-photo-credit";
+    credit.textContent = planPhotoCredits[day.id];
+    container.insertAdjacentElement("afterend", credit);
+  }
 }
 
 function isAlbumPhoto(photo) {
@@ -2489,7 +2499,7 @@ const DAY_PARTY = {
 
 const DAY_MUST_DOS = {
   day02: [
-    { marker: "needs-confirmation", label: "Flight record", detail: FLIGHT_NOTE },
+    { marker: "done", label: "Flight record", detail: FLIGHT_NOTE },
     { marker: "booked", label: "Nozomi 261 Tokyo to Shin-Osaka", detail: SHINKANSEN_OCT24 },
     { marker: "needs-confirmation", label: "Luggage", detail: "At Narita, choose forward or carry. [luggage service and deadline — needs confirmation]." },
     { marker: "booked", label: "Hotel Cordia Osaka Hommachi", detail: "Check in after the train. Call the hotel if you will arrive late. Do not add Dotonbori. Do not add kaiten sushi. Kura Sushi Dotonbori has no date." }
@@ -6067,7 +6077,8 @@ function storyDayCard(day, today, snippet) {
   const journal = past && snippet ? `<p class="story-journal"><span>Journal</span> ${escapeHtml(snippet)}</p>` : "";
   return `<button type="button" class="story-card${day.date === today ? " is-today" : ""}" data-city="${escapeHtml(stayCityForDay(day) || "travel")}" data-story-day="${escapeHtml(day.id)}">
     <span class="story-card-band" aria-hidden="true"></span>
-    ${photo ? `<img src="${escapeHtml(photo)}" alt="">` : ""}
+    ${photo ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(planPhotoCredits[day.id] || "")}">` : ""}
+    ${planPhotoCredits[day.id] ? `<span class="story-photo-credit">${escapeHtml(planPhotoCredits[day.id])}</span>` : ""}
     <span class="story-card-body">
       <span class="story-card-meta">Day ${number} · ${escapeHtml(day.short)}</span>
       <span class="story-card-title">${escapeHtml(storyDayTitle(day))}</span>
