@@ -5309,6 +5309,86 @@ button.story-card {
   font-weight: 800;
 }
 
+.paste-email-open,
+.paste-email-save {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  margin: 0 0 10px;
+  border: 1px solid #1c0f14;
+  border-radius: 12px;
+  background-color: #3b2418;
+  background-image: linear-gradient(#3b2418, #3b2418);
+  color: #fff;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.paste-email-read {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  margin: 0 0 8px;
+  padding: 8px 16px;
+  border: 1px solid #1c0f14;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.paste-email-steps {
+  margin: 0 0 10px;
+  padding-left: 1.3rem;
+  color: #1c0f14;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.paste-email-count,
+.paste-email-list,
+.paste-email-who {
+  color: #1c0f14;
+}
+
+.paste-email-count {
+  margin: 0 0 8px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.paste-email-list {
+  margin: 0 0 10px;
+  padding-left: 1.2rem;
+  font-weight: 800;
+}
+
+.paste-email-who {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border: 1px solid #1c0f14;
+  border-radius: 10px;
+}
+
+.paste-email-who label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin: 0;
+}
+
 .my-tickets input,
 .my-tickets textarea {
   width: 100%;

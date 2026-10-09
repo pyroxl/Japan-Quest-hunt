@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v185";
+const APP_VERSION = "japan-quest-v186";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -5366,12 +5366,13 @@ function walletPhoneStatusHtml(item) {
 }
 
 function dayTicketOpenHtml(item) {
-  const saved = savedTicketsForBooking(item.id)[0];
-  if (!saved) return "";
-  if (saved.kind === "link") {
-    return `<a class="day-ticket-open" href="${escapeHtml(saved.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a>`;
-  }
-  return `<button type="button" class="day-ticket-open" data-show-ticket="${escapeHtml(saved.id)}">Open ticket</button>`;
+  return savedTicketsForBooking(item.id).map((saved) => {
+    const seat = saved.seat ? ` ${saved.seat}` : "";
+    if (saved.kind === "link") {
+      return `<a class="day-ticket-open" href="${escapeHtml(saved.url)}" target="_blank" rel="noopener noreferrer">Open ticket${escapeHtml(seat)}</a>`;
+    }
+    return `<button type="button" class="day-ticket-open" data-show-ticket="${escapeHtml(saved.id)}">Open ticket${escapeHtml(seat)}</button>`;
+  }).join("");
 }
 
 function dayTicketsHtml(day) {
@@ -5423,6 +5424,8 @@ const MY_TICKET_STORE = "images";
 const SMARTEX_TICKET_HOST = "shinkansen2.jr-central.co.jp";
 const SMARTEX_TICKET_PATH = "/RSV_P/ClientServiceQR-Ticket";
 let myTicketStatus = "";
+let emailPasteDraft = "";
+let emailPastePhone = "Both";
 
 function openMyTicketDb() {
   return new Promise((resolve, reject) => {
@@ -5484,8 +5487,9 @@ function isMyTicketUrl(value) {
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.username || url.password) return false;
-    if (url.hostname === "example.com") return true;
-    return url.hostname === SMARTEX_TICKET_HOST && url.pathname.startsWith(SMARTEX_TICKET_PATH);
+    const host = url.hostname.toLowerCase();
+    if (host === "example.com" || host === "example.jr-central") return true;
+    return /^shinkansen[a-z0-9-]*\.jr-central\.co\.jp$/.test(host);
   } catch {
     return false;
   }
@@ -5575,7 +5579,20 @@ function myTicketsHtml() {
   return `<section class="my-tickets" id="myTickets" aria-labelledby="myTicketsTitle">
     <h3 id="myTicketsTitle" class="wallet-section">My tickets</h3>
     <p class="my-ticket-note">Saved only on this phone. Not shared.</p>
-    <p class="my-ticket-help">Paste one SmartEX QR-ticket link on each line. Add a label for one link. Choose a QR image from your photo library.</p>
+    <div class="paste-email">
+      <button type="button" class="paste-email-open" id="pasteEmailButton">Paste from email</button>
+      <ol class="paste-email-steps">
+        <li>Open the ticket email.</li>
+        <li>Select all text and copy it.</li>
+        <li>Tap Paste from email.</li>
+      </ol>
+      <button type="button" class="paste-email-read" id="pasteEmailRead">Paste</button>
+      <label>Ticket email
+        <textarea id="pasteEmailText" rows="8" placeholder="Paste the email here.">${escapeHtml(emailPasteDraft)}</textarea>
+      </label>
+      <div id="pasteEmailPreview"></div>
+    </div>
+    <p class="my-ticket-help">Or paste one QR-ticket link on each line. Add a label for one link. Choose a QR image from your photo library.</p>
     ${linkNote}
     <form id="myTicketForm">
       <label>Label
@@ -5690,7 +5707,104 @@ function renderTickets() {
     : "";
   const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
   ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
+  refreshEmailPreview();
   void hydrateMyTicketImages();
+}
+
+function emailPasteSelection() {
+  const parsed = typeof parseTicketEmail === "function" ? parseTicketEmail(emailPasteDraft) : [];
+  const choice = typeof emailNeedsPhoneChoice === "function" && emailNeedsPhoneChoice(parsed);
+  const phone = choice ? emailPastePhone || "Both" : "";
+  const tickets = typeof emailTicketsForPhone === "function" ? emailTicketsForPhone(parsed, phone) : [];
+  return { parsed, choice, phone, tickets };
+}
+
+function refreshEmailPreview() {
+  const host = document.querySelector("#pasteEmailPreview");
+  const box = document.querySelector("#pasteEmailText");
+  if (!host) return;
+  if (box && document.activeElement !== box) box.value = emailPasteDraft;
+  const { choice, tickets } = emailPasteSelection();
+  if (!emailPasteDraft.trim()) {
+    host.innerHTML = "";
+    return;
+  }
+  if (!tickets.length) {
+    host.innerHTML = `<p class="paste-email-count">No tickets found. Paste the whole email.</p>`;
+    return;
+  }
+  const sentence = `${tickets.length} ticket${tickets.length === 1 ? "" : "s"} found: ${tickets.map((ticket) => `${ticket.label} ✓`).join(", ")}`;
+  const phones = choice ? `<fieldset class="paste-email-who">
+    <legend>Whose phone is this?</legend>
+    ${["Mom", "Dad", "Both"].map((name) => `<label><input type="radio" name="ticketPhone" value="${name}" ${emailPastePhone === name ? "checked" : ""}> ${name}</label>`).join("")}
+  </fieldset>` : "";
+  host.innerHTML = `${phones}
+    <p class="paste-email-count">${escapeHtml(sentence)}</p>
+    <ul class="paste-email-list">${tickets.map((ticket) => `<li>${escapeHtml(ticket.label)} ✓</li>`).join("")}</ul>
+    <button type="button" class="paste-email-save" id="pasteEmailSave">Save all</button>`;
+}
+
+function saveEmailTickets() {
+  const { tickets } = emailPasteSelection();
+  if (!tickets.length) {
+    myTicketStatus = "No tickets found. Paste the whole email.";
+    renderTickets();
+    return;
+  }
+  const items = readMyTickets();
+  const urls = new Set(items.map((item) => item.url).filter(Boolean));
+  const seats = new Set(items.filter((item) => item.bookingId && item.seat).map((item) => `${item.bookingId}|${item.seat}`));
+  const now = Date.now();
+  let saved = 0;
+  let skipped = 0;
+  tickets.forEach((ticket, index) => {
+    if (!isMyTicketUrl(ticket.url)) return;
+    const seatKey = `${ticket.bookingId}|${ticket.seat}`;
+    if (urls.has(ticket.url) || seats.has(seatKey)) {
+      skipped += 1;
+      return;
+    }
+    urls.add(ticket.url);
+    seats.add(seatKey);
+    items.push({
+      id: newMyTicketId(),
+      kind: "link",
+      label: ticket.label,
+      url: ticket.url,
+      bookingId: ticket.bookingId,
+      date: ticket.date,
+      seat: ticket.seat,
+      person: ticket.person,
+      addedAt: now + index
+    });
+    saved += 1;
+  });
+  writeMyTickets(items);
+  emailPasteDraft = "";
+  myTicketStatus = skipped
+    ? `${saved} tickets are saved. ${skipped} ${skipped === 1 ? "duplicate is" : "duplicates are"} skipped.`
+    : `${saved} ${saved === 1 ? "ticket is" : "tickets are"} saved.`;
+  renderTickets();
+}
+
+async function pasteEmailFromClipboard() {
+  const box = document.querySelector("#pasteEmailText");
+  let text = "";
+  try {
+    if (navigator.clipboard?.readText) text = await navigator.clipboard.readText();
+  } catch {
+    text = "";
+  }
+  if (text && text.trim()) {
+    emailPasteDraft = text;
+    if (box) box.value = text;
+    refreshEmailPreview();
+    return;
+  }
+  box?.focus();
+  myTicketStatus = "Paste the email into the box.";
+  const status = document.querySelector("#myTicketStatus");
+  if (status) status.textContent = myTicketStatus;
 }
 
 async function saveMyTicketLinks(label, rawText) {
@@ -7262,7 +7376,28 @@ ticketsPanel?.addEventListener("change", (event) => {
   });
 });
 
+ticketsPanel?.addEventListener("input", (event) => {
+  const box = event.target.closest("#pasteEmailText");
+  if (!box) return;
+  emailPasteDraft = box.value;
+  refreshEmailPreview();
+});
+
 ticketsPanel?.addEventListener("click", (event) => {
+  if (event.target.closest("#pasteEmailButton") || event.target.closest("#pasteEmailRead")) {
+    void pasteEmailFromClipboard();
+    return;
+  }
+  const phone = event.target.closest("input[name=ticketPhone]");
+  if (phone) {
+    emailPastePhone = phone.value;
+    refreshEmailPreview();
+    return;
+  }
+  if (event.target.closest("#pasteEmailSave")) {
+    saveEmailTickets();
+    return;
+  }
   const filter = event.target.closest("[data-wallet-filter]");
   if (filter) {
     walletTypeFilter = filter.dataset.walletFilter;

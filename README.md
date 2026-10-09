@@ -36,7 +36,7 @@ Daily maps use **Leaflet 1.9.4** (`leaflet.js` and `leaflet.css`) with OpenStree
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v185`. The menu shows `v185` so you can see which copy is open. The app checks for updates on every launch. Document loads, including the manifest start address, and the shell files (`index.html`, `app.js`, and `styles.css`, with or without a version query) load from the network first and fall back to saved files when offline. An open tab reloads once when the new service worker takes control. If the screen is still old:
+The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v186`. The menu shows `v186` so you can see which copy is open. The app checks for updates on every launch. Document loads, including the manifest start address, and the shell files (`index.html`, `app.js`, and `styles.css`, with or without a version query) load from the network first and fall back to saved files when offline. An open tab reloads once when the new service worker takes control. If the screen is still old:
 
 1. Open `https://pyroxl.github.io/Japan-Quest-hunt/reset.html` once, or close all Japan Trip Hunt tabs.
 2. Start the server again.
