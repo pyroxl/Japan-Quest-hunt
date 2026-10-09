@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#fff0f6">
     <meta name="color-scheme" content="only light">
+    <meta name="supported-color-schemes" content="only light">
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v183">
+    <link rel="stylesheet" href="styles.css?v184">
   </head>
   <body>
     <div class="app-shell">
@@ -28,9 +29,7 @@
         </button>
         <div class="app-menu" id="appMenu" hidden>
           <nav aria-label="Planning tools">
-            <button type="button" data-section="overview" data-overview="0">Planner</button>
             <button type="button" data-section="food">Food</button>
-            <button type="button" data-section="overview" data-overview="1">Trip questions</button>
             <button type="button" data-section="journal">Family journal</button>
           </nav>
           <hr>
@@ -65,115 +64,28 @@
             <button type="button" role="tab" id="storyTabCalendar" data-story="calendar" aria-controls="tripCalendar">Calendar</button>
             <button type="button" role="tab" id="storyTabPhotos" data-story="photos" aria-controls="storyPhotos">Photos</button>
             <button type="button" role="tab" id="storyTabMap" data-story="map" aria-controls="storyMap">Map</button>
+            <button type="button" role="tab" id="storyTabPassport" data-story="passport" aria-controls="storyPassport">Passport</button>
           </div>
           <div class="story-pane" id="storyDays" role="tabpanel" aria-labelledby="storyTabDays"></div>
           <section class="trip-calendar story-pane" id="tripCalendar" role="tabpanel" aria-labelledby="storyTabCalendar" hidden></section>
           <div class="story-pane" id="storyPhotos" role="tabpanel" aria-labelledby="storyTabPhotos" hidden></div>
           <div class="story-pane" id="storyMap" role="tabpanel" aria-labelledby="storyTabMap" hidden></div>
+          <div class="story-pane" id="storyPassport" role="tabpanel" aria-labelledby="storyTabPassport" hidden>
+            <section id="tripQuestHome"></section>
+            <section class="melon-passport-section" id="melonPassportSection">
+              <div class="section-heading">
+                <p class="label">Mai's tasting challenge</p>
+                <h2>Six-Bread Melon Passport</h2>
+              </div>
+              <div id="melonProgress"></div>
+              <div class="melon-grid" id="melonGrid"></div>
+              <div id="melonLeaderboard"></div>
+            </section>
+          </div>
         </section>
         <section class="panel tickets-panel hidden" id="ticketsPanel" aria-live="polite"></section>
-        <section class="panel food-panel hidden" id="foodPanel"><div class="screen-filters" id="foodFilters"></div></section>
-        <section class="panel overview-panel hidden" id="overviewPanel">
-          <div class="screen-filters" id="overviewFilters"></div>
-          <section id="overviewCarouselHost">
-            <section class="overview-window" id="calendarView">
-              <section class="open-confirmations" id="openConfirmations" aria-labelledby="openConfirmationsTitle">
-                <div class="section-heading">
-                  <p class="label">Unfinished arrangements</p>
-                  <h2 id="openConfirmationsTitle">Open items</h2>
-                </div>
-                <p class="helper-copy" id="openConfirmationsIntro"></p>
-                <ul class="open-confirmations-list" id="openConfirmationsList"></ul>
-                <section class="not-booked-journeys" id="notBookedJourneys" hidden>
-                  <h3>Not booked journeys</h3>
-                  <div id="notBookedJourneysList"></div>
-                </section>
-              </section>
-              <div class="section-heading">
-                <p class="label">Trip flow and daily focus</p>
-                <h2>Calendar &amp; Daily Focus</h2>
-              </div>
-              <section class="trip-route-map" id="tripRouteMap" aria-label="Whole trip route map"></section>
-              <details class="context-card collapsible-card locked-hotels-panel">
-                <summary class="collapsible-summary">
-                  <span class="summary-text">
-                    <span class="label">Confirmed stays</span>
-                    <strong>Locked hotels &amp; official websites</strong>
-                  </span>
-                  <span class="count-badge">5 locked</span>
-                </summary>
-                <div class="collapsible-content">
-                  <ul class="locked-hotel-list" aria-live="polite"></ul>
-                  <section class="reservation-countdown" aria-labelledby="reservationCountdownTitle">
-                    <div class="reservation-countdown-heading">
-                      <div>
-                        <p class="label">Action calendar</p>
-                        <h3 id="reservationCountdownTitle">Still to reserve</h3>
-                      </div>
-                      <a class="calendar-all-button" id="addAllReservationReminders" href="#" download="japan-trip-reservation-reminders.ics">
-                        <span aria-hidden="true">🗓</span> Add all reminders
-                      </a>
-                    </div>
-                    <p class="reservation-countdown-intro">Recommended action dates—not trip dates. Countdown badges update automatically.</p>
-                    <ul class="reservation-countdown-list" aria-live="polite"></ul>
-                  </section>
-                </div>
-              </details>
-              <section class="reservation-countdown walk-in-reminders" aria-labelledby="walkInReminderTitle">
-                <div class="reservation-countdown-heading">
-                  <div>
-                    <p class="label">On the day</p>
-                    <h3 id="walkInReminderTitle">Walk-in reminders</h3>
-                  </div>
-                </div>
-                <p class="reservation-countdown-intro">Trip-day stops. No booking number — countdown badges update automatically.</p>
-                <ul class="reservation-countdown-list" id="walkInReminderList" aria-live="polite"></ul>
-              </section>
-              <div class="calendar-grid" id="calendarGrid"></div>
-            </section>
-
-            <section class="overview-window" id="tripQuestView">
-              <section class="trip-quest-dashboard" id="tripQuestDashboard">
-                <div class="section-heading">
-                  <p class="label">Whole trip</p>
-                  <h2>Trip Quests</h2>
-                </div>
-                <div class="quest-progress-overview">
-                  <div class="progress-ring progress-ring-total" id="tripProgressRing" aria-label="Total trip quest progress">
-                    <strong>0%</strong><span>Total trip</span>
-                  </div>
-                  <div class="section-rings" aria-label="Quest progress by section">
-                    <div class="progress-ring progress-ring-small" id="routeProgressRing"><strong>0%</strong><span>Daily quests</span></div>
-                    <div class="progress-ring progress-ring-small" id="cityProgressRing"><strong>0%</strong><span>City chapter</span></div>
-                  </div>
-                </div>
-                <ul class="trip-quest-list" id="tripQuestList"></ul>
-              </section>
-
-              <section class="melon-passport-section" id="melonPassportSection">
-                <div class="section-heading">
-                  <p class="label">Mai's tasting challenge</p>
-                  <h2>Six-Bread Melon Passport</h2>
-                </div>
-                <div id="melonProgress"></div>
-                <div class="melon-grid" id="melonGrid"></div>
-                <div id="melonLeaderboard"></div>
-              </section>
-            </section>
-
-            <section class="overview-window" id="cityQuestView">
-              <section class="city-discovery-card" id="cityDiscoveryCard">
-                <div class="section-heading">
-                  <p class="label">City-specific quests</p>
-                  <h2 id="cityDiscoveryTitle">Osaka Discoveries</h2>
-                </div>
-                <p class="helper-copy" id="cityDiscoveryHelp">Choose a category when it fits the day. The timing notes are suggestions, not a schedule.</p>
-                <div class="discovery-hub-body" id="discoveryHubBody"></div>
-              </section>
-            </section>
-
-            <!-- FOOD MAP PROTOTYPE: remove this section to undo the placeholder UI. -->
-            <section class="overview-window" id="cityFoodMapView">
+        <section class="panel food-panel hidden" id="foodPanel"><div class="screen-filters" id="foodFilters"></div>
+<section class="overview-window" id="cityFoodMapView">
               <section class="city-food-map-card" id="cityFoodMapCard">
                 <div class="section-heading city-food-map-heading">
                   <div>
@@ -217,19 +129,7 @@
                 </div>
               </section>
             </section>
-
-            <section class="overview-window" id="photoAlbum">
-              <div class="section-heading">
-                <p class="label">Memory Loot</p>
-                <h2>Trip Photo Album</h2>
-              </div>
-              <div class="album-grid" id="albumGrid"></div>
-            </section>
-
-            <section class="overview-window" id="planeRideReview"></section>
-          </section>
         </section>
-
         <section class="panel day-panel hidden" id="dayPanel" aria-live="polite"></section>
         <section class="panel journal-panel hidden" id="journalPanel" aria-live="polite"></section>
       </main>
@@ -262,6 +162,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v183"></script>
+    <script src="app.js?v184"></script>
   </body>
 </html>
