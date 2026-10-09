@@ -5395,3 +5395,155 @@ button.story-card {
 .wallet-how {
   margin-top: 4px;
 }
+
+.my-tickets {
+  margin: 4px 0 18px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.my-ticket-note,
+.my-ticket-help,
+.my-ticket-status,
+.my-ticket-empty {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.my-ticket-note {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.my-tickets label {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.my-tickets input,
+.my-tickets textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+}
+
+.my-tickets textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.my-ticket-save,
+.my-ticket-file,
+.my-ticket-open,
+.my-ticket-delete,
+.my-ticket-clear,
+.ticket-viewer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.my-ticket-save,
+.my-ticket-file {
+  width: 100%;
+  margin: 0 0 8px;
+  background: color-mix(in srgb, var(--rose) 34%, #fff);
+}
+
+.my-ticket-file {
+  position: relative;
+}
+
+.my-ticket-file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.my-ticket {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.my-ticket.is-today {
+  border: 3px solid #1c0f14;
+}
+
+.my-ticket h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.my-ticket-open {
+  width: 100%;
+}
+
+.my-ticket-open img {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.my-ticket-delete,
+.my-ticket-clear {
+  justify-self: start;
+}
+
+.ticket-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  background: #fff;
+}
+
+.ticket-viewer[hidden] {
+  display: none;
+}
+
+.ticket-viewer img {
+  width: auto;
+  max-width: 100%;
+  max-height: calc(100% - 60px);
+  object-fit: contain;
+  background: #fff;
+}

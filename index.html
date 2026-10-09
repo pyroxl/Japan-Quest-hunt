@@ -8,7 +8,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v179">
+    <link rel="stylesheet" href="styles.css?v180">
   </head>
   <body>
     <div class="app-shell">
@@ -254,10 +254,14 @@
       </nav>
       </div>
       <p class="grok-toast" id="grokToast" role="status" hidden>Copied, paste it into Grok Bot</p>
+      <div class="ticket-viewer" id="ticketViewer" hidden>
+        <button type="button" id="ticketViewerClose">Close</button>
+        <img id="ticketViewerImage" alt="QR ticket">
+      </div>
     </div>
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v179"></script>
+    <script src="app.js?v180"></script>
   </body>
 </html>
