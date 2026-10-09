@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v183";
+const APP_VERSION = "japan-quest-v184";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -81,6 +81,15 @@ const LOCKED_HOTELS = [
 ];
 
 const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
+
+const HOTEL_SITE_BY_BOOKING = {
+  cordia: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Cordia"))?.url || "",
+  monterey: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Monterey"))?.url || "",
+  granvia: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Granvia"))?.url || "",
+  "apa-nov5": LOCKED_HOTELS.find((hotel) => hotel.name === APA_HOTEL_NAME)?.url || "",
+  "apa-nov11": LOCKED_HOTELS.find((hotel) => hotel.name === APA_HOTEL_NAME)?.url || "",
+  setsugetsuka: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Setsugetsuka"))?.url || ""
+};
 
 const RESERVATION_COUNTDOWN = [
   { id: "parent-rooms", name: "Parent rooms: Osaka, Kyoto & Hiroshima", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 24–Nov 5", note: "Hotels are confirmed. The saved record is 1 room at Cordia, 1 room at Monterey, and 1 room at Granvia. [extra parent rooms — needs confirmation] only if Mom and Dad are not in that room. Their Tokyo hotel is a separate gap." },
@@ -2026,6 +2035,8 @@ function makeQuestPage(day) {
     mountSnackLeagueScorecard(day, host);
   }
   section.appendChild(renderQuestDeck(day));
+  const cityId = findDay(day.id)?.cityId;
+  if (cityId) section.appendChild(cityDiscoverySection(cityId));
   return section;
 }
 
@@ -2192,11 +2203,50 @@ function makeDiscoveryCheckRow(quest) {
     state.deckDone[quest.id] = event.target.checked;
     if (event.target.checked) delete state.deckSkipped[quest.id];
     saveState();
+    row.classList.toggle("is-found", event.target.checked);
+    const group = row.closest(".discovery-group");
+    const count = group?.querySelector(".discovery-group-count");
+    const checks = group ? [...group.querySelectorAll("input[type=checkbox]")] : [];
+    if (count && checks.length) count.textContent = `${checks.filter((input) => input.checked).length}/${checks.length}`;
     renderCityDiscoveryChecklist();
     renderStats();
   });
   row.append(checkbox, copy);
   return row;
+}
+
+function cityDiscoverySection(cityId) {
+  const city = tripData[cityId];
+  const presentation = cityDiscoveryPresentation[cityId];
+  const section = document.createElement("section");
+  section.className = "city-discovery-card";
+  section.innerHTML = `
+    <div class="section-heading">
+      <p class="label">City-specific quests</p>
+      <h2>${escapeHtml(city?.name || "City")} discoveries</h2>
+    </div>
+    <p class="helper-copy">${escapeHtml(presentation?.help || "Choose a category when it fits the day. The timing notes are suggestions, not a schedule.")}</p>
+  `;
+  const categories = cityDiscoveryCategories(cityId);
+  categories.forEach((category, index) => {
+    const group = document.createElement("details");
+    group.className = "discovery-group";
+    if (index === 0) group.open = true;
+    const sectionFound = category.quests.filter((quest) => state.deckDone[quest.id]).length;
+    group.innerHTML = `
+      <summary>
+        <span>${escapeHtml(category.title)}</span>
+        <span class="discovery-group-count">${sectionFound}/${category.quests.length}</span>
+      </summary>
+      <p class="discovery-group-note">${escapeHtml(category.note)}</p>
+    `;
+    const list = document.createElement("div");
+    list.className = "discovery-checklist";
+    category.quests.forEach((quest) => list.appendChild(makeDiscoveryCheckRow(quest)));
+    group.appendChild(list);
+    section.appendChild(group);
+  });
+  return section;
 }
 
 function renderCityDiscoveryChecklist() {
@@ -4303,7 +4353,9 @@ function makePlaneRideReviewCard() {
   compileButton.addEventListener("click", async () => {
     output.value = await compileTripReview();
   });
-  content.append(intro, awardsSection, form, compileButton, output);
+  const wraps = document.createElement("div");
+  Object.entries(tripData).forEach(([cityId, city]) => wraps.appendChild(makeCityWrapSection(cityId, city)));
+  content.append(intro, wraps, awardsSection, form, compileButton, output);
   return card;
 }
 
@@ -4819,7 +4871,49 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
   return carousel;
 }
 
-function mountDayView(host, day) {
+function hotelForDay(day) {
+  const name = STAY_HOTEL_BY_DAY[day.id];
+  if (!name) return null;
+  return LOCKED_HOTELS.find((hotel) => hotel.name === name) || null;
+}
+
+function reminderLinkForOpenItem(item) {
+  const match = RESERVATION_COUNTDOWN.find((entry) => entry.id === item.id);
+  if (!match || match.done) return "";
+  const calendarName = `japan-trip-${match.name.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replaceAll(/^-|-$/g, "")}.ics`;
+  return `<a class="day-ticket-open" href="${reservationCalendarHref([match])}" download="${calendarName}">Add reminder</a>`;
+}
+
+function openItemRowHtml(item) {
+  return `<article class="day-detail-row">
+    <div class="must-do-item-top"><strong>${escapeHtml(item.label)}</strong> ${openItemDayButtons(item.dayIds)}</div>
+    <p class="ticket-meta">${escapeHtml(item.when)}</p>
+    <p>${collapsedNoteHtml(item.detail, "Details")}</p>
+    ${reminderLinkForOpenItem(item)}
+  </article>`;
+}
+
+function makeDayDetails(day) {
+  const section = document.createElement("section");
+  section.className = "day-details";
+  const timing = [calendarWakeLabel(day.id), calendarWalkLabel(day.id)].filter(Boolean).join(" · ");
+  const hotel = hotelForDay(day);
+  const reference = calendarReferenceLinks[day.id];
+  const items = openItems().filter((item) => item.dayIds.includes(day.id));
+  const walks = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id);
+  section.innerHTML = `
+    ${timing ? `<p class="day-meta-line">${escapeHtml(timing)}</p>` : ""}
+    ${hotel ? `<p><a class="day-ticket-open" href="${hotel.url}" target="_blank" rel="noopener noreferrer">Open hotel site</a></p>` : ""}
+    ${reference ? `<p><a class="day-ticket-open" href="${reference.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(reference.label.replace(/\s*↗\s*$/, ""))}</a></p>` : ""}
+    <h3>Still to book</h3>
+    ${items.length ? items.map(openItemRowHtml).join("") : `<p>Nothing is still open for this day.</p>`}
+    ${walks.length ? `<h3>Walk-in</h3><ul class="reservation-countdown-list">${walkInReminderItemsHtml(walks)}</ul>` : ""}
+  `;
+  bindWalkInChecks(section);
+  return section;
+}
+
+function mountDayView(host, day, options = {}) {
   host.innerHTML = `
     <div class="day-title">
       <p>${day.short}</p>
@@ -4829,7 +4923,12 @@ function mountDayView(host, day) {
     ${dayTicketsHtml(day)}
   `;
   const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
-  host.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Journal"]));
+  const labels = ["Plan", "Quest", "Map", "Journal"];
+  if (options.details) {
+    windows.push(makeDayDetails(day));
+    labels.push("Details");
+  }
+  host.appendChild(makeWindowCarousel(day.id, windows, labels));
 }
 
 function renderDay(day) {
@@ -4845,7 +4944,7 @@ function renderDay(day) {
   dayPanel.appendChild(back);
   const host = document.createElement("div");
   dayPanel.appendChild(host);
-  mountDayView(host, day);
+  mountDayView(host, day, { details: true });
 }
 
 function markScrollableRails() {
@@ -5245,6 +5344,10 @@ function dayTicketsHtml(day) {
 function walletCardHtml(item, featured) {
   const code = item.code ? copyCodeButton(item.code) : "";
   const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
+  const hotelSite = HOTEL_SITE_BY_BOOKING[item.id];
+  const hotelLink = hotelSite
+    ? `<p><a class="day-ticket-open" href="${escapeHtml(hotelSite)}" target="_blank" rel="noopener noreferrer">Open hotel site</a></p>`
+    : "";
   return `<article class="${featured ? "next-stop" : "wallet-card"}">
     ${featured ? `<p class="wallet-kicker">Next stop</p><p class="wallet-countdown">${escapeHtml(item.countdown || "")}</p>` : ""}
     <div class="wallet-card-row">
@@ -5257,6 +5360,7 @@ function walletCardHtml(item, featured) {
         ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
         ${code ? `<div class="ticket-links">${code}</div>` : ""}
         <p class="wallet-how">${escapeHtml(item.how)}</p>
+        ${hotelLink}
         ${walletPhoneStatusHtml(item)}
       </div>
     </div>
@@ -5493,6 +5597,31 @@ function walletFiltersHtml() {
   return `<div class="wallet-filters" role="group" aria-label="Ticket types">${chips}</div>`;
 }
 
+function stillToBookHtml() {
+  const journeyCards = unbookedJourneyCards().filter((card) => card.status === "Not booked");
+  const journeyIds = new Set(journeyCards.map((card) => card.id));
+  const items = openItems().filter((item) => !journeyIds.has(item.id));
+  const toBook = items.filter((item) => item.group === "to-book");
+  const awaiting = items.filter((item) => item.group === "awaiting");
+  const pending = RESERVATION_COUNTDOWN.filter((item) => !item.done);
+  const addAll = pending.length
+    ? `<p><a class="day-ticket-open" href="${reservationCalendarHref(pending)}" download="japan-trip-reservation-reminders.ics">Add all reminders</a></p>`
+    : "";
+  const journeys = journeyCards.length
+    ? `<h3>Not booked journeys</h3>${journeyCards.map(ticketCardHtml).join("")}`
+    : "";
+  return `<section class="still-to-book" aria-label="Still to book">
+    <h3>Still to book</h3>
+    ${toBook.length ? toBook.map(openItemRowHtml).join("") : `<p>Nothing is still to book.</p>`}
+    ${journeys}
+    ${addAll}
+    <h3>Awaiting confirmation</h3>
+    ${awaiting.length ? awaiting.map(openItemRowHtml).join("") : `<p>Nothing is awaiting confirmation.</p>`}
+    <h3>Walk-in</h3>
+    <ul class="reservation-countdown-list">${walkInReminderItemsHtml(WALK_IN_REMINDERS)}</ul>
+  </section>`;
+}
+
 function renderTickets() {
   if (!ticketsPanel) return;
   const now = japanNowMs();
@@ -5510,7 +5639,8 @@ function renderTickets() {
     ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
     : "";
   const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${stillToBookHtml()}${done}`;
+  bindWalkInChecks(ticketsPanel);
   void hydrateMyTicketImages();
 }
 
@@ -5832,15 +5962,26 @@ async function storyJournalSnippets() {
 
 let storyDaysToken = 0;
 
+function mountPlaneReview(host) {
+  host.querySelector(".plane-review-host")?.remove();
+  if (japanTodayIso() < "2026-11-10") return;
+  const wrap = document.createElement("div");
+  wrap.className = "plane-review-host";
+  wrap.appendChild(makePlaneRideReviewCard());
+  host.appendChild(wrap);
+}
+
 function renderStoryDays() {
   const host = document.querySelector("#storyDays");
   if (!host) return;
   host.innerHTML = storyDaysHtml({});
+  mountPlaneReview(host);
   const token = ++storyDaysToken;
   storyJournalSnippets().then((snippets) => {
     if (token !== storyDaysToken || !host.isConnected) return;
     if (!Object.values(snippets).some(Boolean)) return;
     host.innerHTML = storyDaysHtml(snippets);
+    mountPlaneReview(host);
   }).catch(() => {});
 }
 
@@ -5858,13 +5999,28 @@ function storyPhotoErrorHtml() {
   return `<p class="story-empty">The photos did not load.</p><button type="button" class="story-photo-retry" data-retry-photos>Try again</button>`;
 }
 
+function mountStoryPhoneAlbum(host) {
+  if (!host || host.querySelector("#albumGrid")) return;
+  const section = document.createElement("section");
+  section.id = "storyPhoneAlbum";
+  section.className = "story-phone-album";
+  section.innerHTML = `<h3>On this phone</h3><div class="album-grid" id="albumGrid"></div>`;
+  host.appendChild(section);
+  void renderAlbum();
+}
+
+function finishStoryPhotos(host, html) {
+  host.innerHTML = html;
+  mountStoryPhoneAlbum(host);
+}
+
 async function renderStoryPhotos() {
   const host = document.querySelector("#storyPhotos");
   if (!host) return;
   const token = ++storyPhotosToken;
   const prefs = readJournalPrefs();
   if (!journalConfigured() || !prefs.passcode) {
-    host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+    finishStoryPhotos(host, `<p class="story-empty">No journal photos yet.</p>`);
     return;
   }
   host.innerHTML = `<p class="story-empty">Loading photos.</p>`;
@@ -5879,7 +6035,7 @@ async function renderStoryPhotos() {
     if (token !== storyPhotosToken || !host.isConnected) return;
     const photos = (data.photos || []).filter((photo) => photo.fileId || photo.thumbFileId);
     if (!photos.length) {
-      host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+      finishStoryPhotos(host, `<p class="story-empty">No journal photos yet.</p>`);
       return;
     }
     const withThumbs = await withinDeadline(Promise.all(photos.map(async (photo) => {
@@ -5905,7 +6061,7 @@ async function renderStoryPhotos() {
       const bi = order.indexOf(b);
       return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
     });
-    host.innerHTML = keys.map((dayId) => {
+    finishStoryPhotos(host, keys.map((dayId) => {
       const found = findDay(dayId);
       const label = found ? `${found.day.short} · Day ${Number(dayId.replace("day", ""))}` : "Other days";
       const cells = groups.get(dayId).map((photo) => {
@@ -5916,10 +6072,10 @@ async function renderStoryPhotos() {
         return `<${tag} type="button" class="story-photo"${open}><img src="${src}" alt="${escapeHtml(photo.caption || "Journal photo")}"></${tag}>`;
       }).join("");
       return `<section class="story-photo-day"><h3>${escapeHtml(label)}</h3><div class="story-photo-grid">${cells}</div></section>`;
-    }).join("");
-    if (!host.querySelector("img")) host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+    }).join(""));
+    if (!host.querySelector(".story-photo img")) finishStoryPhotos(host, `<p class="story-empty">No journal photos yet.</p>`);
   } catch {
-    if (token === storyPhotosToken && host.isConnected) host.innerHTML = storyPhotoErrorHtml();
+    if (token === storyPhotosToken && host.isConnected) finishStoryPhotos(host, storyPhotoErrorHtml());
   }
 }
 
@@ -5955,6 +6111,28 @@ function renderStoryMap() {
     </div>`;
 }
 
+function renderStoryPassport() {
+  const home = document.querySelector("#tripQuestHome");
+  if (!home) return;
+  const tasks = allTasks();
+  const completed = tasks.filter((task) => state.done[task.id]).length;
+  const cities = Object.keys(tripData).map((cityId) => {
+    const quests = cityDiscoveryCategories(cityId).flatMap((category) => category.quests);
+    const done = quests.filter((quest) => state.deckDone[quest.id]).length;
+    return `<li>${escapeHtml(tripData[cityId].name)} discoveries: ${done} of ${quests.length}</li>`;
+  }).join("");
+  home.innerHTML = `<section class="story-passport-goals">
+    <h2>Main goals</h2>
+    <p class="day-meta-line">Main goals: ${completed} of ${tasks.length}</p>
+    <ul class="story-passport-list">
+      ${coreExperienceQuests.map((group) => `<li><strong>${escapeHtml(group.title)}</strong><p>${escapeHtml(group.description)}</p><ol>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol></li>`).join("")}
+    </ul>
+    <h2>City discoveries</h2>
+    <ul>${cities}</ul>
+  </section>`;
+  void renderMelonPassport();
+}
+
 function renderStory() {
   if (!storyShell) return;
   storyShell.querySelectorAll("[data-story]").forEach((button) => {
@@ -5966,10 +6144,12 @@ function renderStory() {
   tripCalendar?.toggleAttribute("hidden", storyView !== "calendar");
   document.querySelector("#storyPhotos")?.toggleAttribute("hidden", storyView !== "photos");
   document.querySelector("#storyMap")?.toggleAttribute("hidden", storyView !== "map");
+  document.querySelector("#storyPassport")?.toggleAttribute("hidden", storyView !== "passport");
   if (storyView === "days") renderStoryDays();
   if (storyView === "calendar") renderTripCalendar();
   if (storyView === "photos") void renderStoryPhotos();
   if (storyView === "map") renderStoryMap();
+  if (storyView === "passport") renderStoryPassport();
 }
 
 function renderTripCalendar() {
@@ -6111,7 +6291,54 @@ function placeScreenFilters(name) {
   requestAnimationFrame(markScrollableRails);
 }
 
+function storyViewForOverview(index) {
+  if (index === 0) return "calendar";
+  if (index === 1) return "passport";
+  if (index === 3) return "photos";
+  return "days";
+}
+
+function openStoryView(view) {
+  daysShowsDay = false;
+  storyView = view;
+  showSection("days");
+}
+
+function legacyRouteTarget() {
+  const params = new URLSearchParams(location.search);
+  const raw = [params.get("section"), params.get("view"), params.get("page"), (location.hash || "").replace(/^#/, "")]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  if (!raw) return "";
+  if (/open-?items|still-to-book|not-booked/.test(raw)) return "wallet";
+  if (/trip-?questions|tripquestions/.test(raw)) return "passport";
+  if (/city-?quests/.test(raw)) return "days";
+  if (/chapter-?map|overviewchaptermap/.test(raw)) return "map";
+  if (/album|photo-?album/.test(raw)) return "photos";
+  if (/review|plane-?ride/.test(raw)) return "days";
+  if (/passport|\bquests\b/.test(raw)) return "passport";
+  if (/calendar/.test(raw)) return "calendar";
+  if (/planner|overview/.test(raw)) return "calendar";
+  return "";
+}
+
+function followLegacyRoute() {
+  if (history.state?.overviewChapterMap) {
+    openStoryView("map");
+    return;
+  }
+  const target = legacyRouteTarget();
+  if (!target) return;
+  if (target === "wallet") showSection("tickets");
+  else openStoryView(target);
+}
+
 function showSection(name) {
+  if (name === "overview") {
+    openStoryView(storyViewForOverview(state.overviewWindows?.overview ?? 0));
+    return;
+  }
   document.body.dataset.section = name;
   const dateLabel = document.querySelector("#headerCalendarDate");
   if (dateLabel) dateLabel.textContent = headerDateLabel();
@@ -6131,7 +6358,7 @@ function showSection(name) {
   journalPanel?.classList.toggle("hidden", name !== "journal");
   ticketsPanel?.classList.toggle("hidden", name !== "tickets");
   foodPanel?.classList.toggle("hidden", name !== "food");
-  overviewPanel.classList.toggle("hidden", name !== "overview");
+  overviewPanel?.classList.add("hidden");
   const viewingDay = name === "days" && daysShowsDay && Boolean(findDay(state.openDayId));
   dayPanel.classList.toggle("hidden", !viewingDay);
   storyShell?.classList.toggle("hidden", name !== "days" || viewingDay);
@@ -6142,11 +6369,6 @@ function showSection(name) {
     renderCityFoodMapPrototype();
     syncFoodList();
     requestAnimationFrame(() => activeCityFoodPrototypeMap?.invalidateSize());
-  }
-  if (name === "overview") {
-    document.body.dataset.city = state.activeCity;
-    renderOverview();
-    renderStats();
   }
   if (name === "days" && viewingDay) {
     const found = findDay(state.openDayId);
@@ -6161,7 +6383,7 @@ function showSection(name) {
 }
 
 function showOverview() {
-  showSection("overview");
+  openStoryView("days");
 }
 
 function showDay(day) {
@@ -6175,7 +6397,7 @@ function showDay(day) {
 }
 
 function renderStats() {
-  if (!overviewPanel.classList.contains("hidden")) renderTripQuestDashboard();
+  if (document.body.dataset.section === "days" && !daysShowsDay && storyView === "passport") renderStoryPassport();
 }
 
 let citySnapArmedFor = null;
@@ -6211,18 +6433,10 @@ cityRail.addEventListener("click", (event) => {
     showSection("days");
     return;
   }
-  const shouldSnap = citySnapArmedFor === selectedCity;
-  citySnapArmedFor = shouldSnap ? null : selectedCity;
-  resetOverviewToCalendar();
+  citySnapArmedFor = null;
   saveState();
   renderNav();
-  showOverview();
-  if (shouldSnap) snapOverviewToActiveCity();
-  document.querySelectorAll(".city-chip").forEach((chip) => {
-    const armed = !shouldSnap && chip.dataset.city === selectedCity;
-    chip.classList.toggle("snap-armed", armed);
-    chip.setAttribute("aria-label", armed ? `${activeCity().name} selected. Press again to jump to its calendar days.` : chip.textContent.trim());
-  });
+  openStoryView("days");
 });
 
 dayRail.addEventListener("click", (event) => {
@@ -6233,9 +6447,8 @@ dayRail.addEventListener("click", (event) => {
   const view = button.dataset.view;
   document.querySelectorAll(".chip").forEach((chip) => chip.classList.toggle("active", chip === button));
   if (view === "overview") {
-    resetOverviewToCalendar();
     saveState();
-    showOverview();
+    openStoryView("days");
   } else {
     showDay(activeCity().days.find((day) => day.id === view));
   }
@@ -6994,6 +7207,12 @@ ticketsPanel?.addEventListener("click", (event) => {
     void clearMyTickets();
     return;
   }
+  const openDay = event.target.closest("[data-open-day]");
+  if (openDay) {
+    const found = findDay(openDay.dataset.openDay);
+    if (found) showDay(found.day);
+    return;
+  }
   const addButton = event.target.closest("[data-add-ticket]");
   if (addButton) {
     ticketBookingId = addButton.dataset.addTicket || "";
@@ -7036,4 +7255,9 @@ renderNav();
 resetOverviewToCalendar();
 saveState();
 showSection("today");
+followLegacyRoute();
+window.addEventListener("hashchange", followLegacyRoute);
+window.addEventListener("popstate", () => {
+  if (history.state?.overviewChapterMap) openStoryView("map");
+});
 startJournalSync();
