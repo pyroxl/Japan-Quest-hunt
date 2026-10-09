@@ -5320,3 +5320,99 @@ button.story-card {
   object-fit: contain;
   background: #fff;
 }
+
+.day-tickets {
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.day-tickets > h3 {
+  margin: 0 0 8px;
+  color: #1c0f14;
+  font-size: 1rem;
+}
+
+.day-ticket {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.day-ticket:first-of-type {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.day-ticket h3,
+.day-ticket .ticket-meta {
+  margin: 0;
+  color: #1c0f14;
+}
+
+.day-ticket h3 {
+  font-size: 1rem;
+}
+
+.day-ticket-open,
+.wallet-add-ticket,
+.story-photo-retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  min-height: 44px;
+  min-width: 44px;
+  margin-top: 4px;
+  padding: 8px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.wallet-ready {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c0f14;
+  font-weight: 800;
+}
+
+.wallet-saved {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  color: #0f5132;
+  font-weight: 800;
+}
+
+.wallet-saved svg {
+  flex: none;
+}
+
+.wallet-missing {
+  margin: 8px 0 0;
+  color: #9a3412;
+  font-weight: 800;
+}
+
+.my-ticket-link {
+  margin: 0 0 8px;
+  color: #1c0f14;
+  font-weight: 800;
+}
+
+#myTickets {
+  scroll-margin-top: 72px;
+}

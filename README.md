@@ -36,7 +36,7 @@ Daily maps use **Leaflet 1.9.4** (`leaflet.js` and `leaflet.css`) with OpenStree
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v182`, checks for updates on every launch, and falls back to saved files when offline. If an already-open tab still shows the old route or styling:
+The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v183`. The app checks for updates on every launch. Shell files (`index.html`, `app.js`, and `styles.css`) load from the network first and fall back to saved files when offline. An open tab reloads once when the new service worker takes control. If the screen is still old:
 
 1. Open `https://pyroxl.github.io/Japan-Quest-hunt/reset.html` once, or close all Japan Trip Hunt tabs.
 2. Start the server again.

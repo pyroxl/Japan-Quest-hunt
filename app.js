@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v182";
+const APP_VERSION = "japan-quest-v183";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -2601,6 +2601,11 @@ document.addEventListener("click", (event) => {
     copyTextToClipboard(grokPrompt(found.day, cityName)).then((ok) => { if (ok) showGrokToast(); });
     return;
   }
+  const showTicket = event.target.closest?.("[data-show-ticket]");
+  if (showTicket) {
+    void showMyTicketImage(showTicket.dataset.showTicket);
+    return;
+  }
   const button = event.target.closest?.("button[data-copy-code]");
   if (!button) return;
   const code = button.dataset.copyCode || "";
@@ -4821,6 +4826,7 @@ function mountDayView(host, day) {
       <h2>${day.title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
       <p>${day.theme}</p>
     </div>
+    ${dayTicketsHtml(day)}
   `;
   const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
   host.appendChild(makeWindowCarousel(day.id, windows, ["Plan", "Quest", "Map", "Journal"]));
@@ -5169,6 +5175,72 @@ const WALLET_FILTERS = [
 ];
 
 let walletTypeFilter = "all";
+let ticketBookingId = "";
+
+const QR_TICKET_IDS = new Set([
+  "shinkansen-oct24",
+  "shinkansen-nov2",
+  "shinkansen-himeji",
+  "shinkansen-nov5",
+  "himeji-tickets",
+  "teamlab",
+  "romancecar-out"
+]);
+
+function bookingClock(item) {
+  const parts = String(item.when || "").split(" · ");
+  return parts.length > 1 ? parts.slice(1).join(" · ") : String(item.when || "");
+}
+
+function linkedBooking() {
+  return walletBookings().find((item) => item.id === ticketBookingId) || null;
+}
+
+function savedTicketsForBooking(bookingId) {
+  if (!bookingId) return [];
+  return readMyTickets().filter((ticket) => ticket.bookingId === bookingId);
+}
+
+function walletReadyHtml() {
+  const savedIds = new Set(
+    readMyTickets().map((ticket) => ticket.bookingId).filter((id) => QR_TICKET_IDS.has(id))
+  );
+  return `<p class="wallet-ready">Saved on this phone: ${savedIds.size} of ${QR_TICKET_IDS.size} QR tickets</p>`;
+}
+
+function walletPhoneStatusHtml(item) {
+  if (!QR_TICKET_IDS.has(item.id)) return "";
+  if (savedTicketsForBooking(item.id).length) {
+    return `<p class="wallet-saved"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Saved on this phone</p>`;
+  }
+  return `<p class="wallet-missing">Not saved yet</p><button type="button" class="wallet-add-ticket" data-add-ticket="${escapeHtml(item.id)}">Add ticket</button>`;
+}
+
+function dayTicketOpenHtml(item) {
+  const saved = savedTicketsForBooking(item.id)[0];
+  if (!saved) return "";
+  if (saved.kind === "link") {
+    return `<a class="day-ticket-open" href="${escapeHtml(saved.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a>`;
+  }
+  return `<button type="button" class="day-ticket-open" data-show-ticket="${escapeHtml(saved.id)}">Open ticket</button>`;
+}
+
+function dayTicketsHtml(day) {
+  const items = walletBookings().filter((item) => String(item.at).slice(0, 10) === day.date);
+  if (!items.length) return "";
+  const rows = items.map((item) => {
+    const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
+    const code = item.code ? copyCodeButton(item.code) : "";
+    return `<article class="day-ticket">
+      <p class="wallet-type">${escapeHtml(type)}</p>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p class="ticket-meta">${escapeHtml(bookingClock(item))}</p>
+      ${code ? `<div class="ticket-links">${code}</div>` : ""}
+      ${dayTicketOpenHtml(item)}
+    </article>`;
+  }).join("");
+  return `<section class="day-tickets" aria-label="Tickets for today"><h3>Tickets for today</h3>${rows}</section>`;
+}
 
 function walletCardHtml(item, featured) {
   const code = item.code ? copyCodeButton(item.code) : "";
@@ -5185,6 +5257,7 @@ function walletCardHtml(item, featured) {
         ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
         ${code ? `<div class="ticket-links">${code}</div>` : ""}
         <p class="wallet-how">${escapeHtml(item.how)}</p>
+        ${walletPhoneStatusHtml(item)}
       </div>
     </div>
   </article>`;
@@ -5342,13 +5415,17 @@ function myTicketsHtml() {
   const clear = tickets.length
     ? `<button type="button" class="my-ticket-clear" data-clear-tickets>Clear all my tickets</button>`
     : "";
+  const linked = linkedBooking();
+  const linkNote = linked ? `<p class="my-ticket-link">This ticket is for ${escapeHtml(linked.title)}.</p>` : "";
+  const labelValue = linked ? ` value="${escapeHtml(`${linked.when} ${linked.title}`)}"` : "";
   return `<section class="my-tickets" id="myTickets" aria-labelledby="myTicketsTitle">
     <h3 id="myTicketsTitle" class="wallet-section">My tickets</h3>
     <p class="my-ticket-note">Saved only on this phone. Not shared.</p>
     <p class="my-ticket-help">Paste one SmartEX QR-ticket link on each line. Add a label for one link. Choose a QR image from your photo library.</p>
+    ${linkNote}
     <form id="myTicketForm">
       <label>Label
-        <input name="label" maxlength="120" autocomplete="off" placeholder="Oct 24 Tokyo to Shin-Osaka, Car 6 Seat 9-D">
+        <input name="label" maxlength="120" autocomplete="off" placeholder="Oct 24 Tokyo to Shin-Osaka, Car 6 Seat 9-D"${labelValue}>
       </label>
       <label>Links
         <textarea name="links" rows="4" placeholder="One link on each line."></textarea>
@@ -5433,7 +5510,7 @@ function renderTickets() {
     ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
     : "";
   const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
   void hydrateMyTicketImages();
 }
 
@@ -5454,18 +5531,21 @@ async function saveMyTicketLinks(label, rawText) {
   }
   const items = readMyTickets();
   const now = Date.now();
+  const booking = linkedBooking();
   valid.forEach((item, index) => {
     const text = item.label.trim();
     items.push({
       id: newMyTicketId(),
       kind: "link",
-      label: text,
+      label: text || (booking ? `${booking.when} ${booking.title}` : ""),
       url: item.url,
-      date: ticketDateFromLabel(text),
+      bookingId: booking ? booking.id : "",
+      date: booking ? String(booking.at).slice(0, 10) : ticketDateFromLabel(text),
       addedAt: now + index
     });
   });
   writeMyTickets(items);
+  ticketBookingId = "";
   const skipped = lines.length - valid.length;
   myTicketStatus = skipped
     ? "Some links are saved. Check the other lines."
@@ -5483,13 +5563,15 @@ async function saveMyTicketImage(file, label) {
   const dataUrl = await compressTicketImage(file);
   await writeMyTicketImage({ id, dataUrl });
   const text = label.trim();
+  const booking = linkedBooking();
   const items = readMyTickets();
   items.push({
     id,
     kind: "image",
-    label: text,
+    label: text || (booking ? `${booking.when} ${booking.title}` : ""),
     url: "",
-    date: ticketDateFromLabel(text),
+    bookingId: booking ? booking.id : "",
+    date: booking ? String(booking.at).slice(0, 10) : ticketDateFromLabel(text),
     addedAt: Date.now()
   });
   try {
@@ -5498,6 +5580,7 @@ async function saveMyTicketImage(file, label) {
     await deleteMyTicketImage(id).catch(() => {});
     throw error;
   }
+  ticketBookingId = "";
   myTicketStatus = "The image is saved.";
   renderTickets();
 }
@@ -5763,6 +5846,18 @@ function renderStoryDays() {
 
 let storyPhotosToken = 0;
 
+function withTimeout(promise, ms) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error("timeout")), ms);
+  });
+  return Promise.race([Promise.resolve(promise), timeout]).finally(() => clearTimeout(timer));
+}
+
+function storyPhotoErrorHtml() {
+  return `<p class="story-empty">The photos did not load.</p><button type="button" class="story-photo-retry" data-retry-photos>Try again</button>`;
+}
+
 async function renderStoryPhotos() {
   const host = document.querySelector("#storyPhotos");
   if (!host) return;
@@ -5773,15 +5868,21 @@ async function renderStoryPhotos() {
     return;
   }
   host.innerHTML = `<p class="story-empty">Loading photos.</p>`;
+  const deadline = Date.now() + 8000;
+  const withinDeadline = (promise) => {
+    const ms = deadline - Date.now();
+    if (ms <= 0) return Promise.reject(new Error("timeout"));
+    return withTimeout(promise, ms);
+  };
   try {
-    const data = await journalPost({ action: "list" });
+    const data = await withinDeadline(journalPost({ action: "list" }));
     if (token !== storyPhotosToken || !host.isConnected) return;
     const photos = (data.photos || []).filter((photo) => photo.fileId || photo.thumbFileId);
     if (!photos.length) {
       host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
       return;
     }
-    const withThumbs = await Promise.all(photos.map(async (photo) => {
+    const withThumbs = await withinDeadline(Promise.all(photos.map(async (photo) => {
       if (photo.thumb) return photo;
       const fileId = photo.thumbFileId || photo.fileId;
       try {
@@ -5790,7 +5891,7 @@ async function renderStoryPhotos() {
       } catch {
         return photo;
       }
-    }));
+    })));
     if (token !== storyPhotosToken || !host.isConnected) return;
     const groups = new Map();
     withThumbs.forEach((photo) => {
@@ -5818,7 +5919,7 @@ async function renderStoryPhotos() {
     }).join("");
     if (!host.querySelector("img")) host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
   } catch {
-    if (token === storyPhotosToken && host.isConnected) host.innerHTML = `<p class="story-empty">No journal photos yet.</p>`;
+    if (token === storyPhotosToken && host.isConnected) host.innerHTML = storyPhotoErrorHtml();
   }
 }
 
@@ -6148,9 +6249,20 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
     refreshing = true;
     window.location.reload();
   });
+  const wakeWaiting = (registration) => {
+    if (registration.waiting) registration.waiting.postMessage({ type: "SKIP_WAITING" });
+  };
   navigator.serviceWorker.register(`sw.js?${APP_VERSION}`)
     .then((registration) => {
+      wakeWaiting(registration);
       registration.update();
+      registration.addEventListener("updatefound", () => {
+        const worker = registration.installing;
+        if (!worker) return;
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "installed") wakeWaiting(registration);
+        });
+      });
       setInterval(() => registration.update(), 60 * 60 * 1000);
     })
     .catch(() => {});
@@ -6882,8 +6994,14 @@ ticketsPanel?.addEventListener("click", (event) => {
     void clearMyTickets();
     return;
   }
-  const showButton = event.target.closest("[data-show-ticket]");
-  if (showButton) void showMyTicketImage(showButton.dataset.showTicket);
+  const addButton = event.target.closest("[data-add-ticket]");
+  if (addButton) {
+    ticketBookingId = addButton.dataset.addTicket || "";
+    renderTickets();
+    const links = ticketsPanel.querySelector("#myTicketForm [name=links]");
+    document.querySelector("#myTickets")?.scrollIntoView({ block: "start" });
+    links?.focus();
+  }
 });
 
 document.querySelector("#ticketViewerClose")?.addEventListener("click", closeMyTicketImage);
@@ -6897,6 +7015,10 @@ document.addEventListener("keydown", (event) => {
 });
 
 storyShell?.addEventListener("click", (event) => {
+  if (event.target.closest("[data-retry-photos]")) {
+    void renderStoryPhotos();
+    return;
+  }
   const tab = event.target.closest("[data-story]");
   if (tab) {
     storyView = tab.dataset.story;
