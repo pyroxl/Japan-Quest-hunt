@@ -3865,9 +3865,14 @@ body[data-theme="dark"] .chapter-map, body[data-theme="dark"] .overview-leaflet-
 }
 
 .tab-bar button[aria-current="page"] {
-  background: color-mix(in srgb, var(--rose) 34%, #fff);
-  color: var(--ink);
+  background: #fff6ee;
+  color: #1c0f14;
   font-weight: 850;
+}
+
+body[data-theme="dark"] .tab-bar button[aria-current="page"] {
+  background: #fff6ee;
+  color: #1c0f14;
 }
 
 .not-booked-journeys {
@@ -5394,6 +5399,58 @@ button.story-card {
 
 .wallet-how {
   margin-top: 4px;
+}
+
+.wallet-type {
+  margin: 0 0 2px;
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wallet-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.wallet-filters button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.wallet-filters button[aria-pressed="true"] {
+  background: #1c0f14;
+  color: #fff6ee;
+}
+
+.wallet-day {
+  margin: 14px 0 8px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.wallet-done {
+  margin: 8px 0 16px;
+}
+
+.wallet-done summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-weight: 850;
+  cursor: pointer;
 }
 
 .my-tickets {

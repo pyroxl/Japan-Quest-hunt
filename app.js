@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v180";
+const APP_VERSION = "japan-quest-v181";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -5151,13 +5151,34 @@ function walletBookings() {
   ];
 }
 
+const WALLET_TYPE_LABEL = {
+  flight: "Flight",
+  train: "Train",
+  hotel: "Hotel",
+  ticket: "Attraction",
+  meal: "Restaurant"
+};
+
+const WALLET_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "flight", label: "Flights" },
+  { id: "train", label: "Trains" },
+  { id: "hotel", label: "Hotels" },
+  { id: "ticket", label: "Attractions" },
+  { id: "meal", label: "Restaurants" }
+];
+
+let walletTypeFilter = "all";
+
 function walletCardHtml(item, featured) {
   const code = item.code ? copyCodeButton(item.code) : "";
+  const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
   return `<article class="${featured ? "next-stop" : "wallet-card"}">
     ${featured ? `<p class="wallet-kicker">Next stop</p><p class="wallet-countdown">${escapeHtml(item.countdown || "")}</p>` : ""}
     <div class="wallet-card-row">
       ${walletIcon(item.kind)}
       <div>
+        <p class="wallet-type">${escapeHtml(type)}</p>
         <h3>${escapeHtml(item.title)}</h3>
         <p class="ticket-meta">${escapeHtml(item.when)}</p>
         <p class="wallet-route">${escapeHtml(item.route)}</p>
@@ -5353,22 +5374,66 @@ async function hydrateMyTicketImages() {
   }));
 }
 
+function walletDayLabel(iso) {
+  const { year, month, day } = isoParts(iso);
+  const text = new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC"
+  });
+  const row = tripRows().find((entry) => entry.day.date === iso);
+  if (!row) return text;
+  return `${text} · Day ${Number(row.day.id.replace("day", ""))}`;
+}
+
+function walletDayGroups(items) {
+  const groups = [];
+  items.forEach((item) => {
+    const iso = String(item.at).slice(0, 10);
+    let group = groups.find((entry) => entry.iso === iso);
+    if (!group) {
+      group = { iso, items: [] };
+      groups.push(group);
+    }
+    group.items.push(item);
+  });
+  groups.sort((a, b) => a.iso.localeCompare(b.iso));
+  groups.forEach((group) => group.items.sort((a, b) => a.atMs - b.atMs));
+  return groups;
+}
+
+function walletGroupsHtml(items) {
+  if (!items.length) return "";
+  return walletDayGroups(items).map((group) => `<h3 class="wallet-day">${escapeHtml(walletDayLabel(group.iso))}</h3>${group.items.map((item) => walletCardHtml(item, false)).join("")}`).join("");
+}
+
+function walletFiltersHtml() {
+  const chips = WALLET_FILTERS.map((filter) => {
+    const on = filter.id === walletTypeFilter;
+    return `<button type="button" data-wallet-filter="${filter.id}" aria-pressed="${on}">${filter.label}</button>`;
+  }).join("");
+  return `<div class="wallet-filters" role="group" aria-label="Ticket types">${chips}</div>`;
+}
+
 function renderTickets() {
   if (!ticketsPanel) return;
   const now = japanNowMs();
   const items = walletBookings()
     .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
     .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
-  const upcoming = items.filter((item) => item.atMs >= now);
-  const past = items.filter((item) => item.atMs < now);
-  const next = upcoming[0];
-  const nextHtml = next
-    ? walletCardHtml({ ...next, countdown: walletCountdown(next.atMs, now) }, true)
+  const matches = walletTypeFilter === "all" ? items : items.filter((item) => item.kind === walletTypeFilter);
+  const upcoming = matches.filter((item) => item.atMs >= now);
+  const past = matches.filter((item) => item.atMs < now);
+  const nextSource = items.filter((item) => item.atMs >= now)[0];
+  const nextHtml = nextSource
+    ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
-  const section = (label, rows) => rows.length
-    ? `<h3 class="wallet-section">${label}</h3>${rows.map((item) => walletCardHtml(item, false)).join("")}`
+  const done = past.length
+    ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
     : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${section("Upcoming", upcoming.slice(next ? 1 : 0))}${section("Past", past)}`;
+  const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
   void hydrateMyTicketImages();
 }
 
@@ -6801,6 +6866,12 @@ ticketsPanel?.addEventListener("change", (event) => {
 });
 
 ticketsPanel?.addEventListener("click", (event) => {
+  const filter = event.target.closest("[data-wallet-filter]");
+  if (filter) {
+    walletTypeFilter = filter.dataset.walletFilter;
+    renderTickets();
+    return;
+  }
   const deleteButton = event.target.closest("[data-delete-ticket]");
   if (deleteButton) {
     void deleteMyTicket(deleteButton.dataset.deleteTicket);
