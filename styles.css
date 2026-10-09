@@ -3814,6 +3814,74 @@ h3 {
   padding: 6px 2px 2px;
 }
 
+.day-weather,
+.rain-day {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 12px;
+  background: #fff;
+  color: #1c0f14;
+}
+
+.day-weather-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0 0 6px;
+  font-weight: 800;
+}
+
+.weather-icon {
+  display: inline-flex;
+  color: #1c0f14;
+}
+
+.weather-f,
+.day-weather-updated,
+.day-weather-pending,
+.day-weather-typical {
+  color: #1c0f14;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.day-weather-updated,
+.day-weather-pending,
+.day-weather-typical {
+  margin: 0 0 6px;
+}
+
+.rain-slot:empty {
+  display: none;
+}
+
+.rain-day summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.rain-idea {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid #1c0f14;
+}
+
+.rain-idea h3 {
+  margin: 0 0 4px;
+  color: #1c0f14;
+  font-size: 1rem;
+}
+
+.rain-idea p {
+  margin: 0 0 4px;
+  color: #1c0f14;
+}
+
 .day-title p {
   margin-bottom: 6px;
   color: var(--muted);
