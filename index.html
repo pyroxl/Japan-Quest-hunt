@@ -6,10 +6,11 @@
     <meta name="theme-color" content="#fff0f6">
     <meta name="color-scheme" content="only light">
     <meta name="supported-color-schemes" content="only light">
+    <style>:root { color-scheme: only light; background-color: #fff0f6; color: #34222a; }</style>
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v184">
+    <link rel="stylesheet" href="styles.css?v185">
   </head>
   <body>
     <div class="app-shell">
@@ -29,11 +30,13 @@
         </button>
         <div class="app-menu" id="appMenu" hidden>
           <nav aria-label="Planning tools">
+            <button type="button" data-section="admin">Trip admin</button>
             <button type="button" data-section="food">Food</button>
             <button type="button" data-section="journal">Family journal</button>
           </nav>
           <hr>
           <button type="button" id="archiveToggle" aria-pressed="false">Show skipped</button>
+          <p class="menu-version">v185</p>
         </div>
       </header>
 
@@ -84,6 +87,7 @@
           </div>
         </section>
         <section class="panel tickets-panel hidden" id="ticketsPanel" aria-live="polite"></section>
+        <section class="panel admin-panel hidden" id="adminPanel" aria-live="polite"></section>
         <section class="panel food-panel hidden" id="foodPanel"><div class="screen-filters" id="foodFilters"></div>
 <section class="overview-window" id="cityFoodMapView">
               <section class="city-food-map-card" id="cityFoodMapCard">
@@ -162,6 +166,6 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="app.js?v184"></script>
+    <script src="app.js?v185"></script>
   </body>
 </html>
