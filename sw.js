@@ -1,9 +1,9 @@
-const CACHE_NAME = "japan-quest-v184";
+const CACHE_NAME = "japan-quest-v185";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v184",
-  "./app.js?v184",
+  "./styles.css?v185",
+  "./app.js?v185",
   "./leaflet.css",
   "./leaflet.js",
   "./place-coordinates.js",
@@ -38,9 +38,20 @@ const APP_FILES = [
   "./capstones/day21.jpg"
 ];
 
+function fileName(url) {
+  const path = url.pathname.replace(/\/+$/, "");
+  return path.split("/").pop() || "index.html";
+}
+
 function isShellFile(url) {
-  const name = url.pathname.split("/").pop() || "index.html";
-  return name === "index.html" || name === "app.js" || name === "styles.css" || name === "sw.js";
+  const name = fileName(url);
+  return name === "index.html" || name === "app.js" || name === "styles.css" || name === "sw.js" || name === "manifest.webmanifest";
+}
+
+function isDocumentRequest(request, url) {
+  if (request.mode === "navigate" || request.destination === "document") return true;
+  const name = fileName(url);
+  return name === "index.html";
 }
 
 self.addEventListener("install", (event) => {
@@ -68,9 +79,9 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
-  const shell = isShellFile(url);
+  const fresh = isShellFile(url) || isDocumentRequest(event.request, url);
   event.respondWith(
-    fetch(event.request, shell ? { cache: "no-store" } : undefined)
+    fetch(event.request, fresh ? { cache: "no-store" } : undefined)
       .then((response) => {
         if (response && response.ok) {
           const copy = response.clone();
@@ -78,6 +89,10 @@ self.addEventListener("fetch", (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html")))
+      .catch(() => caches.match(event.request, { ignoreSearch: true }).then((cached) => {
+        if (cached) return cached;
+        if (isDocumentRequest(event.request, url)) return caches.match("./index.html");
+        return undefined;
+      }))
   );
 });

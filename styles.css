@@ -1,5 +1,5 @@
 :root {
-  color-scheme: only light;
+  color-scheme: only light !important;
   --paper: #fff0f6;
   --ink: #34222a;
   --muted: #715862;
@@ -4837,6 +4837,33 @@ button.trip-date {
     gap: 8px;
     padding: 4px 4px 8px;
   }
+}
+
+.menu-version {
+  margin: 10px 4px 2px;
+  color: #34222a;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.story-shell,
+#todayPanel,
+#dayPanel {
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+
+.day-fold > summary,
+.day-details > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: #1c0f14;
+  font-weight: 800;
+}
+
+.inline-ticket {
+  margin-top: 8px;
 }
 
 .story-switch {

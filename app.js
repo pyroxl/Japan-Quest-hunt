@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v184";
+const APP_VERSION = "japan-quest-v185";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -1021,6 +1021,7 @@ const dayPanel = document.querySelector("#dayPanel");
 const todayPanel = document.querySelector("#todayPanel");
 const journalPanel = document.querySelector("#journalPanel");
 const ticketsPanel = document.querySelector("#ticketsPanel");
+const adminPanel = document.querySelector("#adminPanel");
 const foodPanel = document.querySelector("#foodPanel");
 const tripCalendar = document.querySelector("#tripCalendar");
 const storyShell = document.querySelector("#storyShell");
@@ -1724,9 +1725,50 @@ function renderQuestDeck(day) {
   return section;
 }
 
+function dayBookings(day) {
+  return walletBookings().filter((item) => String(item.at).slice(0, 10) === day.date);
+}
+
+function bookingClockTime(item) {
+  return (String(item.at).match(/T(\d{2}:\d{2})/) || [])[1] || "";
+}
+
+function bookingMatchesStep(item, timeLabel, activity) {
+  const activityText = String(activity).toLowerCase();
+  const title = item.title.toLowerCase();
+  const generic = new Set(["hotel", "osaka", "tokyo", "kyoto", "hiroshima", "hakone", "station", "borderless"]);
+  if (title && activityText.includes(title)) return true;
+  const words = title.split(/[^a-z0-9]+/).filter((word) => word.length > 4 && !generic.has(word));
+  if (words.some((word) => activityText.includes(word))) return true;
+  const start = (String(timeLabel).match(/(\d{1,2}:\d{2})/) || [])[1] || "";
+  const clock = bookingClockTime(item);
+  return Boolean(clock && start.padStart(5, "0") === clock);
+}
+
+function inlineTicketHtml(item) {
+  const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
+  const code = item.code ? copyCodeButton(item.code) : "";
+  return `<article class="day-ticket inline-ticket">
+    <p class="wallet-type">${escapeHtml(type)}</p>
+    <h3>${escapeHtml(item.title)}</h3>
+    <p class="ticket-meta">${escapeHtml(bookingClock(item))}${item.route ? ` · ${escapeHtml(item.route)}` : ""}</p>
+    ${code ? `<div class="ticket-links">${code}</div>` : ""}
+    ${dayTicketOpenHtml(item)}
+  </article>`;
+}
+
+function timelineMarkup(day, timeline, used) {
+  return timeline.map(([time, activity]) => {
+    const matches = dayBookings(day).filter((item) => !used.has(item.id) && bookingMatchesStep(item, time, activity));
+    matches.forEach((item) => used.add(item.id));
+    const tickets = matches.map(inlineTicketHtml).join("");
+    return `<li><time>${escapeHtml(time)}</time><span>${renderGuideHtml(activity)}</span>${tickets}</li>`;
+  }).join("");
+}
+
 function dailyGuide(day) {
   const context = dayContext[day.id] || { summary: day.theme, timeline: [], history: ["Background notes can be added here later."] };
-  const timelineMarkup = (timeline) => timeline.map(([time, activity]) => `<li><time>${escapeHtml(time)}</time><span>${renderGuideHtml(activity)}</span></li>`).join("");
+  const usedTickets = new Set();
   const slowTimeline = Array.isArray(context.slowTimeline) ? context.slowTimeline : [];
   const hasSlowTimeline = slowTimeline.length > 0;
   const hasBookedTime = mustDoItems(day.id).some((item) => (item.markers || [item.marker]).includes("booked"));
@@ -1747,22 +1789,28 @@ function dailyGuide(day) {
           <button type="button" role="tab" aria-selected="false" data-timeline-tab="slow">${escapeHtml(context.slowLabel || "Slow plan")}</button>
         </div>` : ""}
       </div>
-      <div data-timeline-panel="main" role="tabpanel"><ol class="day-timeline">${timelineMarkup(context.timeline)}</ol></div>
-      ${hasSlowTimeline ? `<div data-timeline-panel="slow" role="tabpanel" hidden><ol class="day-timeline slow-day-timeline">${timelineMarkup(slowTimeline)}</ol></div>` : ""}
+      <div data-timeline-panel="main" role="tabpanel"><ol class="day-timeline">${timelineMarkup(day, context.timeline, usedTickets)}</ol></div>
+      ${hasSlowTimeline ? `<div data-timeline-panel="slow" role="tabpanel" hidden><ol class="day-timeline slow-day-timeline">${timelineMarkup(day, slowTimeline, usedTickets)}</ol></div>` : ""}
       <p class="timeline-note">${hasBookedTime ? "Booked times in this plan are fixed. Other times here are pacing windows. Move only the pacing windows." : "These times are pacing windows, not reservations. Move them around tickets, transport, weather, and energy."}</p>
     </section>
-    ${context.evening ? `<section class="context-block evening-flex-block">
-      <h4>Evening Flexibility</h4>
+    ${context.evening ? `<details class="day-fold"><summary>Evening flexibility</summary><section class="context-block evening-flex-block">
       <p><strong>${context.evening.rank}:</strong> ${context.evening.window}</p>
       <p><strong>Best use:</strong> ${context.evening.bestUse}</p>
       <p><strong>Can move later:</strong> ${context.evening.canMove}</p>
       <p><strong>Keep in daylight:</strong> ${context.evening.keepDaylight}</p>
-    </section>` : ""}
-    <section class="context-block">
-      <h4>The Story Behind Today</h4>
+    </section></details>` : ""}
+    <details class="day-fold">
+      <summary>The story behind today</summary>
       <div class="history-story">${context.history.map((paragraph) => `<p>${collapsedNoteHtml(paragraph, "More")}</p>`).join("")}</div>
-    </section>
+    </details>
   `;
+  const leftover = dayBookings(day).filter((item) => !usedTickets.has(item.id));
+  if (leftover.length) {
+    const extra = document.createElement("div");
+    extra.className = "inline-ticket-rest";
+    extra.innerHTML = leftover.map(inlineTicketHtml).join("");
+    card.appendChild(extra);
+  }
   if (hasSlowTimeline) {
     card.querySelectorAll("[data-timeline-tab]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -4513,19 +4561,16 @@ let activeDayLeafletMap = null;
 
 function makeMapCard(day) {
   const mapPlaces = dayMapPlaces(day);
-  const { card, content, summary } = makeCollapsibleCard({
+  const { card, content } = makeCollapsibleCard({
     className: "map-card",
-    label: "Map Layer",
+    label: "Map",
     title: "Where things are",
     badge: "Map",
-    open: true
+    open: false
   });
-  card.classList.add("is-fixed-open");
-  summary.tabIndex = -1;
-  summary.setAttribute("aria-disabled", "true");
-  summary.addEventListener("click", (event) => event.preventDefault());
-  summary.addEventListener("keydown", (event) => event.preventDefault());
-  card.addEventListener("toggle", () => { if (!card.open) card.open = true; });
+  card.addEventListener("toggle", () => {
+    if (card.open) activeDayLeafletMap?.invalidateSize();
+  });
 
   const mapElement = document.createElement("div");
   mapElement.className = "day-leaflet-map";
@@ -4686,7 +4731,7 @@ function makeDailyPhotoCard(day) {
     label: "Daily Album",
     title: "Photos to catch today",
     badge: "5 slots",
-    open: true
+    open: false
   });
   const grid = document.createElement("div");
   grid.className = "daily-photo-grid";
@@ -4893,8 +4938,17 @@ function openItemRowHtml(item) {
   </article>`;
 }
 
+function foldSection(title, node) {
+  const details = document.createElement("details");
+  details.className = "day-fold";
+  const summary = document.createElement("summary");
+  summary.textContent = title;
+  details.append(summary, node);
+  return details;
+}
+
 function makeDayDetails(day) {
-  const section = document.createElement("section");
+  const section = document.createElement("details");
   section.className = "day-details";
   const timing = [calendarWakeLabel(day.id), calendarWalkLabel(day.id)].filter(Boolean).join(" · ");
   const hotel = hotelForDay(day);
@@ -4902,6 +4956,7 @@ function makeDayDetails(day) {
   const items = openItems().filter((item) => item.dayIds.includes(day.id));
   const walks = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id);
   section.innerHTML = `
+    <summary>Details</summary>
     ${timing ? `<p class="day-meta-line">${escapeHtml(timing)}</p>` : ""}
     ${hotel ? `<p><a class="day-ticket-open" href="${hotel.url}" target="_blank" rel="noopener noreferrer">Open hotel site</a></p>` : ""}
     ${reference ? `<p><a class="day-ticket-open" href="${reference.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(reference.label.replace(/\s*↗\s*$/, ""))}</a></p>` : ""}
@@ -4913,22 +4968,21 @@ function makeDayDetails(day) {
   return section;
 }
 
-function mountDayView(host, day, options = {}) {
+function mountDayView(host, day) {
   host.innerHTML = `
     <div class="day-title">
       <p>${day.short}</p>
       <h2>${day.title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
       <p>${day.theme}</p>
     </div>
-    ${dayTicketsHtml(day)}
   `;
-  const windows = [makeDayFrontPage(day), makeQuestPage(day), makeMapCard(day), makeDailyPhotoCard(day)];
-  const labels = ["Plan", "Quest", "Map", "Journal"];
-  if (options.details) {
-    windows.push(makeDayDetails(day));
-    labels.push("Details");
-  }
-  host.appendChild(makeWindowCarousel(day.id, windows, labels));
+  host.append(
+    makeDayFrontPage(day),
+    foldSection("Quest", makeQuestPage(day)),
+    makeMapCard(day),
+    makeDailyPhotoCard(day),
+    makeDayDetails(day)
+  );
 }
 
 function renderDay(day) {
@@ -4944,7 +4998,7 @@ function renderDay(day) {
   dayPanel.appendChild(back);
   const host = document.createElement("div");
   dayPanel.appendChild(host);
-  mountDayView(host, day, { details: true });
+  mountDayView(host, day);
 }
 
 function markScrollableRails() {
@@ -5639,8 +5693,7 @@ function renderTickets() {
     ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
     : "";
   const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${stillToBookHtml()}${done}`;
-  bindWalkInChecks(ticketsPanel);
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
   void hydrateMyTicketImages();
 }
 
@@ -6220,12 +6273,31 @@ function todayBrowseRow() {
   return landingSelection();
 }
 
+function renderAdmin() {
+  if (!adminPanel) return;
+  adminPanel.innerHTML = `<div class="section-heading"><p class="label">Bookings and confirmations</p><h2>Trip admin</h2></div>${stillToBookHtml()}`;
+  bindWalkInChecks(adminPanel);
+}
+
+function currentBrowseDay() {
+  if (document.body.dataset.section === "days" && daysShowsDay) {
+    return findDay(state.openDayId);
+  }
+  const row = todayBrowseRow();
+  return { cityId: row.cityId, day: row.day };
+}
+
 function stepTodayDay(delta) {
   const rows = tripRows();
-  const current = todayBrowseRow();
+  const current = currentBrowseDay();
+  if (!current?.day) return;
   const index = rows.findIndex((row) => row.day.id === current.day.id);
   const next = rows[index + delta];
   if (!next) return;
+  if (document.body.dataset.section === "days" && daysShowsDay) {
+    showDay(next.day);
+    return;
+  }
   todayBrowseId = next.day.id;
   state.activeCity = next.cityId;
   showSection("today");
@@ -6233,11 +6305,12 @@ function stepTodayDay(delta) {
 
 function updateHeaderDayStep() {
   const step = document.querySelector("#headerDayStep");
-  const onToday = document.body.dataset.section === "today";
-  if (step) step.hidden = !onToday;
-  if (!onToday) return;
+  const onDayPage = document.body.dataset.section === "today" || (document.body.dataset.section === "days" && daysShowsDay);
+  if (step) step.hidden = !onDayPage;
+  if (!onDayPage) return;
   const rows = tripRows();
-  const index = rows.findIndex((row) => row.day.id === todayBrowseRow().day.id);
+  const current = currentBrowseDay();
+  const index = rows.findIndex((row) => row.day.id === current?.day?.id);
   const previous = document.querySelector("#headerPrevDay");
   const next = document.querySelector("#headerNextDay");
   if (previous) previous.disabled = index <= 0;
@@ -6357,6 +6430,7 @@ function showSection(name) {
   todayPanel?.classList.toggle("hidden", name !== "today");
   journalPanel?.classList.toggle("hidden", name !== "journal");
   ticketsPanel?.classList.toggle("hidden", name !== "tickets");
+  adminPanel?.classList.toggle("hidden", name !== "admin");
   foodPanel?.classList.toggle("hidden", name !== "food");
   overviewPanel?.classList.add("hidden");
   const viewingDay = name === "days" && daysShowsDay && Boolean(findDay(state.openDayId));
@@ -6364,6 +6438,7 @@ function showSection(name) {
   storyShell?.classList.toggle("hidden", name !== "days" || viewingDay);
   if (name === "today") renderToday();
   if (name === "tickets") renderTickets();
+  if (name === "admin") renderAdmin();
   if (name === "food") {
     mountFoodPanel();
     renderCityFoodMapPrototype();
@@ -6532,6 +6607,7 @@ document.querySelector(".tab-bar")?.addEventListener("click", (event) => {
   if (button.dataset.tab === "today") showSection("today");
   else if (button.dataset.tab === "story") {
     daysShowsDay = false;
+    storyView = "days";
     showSection("days");
   } else if (button.dataset.tab === "wallet") showSection("tickets");
 });
@@ -7221,6 +7297,13 @@ ticketsPanel?.addEventListener("click", (event) => {
     document.querySelector("#myTickets")?.scrollIntoView({ block: "start" });
     links?.focus();
   }
+});
+
+adminPanel?.addEventListener("click", (event) => {
+  const openDay = event.target.closest("[data-open-day]");
+  if (!openDay) return;
+  const found = findDay(openDay.dataset.openDay);
+  if (found) showDay(found.day);
 });
 
 document.querySelector("#ticketViewerClose")?.addEventListener("click", closeMyTicketImage);
