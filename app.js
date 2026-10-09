@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v177";
+const APP_VERSION = "japan-quest-v178";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -43,9 +43,11 @@ const SETSUGETSUKA_NOTE = `BOOKED by Mai on Booking.com. The confirmation number
 const ROMANCECAR_OUT_NOTE = "BOOKED. e-Romancecar booking no. {{copy:00081}}. Take SuperHakone 9 (GSE). Leave Shinjuku at 10:00. Arrive at Hakone-Yumoto at 11:21. Sit in car 5, seats 8A and 8B. The seat type is Standard seat. The booking is for 2 adults. The price is JPY 2,300. This price is the limited-express charge only. You need a separate ticket or a Freepass to board. Pay the base fare with Suica or the Hakone Freepass. Show this booking on your phone. Or show a printout of the completion page. Also show the credit card you used to pay. Do not exchange the booking at a ticket counter. The completion page is saved as romancecar.pdf. The file is in the Downloads folder on Brian's phone. A backup copy is in the WhatsApp chat with Mai. Search for 00081. Or open the Docs tab in that chat. A bookmark does not reopen the booking. If you lose both copies, open e-Romancecar. Log in. Select Confirm booking.";
 const ROMANCECAR_BACK_NOTE = "NOT BOOKED. Reserve Hakone-Yumoto to Shinjuku. Tickets go on sale on Oct 11. Record [departure time — not booked] and [seats — not booked].";
 const FLIGHT_NOTE = "The booking code is {{copy:A3II92}}. JAL sold the ticket through Expedia. The Expedia itinerary is {{copy:73510634155016}}. Prefer A3II92. Iberia QBYM0 may be truncated. Outbound JL7088 is operated by Iberia as IB281. It leaves MAD at 12:30 on Fri Oct 23. It arrives at NRT at 09:30 on Sat Oct 24. The outbound flight is nonstop. There is no Heathrow connection on the way to Tokyo. Return BA4609 is operated by JAL. It leaves HND at 01:00 on Fri Nov 13. It arrives at LHR at 06:25. Then IB3645 is operated by BA. It leaves LHR at 08:45. It arrives at MAD at 12:15. This fare has no advance seat selection. Choose seats free at online check-in, 24 hours before each departure. Reminders are already set for Oct 22 Madrid and Nov 12 Tokyo. Iberia may change this MAD–NRT schedule after Oct 25. Check for a schedule-change notice before travel.";
-const SHINKANSEN_OCT24 = "Not booked. Book 4 reserved seats on SmartEX for Sat Oct 24, Shinagawa to Shin-Osaka, for Brian, Mai, Mom Cynthia, and Dad, and the day count is 5 so [how the extra travellers ride — needs confirmation] (unreserved car, separate tickets, or not riding). Record [train number — not booked], [car — not booked], and [seat — not booked].";
-const SHINKANSEN_NOV2 = "Not booked. Book 4 reserved seats on SmartEX for Mon Nov 2, Kyoto to Himeji or Shin-Kobe, then Hiroshima, for Brian, Mai, Mom Cynthia, and Dad. Record [train number — not booked], [car — not booked], and [seat — not booked].";
-const SHINKANSEN_NOV5 = "Not booked. Book 4 reserved seats on SmartEX for Thu Nov 5, Hiroshima to Tokyo, for Brian, Mai, Mom Cynthia, and Dad, and the day count is 6 so [how the extra travellers ride — needs confirmation] (unreserved car, separate tickets, or not riding). Record [train number — not booked], [car — not booked], and [seat — not booked].";
+const SHINKANSEN_BOARDING = "Show the QR ticket from SmartEX My Trips > Details at the gate, or get paper tickets from a ticket machine with the pickup code.";
+const SHINKANSEN_OCT24 = `Booked. Nozomi 261 leaves Tokyo Station at 14:00 and reaches Shin-Osaka at 16:30, car 6, seats 9-D, 9-E, 10-D, and 10-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥58,880. SmartEX reservation {{copy:2005}}. ${SHINKANSEN_BOARDING}`;
+const SHINKANSEN_NOV2 = `Booked. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49, car 6, seats 17-D, 17-E, 18-D, and 18-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥20,280. SmartEX reservation {{copy:2000}}. ${SHINKANSEN_BOARDING}`;
+const SHINKANSEN_HIMEJI = `Booked. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42, car 14, seats 6-D, 6-E, 7-D, and 7-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥35,080. SmartEX reservation {{copy:2004}}. ${SHINKANSEN_BOARDING}`;
+const SHINKANSEN_NOV5 = `Booked. Nozomi 90 starts at Hiroshima, leaves at 10:03, and reaches Tokyo at 13:57, car 6, seats 5-D, 5-E, 6-D, and 6-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥78,240. SmartEX reservation {{copy:2007}}. ${SHINKANSEN_BOARDING}`;
 const APA_LUGGAGE_STATUS = "Mai emailed APA at ah-rnisi5@guest.apa.co.jp on Oct 8, 2026. The reply is still pending. [APA luggage storage Nov 8–11 — needs confirmation]. KOKO storage does not apply.";
 const PARENTS_HANEDA_NOTE = "Mom (Cynthia King) and Dad depart Haneda on Nov 10. The date is confirmed. Their Tokyo hotel for Nov 5–10 is not in this app. [parents' Tokyo hotel — needs confirmation]. The flight number is not in this app. [parents' Haneda flight number — needs confirmation]. Do not invent a hotel or a flight number.";
 const TEAMLAB_NOTE = `BOOKED. Ticket number {{copy:A4WAUKWPLYPR-0001}}. The ticket is an Entrance Pass for 2 adults. The price is JPY 10,800. Enter between 12:30 and 13:00. The address is Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo. {{link:${TEAMLAB_MAP_URL}|Open the map}} Open the ticket QR code from the teamLab email. Do not use a QR link from this app. You can change the date or the time up to 3 times. Make the change no later than 2 hours before entry. {{link:${TEAMLAB_GUIDE_URL}|Open the guide app}} For inquiries, call +81-3-6230-9666. The line is open from 10:00 to 18:00. EN TEA HOUSE is inside the museum.`;
@@ -84,9 +86,10 @@ const RESERVATION_COUNTDOWN = [
   { id: "parent-rooms", name: "Parent rooms: Osaka, Kyoto & Hiroshima", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 24–Nov 5", note: "Hotels are confirmed. The saved record is 1 room at Cordia, 1 room at Monterey, and 1 room at Granvia. [extra parent rooms — needs confirmation] only if Mom and Dad are not in that room. Their Tokyo hotel is a separate gap." },
   { id: "flight-locators", name: "Record ticketed flight details", attention: "needs-confirmation", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", note: FLIGHT_NOTE },
   { id: "teamlab", name: "teamLab Borderless", done: true, attention: "booked", recommendedOn: "2026-09-01", target: "Nov 12 · 12:30–13:00", note: TEAMLAB_NOTE, url: TEAMLAB_GUIDE_URL },
-  { id: "shinkansen-oct24", name: "Shinkansen Shinagawa to Shin-Osaka", attention: "not-booked", recommendedOn: "2026-10-02", target: "Sat Oct 24", note: SHINKANSEN_OCT24 },
-  { id: "shinkansen-nov2", name: "Shinkansen Kyoto to Hiroshima", attention: "not-booked", recommendedOn: "2026-10-02", target: "Mon Nov 2", note: SHINKANSEN_NOV2 },
-  { id: "shinkansen-nov5", name: "Shinkansen Hiroshima to Tokyo", attention: "not-booked", recommendedOn: "2026-10-02", target: "Thu Nov 5", note: SHINKANSEN_NOV5 },
+  { id: "shinkansen-oct24", name: "Nozomi 261 Tokyo to Shin-Osaka", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Sat Oct 24 · 14:00", note: SHINKANSEN_OCT24 },
+  { id: "shinkansen-nov2", name: "Hikari 733 Kyoto to Himeji", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 08:01", note: SHINKANSEN_NOV2 },
+  { id: "shinkansen-himeji", name: "Nozomi 69 Himeji to Hiroshima", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 14:46", note: SHINKANSEN_HIMEJI },
+  { id: "shinkansen-nov5", name: "Nozomi 90 Hiroshima to Tokyo", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Thu Nov 5 · 10:03", note: SHINKANSEN_NOV5 },
   { id: "romancecar-out", name: "Hakone outbound Romancecar", done: true, attention: "booked", recommendedOn: "2026-10-08", target: "Nov 8 · 10:00", note: ROMANCECAR_OUT_NOTE },
   { id: "romancecar-back", name: "Hakone return Romancecar", attention: "not-booked", recommendedOn: "2026-10-11", target: "Nov 11", note: ROMANCECAR_BACK_NOTE },
   { id: "setsugetsuka-record", name: "Tokinoyu Setsugetsuka", done: true, attention: "booked", recommendedOn: "2026-08-03", target: "Nov 8–11 · 3 nights", note: SETSUGETSUKA_NOTE },
@@ -577,7 +580,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day02", "2026-10-24", "Narita to Osaka", "Land in Tokyo, handle the luggage, then continue directly to Osaka.", ["Narita International Airport", "Shinagawa Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, forward or carry the luggage, then take the Shinkansen to Osaka with a comfortable buffer.", ["Keep a full buffer for immigration and bags", "Forward the large bags if carrying them makes the transfer hard", "Eat during the transfer or on the train", "Call Hotel Cordia if check-in will be late", "Stop after check-in. Do not add Dotonbori. Kura Sushi Dotonbori has no date"], ["The first Japan train window", "The Shinkansen platform", "The first Osaka hotel-room view"], "Mai gets a calm first day instead of a cross-Tokyo deadline.", "If the flight or immigration runs late, take the next practical reserved train and keep the evening empty."),
+      questDay("day02", "2026-10-24", "Narita to Osaka", "Land in Tokyo, take the Narita Express to Tokyo Station, then ride Nozomi 261 to Osaka.", ["Narita International Airport", "Tokyo Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, then take the Narita Express to Tokyo Station. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00.", ["Keep a full buffer for immigration and bags", "Take the Narita Express to Tokyo Station", "Be at the Shinkansen gates by about 13:30", "Eat during the transfer or on the train", "Call Hotel Cordia if check-in will be late", "Stop after check-in. Do not add Dotonbori. Kura Sushi Dotonbori has no date"], ["The first Japan train window", "The Shinkansen platform", "The first Osaka hotel-room view"], "Mai gets a calm first day instead of a cross-Tokyo deadline.", "The reserved train is Nozomi 261 at 14:00 from Tokyo Station. Keep the evening empty."),
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town, and be at Sankei Club at 17:00.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents can skip Den Den. Still reach Sankei Club in Shinsekai at 17:00."),
       questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
       questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, and café time. Dinner is On-yasai in Osaka at 20:00.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing. Return to Osaka for the booked On-yasai dinner.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day. Dinner is still On-yasai at 20:00."),
@@ -619,7 +622,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day11", "2026-11-02", "White Heron Westbound", "An optional no-delay To-ji dawn, white-castle reveal, then the first scored train-food ride west.", ["To-ji Temple", "Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Use To-ji's free grounds only if luggage is handled and you still reach Himeji in time for the 09:30 castle entry. Otherwise begin at Kyoto Station.", ["Skip To-ji unless someone is already awake and the train still leaves on time", "Forward or carry the large bags", "Enter Himeji Castle between 09:30 and 10:00", "Do Koko-en before the castle or after the castle", "Eat lunch in Himeji", "Buy different regional ekiben", "Photograph each box closed and open", "Eat the one Hiroshima okonomiyaki at Reichan"], ["To-ji's pagoda at dawn if earned", "A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "Skipping To-ji is a complete win. The castle entry is booked for 09:30–10:00."),
+      questDay("day11", "2026-11-02", "White Heron Westbound", "Hikari 733 to Himeji, the white-castle reveal, then Nozomi 69 to Hiroshima.", ["Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01. Do not go to To-ji. Enter the castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46.", ["Leave the hotel at about 7:30", "Do not go to To-ji", "Forward or carry the large bags", "Enter Himeji Castle between 09:30 and 10:00", "Do Koko-en before the castle or after the castle", "Eat lunch in Himeji", "Buy different regional ekiben", "Be at Himeji Station for the 14:46 train", "Eat the one Hiroshima okonomiyaki at Reichan"], ["A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "The castle entry is booked for 09:30–10:00. Granvia check-in is about 16:00."),
       questDay("day12", "2026-11-03", "Memory Along the River", "Museum, remembrance, river, and the Dome at dusk without emotional clutter.", ["Hiroshima Peace Memorial Museum", "Hiroshima Peace Memorial Park", "Atomic Bomb Dome", "Hiroshima National Peace Memorial Hall"], "Move from the museum through the Cenotaph and memorial axis, then see the Atomic Bomb Dome at dusk. Suishin main store is booked for 18:00. The booking is table only.", ["Leave time for a quiet break", "Use the National Peace Memorial Hall if a quieter space helps", "Write one private sentence about what should be remembered", "Try momiji manju or a calm cafe instead of adding sightseeing"], ["The alignment through the Cenotaph", "A paper crane or peace message", "The river changing the mood of the park"], "The day feels thoughtful and humane, not consumed as an attraction.", "Shukkeien is optional; emotional room is the priority."),
       questDay("day13", "2026-11-04", "Torii at the Tide", "Miyajima is the centerpiece of the Hiroshima stay. Keep the day unhurried.", ["Miyajimaguchi Station", "Itsukushima Shrine", "Miyajima Omotesando", "Daisho-in Temple", "Miyajima Ropeway"], "Leave the hotel at 07:50. Take the ropeway in the morning. Eat anago-meshi at Fujitaya. See Itsukushima Shrine from 16:00, when the water is high.", ["Ride the JR ferry", "Take the ropeway if the wind is safe", "Eat anago-meshi at Fujitaya", "Visit Daisho-in", "Buy momiji manju on Omotesando", "See Itsukushima Shrine from 16:00 to 17:20", "Do not feed the deer", "Try a grilled oyster only if someone wants it"], ["The torii with water around it after 16:00", "A deer that you do not feed", "Momiji manju on Omotesando"], "Miyajima earns its place as the romantic westward payoff.", "The shrine, the waterfront, and the food street complete the day.")
     ]
@@ -660,7 +663,7 @@ const tripData = {
 
 const dayGoals = {
   day02: {
-    clearPath: "NRT arrival → luggage handoff → Shinagawa/Shinkansen → Osaka check-in.",
+    clearPath: "Narita Express to Tokyo Station, gates by 13:30, Nozomi 261 at 14:00, then Osaka check-in.",
     mainGoal: "Reach Osaka smoothly and end the long travel day without adding another district.",
     photoHint: "First Japan train window, Shinkansen platform, or first Osaka hotel-room view."
   },
@@ -705,7 +708,7 @@ const dayGoals = {
     photoHint: "Summit viewpoint, forest path, or Enryaku-ji bell/incense moment."
   },
   day11: {
-    clearPath: "Castle entry 09:30–10:00. Koko-en before or after. Lunch in Himeji. Reichan walk-in dinner.",
+    clearPath: "Leave about 7:30. Hikari 733 at 08:01. Castle 09:30. Nozomi 69 at 14:46. Granvia about 16:00.",
     mainGoal: "Photograph Himeji's white keep in full and crown Round One of the Ekiben League.",
     photoHint: "Castle reveal, Koko-en frame, or open ekiben on the train."
   },
@@ -720,7 +723,7 @@ const dayGoals = {
     photoHint: "Torii with tide, anago-meshi, or island waterfront."
   },
   day14: {
-    clearPath: "Ekiben browse, score, and ride east—then learn the Tokyo hotel neighborhood.",
+    clearPath: "Nozomi 90 leaves Hiroshima at 10:03 and reaches Tokyo at 13:57. Then learn the hotel neighborhood.",
     mainGoal: "Photograph the winning Main Ekiben League box open on the Shinkansen.",
     photoHint: "Open ekiben trays, beautiful wrapper, or train-window lunch."
   },
@@ -786,8 +789,8 @@ const sharedDayGroupTypes = new Set(["side", "egg"]);
 
 const dayContext = {
   day02: {
-    summary: "JL7088 lands at Narita at 09:30. Iberia operates the flight. It is nonstop from Madrid. Clear immigration. Settle the luggage plan. Go to Shinagawa for the Shinkansen to Shin-Osaka. The Shinkansen seats are not booked yet. Reach Hotel Cordia Osaka Hommachi. Do not add Dotonbori. Do not add kaiten sushi.",
-    timeline: [["09:30–12:00", "Land at Narita at 09:30 on JL7088, operated by Iberia. Clear immigration. Collect the bags. Choose forward or carry. [luggage service and deadline — needs confirmation]."], ["12:00–14:00", "Go to Shinagawa. Eat on the way. Keep a buffer before the train."], ["Afternoon", "Ride the Tokaido Shinkansen from Shinagawa to Shin-Osaka. [train number — not booked]. [car — not booked]. [seat — not booked]."], ["Evening", "Go to Hotel Cordia Osaka Hommachi. Check in. Stop. Eat near the hotel if you need food. Do not go to Dotonbori. Do not add kaiten sushi."]],
+    summary: "JL7088 lands at Narita at 09:30. Iberia operates the flight. It is nonstop from Madrid. Clear immigration. Settle the luggage plan. Take the Narita Express to Tokyo Station. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00 and reaches Shin-Osaka at 16:30. The seats are booked. Reach Hotel Cordia Osaka Hommachi. Do not add Dotonbori. Do not add kaiten sushi.",
+    timeline: [["09:30–12:00", "Land at Narita at 09:30 on JL7088, operated by Iberia. Clear immigration. Collect the bags. Choose forward or carry. [luggage service and deadline — needs confirmation]."], ["About 12:00", "Take the Narita Express from Narita to Tokyo Station and be at the Tokyo Station Shinkansen gates by about 13:30."], ["14:00–16:30", SHINKANSEN_OCT24], ["Evening", "Go to Hotel Cordia Osaka Hommachi. Check in. Stop. Eat near the hotel if you need food. Do not go to Dotonbori. Do not add kaiten sushi."]],
     history: [
       "Narita opened in 1978 as Tokyo's principal international gateway. Reaching western Tokyo from it crosses much of the metropolis, so the transfer is a real part of the day's time budget.",
       "The Tokaido Shinkansen links Tokyo and Osaka in roughly two and a half hours, compressing a historic intercity corridor into the final chapter of a demanding but possible arrival day."
@@ -872,12 +875,12 @@ const dayContext = {
     ]
   },
   day11: {
-    summary: "Make Himeji the priority. Do not wake the group at 05:00 for To-ji. Enter Himeji Castle between 09:30 and 10:00. The tickets are booked. Visit Koko-en before the castle or after the castle. Eat lunch in Himeji. Buy ekiben. Check in at Hotel Granvia Hiroshima at about 16:00. Eat dinner at Reichan. Walk in. Do not reserve.",
-    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:00–09:00", "Go to Kyoto Station. Take the westbound train. [train number — not booked]. [car — not booked]. [seat — not booked]. Go to To-ji only if a person is already awake and the train still leaves on time. [luggage forwarding service and deadline — needs confirmation]."], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness."], ["About 16:00", `Check in at Hotel Granvia Hiroshima. ${REICHAN_DINNER_NOTE}`]],
+    summary: "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49. Do not go to To-ji. Enter Himeji Castle between 09:30 and 10:00. The tickets are booked. Visit Koko-en before the castle or after the castle. Eat lunch in Himeji. Buy ekiben. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42. Check in at Hotel Granvia Hiroshima at about 16:00. Eat dinner at Reichan. Walk in. Do not reserve.",
+    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", `Check in at Hotel Granvia Hiroshima. ${REICHAN_DINNER_NOTE}`]],
     history: [
       "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
       "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
-      "Koko-en beside the moat reframes the keep from below—Edo-style garden rooms built on samurai residence sites. Optional To-ji at dawn adds a free Kyoto pagoda silhouette only if the transfer rhythm stays humane. The day's larger story is departure: Kyoto's temple city giving way to the white keep, then ekiben culture and the long slide west toward Hiroshima."
+      "Koko-en beside the moat reframes the keep from below—Edo-style garden rooms built on samurai residence sites. Hikari 733 leaves Kyoto at 08:01, so this day does not include To-ji. The day's larger story is departure: Kyoto's temple city giving way to the white keep, then ekiben culture and the ride west to Hiroshima."
     ]
   },
   day12: {
@@ -911,8 +914,8 @@ const dayContext = {
     ]
   },
   day14: {
-    summary: "The long train is the experience: browse Hiroshima's ekiben, reveal and score them after departure, then arrive in Tokyo as temporary neighborhood residents rather than sightseers. Photograph closed and open boxes, trade tastes, and score all five Ekiben League categories while the landscape changes. Evening is depachika, supermarket, or ramen near the hotel—no sightseeing campaign after arrival.",
-    timeline: [["08:30–10:00", "Check out and reach Hiroshima Station early enough to browse regional ekiben calmly."], ["10:00–14:30", "Ride east, photograph closed and open boxes, trade tastes, score them, and watch the country change."], ["15:00–17:30", "Reach APA Nishishinjuku. From Tokyo Station, take the JR Chuo line to Shinjuku. Then take the Toei Oedo line to Nishi-shinjuku-gochome. Allow about 40 minutes with bags. Learn the station exit. Check in from 15:00."], ["Evening", "Choose a depachika, supermarket, ramen, or curry dinner near Nishi-shinjuku-gochome. Do not plan this dinner in Ningyocho. Add no sightseeing campaign."]],
+    summary: "Nozomi 90 starts at Hiroshima. It leaves at 10:03 and reaches Tokyo at 13:57. Browse Hiroshima ekiben before the gate. Score the boxes on the train. Then go to APA Nishishinjuku. Do not add sightseeing after arrival.",
+    timeline: [["Before 10:03", "Check out, browse the ekiben at Hiroshima Station, and be at the gate before 10:03."], ["10:03–13:57", SHINKANSEN_NOV5], ["After 13:57", "Reach APA Nishishinjuku. From Tokyo Station, take the JR Chuo line to Shinjuku. Then take the Toei Oedo line to Nishi-shinjuku-gochome. Allow about 40 minutes with bags. Learn the station exit. Check in from 15:00."], ["Evening", "Choose a depachika, supermarket, ramen, or curry dinner near Nishi-shinjuku-gochome. Do not plan this dinner in Ningyocho. Add no sightseeing campaign."]],
     history: [
       "Japan's first railway opened in 1872, and station boxed meals soon turned travel into a way of tasting place. Ekiben packaging, ingredients, and presentation became miniature regional advertisements, allowing a train journey to carry local identity across the country.",
       "The Tokaido corridor linking Kyoto, Osaka, and Tokyo has organized movement for centuries, first as a famed highway and now as the country's busiest high-speed rail axis. Arriving by Shinkansen compresses landscapes once measured in days of walking into a single seated chapter.",
@@ -2387,7 +2390,7 @@ const DAY_PARTY = {
 const DAY_MUST_DOS = {
   day02: [
     { marker: "needs-confirmation", label: "Flight record", detail: FLIGHT_NOTE },
-    { marker: "not-booked", label: "Shinkansen Shinagawa to Shin-Osaka", detail: SHINKANSEN_OCT24 },
+    { marker: "booked", label: "Nozomi 261 Tokyo to Shin-Osaka", detail: SHINKANSEN_OCT24 },
     { marker: "needs-confirmation", label: "Luggage", detail: "At Narita, choose forward or carry. [luggage service and deadline — needs confirmation]." },
     { marker: "booked", label: "Hotel Cordia Osaka Hommachi", detail: "Check in after the train. Call the hotel if you will arrive late. Do not add Dotonbori. Do not add kaiten sushi. Kura Sushi Dotonbori has no date." }
   ],
@@ -2423,10 +2426,11 @@ const DAY_MUST_DOS = {
     { marker: "needs-confirmation", label: "Descent point", detail: "Meet between 15:15 and 16:00. [descent transport point — needs confirmation]." }
   ],
   day11: [
-    { marker: "not-booked", label: "Shinkansen Kyoto to Hiroshima", detail: SHINKANSEN_NOV2 },
+    { marker: "booked", label: "Hikari 733 Kyoto to Himeji", detail: SHINKANSEN_NOV2 },
+    { marker: "booked", label: "Nozomi 69 Himeji to Hiroshima", detail: SHINKANSEN_HIMEJI },
     { marker: "needs-confirmation", label: "Luggage", detail: "[luggage forwarding service and deadline — needs confirmation]." },
     { marker: "booked", label: "Himeji Castle and Koko-en", detail: HIMEJI_TICKET_NOTE },
-    { marker: "info", label: "To-ji", detail: "To-ji is optional and only at dawn. Use it only if someone is already awake and the train still leaves on time." },
+    { marker: "info", label: "To-ji", detail: "Do not go to To-ji. Hikari 733 leaves Kyoto at 08:01. Leave the hotel at about 7:30." },
     { marker: "info", label: "Ekiben scores", detail: "Score each box on five lines: packaging, regional character, variety, flavor, and train happiness. Write the scores in today's note. There is no separate scorecard screen." },
     { marker: "info", label: "Reichan dinner", detail: REICHAN_DINNER_NOTE }
   ],
@@ -2439,7 +2443,7 @@ const DAY_MUST_DOS = {
     { marker: "info", label: "Weather swap", detail: HIROSHIMA_WEATHER_SWAP }
   ],
   day14: [
-    { marker: "not-booked", label: "Shinkansen Hiroshima to Tokyo", detail: SHINKANSEN_NOV5 },
+    { marker: "booked", label: "Nozomi 90 Hiroshima to Tokyo", detail: SHINKANSEN_NOV5 },
     { marker: "booked", label: "APA Nishishinjuku", detail: APA_NOTE },
     { marker: "info", label: "Ekiben scores", detail: "Score each box on packaging, regional character, variety, flavor, and train happiness. Write the scores in today's note." }
   ],
@@ -4329,9 +4333,9 @@ const overviewMapFitDayIds = {
 };
 
 const placeBackground = {
-  "Narita International Airport": "The current nonstop flight reaches NRT around 09:30 on Oct 24. Allow roughly two hours for immigration and baggage before continuing to Shinagawa for the Osaka transfer.",
+  "Narita International Airport": "The flight reaches NRT at 09:30 on Oct 24. Allow time for immigration and bags. Then take the Narita Express to Tokyo Station.",
   "Haneda Airport": "Mom (Cynthia King) and Dad depart Haneda on Nov 10. The date is confirmed. Their Tokyo hotel for Nov 5–10 is not in this app. Their flight number is not in this app. Mai and Brian leave HND at 01:00 on Nov 13 on BA4609, operated by JAL, then connect at LHR.",
-  "Shinagawa Station": "Shinagawa is the preferred Tokaido Shinkansen boarding point for the arrival-day Osaka transfer. Reserve a train with enough Narita and luggage margin.",
+  "Shinagawa Station": "This trip does not board the Shinkansen at Shinagawa. Nozomi 261 leaves Tokyo Station at 14:00 on Oct 24.",
   "Shin-Osaka Station": "Shin-Osaka is the Tokaido Shinkansen terminus for the arrival-day transfer. Continue to Hommachi and notify Hotel Cordia in advance that check-in will be late.",
   "Kansai International Airport": "KIX sits on an artificial island in Osaka Bay and is the main international gateway for the Kansai region. This itinerary does not land at KIX. The Oct 24 arrival is Narita, then the Shinkansen to Osaka.",
   "Namba Station Osaka": "Namba links the Midosuji subway, private railways toward Nara, and the Namba entertainment zone. The hotel is Hotel Cordia in Hommachi, not a Namba hotel. Day 2 does not include a Dotonbori walk.",
@@ -4368,7 +4372,7 @@ const placeBackground = {
   "Miyajima Omotesando": "Omotesando is Miyajima's main merchant street for snacks, momiji manju and souvenir browsing. Shops close around 17:00–18:00. Do not feed the deer.",
   "Daisho-in Temple": "Daisho-in climbs the hillside behind the town with lanterns, halls and forest atmosphere away from the busiest waterfront. Go at about 12:30, after Fujitaya. Entry is free. The temple is open from 8:00 to 17:00.",
   "Miyajima Ropeway": "The Miyajima ropeway climbs toward Mount Misen for broad Seto Inland Sea views. Go up from 9:00 to 16:00. The last ride down is 16:30. Do not reserve. It stops in strong wind.",
-  "Tokyo Station": "Tokyo Station's red-brick Marunouchi side is both a Shinkansen hub and a symbol of Meiji-era modernisation. On arrival and departure days it handles ekiben, luggage and final train logistics rather than sightseeing.",
+  "Tokyo Station": "Nozomi 261 leaves Tokyo Station at 14:00 on Oct 24. Nozomi 90 arrives at 13:57 on Nov 5. On Oct 24, take the Narita Express from Narita and be at the Shinkansen gates by about 13:30.",
   [APA_HOTEL_NAME]: APA_NOTE,
   "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
@@ -4950,11 +4954,12 @@ const COUNTDOWN_DAY_IDS = {
   "koko-return": ["day14", "day15", "day16", "day17", "day20", "day21"],
   "shinkansen-oct24": ["day02"],
   "shinkansen-nov2": ["day11"],
+  "shinkansen-himeji": ["day11"],
   "shinkansen-nov5": ["day14"],
   "flight-locators": ["day02"]
 };
 
-const TICKET_JOURNEY_IDS = new Set(["flight-locators", "shinkansen-oct24", "shinkansen-nov2", "shinkansen-nov5", "romancecar-back"]);
+const TICKET_JOURNEY_IDS = new Set(["flight-locators", "shinkansen-oct24", "shinkansen-nov2", "shinkansen-himeji", "shinkansen-nov5", "romancecar-back"]);
 
 function noteMapUrl(text) {
   const match = String(text || "").match(/\{\{link:(https:\/\/www\.google\.com\/maps\/search\/\?[^|}]+)\|/);
