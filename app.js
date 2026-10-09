@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v188";
+const APP_VERSION = "japan-quest-v189";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -4943,6 +4943,404 @@ function foldSection(title, node) {
   return details;
 }
 
+const WEATHER_KEY = "japanQuestWeather";
+const WEATHER_MAX_AGE_MS = 6 * 60 * 60 * 1000;
+const WEATHER_PLACES = {
+  tokyo: { name: "Tokyo", latitude: 35.6812, longitude: 139.7671, typical: [16.7, 8.8] },
+  osaka: { name: "Osaka", latitude: 34.6937, longitude: 135.5022, typical: [17.8, 10.2] },
+  kyoto: { name: "Kyoto", latitude: 35.0116, longitude: 135.7681, typical: [17.3, 8.4] },
+  kobe: { name: "Kobe", latitude: 34.7108, longitude: 135.1955 },
+  nara: { name: "Nara", latitude: 34.6851, longitude: 135.843 },
+  hiei: { name: "Mt Hiei", latitude: 35.0705, longitude: 135.838 },
+  himeji: { name: "Himeji", latitude: 34.8394, longitude: 134.6939 },
+  hiroshima: { name: "Hiroshima", latitude: 34.3955, longitude: 132.4536, typical: [17.7, 8.9] },
+  miyajima: { name: "Miyajima", latitude: 34.2959, longitude: 132.3198, typicalName: "Hiroshima", typical: [17.7, 8.9] },
+  gora: { name: "Gora", latitude: 35.2494, longitude: 139.0455 }
+};
+const DAY_FORECAST_KEYS = {
+  day02: ["tokyo", "osaka"],
+  day03: ["osaka"],
+  day04: ["osaka"],
+  day05: ["kobe"],
+  day06: ["nara"],
+  day07: ["kyoto"],
+  day08: ["kyoto"],
+  day09: ["kyoto"],
+  day10: ["hiei"],
+  day11: ["himeji", "hiroshima"],
+  day12: ["hiroshima"],
+  day13: ["miyajima"],
+  day14: ["tokyo"],
+  day15: ["tokyo"],
+  day16: ["tokyo"],
+  day17: ["gora"],
+  day18: ["gora"],
+  day19: ["gora"],
+  day20: ["tokyo"],
+  day21: ["tokyo"]
+};
+const RAIN_CITY_BY_DAY = {
+  day02: "osaka",
+  day03: "osaka",
+  day04: "osaka",
+  day05: "osaka",
+  day06: "kyoto",
+  day07: "kyoto",
+  day08: "kyoto",
+  day09: "kyoto",
+  day10: "kyoto",
+  day11: "hiroshima",
+  day12: "hiroshima",
+  day13: "hiroshima",
+  day14: "tokyo",
+  day15: "tokyo",
+  day16: "tokyo",
+  day17: "hakone",
+  day18: "hakone",
+  day19: "hakone",
+  day20: "tokyo",
+  day21: "tokyo"
+};
+const IDEA_CITY_BY_PLACE = {
+  tokyo: "tokyo",
+  osaka: "osaka",
+  kobe: "osaka",
+  kyoto: "kyoto",
+  nara: "kyoto",
+  hiei: "kyoto",
+  himeji: "hiroshima",
+  hiroshima: "hiroshima",
+  miyajima: "hiroshima",
+  gora: "hakone"
+};
+const RAIN_IDEAS = {
+  tokyo: [
+    {
+      name: "Tokyo National Museum",
+      why: "The galleries are indoors. The museum is non-smoking.",
+      travel: "About 40 minutes from the APA hotel. Take the train to Ueno.",
+      url: "https://www.tnm.jp/modules/r_free_page/index.php?id=113",
+      link: "Open the museum site"
+    },
+    {
+      name: "Odakyu Shinjuku food hall",
+      why: "The basement food hall is indoors. Mai can taste several small dishes.",
+      travel: "About 15 minutes on foot from the APA hotel.",
+      url: "https://www.odakyu-dept.co.jp/shinjuku/",
+      link: "Open the store site"
+    }
+  ],
+  osaka: [
+    {
+      name: "Osaka Aquarium Kaiyukan",
+      why: "The aquarium is indoors. The visit stays out of the rain.",
+      travel: "About 25 minutes from Hotel Cordia. Take the subway to Osakako.",
+      url: "https://www.kaiyukan.com/",
+      link: "Open the aquarium site"
+    },
+    {
+      name: "Osaka Museum of Housing and Living",
+      why: "The old Osaka street is indoors. The museum is non-smoking.",
+      travel: "About 20 minutes from Hotel Cordia. Take the subway to Tenjinbashisuji 6-chome.",
+      url: "https://www.konjyakukan.com/",
+      link: "Open the museum site"
+    }
+  ],
+  kyoto: [
+    {
+      name: "Nishiki Market",
+      why: "The market street is covered. Mai can eat small dishes as you walk.",
+      travel: "About 15 minutes from Hotel Monterey Kyoto. Take the subway to Shijo.",
+      url: "https://www.kyoto-nishiki.or.jp/en/",
+      link: "Open the market site"
+    },
+    {
+      name: "Kyoto Railway Museum",
+      why: "The trains and halls are indoors. The museum is non-smoking.",
+      travel: "About 10 minutes on foot from Hotel Monterey Kyoto.",
+      url: "https://www.kyotorailwaymuseum.jp/en/",
+      link: "Open the museum site"
+    }
+  ],
+  hiroshima: [
+    {
+      name: "Hiroshima Peace Memorial Museum",
+      why: "The exhibits are indoors. The museum is non-smoking.",
+      travel: "About 15 minutes from Hotel Granvia Hiroshima. Walk or take the streetcar.",
+      travelByDay: {
+        day13: "About 50 minutes from Miyajima. Take the ferry, then walk or take the streetcar."
+      },
+      skipDays: ["day12"],
+      url: "https://hpmmuseum.jp/?lang=eng",
+      link: "Open the museum site"
+    },
+    {
+      name: "Okonomimura",
+      why: "The floors are indoors. Choose a non-smoking seat.",
+      travel: "About 10 minutes on foot from Hotel Granvia Hiroshima.",
+      travelByDay: {
+        day13: "About 45 minutes from Miyajima. Take the ferry, then walk."
+      },
+      url: "https://okonomimura.jp/",
+      link: "Open the Okonomimura site"
+    }
+  ],
+  hakone: [
+    {
+      name: "Picasso Pavilion, Hakone Open-Air Museum",
+      why: "The Picasso hall is indoors. Use it when the outdoor park is wet.",
+      travel: "About 15 minutes on foot from Tokinoyu Setsugetsuka.",
+      url: "https://www.hakone-oam.or.jp/en/",
+      link: "Open the museum site"
+    },
+    {
+      name: "Bath at Tokinoyu Setsugetsuka",
+      why: "Stay at the hotel. Use the room bath. Dinner is included.",
+      travel: "The bath is in the hotel. Gora Station is about 1 minute away.",
+      url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/",
+      link: "Open the hotel site"
+    }
+  ]
+};
+let forecastRequest = null;
+
+function addDaysIso(iso, days) {
+  const [year, month, day] = iso.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+  return date.toISOString().slice(0, 10);
+}
+
+function cToF(celsius) {
+  return Math.round((celsius * 9) / 5 + 32);
+}
+
+function readWeatherCache() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(WEATHER_KEY) || "null");
+    if (!saved || typeof saved.fetchedAt !== "number" || !saved.places) return null;
+    return saved;
+  } catch {
+    return null;
+  }
+}
+
+function writeWeatherCache(cache) {
+  localStorage.setItem(WEATHER_KEY, JSON.stringify(cache));
+}
+
+function weatherRequestUrl(place) {
+  const url = new URL("https://api.open-meteo.com/v1/forecast");
+  url.searchParams.set("latitude", String(place.latitude));
+  url.searchParams.set("longitude", String(place.longitude));
+  url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max");
+  url.searchParams.set("timezone", "Asia/Tokyo");
+  url.searchParams.set("forecast_days", "16");
+  return url;
+}
+
+function fetchForecast(previous) {
+  const places = { ...(previous?.places || {}) };
+  return Promise.allSettled(Object.entries(WEATHER_PLACES).map(([id, place]) => fetch(weatherRequestUrl(place), { cache: "no-store" })
+    .then((response) => {
+      if (!response.ok) throw new Error("forecast");
+      return response.json();
+    })
+    .then((json) => {
+      const daily = json.daily || {};
+      places[id] = {
+        time: daily.time || [],
+        code: daily.weather_code || [],
+        high: daily.temperature_2m_max || [],
+        low: daily.temperature_2m_min || [],
+        rain: daily.precipitation_probability_max || []
+      };
+    }))).then((results) => {
+    if (results.every((result) => result.status === "rejected")) throw new Error("forecast");
+    const cache = { fetchedAt: Date.now(), places };
+    writeWeatherCache(cache);
+    return cache;
+  });
+}
+
+function loadForecast() {
+  if (forecastRequest) return forecastRequest;
+  const cached = readWeatherCache();
+  if (cached && Date.now() - cached.fetchedAt < WEATHER_MAX_AGE_MS) {
+    return Promise.resolve({ cache: cached, failed: false });
+  }
+  forecastRequest = fetchForecast(cached)
+    .then((cache) => ({ cache, failed: false }))
+    .catch(() => ({ cache: cached, failed: true }))
+    .finally(() => { forecastRequest = null; });
+  return forecastRequest;
+}
+
+function forecastKeysForDay(day) {
+  return DAY_FORECAST_KEYS[day.id] || ["tokyo"];
+}
+
+function placeReading(cache, placeId, iso) {
+  const place = cache?.places?.[placeId];
+  if (!place?.time) return null;
+  const index = place.time.indexOf(iso);
+  if (index < 0) return null;
+  const high = Number(place.high?.[index]);
+  const low = Number(place.low?.[index]);
+  const rain = Number(place.rain?.[index]);
+  const code = Number(place.code?.[index]);
+  if (!Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(rain)) return null;
+  return { high, low, rain, code };
+}
+
+function weatherKind(code) {
+  if (code === 0) return "clear";
+  if (code === 1) return "mainly";
+  if (code === 2) return "partly";
+  if (code === 3) return "cloudy";
+  if (code === 45 || code === 48) return "fog";
+  if (code >= 51 && code <= 57) return "drizzle";
+  if (code >= 61 && code <= 67) return "rain";
+  if (code >= 71 && code <= 77) return "snow";
+  if (code >= 80 && code <= 82) return "showers";
+  if (code >= 95) return "thunder";
+  return "cloudy";
+}
+
+function weatherLabel(kind) {
+  return {
+    clear: "Clear",
+    mainly: "Mainly clear",
+    partly: "Partly cloudy",
+    cloudy: "Cloudy",
+    fog: "Fog",
+    drizzle: "Drizzle",
+    rain: "Rain",
+    snow: "Snow",
+    showers: "Showers",
+    thunder: "Thunderstorm"
+  }[kind] || "Cloudy";
+}
+
+function weatherIcon(kind) {
+  const start = `<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">`;
+  if (kind === "clear" || kind === "mainly") {
+    return `${start}<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  }
+  if (kind === "rain" || kind === "drizzle" || kind === "showers" || kind === "thunder") {
+    return `${start}<path d="M7 15a5 5 0 1 1 1.2-9.8A6 6 0 0 1 18 10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  }
+  if (kind === "snow") {
+    return `${start}<path d="M12 3v18M5 7.5l14 9M19 7.5l-14 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+  }
+  return `${start}<path d="M7 16h11a4 4 0 0 0 0-8 6 6 0 0 0-11.4 1.6A4.5 4.5 0 0 0 7 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
+}
+
+function formatUpdated(ms) {
+  const time = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "Asia/Tokyo"
+  }).format(new Date(ms));
+  return `Updated ${time}`;
+}
+
+function typicalHtml(placeId) {
+  const place = WEATHER_PLACES[placeId];
+  if (!place?.typical) return "";
+  const [high, low] = place.typical;
+  const name = place.typicalName || place.name;
+  return `<p class="day-weather-typical">Typical November in ${escapeHtml(name)}: high ${high}°C, low ${low}°C. JMA 1991–2020.</p>`;
+}
+
+function weatherLineHtml(placeId, reading) {
+  const place = WEATHER_PLACES[placeId];
+  const kind = weatherKind(reading.code);
+  const high = Math.round(reading.high);
+  const low = Math.round(reading.low);
+  return `<p class="day-weather-line">
+    <span class="weather-icon">${weatherIcon(kind)}</span>
+    <span class="weather-place">${escapeHtml(place.name)}</span>
+    <span class="weather-cond">${escapeHtml(weatherLabel(kind))}</span>
+    <span class="weather-temp">${high}° / ${low}°C <span class="weather-f">${cToF(reading.high)}° / ${cToF(reading.low)}°F</span></span>
+    <span class="weather-rain">Rain chance ${Math.round(reading.rain)}%</span>
+  </p>`;
+}
+
+function weatherBlockHtml(day, cache, failed) {
+  const today = japanTodayIso();
+  const limit = addDaysIso(today, 15);
+  const keys = forecastKeysForDay(day);
+  if (!cache && !failed && day.date >= today && day.date <= limit) {
+    return `<p class="day-weather-pending">Checking the forecast.</p>`;
+  }
+  if (day.date > limit) {
+    const typical = [...new Set(keys.map((placeId) => typicalHtml(placeId)).filter(Boolean))].join("");
+    return `<p class="day-weather-pending">Forecast appears about 2 weeks before.</p>${typical}`;
+  }
+  const lines = [];
+  let sawNumber = false;
+  keys.forEach((placeId) => {
+    const reading = placeReading(cache, placeId, day.date);
+    if (reading) {
+      sawNumber = true;
+      lines.push(weatherLineHtml(placeId, reading));
+      return;
+    }
+    if (day.date < today || (!cache && failed)) {
+      lines.push(`<p class="day-weather-pending">${escapeHtml(WEATHER_PLACES[placeId].name)}: No forecast saved for this day.</p>`);
+      return;
+    }
+    lines.push(`<p class="day-weather-pending">${escapeHtml(WEATHER_PLACES[placeId].name)}: The forecast for this day is not ready yet.</p>`);
+  });
+  const updated = sawNumber && cache?.fetchedAt ? `<p class="day-weather-updated">${escapeHtml(formatUpdated(cache.fetchedAt))}</p>` : "";
+  return `${lines.join("")}${updated}`;
+}
+
+function ideasForCity(cityId, day) {
+  return (RAIN_IDEAS[cityId] || []).filter((idea) => !(idea.skipDays || []).includes(day.id));
+}
+
+function rainIdeasHtml(day, cityIds) {
+  const ids = cityIds || [RAIN_CITY_BY_DAY[day.id]].filter(Boolean);
+  return ids.map((cityId) => ideasForCity(cityId, day).map((idea) => {
+    const travel = idea.travelByDay?.[day.id] || idea.travel;
+    return `<article class="rain-idea">
+      <h3>${escapeHtml(idea.name)}</h3>
+      <p>${escapeHtml(idea.why)}</p>
+      <p>${escapeHtml(travel)}</p>
+      <p><a class="day-ticket-open" href="${escapeHtml(idea.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(idea.link)}</a></p>
+    </article>`;
+  }).join("")).join("");
+}
+
+function rainyCities(day, cache) {
+  const cities = [];
+  forecastKeysForDay(day).forEach((placeId) => {
+    const reading = placeReading(cache, placeId, day.date);
+    if (!reading || reading.rain < 60) return;
+    const cityId = IDEA_CITY_BY_PLACE[placeId];
+    if (cityId && !cities.includes(cityId)) cities.push(cityId);
+  });
+  return cities;
+}
+
+function rainCardHtml(day, cache) {
+  const cities = rainyCities(day, cache);
+  if (!cities.length) return "";
+  return `<details class="rain-day">
+    <summary>If it rains</summary>
+    ${rainIdeasHtml(day, cities)}
+  </details>`;
+}
+
+function paintDayWeather(day, weather, rainSlot, cache, failed) {
+  weather.innerHTML = weatherBlockHtml(day, cache, failed);
+  const open = rainSlot.querySelector("details")?.open;
+  rainSlot.innerHTML = rainCardHtml(day, cache);
+  const details = rainSlot.querySelector("details");
+  if (details && open) details.open = true;
+}
+
 function makeDayDetails(day) {
   const section = document.createElement("details");
   section.className = "day-details";
@@ -4959,6 +5357,8 @@ function makeDayDetails(day) {
     <h3>Still to book</h3>
     ${items.length ? items.map(openItemRowHtml).join("") : `<p>Nothing is still open for this day.</p>`}
     ${walks.length ? `<h3>Walk-in</h3><ul class="reservation-countdown-list">${walkInReminderItemsHtml(walks)}</ul>` : ""}
+    <h3>If it rains</h3>
+    ${rainIdeasHtml(day)}
   `;
   bindWalkInChecks(section);
   return section;
@@ -4972,13 +5372,26 @@ function mountDayView(host, day) {
       <p>${day.theme}</p>
     </div>
   `;
+  const weather = document.createElement("section");
+  weather.className = "day-weather";
+  weather.setAttribute("aria-live", "polite");
+  weather.setAttribute("aria-label", "Weather");
+  const rainSlot = document.createElement("div");
+  rainSlot.className = "rain-slot";
   host.append(
+    weather,
+    rainSlot,
     makeDayFrontPage(day),
     foldSection("Quest", makeQuestPage(day)),
     makeMapCard(day),
     foldSection("Journal", makeDailyPhotoCard(day)),
     makeDayDetails(day)
   );
+  paintDayWeather(day, weather, rainSlot, readWeatherCache(), false);
+  loadForecast().then(({ cache, failed }) => {
+    if (!weather.isConnected) return;
+    paintDayWeather(day, weather, rainSlot, cache, failed);
+  });
 }
 
 function renderDay(day) {

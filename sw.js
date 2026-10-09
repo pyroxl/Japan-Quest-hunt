@@ -1,10 +1,10 @@
-const CACHE_NAME = "japan-quest-v188";
+const CACHE_NAME = "japan-quest-v189";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v188",
-  "./ticket-email.js?v188",
-  "./app.js?v188",
+  "./styles.css?v189",
+  "./ticket-email.js?v189",
+  "./app.js?v189",
   "./leaflet.css",
   "./leaflet.js",
   "./place-coordinates.js",
@@ -92,8 +92,10 @@ self.addEventListener("fetch", (event) => {
       })
       .catch(() => caches.match(event.request, { ignoreSearch: true }).then((cached) => {
         if (cached) return cached;
-        if (isDocumentRequest(event.request, url)) return caches.match("./index.html");
-        return undefined;
+        if (isDocumentRequest(event.request, url)) {
+          return caches.match("./index.html").then((shell) => shell || Response.error());
+        }
+        return Response.error();
       }))
   );
 });
