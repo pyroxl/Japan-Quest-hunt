@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v189";
+const APP_VERSION = "japan-quest-v190";
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -5110,10 +5110,6 @@ function addDaysIso(iso, days) {
   return date.toISOString().slice(0, 10);
 }
 
-function cToF(celsius) {
-  return Math.round((celsius * 9) / 5 + 32);
-}
-
 function readWeatherCache() {
   try {
     const saved = JSON.parse(localStorage.getItem(WEATHER_KEY) || "null");
@@ -5206,94 +5202,34 @@ function weatherKind(code) {
   return "cloudy";
 }
 
-function weatherLabel(kind) {
-  return {
-    clear: "Clear",
-    mainly: "Mainly clear",
-    partly: "Partly cloudy",
-    cloudy: "Cloudy",
-    fog: "Fog",
-    drizzle: "Drizzle",
-    rain: "Rain",
-    snow: "Snow",
-    showers: "Showers",
-    thunder: "Thunderstorm"
-  }[kind] || "Cloudy";
+function weatherMark(kind) {
+  if (kind === "clear" || kind === "mainly") return "☀️";
+  if (kind === "partly") return "⛅";
+  if (kind === "snow") return "❄️";
+  if (kind === "thunder") return "⛈️";
+  if (kind === "rain" || kind === "drizzle" || kind === "showers") return "🌧️";
+  return "☁️";
 }
 
-function weatherIcon(kind) {
-  const start = `<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">`;
-  if (kind === "clear" || kind === "mainly") {
-    return `${start}<circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2L19 19M19 5l-1.8 1.8M6.8 17.2L5 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-  }
-  if (kind === "rain" || kind === "drizzle" || kind === "showers" || kind === "thunder") {
-    return `${start}<path d="M7 15a5 5 0 1 1 1.2-9.8A6 6 0 0 1 18 10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-  }
-  if (kind === "snow") {
-    return `${start}<path d="M12 3v18M5 7.5l14 9M19 7.5l-14 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-  }
-  return `${start}<path d="M7 16h11a4 4 0 0 0 0-8 6 6 0 0 0-11.4 1.6A4.5 4.5 0 0 0 7 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
+function forecastChoice(day, cache) {
+  const rows = forecastKeysForDay(day)
+    .map((placeId) => ({ placeId, reading: placeReading(cache, placeId, day.date) }))
+    .filter((row) => row.reading);
+  if (!rows.length) return null;
+  const rainy = rows.filter((row) => row.reading.rain >= 60);
+  if (rainy.length) return rainy.sort((a, b) => b.reading.rain - a.reading.rain)[0];
+  return rows[rows.length - 1];
 }
 
-function formatUpdated(ms) {
-  const time = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "Asia/Tokyo"
-  }).format(new Date(ms));
-  return `Updated ${time}`;
-}
-
-function typicalHtml(placeId) {
-  const place = WEATHER_PLACES[placeId];
-  if (!place?.typical) return "";
-  const [high, low] = place.typical;
-  const name = place.typicalName || place.name;
-  return `<p class="day-weather-typical">Typical November in ${escapeHtml(name)}: high ${high}°C, low ${low}°C. JMA 1991–2020.</p>`;
-}
-
-function weatherLineHtml(placeId, reading) {
-  const place = WEATHER_PLACES[placeId];
-  const kind = weatherKind(reading.code);
+function weatherLineHtml(day, cache) {
+  if (day.date > addDaysIso(japanTodayIso(), 15)) return "";
+  const choice = forecastChoice(day, cache);
+  if (!choice) return "";
+  const reading = choice.reading;
   const high = Math.round(reading.high);
   const low = Math.round(reading.low);
-  return `<p class="day-weather-line">
-    <span class="weather-icon">${weatherIcon(kind)}</span>
-    <span class="weather-place">${escapeHtml(place.name)}</span>
-    <span class="weather-cond">${escapeHtml(weatherLabel(kind))}</span>
-    <span class="weather-temp">${high}° / ${low}°C <span class="weather-f">${cToF(reading.high)}° / ${cToF(reading.low)}°F</span></span>
-    <span class="weather-rain">Rain chance ${Math.round(reading.rain)}%</span>
-  </p>`;
-}
-
-function weatherBlockHtml(day, cache, failed) {
-  const today = japanTodayIso();
-  const limit = addDaysIso(today, 15);
-  const keys = forecastKeysForDay(day);
-  if (!cache && !failed && day.date >= today && day.date <= limit) {
-    return `<p class="day-weather-pending">Checking the forecast.</p>`;
-  }
-  if (day.date > limit) {
-    const typical = [...new Set(keys.map((placeId) => typicalHtml(placeId)).filter(Boolean))].join("");
-    return `<p class="day-weather-pending">Forecast appears about 2 weeks before.</p>${typical}`;
-  }
-  const lines = [];
-  let sawNumber = false;
-  keys.forEach((placeId) => {
-    const reading = placeReading(cache, placeId, day.date);
-    if (reading) {
-      sawNumber = true;
-      lines.push(weatherLineHtml(placeId, reading));
-      return;
-    }
-    if (day.date < today || (!cache && failed)) {
-      lines.push(`<p class="day-weather-pending">${escapeHtml(WEATHER_PLACES[placeId].name)}: No forecast saved for this day.</p>`);
-      return;
-    }
-    lines.push(`<p class="day-weather-pending">${escapeHtml(WEATHER_PLACES[placeId].name)}: The forecast for this day is not ready yet.</p>`);
-  });
-  const updated = sawNumber && cache?.fetchedAt ? `<p class="day-weather-updated">${escapeHtml(formatUpdated(cache.fetchedAt))}</p>` : "";
-  return `${lines.join("")}${updated}`;
+  const rain = Math.round(reading.rain);
+  return `${weatherMark(weatherKind(reading.code))} <span class="day-forecast-high">${high}°</span><span class="day-forecast-low">/${low}°</span><span class="day-forecast-rain"> · ${rain}%</span>`;
 }
 
 function ideasForCity(cityId, day) {
@@ -5301,14 +5237,14 @@ function ideasForCity(cityId, day) {
 }
 
 function rainIdeasHtml(day, cityIds) {
-  const ids = cityIds || [RAIN_CITY_BY_DAY[day.id]].filter(Boolean);
+  const ids = cityIds || [];
   return ids.map((cityId) => ideasForCity(cityId, day).map((idea) => {
     const travel = idea.travelByDay?.[day.id] || idea.travel;
     return `<article class="rain-idea">
       <h3>${escapeHtml(idea.name)}</h3>
       <p>${escapeHtml(idea.why)}</p>
       <p>${escapeHtml(travel)}</p>
-      <p><a class="day-ticket-open" href="${escapeHtml(idea.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(idea.link)}</a></p>
+      <p><a href="${escapeHtml(idea.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(idea.link)}</a></p>
     </article>`;
   }).join("")).join("");
 }
@@ -5324,21 +5260,40 @@ function rainyCities(day, cache) {
   return cities;
 }
 
-function rainCardHtml(day, cache) {
+function rainRowHtml(day, cache) {
+  if (day.date > addDaysIso(japanTodayIso(), 15)) return "";
   const cities = rainyCities(day, cache);
-  if (!cities.length) return "";
-  return `<details class="rain-day">
-    <summary>If it rains</summary>
-    ${rainIdeasHtml(day, cities)}
+  const ideas = rainIdeasHtml(day, cities);
+  if (!ideas) return "";
+  const count = ideas.match(/class="rain-idea"/g)?.length || 0;
+  if (!count) return "";
+  const label = count === 1 ? "If it rains · 1 idea" : `If it rains · ${count} ideas`;
+  return `<details class="rain-row">
+    <summary>${label}</summary>
+    ${ideas}
   </details>`;
 }
 
-function paintDayWeather(day, weather, rainSlot, cache, failed) {
-  weather.innerHTML = weatherBlockHtml(day, cache, failed);
+function fitForecastLine(row) {
+  if (!row || row.scrollWidth <= row.clientWidth + 1) return;
+  row.querySelector(".day-forecast-low")?.remove();
+  if (row.scrollWidth <= row.clientWidth + 1) return;
+  row.querySelector(".day-forecast-rain")?.remove();
+}
+
+function paintDayWeather(day, weather, rainSlot, cache) {
+  const line = weatherLineHtml(day, cache);
+  weather.hidden = !line;
+  weather.innerHTML = line;
   const open = rainSlot.querySelector("details")?.open;
-  rainSlot.innerHTML = rainCardHtml(day, cache);
+  const row = rainRowHtml(day, cache);
+  rainSlot.hidden = !row;
+  rainSlot.innerHTML = row;
   const details = rainSlot.querySelector("details");
   if (details && open) details.open = true;
+  requestAnimationFrame(() => {
+    if (weather.isConnected) fitForecastLine(weather.closest(".day-date-row"));
+  });
 }
 
 function makeDayDetails(day) {
@@ -5357,40 +5312,41 @@ function makeDayDetails(day) {
     <h3>Still to book</h3>
     ${items.length ? items.map(openItemRowHtml).join("") : `<p>Nothing is still open for this day.</p>`}
     ${walks.length ? `<h3>Walk-in</h3><ul class="reservation-countdown-list">${walkInReminderItemsHtml(walks)}</ul>` : ""}
-    <h3>If it rains</h3>
-    ${rainIdeasHtml(day)}
   `;
   bindWalkInChecks(section);
   return section;
 }
 
 function mountDayView(host, day) {
+  host.classList.add("day-view");
   host.innerHTML = `
     <div class="day-title">
-      <p>${day.short}</p>
+      <p class="day-date-row"><span class="day-date">${day.short}</span></p>
       <h2>${day.title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
       <p>${day.theme}</p>
     </div>
   `;
-  const weather = document.createElement("section");
-  weather.className = "day-weather";
+  const weather = document.createElement("span");
+  weather.className = "day-forecast";
+  weather.hidden = true;
   weather.setAttribute("aria-live", "polite");
-  weather.setAttribute("aria-label", "Weather");
+  const dateRow = host.querySelector(".day-date-row");
+  dateRow.append(weather);
   const rainSlot = document.createElement("div");
   rainSlot.className = "rain-slot";
+  rainSlot.hidden = true;
+  dateRow.after(rainSlot);
   host.append(
-    weather,
-    rainSlot,
     makeDayFrontPage(day),
     foldSection("Quest", makeQuestPage(day)),
     makeMapCard(day),
     foldSection("Journal", makeDailyPhotoCard(day)),
     makeDayDetails(day)
   );
-  paintDayWeather(day, weather, rainSlot, readWeatherCache(), false);
-  loadForecast().then(({ cache, failed }) => {
+  paintDayWeather(day, weather, rainSlot, readWeatherCache());
+  loadForecast().then(({ cache }) => {
     if (!weather.isConnected) return;
-    paintDayWeather(day, weather, rainSlot, cache, failed);
+    paintDayWeather(day, weather, rainSlot, cache);
   });
 }
 

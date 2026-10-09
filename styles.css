@@ -3810,76 +3810,106 @@ h3 {
   text-decoration: line-through;
 }
 
+.day-view {
+  min-width: 0;
+  max-width: 100%;
+}
+
 .day-title {
+  min-width: 0;
+  max-width: 100%;
   padding: 6px 2px 2px;
 }
 
-.day-weather,
-.rain-day {
-  margin: 0 0 12px;
-  padding: 10px 12px;
-  border: 1px solid #1c0f14;
-  border-radius: 12px;
-  background: #fff;
-  color: #1c0f14;
-}
-
-.day-weather-line {
+.day-title p.day-date-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  margin: 0 0 6px;
-  font-weight: 800;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  height: 30px;
+  margin: 0 0 2px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  line-height: 30px;
+  white-space: nowrap;
 }
 
-.weather-icon {
-  display: inline-flex;
-  color: #1c0f14;
+.day-date {
+  flex: none;
 }
 
-.weather-f,
-.day-weather-updated,
-.day-weather-pending,
-.day-weather-typical {
-  color: #1c0f14;
-  font-size: 0.9rem;
-  font-weight: 700;
+.day-forecast {
+  flex: none;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 30px;
+  white-space: nowrap;
 }
 
-.day-weather-updated,
-.day-weather-pending,
-.day-weather-typical {
-  margin: 0 0 6px;
-}
-
+.day-forecast[hidden],
+.rain-slot[hidden],
 .rain-slot:empty {
   display: none;
 }
 
-.rain-day summary {
+.rain-row {
+  margin: 0 0 4px;
+  border: 0;
+  background: transparent;
+  color: #1c0f14;
+}
+
+.rain-row summary {
   display: flex;
   align-items: center;
-  min-height: 44px;
-  font-weight: 800;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  color: #1c0f14;
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 30px;
   cursor: pointer;
 }
 
 .rain-idea {
-  margin: 8px 0 0;
-  padding-top: 8px;
-  border-top: 1px solid #1c0f14;
+  margin: 6px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .rain-idea h3 {
-  margin: 0 0 4px;
+  margin: 0 0 2px;
   color: #1c0f14;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .rain-idea p {
-  margin: 0 0 4px;
+  margin: 0 0 2px;
   color: #1c0f14;
+  font-size: 0.9rem;
+}
+
+.rain-idea a {
+  display: inline;
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1c0f14;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: underline;
 }
 
 .day-title p {
