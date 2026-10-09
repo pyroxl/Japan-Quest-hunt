@@ -2202,9 +2202,16 @@ h3 {
   line-height: 1.3;
 }
 
-.day-timeline span {
+.day-timeline span,
+.timeline-text {
   color: var(--ink);
   line-height: 1.4;
+  min-width: 0;
+}
+
+.timeline-body {
+  grid-column: 2;
+  min-width: 0;
 }
 
 .timeline-note {
@@ -2262,6 +2269,22 @@ h3 {
 }
 
 @media (max-width: 540px) {
+  .day-timeline::before,
+  .day-timeline li::before {
+    display: none;
+  }
+
+  .day-timeline li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .day-timeline time,
+  .timeline-body {
+    grid-column: 1;
+    min-width: 0;
+  }
+
   .timeline-heading {
     display: grid;
   }
@@ -4862,8 +4885,35 @@ button.trip-date {
   font-weight: 800;
 }
 
+.day-fold > .daily-photo-card {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
 .inline-ticket {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  max-width: 100%;
   margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid #1c0f14;
+  border-radius: 10px;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  box-sizing: border-box;
+}
+
+.inline-ticket .wallet-type,
+.inline-ticket h3,
+.inline-ticket .ticket-meta {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.inline-ticket .ticket-meta {
+  white-space: nowrap;
 }
 
 .story-switch {
@@ -5486,9 +5536,31 @@ button.story-card {
   border-top: 1px solid var(--line);
 }
 
+.day-ticket.inline-ticket {
+  gap: 2px;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid #1c0f14;
+  border-radius: 10px;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  box-sizing: border-box;
+}
+
+.day-ticket.inline-ticket .ticket-meta {
+  white-space: nowrap;
+}
+
 .day-ticket:first-of-type {
   padding-top: 0;
   border-top: 0;
+}
+
+.day-ticket.inline-ticket:first-of-type {
+  padding: 8px 10px;
+  border: 1px solid #1c0f14;
 }
 
 .day-ticket h3,

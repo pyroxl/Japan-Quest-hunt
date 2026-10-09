@@ -1762,7 +1762,7 @@ function timelineMarkup(day, timeline, used) {
     const matches = dayBookings(day).filter((item) => !used.has(item.id) && bookingMatchesStep(item, time, activity));
     matches.forEach((item) => used.add(item.id));
     const tickets = matches.map(inlineTicketHtml).join("");
-    return `<li><time>${escapeHtml(time)}</time><span>${renderGuideHtml(activity)}</span>${tickets}</li>`;
+    return `<li><time>${escapeHtml(time)}</time><div class="timeline-body"><div class="timeline-text">${renderGuideHtml(activity)}</div>${tickets}</div></li>`;
   }).join("");
 }
 
@@ -4726,13 +4726,9 @@ function makeMapCard(day) {
 }
 
 function makeDailyPhotoCard(day) {
-  const { card, content } = makeCollapsibleCard({
-    className: "daily-photo-card",
-    label: "Daily Album",
-    title: "Photos to catch today",
-    badge: "5 slots",
-    open: false
-  });
+  const card = document.createElement("section");
+  card.className = "daily-photo-card";
+  const content = card;
   const grid = document.createElement("div");
   grid.className = "daily-photo-grid";
   dailyPhotoSlots.forEach(([slot, title, description]) => {
@@ -4980,7 +4976,7 @@ function mountDayView(host, day) {
     makeDayFrontPage(day),
     foldSection("Quest", makeQuestPage(day)),
     makeMapCard(day),
-    makeDailyPhotoCard(day),
+    foldSection("Journal", makeDailyPhotoCard(day)),
     makeDayDetails(day)
   );
 }
