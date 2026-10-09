@@ -5381,7 +5381,7 @@ function walletDayLabel(iso) {
     month: "short",
     day: "numeric",
     timeZone: "UTC"
-  });
+  }).replace(",", "");
   const row = tripRows().find((entry) => entry.day.date === iso);
   if (!row) return text;
   return `${text} · Day ${Number(row.day.id.replace("day", ""))}`;
