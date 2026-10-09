@@ -4639,7 +4639,6 @@ button.trip-date {
   margin: 0 0 6px;
 }
 
-.ask-grok,
 .food-list-toggle {
   min-height: 44px;
   padding: 8px 14px;
@@ -4650,10 +4649,6 @@ button.trip-date {
   font: inherit;
   font-weight: 850;
   cursor: pointer;
-}
-
-.ask-grok {
-  width: 100%;
 }
 
 .day-open-items {
@@ -4716,26 +4711,6 @@ button.trip-date {
 }
 
 .city-food-list.is-collapsed {
-  display: none;
-}
-
-.grok-toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(112px + env(safe-area-inset-bottom));
-  z-index: 46;
-  transform: translateX(-50%);
-  max-width: min(92vw, 360px);
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 8px;
-  background: var(--ink);
-  color: var(--paper);
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.grok-toast[hidden] {
   display: none;
 }
 
