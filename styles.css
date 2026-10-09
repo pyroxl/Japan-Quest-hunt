@@ -3821,9 +3821,10 @@ h3 {
   padding: 6px 2px 2px;
 }
 
-.day-title p.day-forecast {
+.day-title p.day-date-row {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
   gap: 8px;
   min-width: 0;
   max-width: 100%;
@@ -3833,30 +3834,29 @@ h3 {
   overflow: hidden;
   border: 0;
   background: transparent;
-  color: #1c0f14;
-  font-size: 0.95rem;
-  font-weight: 750;
+  color: var(--muted);
   line-height: 30px;
   white-space: nowrap;
 }
 
-.day-title p.day-forecast[hidden],
+.day-date {
+  flex: none;
+}
+
+.day-forecast {
+  flex: none;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 30px;
+  white-space: nowrap;
+}
+
+.day-forecast[hidden],
 .rain-slot[hidden],
 .rain-slot:empty {
   display: none;
-}
-
-.day-forecast-main {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.day-forecast-updated {
-  flex: none;
-  color: #6b5348;
-  font-size: 0.72rem;
-  font-weight: 650;
 }
 
 .rain-row {

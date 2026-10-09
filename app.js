@@ -5211,18 +5211,6 @@ function weatherMark(kind) {
   return "☁️";
 }
 
-function formatUpdated(ms) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hourCycle: "h12",
-    timeZone: "Asia/Tokyo"
-  }).formatToParts(new Date(ms));
-  const hour = parts.find((part) => part.type === "hour")?.value || "";
-  const minute = parts.find((part) => part.type === "minute")?.value || "";
-  return `Updated ${hour}:${minute}`;
-}
-
 function forecastChoice(day, cache) {
   const rows = forecastKeysForDay(day)
     .map((placeId) => ({ placeId, reading: placeReading(cache, placeId, day.date) }))
@@ -5237,12 +5225,11 @@ function weatherLineHtml(day, cache) {
   if (day.date > addDaysIso(japanTodayIso(), 15)) return "";
   const choice = forecastChoice(day, cache);
   if (!choice) return "";
-  const place = WEATHER_PLACES[choice.placeId];
   const reading = choice.reading;
   const high = Math.round(reading.high);
   const low = Math.round(reading.low);
-  const updated = cache?.fetchedAt ? `<span class="day-forecast-updated">${escapeHtml(formatUpdated(cache.fetchedAt))}</span>` : "";
-  return `<span class="day-forecast-main">${weatherMark(weatherKind(reading.code))} ${high}°/${low}°C · ${Math.round(reading.rain)}% rain · ${escapeHtml(place.name)}</span>${updated}`;
+  const rain = Math.round(reading.rain);
+  return `${weatherMark(weatherKind(reading.code))} <span class="day-forecast-high">${high}°</span><span class="day-forecast-low">/${low}°</span><span class="day-forecast-rain"> · ${rain}%</span>`;
 }
 
 function ideasForCity(cityId, day) {
@@ -5287,12 +5274,11 @@ function rainRowHtml(day, cache) {
   </details>`;
 }
 
-function fitForecastUpdated(node) {
-  const updated = node.querySelector(".day-forecast-updated");
-  const main = node.querySelector(".day-forecast-main");
-  if (!updated || !main) return;
-  const clipped = main.scrollWidth > main.clientWidth + 1 || node.scrollWidth > node.clientWidth + 1;
-  if (clipped) updated.remove();
+function fitForecastLine(row) {
+  if (!row || row.scrollWidth <= row.clientWidth + 1) return;
+  row.querySelector(".day-forecast-low")?.remove();
+  if (row.scrollWidth <= row.clientWidth + 1) return;
+  row.querySelector(".day-forecast-rain")?.remove();
 }
 
 function paintDayWeather(day, weather, rainSlot, cache) {
@@ -5306,7 +5292,7 @@ function paintDayWeather(day, weather, rainSlot, cache) {
   const details = rainSlot.querySelector("details");
   if (details && open) details.open = true;
   requestAnimationFrame(() => {
-    if (weather.isConnected) fitForecastUpdated(weather);
+    if (weather.isConnected) fitForecastLine(weather.closest(".day-date-row"));
   });
 }
 
@@ -5335,19 +5321,21 @@ function mountDayView(host, day) {
   host.classList.add("day-view");
   host.innerHTML = `
     <div class="day-title">
-      <p>${day.short}</p>
+      <p class="day-date-row"><span class="day-date">${day.short}</span></p>
       <h2>${day.title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
       <p>${day.theme}</p>
     </div>
   `;
-  const weather = document.createElement("p");
+  const weather = document.createElement("span");
   weather.className = "day-forecast";
   weather.hidden = true;
   weather.setAttribute("aria-live", "polite");
+  const dateRow = host.querySelector(".day-date-row");
+  dateRow.append(weather);
   const rainSlot = document.createElement("div");
   rainSlot.className = "rain-slot";
   rainSlot.hidden = true;
-  host.querySelector(".day-title p")?.after(weather, rainSlot);
+  dateRow.after(rainSlot);
   host.append(
     makeDayFrontPage(day),
     foldSection("Quest", makeQuestPage(day)),
