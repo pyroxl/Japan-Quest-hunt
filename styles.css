@@ -89,6 +89,27 @@ body[data-city="hiroshima"] {
   --nav-pill: #1a2740;
 }
 
+body[data-traveler="mai"] {
+  --paper: #fff6f8;
+  --ink: #351f2c;
+  --muted: #6b3e54;
+  --line: rgba(158, 62, 104, 0.22);
+  --card: rgba(255, 251, 252, 0.94);
+  --green: #8e2f58;
+  --teal: #8a3d68;
+  --rose: #8e2f58;
+  --gold: #7b5822;
+  --shadow: 0 16px 40px rgba(142, 47, 88, 0.12);
+  --glow-one: rgba(232, 160, 190, 0.45);
+  --glow-two: rgba(255, 214, 228, 0.55);
+  --wash-one: rgba(212, 106, 150, 0.16);
+  --wash-two: rgba(255, 255, 255, 0.4);
+  --nav-pill: #8e2f58;
+  --sakura: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%23d56b98'%3E%3Cellipse cx='32' cy='16' rx='6.2' ry='10'/%3E%3Cellipse cx='32' cy='16' rx='6.2' ry='10' transform='rotate(72 32 32)'/%3E%3Cellipse cx='32' cy='16' rx='6.2' ry='10' transform='rotate(144 32 32)'/%3E%3Cellipse cx='32' cy='16' rx='6.2' ry='10' transform='rotate(216 32 32)'/%3E%3Cellipse cx='32' cy='16' rx='6.2' ry='10' transform='rotate(288 32 32)'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='3.4' fill='%23f8d5e4'/%3E%3C/svg%3E");
+  background-color: #fff6f8 !important;
+  background-image: linear-gradient(#fff6f8, #fff6f8);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -304,6 +325,108 @@ textarea::placeholder {
   text-align: left;
   font-weight: 800;
   cursor: pointer;
+}
+
+.traveler-toggle {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.traveler-toggle button {
+  min-height: 44px;
+  padding: 8px 4px;
+  border: 2px solid #34222a;
+  border-radius: 8px;
+  background: #fff;
+  color: #34222a;
+  text-align: center;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.app-menu .traveler-toggle button {
+  text-align: center;
+}
+
+.traveler-toggle button[aria-pressed="true"] {
+  background: #34222a;
+  color: #fff;
+}
+
+body[data-traveler="mai"] .traveler-toggle button[aria-pressed="true"] {
+  border-color: #8e2f58;
+  background: #8e2f58;
+  color: #fff;
+}
+
+body[data-traveler="mai"] .app-header {
+  background-image: var(--sakura), linear-gradient(#fff6f8, #fff6f8);
+  background-repeat: no-repeat, no-repeat;
+  background-position: right 62px center, 0 0;
+  background-size: 30px 30px, auto;
+}
+
+body[data-traveler="mai"] .daily-guide,
+body[data-traveler="mai"] .next-stop {
+  position: relative;
+}
+
+body[data-traveler="mai"] .daily-guide::after,
+body[data-traveler="mai"] .next-stop::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  width: 26px;
+  height: 26px;
+  background: var(--sakura) center / contain no-repeat;
+  pointer-events: none;
+}
+
+.traveler-toggle button:focus-visible {
+  outline: 2px solid #285b96;
+  outline-offset: 2px;
+}
+
+.traveler-ask {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(52, 34, 42, 0.72);
+}
+
+.traveler-ask[hidden] {
+  display: none;
+}
+
+.traveler-ask-card {
+  width: min(360px, 100%);
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #fffafc;
+  color: #34222a;
+}
+
+.traveler-ask-card h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.away-line {
+  margin: 12px 0;
+  color: #34222a;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .app-menu button[aria-current="page"] {
@@ -5355,6 +5478,13 @@ button.story-card {
   border: 2px solid #1c0f14;
 }
 
+body[data-traveler="mai"] .wallet-card,
+body[data-traveler="mai"] .next-stop {
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff7f9);
+  border-color: #8e2f58;
+}
+
 .wallet-kicker {
   margin: 0;
   color: var(--muted);
@@ -5431,31 +5561,156 @@ button.story-card {
   color: #fff6ee;
 }
 
-.wallet-day {
-  margin: 14px 0 8px;
-  color: var(--ink);
-  font-size: 1rem;
+.tickets-panel {
+  min-width: 0;
+  max-width: 100%;
 }
 
-.wallet-done {
-  margin: 8px 0 16px;
+.wallet-dial-wrap {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 12px;
+  overflow: hidden;
 }
 
-.wallet-done summary {
+.wallet-dial-wrap::before,
+.wallet-dial-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 10px;
+  width: 18px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.wallet-dial-wrap::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--paper), transparent);
+}
+
+.wallet-dial-wrap::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--paper), transparent);
+}
+
+.wallet-dial {
   display: flex;
   align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  padding: 2px 0 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #1c0f14 transparent;
+}
+
+.wallet-dial-pad {
+  flex: 0 0 calc(50% - 0.25rem);
+}
+
+.wallet-dial-chip {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
   min-height: 44px;
-  color: var(--ink);
-  font-weight: 850;
+  padding: 8px 14px;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
 }
 
+.wallet-dial-chip.is-selected {
+  background: #1c0f14;
+  border-color: #1c0f14;
+  color: #fff;
+}
+
+.wallet-dial-chip.is-dim:not(.is-selected) {
+  border-color: #8a7068;
+  color: #5c4036;
+}
+
+.wallet-dial-chip:focus-visible,
+.my-tickets > summary:focus-visible {
+  outline: 2px solid #285b96;
+  outline-offset: 2px;
+}
+
+.wallet-day-items .wallet-card:last-child {
+  margin-bottom: 0;
+}
+
 .my-tickets {
-  margin: 4px 0 18px;
-  padding: 12px;
-  border: 1px solid var(--line);
+  margin: 4px 0 12px;
+  padding: 0 12px;
+  border: 1px solid #1c0f14;
   border-radius: 12px;
   background: #fff;
+  color: #1c0f14;
+}
+
+.my-tickets[open] {
+  padding-bottom: 12px;
+}
+
+.my-tickets > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0 -12px;
+  padding: 8px 12px;
+  color: #1c0f14;
+  font-weight: 800;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+body[data-traveler="mai"] .wallet-dial {
+  scrollbar-color: #8e2f58 transparent;
+}
+
+body[data-traveler="mai"] .wallet-dial-chip {
+  border-color: #8e2f58;
+  background: #fff;
+  color: #351f2c;
+}
+
+body[data-traveler="mai"] .wallet-dial-chip.is-selected {
+  border-color: #8e2f58;
+  background: #8e2f58;
+  color: #fff;
+}
+
+body[data-traveler="mai"] .wallet-dial-chip.is-dim:not(.is-selected) {
+  border-color: #8e2f58;
+  color: #6b3e54;
+}
+
+body[data-traveler="mai"] .my-tickets {
+  border-color: #8e2f58;
+  background: #fff;
+}
+
+body[data-traveler="mai"] .my-tickets > summary {
+  color: #351f2c;
+}
+
+body[data-traveler="mai"] .wallet-filters button[aria-pressed="true"] {
+  border-color: #8e2f58;
+  background: #8e2f58;
+  color: #fff;
 }
 
 .my-ticket-note,

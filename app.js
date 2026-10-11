@@ -1,5 +1,43 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v193";
+const APP_VERSION = "japan-quest-v197";
+const TRAVELER_KEY = "japanQuestTraveler";
+
+function travelerView() {
+  const saved = localStorage.getItem(TRAVELER_KEY);
+  if (saved === "brianMai") {
+    localStorage.setItem(TRAVELER_KEY, "brian");
+    return "brian";
+  }
+  return saved === "brian" || saved === "mai" || saved === "parents" ? saved : "";
+}
+
+function coupleView() {
+  const view = travelerView();
+  return view === "brian" || view === "mai";
+}
+
+function sees(who) {
+  if (!who || who === "shared") return true;
+  const view = travelerView();
+  if (!view) return true;
+  if (who === "brianMai") return coupleView();
+  return who === view;
+}
+
+function awayLine(iso) {
+  const view = travelerView();
+  if (coupleView() && iso === "2026-10-23") return "Not in Japan yet.";
+  if (view === "parents" && iso >= "2026-11-11" && iso <= "2026-11-13") return "Flown home.";
+  return "";
+}
+
+function tripStartIso() {
+  return coupleView() ? "2026-10-24" : "2026-10-23";
+}
+
+function tripEndIso() {
+  return travelerView() === "parents" ? "2026-11-10" : "2026-11-13";
+}
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const HIMEJI_LOGIN_URL = "https://himejicastle-ticket.jp/?lng=en-US";
@@ -68,15 +106,25 @@ const HOTEL_PLACES = new Set([
   "Hotel Monterey Kyoto",
   "Hotel Granvia Hiroshima",
   APA_HOTEL_NAME,
-  "Tokinoyu Setsugetsuka"
+  "Tokinoyu Setsugetsuka",
+  "Shinagawa Prince Hotel",
+  "Royal Park Hotel ICONIC Osaka Midosuji"
 ]);
 
+const SHINAGAWA_PRINCE_MAP = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Shinagawa Prince Hotel")}`;
+const ROYAL_PARK_MAP = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Royal Park Hotel ICONIC Osaka Midosuji")}`;
+
 const LOCKED_HOTELS = [
-  { dates: "Osaka · Oct 24–28", note: "Hommachi · 1 room", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/" },
-  { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/" },
-  { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/" },
-  { dates: "Tokyo · Nov 5–8 & Nov 11–12", note: APA_NOTE, name: APA_HOTEL_NAME, url: APA_MAP_URL },
-  { dates: "Hakone · Nov 8–11", note: "BOOKED. Booking.com {{copy:6890781811}}. Superior Room with Tatami Area and Open-Air Bath. 2 adults. Breakfast and dinner are included. Check-in 15:00–19:30. Check-out 11:00. Paid in full. JPY 325,507.", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/" }
+  { dates: "Osaka · Oct 24–28", note: "Hommachi · 1 room", name: "Hotel Cordia Osaka Hommachi", url: "https://cordia-osaka.com/hommachi/en/", who: "brianMai" },
+  { dates: "Kyoto · Oct 28–Nov 2", note: "Karasuma Oike / Sanjo · 1 room", name: "Hotel Monterey Kyoto", url: "https://www.hotelmonterey.co.jp/en/kyoto/", who: "brianMai" },
+  { dates: "Hiroshima · Nov 2–5", note: "JR Hiroshima Station · 1 room", name: "Hotel Granvia Hiroshima", url: "https://www.hgh.co.jp/english/", who: "brianMai" },
+  { dates: "Tokyo · Nov 5–8 & Nov 11–12", note: APA_NOTE, name: APA_HOTEL_NAME, url: APA_MAP_URL, who: "brianMai" },
+  { dates: "Hakone · Nov 8–11", note: "BOOKED. Booking.com {{copy:6890781811}}. Superior Room with Tatami Area and Open-Air Bath. 2 adults. Breakfast and dinner are included. Check-in 15:00–19:30. Check-out 11:00. Paid in full. JPY 325,507.", name: "Tokinoyu Setsugetsuka", url: "https://dormy-hotels.com/resort/hotels/setsugetsuka/", who: "brianMai" },
+  { dates: "Oct 23", note: "After UA803. Haneda to Shinagawa is about 15 minutes.", name: "Shinagawa Prince Hotel", url: SHINAGAWA_PRINCE_MAP, who: "parents" },
+  { dates: "Osaka · Oct 24–28", note: "After Nozomi 261.", name: "Royal Park Hotel ICONIC Osaka Midosuji", url: ROYAL_PARK_MAP, who: "parents" },
+  { dates: "Kyoto · Oct 28–Nov 2", note: "Booked separately.", name: "Kyoto room", url: "", who: "parents" },
+  { dates: "Hiroshima · Nov 2–5", note: "Booked separately.", name: "Hiroshima room", url: "", who: "parents" },
+  { dates: "Tokyo · Nov 5–10", note: "Your room at APA Nishi-Shinjuku Gochome. Leave for Haneda on Nov 10 by about 13:30.", name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL, who: "parents" }
 ];
 
 const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
@@ -87,24 +135,29 @@ const HOTEL_SITE_BY_BOOKING = {
   granvia: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Granvia"))?.url || "",
   "apa-nov5": LOCKED_HOTELS.find((hotel) => hotel.name === APA_HOTEL_NAME)?.url || "",
   "apa-nov11": LOCKED_HOTELS.find((hotel) => hotel.name === APA_HOTEL_NAME)?.url || "",
-  setsugetsuka: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Setsugetsuka"))?.url || ""
+  setsugetsuka: LOCKED_HOTELS.find((hotel) => hotel.name.includes("Setsugetsuka"))?.url || "",
+  "shinagawa-prince": SHINAGAWA_PRINCE_MAP,
+  "royal-park": ROYAL_PARK_MAP,
+  "parents-apa": APA_MAP_URL
 };
 
 const RESERVATION_COUNTDOWN = [
-  { id: "parent-rooms", name: "Parent rooms", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 23–Nov 10", note: "Parents stay at Shinagawa Prince Hotel on Oct 23, Royal Park Hotel ICONIC Osaka Midosuji on Oct 24–28, and APA Nishi-Shinjuku Gochome on Nov 5–10. Their Kyoto and Hiroshima rooms are booked. Brian and Mai stay at Hotel Cordia Osaka Hommachi on Oct 24–28." },
-  { id: "flight-locators", name: "Record ticketed flight details", done: true, attention: "done", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", note: FLIGHT_NOTE },
-  { id: "teamlab", name: "teamLab Borderless", done: true, attention: "booked", recommendedOn: "2026-09-01", target: "Nov 12 · 12:30–13:00", note: TEAMLAB_NOTE, url: TEAMLAB_GUIDE_URL },
+  { id: "parent-rooms", name: "Parent rooms", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 23–Nov 10", who: "parents", note: "Parents stay at Shinagawa Prince Hotel on Oct 23, Royal Park Hotel ICONIC Osaka Midosuji on Oct 24–28, and APA Nishi-Shinjuku Gochome on Nov 5–10. Their Kyoto and Hiroshima rooms are booked. Brian and Mai stay at Hotel Cordia Osaka Hommachi on Oct 24–28." },
+  { id: "flight-locators", name: "Record ticketed flight details", done: true, attention: "done", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", who: "brianMai", note: FLIGHT_NOTE },
+  { id: "teamlab", name: "teamLab Borderless", done: true, attention: "booked", recommendedOn: "2026-09-01", target: "Nov 12 · 12:30–13:00", who: "brianMai", note: TEAMLAB_NOTE, url: TEAMLAB_GUIDE_URL },
   { id: "shinkansen-oct24", name: "Nozomi 261 Tokyo to Shin-Osaka", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Sat Oct 24 · 14:00", note: SHINKANSEN_OCT24 },
   { id: "shinkansen-nov2", name: "Hikari 733 Kyoto to Himeji", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 08:01", note: SHINKANSEN_NOV2 },
   { id: "shinkansen-himeji", name: "Nozomi 69 Himeji to Hiroshima", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 14:46", note: SHINKANSEN_HIMEJI },
   { id: "shinkansen-nov5", name: "Nozomi 90 Hiroshima to Tokyo", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Thu Nov 5 · 10:03", note: SHINKANSEN_NOV5 },
-  { id: "romancecar-out", name: "Hakone outbound Romancecar", done: true, attention: "booked", recommendedOn: "2026-10-08", target: "Nov 8 · 10:00", note: ROMANCECAR_OUT_NOTE },
-  { id: "romancecar-back", name: "Hakone return Romancecar", done: true, attention: "booked", recommendedOn: "2026-10-11", target: "Nov 11 · 10:10", note: ROMANCECAR_BACK_NOTE },
-  { id: "setsugetsuka-record", name: "Tokinoyu Setsugetsuka", done: true, attention: "booked", recommendedOn: "2026-08-03", target: "Nov 8–11 · 3 nights", note: SETSUGETSUKA_NOTE },
+  { id: "romancecar-out", name: "Hakone outbound Romancecar", done: true, attention: "booked", recommendedOn: "2026-10-08", target: "Nov 8 · 10:00", who: "brianMai", note: ROMANCECAR_OUT_NOTE },
+  { id: "romancecar-back", name: "Hakone return Romancecar", done: true, attention: "booked", recommendedOn: "2026-10-11", target: "Nov 11 · 10:10", who: "brianMai", note: ROMANCECAR_BACK_NOTE },
+  { id: "setsugetsuka-record", name: "Tokinoyu Setsugetsuka", done: true, attention: "booked", recommendedOn: "2026-08-03", target: "Nov 8–11 · 3 nights", who: "brianMai", note: SETSUGETSUKA_NOTE },
   { id: "himeji-tickets", name: "Himeji Castle and Koko-en", done: true, attention: "booked", recommendedOn: "2026-10-07", target: "Nov 2 · 4 adults", note: HIMEJI_TICKET_NOTE, url: HIMEJI_LOGIN_URL },
   { id: "kyoya", name: "Kyoya Kiyomizu Yanaginobamba Honke", done: true, attention: "booked", recommendedOn: "2026-10-07", target: "Sat Oct 31 · 18:30", note: KYOYA_NOTE },
   { id: "hiroshima-dinner", name: "Hiroshima arrival dinner at Reichan", done: true, attention: "done", recommendedOn: "2026-10-07", target: "Mon Nov 2 · party of 4", note: `Decided. ${REICHAN_DINNER_NOTE}` },
-  { id: "koko-return", name: "APA Nishishinjuku", done: true, attention: "booked", recommendedOn: "2026-08-18", target: "Nov 5–8 & Nov 11–12", note: APA_NOTE }
+  { id: "koko-return", name: "APA Nishishinjuku", done: true, attention: "booked", recommendedOn: "2026-08-18", target: "Nov 5–8 & Nov 11–12", who: "brianMai", note: APA_NOTE },
+  { id: "ua803", name: "UA803 to Haneda", done: true, attention: "booked", recommendedOn: "2026-10-23", target: "Fri Oct 23 · 15:55", who: "parents", note: "UA803 lands at Haneda at 15:55. Take the Keikyu line to Shinagawa, about 15 minutes." },
+  { id: "ua804", name: "UA804 from Haneda", done: true, attention: "booked", recommendedOn: "2026-11-10", target: "Tue Nov 10 · 16:50", who: "parents", note: PARENTS_HANEDA_NOTE }
 ];
 
 const WALK_IN_REMINDERS = [
@@ -148,12 +201,28 @@ function isHotelPlace(place) {
   return HOTEL_PLACES.has(place);
 }
 
+function stayPlaceForView(day) {
+  const picked = dayView(day)?.hotel?.name;
+  if (picked) return picked;
+  if (day?.id === "oct23") return travelerView() === "parents" ? "Shinagawa Prince Hotel" : "";
+  const name = STAY_HOTEL_BY_DAY[day.id];
+  if (!name) return "";
+  const hotel = LOCKED_HOTELS.find((entry) => entry.name === name);
+  if (hotel && !sees(hotel.who)) {
+    if (travelerView() === "parents" && name.includes("Cordia")) return "Royal Park Hotel ICONIC Osaka Midosuji";
+    return "";
+  }
+  return name;
+}
+
 function dayMapPlaces(day) {
-  const hotel = STAY_HOTEL_BY_DAY[day.id];
-  if (!hotel) return day.places.slice();
-  if (isTransitTravelDay(day.id)) return day.places.slice();
-  const activities = day.places.filter((place) => place !== hotel);
-  return [hotel, ...activities];
+  const viewPlaces = dayView(day)?.places;
+  if (viewPlaces) return viewPlaces.slice();
+  const hotel = stayPlaceForView(day);
+  const listed = (day.places || []).filter((place) => !HOTEL_PLACES.has(place) || place === hotel);
+  if (!hotel) return listed;
+  if (isTransitTravelDay(day.id)) return listed;
+  return [hotel, ...listed.filter((place) => place !== hotel)];
 }
 
 function makeLeafletMarkerIcon({ shellClass, isHotel, label, dayColor }) {
@@ -174,6 +243,7 @@ function makeLeafletMarkerIcon({ shellClass, isHotel, label, dayColor }) {
 const coreExperienceQuests = [
   {
     title: "Mai's Melon Bread Passport",
+    who: "brianMai",
     description: "Collect six distinct versions. Each passport stamp needs Mai's photo and 1–10 score.",
     type: "side",
     items: [
@@ -343,7 +413,7 @@ const regionalQuestPools = {
     ["tokyo-aoyama-square", "culture", "Browse Japan Traditional Crafts Aoyama Square for one well-made keepsake.", ["day21"], ["city"]],
     ["tokyo-nakano-broadway", "culture", "Use Nakano Broadway as the optional collector-culture extension after the west-Tokyo day.", ["day15"], ["kichijoji"]],
     ["tokyo-department-store", "culture", "Check a department-store restaurant floor for an easy meal and the basement depachika for souvenirs.", null, ["city"]],
-    ["tokyo-reflection", "photo", "Photograph the two of us reflected in the city.", null, ["city"]],
+    ["tokyo-reflection", "photo", "Photograph the two of us reflected in the city.", null, ["city"], "brianMai"],
     ["tokyo-routine", "culture", "Repeat one cafe, bakery, konbini, or supermarket.", null, ["city"]]
   ]
 };
@@ -611,7 +681,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day02", "2026-10-24", "Narita to Osaka", "Land in Tokyo, take the Narita Express to Tokyo Station, then ride Nozomi 261 to Osaka.", ["Narita International Airport", "Tokyo Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, then take the Narita Express to Tokyo Station. The ride is about 55 minutes. Buy the ticket at the JR counter. Any train leaving by about 12:30 works. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00.", ["Keep a full buffer for immigration and bags", "Buy the Narita Express at the JR counter. Any train leaving by about 12:30 works", "Be at the Shinkansen gates by about 13:30", "Eat during the transfer or on the train", "Call Hotel Cordia if check-in will be late", "Stop after check-in. Do not add Dotonbori. Kura Sushi Dotonbori has no date"], ["The first Japan train window", "The Shinkansen platform", "The first Osaka hotel-room view"], "Mai gets a calm first day instead of a cross-Tokyo deadline.", "The reserved train is Nozomi 261 at 14:00 from Tokyo Station. Parents can board it at Shinagawa at about 14:07, or meet at Tokyo Station. Keep the evening empty."),
+      questDay("day02", "2026-10-24", "Narita to Osaka", "Land in Tokyo, take the Narita Express to Tokyo Station, then ride Nozomi 261 to Osaka.", ["Narita International Airport", "Tokyo Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, then take the Narita Express to Tokyo Station. The ride is about 55 minutes. Buy the ticket at the JR counter. Any train leaving by about 12:30 works. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00.", [{ text: "Keep a full buffer for immigration and bags", who: "brianMai" }, { text: "Buy the Narita Express at the JR counter. Any train leaving by about 12:30 works", who: "brianMai" }, { text: "Be at the Shinkansen gates by about 13:30", who: "brianMai" }, "Eat during the transfer or on the train", { text: "Call Hotel Cordia if check-in will be late", who: "brianMai" }, { text: "Stop after check-in. Do not add Dotonbori. Kura Sushi Dotonbori has no date", who: "brianMai" }], ["The first Japan train window", "The Shinkansen platform", "The first Osaka hotel-room view"], "Mai gets a calm first day instead of a cross-Tokyo deadline.", "The reserved train is Nozomi 261 at 14:00 from Tokyo Station. Parents can board it at Shinagawa at about 14:07, or meet at Tokyo Station. Keep the evening empty."),
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town, and be at Sankei Club at 17:00.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents can skip Den Den. Still reach Sankei Club in Shinsekai at 17:00."),
       questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
       questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, and café time. Dinner is On-yasai in Osaka at 20:00.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing. Return to Osaka for the booked On-yasai dinner.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day. Dinner is still On-yasai at 20:00."),
@@ -635,7 +705,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", ["Turn around at Yotsutsuji or sooner", "Choose either Tofuku-ji's garden or the Tsutenkyo area", "Finish Gion by late afternoon. Do not plan a night return"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch."),
+      questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", [{ text: "Turn around at Yotsutsuji or sooner", who: "brianMai" }, { text: "Choose either Tofuku-ji's garden or the Tsutenkyo area", who: "brianMai" }, "Finish Gion by late afternoon. Do not plan a night return"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch."),
       questDay("day08", "2026-10-30", "Bamboo to Gold", "An early Arashiyama payoff followed by the rock garden and Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple", "Kamishichiken Kyoto"], "Lock the Bamboo Grove and Togetsukyo, eat early, then use the Randen corridor for compact Ryoan-ji and Kinkaku-ji visits.", ["Walk the grove before it becomes busiest", "Use the river cafe as the parent payoff", "Do not add another Arashiyama temple", "Give the rock garden one focused hour", "Use Kamishichiken only for optional tea or wagashi"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The first Golden Pavilion reflection"], "Mai gets three distinct Kyoto landscapes without a Saturday Arashiyama crowd.", "Parents skip Ryoan-ji if useful and meet at Kinkaku-ji by taxi."),
       questDay("day09", "2026-10-31", "Palaces to Pontocho", "A compact central-Kyoto history, manga, market and neighborhood day.", ["Nijo Castle", "Kyoto Imperial Palace", "Kyoto International Manga Museum", "Nishiki Market", "Kamo River Kyoto", "Pontocho Alley"], "Enter Nijo at opening, make the Imperial Palace compact, use the Manga Museum as an optional split, lock Nishiki, then reset before dinner at Kyoya.", ["Notice Nijo's nightingale floors", "Keep the palace visit to about an hour", "Use the Manga Museum or a parent rest window", "Bound Nishiki rather than starting a second food mission", "Take a real hotel reset before dinner"], ["A castle gate or painted-room detail", "An Imperial Palace roofline", "A manga-art surprise", "A riverbank dinner approach"], "Mai gets shogun history, imperial history, manga and food without crossing Kyoto again.", "Nijo is shared; parents may skip the palace or Manga Museum and rejoin later."),
       questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "A full mountain day of forest paths, sacred precincts and views over Kyoto and Lake Biwa.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent and choose one meaningful Mt Hiei forest walk.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Use Demachiyanagi for dinner only if returning down the Kyoto side"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose.", "Dad uses the most assisted route and may return earlier while Mai and Brian walk farther.")
@@ -805,12 +875,20 @@ Object.values(tripData).forEach((city) => {
   });
 });
 
+function planText(item) {
+  return typeof item === "string" ? item : item?.text || "";
+}
+
+function planWho(item) {
+  return typeof item === "string" ? "shared" : item?.who || "shared";
+}
+
 function dayClearPath(day) {
-  return day.clearPath || day.groups.find((group) => group[1] === "main")?.[2]?.[0] || day.theme;
+  return dayView(day)?.clearPath || day.clearPath || planText(day.groups?.find((group) => group[1] === "main")?.[2]?.[0]) || day.theme;
 }
 
 function dayMainGoal(day) {
-  return day.mainGoal || dayClearPath(day);
+  return dayView(day)?.mainGoal || day.mainGoal || dayClearPath(day);
 }
 
 const awards = ["Best Japan day", "Best snack", "Best meal", "Cutest thing Mai found", "Best unplanned moment", 'Best "we live here now" moment', "Funniest small failure", "Place that felt most like ours", "The discovery we completed by accident", "One sentence we should remember"];
@@ -821,14 +899,14 @@ const sharedDayGroupTypes = new Set(["side", "egg"]);
 const dayContext = {
   day02: {
     summary: "JL7088 lands at Narita at 09:30, then Nozomi 261 at 14:00 to Osaka.",
-    timeline: [["Oct 23", "UA803 lands Haneda 15:55, stay at Shinagawa Prince."], ["Keikyu", "Haneda to Shinagawa, about 15 minutes."], ["Oct 24", "Breakfast near Shinagawa with a friend."], ["14:07", "Nozomi 261 at Shinagawa, or meet at Tokyo."], ["Yamanote", "Shinagawa to Tokyo Station, 10–15 minutes."], ["Hotel", "Royal Park ICONIC Osaka Midosuji through Oct 28."], ["09:30", "Land at Narita on JL7088."], ["By 12:30", "Narita Express, about 55 minutes, JR counter."], ["By 13:30", "Be at the Shinkansen gates."], ["14:00–16:30", SHINKANSEN_OCT24], ["Evening", "Hotel Cordia, eat nearby, no Dotonbori."]],
+    timeline: [["Morning", "Breakfast near Shinagawa with a friend.", "parents"], ["14:07", "Nozomi 261 at Shinagawa, or meet at Tokyo.", "parents"], ["Yamanote", "Shinagawa to Tokyo Station, 10–15 minutes.", "parents"], ["Hotel", "Royal Park ICONIC Osaka Midosuji through Oct 28.", "parents"], ["09:30", "Land at Narita on JL7088.", "brianMai"], ["By 12:30", "Narita Express, about 55 minutes, JR counter.", "brianMai"], ["By 13:30", "Be at the Shinkansen gates.", "brianMai"], ["14:00–16:30", SHINKANSEN_OCT24], ["Evening", "Hotel Cordia, eat nearby, no Dotonbori.", "brianMai"]],
     history: [
       "Narita opened in 1978 as Tokyo's principal international gateway. Reaching western Tokyo from it crosses much of the metropolis, so the transfer is a real part of the day's time budget.",
       "The Tokaido Shinkansen links Tokyo and Osaka in roughly two and a half hours, compressing a historic intercity corridor into the final chapter of a demanding but possible arrival day."
     ]
   },
   day03: {
-    summary: "Castle, character culture and retro food give Osaka one intentionally big day—monumental history in the morning, Den Den browsing in the afternoon, Shinsekai kushikatsu at blue hour. Do not add a fourth district; the arc works because each stop has a different emotional register. Parents can skip the castle interior or shorten Den Den and still meet at Shinsekai for the shared evening finish.",
+    summary: "Castle, character culture and retro food give Osaka one intentionally big day—monumental history in the morning, Den Den browsing in the afternoon, Shinsekai kushikatsu at blue hour. Do not add a fourth district; the arc works because each stop has a different emotional register.",
     timeline: [["08:30–11:30", "Reach Osaka Castle near opening. Photograph the moat view. Enter the keep only if you want the interior."], ["11:30–13:00", "Go south to Nippombashi. Sit down for lunch."], ["13:00–16:00", "Browse one defined part of Den Den Town."], ["17:00", "Be at Shinsekai Kushikatsu Okonomi Sankei Club. Party of 5. Confirmation Resty {{copy:468118574}}. Do not add a fourth district."]],
     history: [
       "Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan. The current keep is a reconstruction and museum, but its moat and walls still establish Osaka's monumental scale.",
@@ -838,7 +916,7 @@ const dayContext = {
   },
   day04: {
     summary: "The Osaka Snack League turns Kuromon, Shinsaibashi and Amerikamura into a bounded five-taste quest before a protected Tenma dinner. Four Kuromon categories by 11:30, one depachika checkpoint, one Amerikamura wildcard, then a real hotel reset before izakaya—not more grazing. The scorecard and hard exits turn market abundance into a game Mai can actually win without ruining appetite for dinner.",
-    timeline: [["10:00–11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave at 11:30."], ["12:00–14:30", "At Daimaru Shinsaibashi, complete one food-hall stop. Then take one Amerikamura wildcard only."], ["15:00–17:00", "Return to Hotel Cordia Osaka Hommachi. Rest. Stop eating."], ["17:30–21:00", "Go to Tenma. Share plates at one izakaya. Add at most one specialist finish."]],
+    timeline: [["10:00–11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave at 11:30."], ["12:00–14:30", "At Daimaru Shinsaibashi, complete one food-hall stop. Then take one Amerikamura wildcard only."], ["15:00–17:00", "Return to Hotel Cordia Osaka Hommachi. Rest. Stop eating.", "brianMai"], ["15:00–17:00", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest. Stop eating.", "parents"], ["17:30–21:00", "Go to Tenma. Share plates at one izakaya. Add at most one specialist finish."]],
     history: [
       "Kuromon Ichiba began as a wholesale fish market and became one of Osaka's most famous public market streets. Merchants built reputations on freshness, knife work, and the theatre of preparation behind glass counters.",
       "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Markets, neighborhood restaurants and compact bars make it a strong lived-in dinner district without needing Dotonbori energy.",
@@ -848,7 +926,7 @@ const dayContext = {
   day05: {
     summary: "Walk in at Udon Izakaya Edobori at 11:00 for 5. Mai orders kitsune udon or chikuwa udon. Honke Shibato is skipped. Then ride the Nunobiki ropeway and pause in the gardens. Dinner is booked: Shabushabu On-yasai Sennichimae at 20:00 for 5. Do not add a Kobe dinner.",
     timeline: [["11:00", EDOBORI_LUNCH_NOTE], ["After lunch–15:30", "Go to Shin-Kobe. Allow 60–75 minutes each way. Ride the Nunobiki ropeway. Pause at one garden café or terrace. [ropeway and garden hours — needs confirmation]."], ["15:30–18:00", "Descend. Choose one Kobe sweet if you want it. Do not book a Kobe dinner."], ["20:00", "Be at Shabushabu On-yasai Sennichimae. Party of 5. Confirmation Ebica {{copy:468119458}}."]],
-    slowTimeline: [["10:00–11:30", "Sleep in. Eat near Hotel Cordia Osaka Hommachi. Leave when everyone is ready."], ["Late morning", "Go to Shin-Kobe. Ride the ropeway both ways. The view is the main event."], ["Midday–15:00", "Use one terrace or café. Use only the shortest garden section."], ["Afternoon", "Return to Hotel Cordia Osaka Hommachi. Rest."], ["20:00", "Be at On-yasai Sennichimae. Do not add a Kobe dinner."]],
+    slowTimeline: [["10:00–11:30", "Sleep in. Eat near Hotel Cordia Osaka Hommachi. Leave when everyone is ready.", "brianMai"], ["10:00–11:30", "Sleep in. Eat near Royal Park Hotel ICONIC Osaka Midosuji. Leave when everyone is ready.", "parents"], ["Late morning", "Go to Shin-Kobe. Ride the ropeway both ways. The view is the main event."], ["Midday–15:00", "Use one terrace or café. Use only the shortest garden section."], ["Afternoon", "Return to Hotel Cordia Osaka Hommachi. Rest.", "brianMai"], ["Afternoon", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest.", "parents"], ["20:00", "Be at On-yasai Sennichimae. Do not add a Kobe dinner."]],
     history: [
       "The Nunobiki slopes rise immediately behind Shin-Kobe, making mountain scenery unusually close to the city and port. For centuries the ridge was admired in poetry and travel writing as a sudden vertical escape from harbour commerce.",
       "The modern ropeway and herb gardens turn that steep terrain into an assisted scenic outing with broad views over Kobe and Osaka Bay. Kobe itself grew as one of Japan's first treaty ports, mixing foreign architecture, hillside neighbourhoods and harbour light.",
@@ -857,7 +935,7 @@ const dayContext = {
   },
   day06: {
     summary: "Use Nara as the bridge from Osaka to Kyoto. Carry all luggage to Kintetsu-Nara and store it in the coin lockers. Keep the deer stop short. Enter Todai-ji's Great Buddha Hall. Buy fresh yomogi mochi before the train. Collect the bags, then go to Hotel Monterey Kyoto. To-ji is not on this day.",
-    timeline: [["08:00–09:00", "Check out of Hotel Cordia Osaka Hommachi. Take all luggage on the Kintetsu train to Kintetsu-Nara. Arrive before 10:00. The large lockers fill in the morning."], ["At Kintetsu-Nara", "Go out through the West ticket gate. Turn left to the coin-locker room. It has 23 extra-large lockers. An extra-large locker costs about ¥800 to ¥1,500 for one day. Pay with coins or an IC card. Suica and ICOCA work. Some lockers take IC cards only. Take a photo of the locker number. Then use the East gate side, Exit 2, for Nara Park and Todai-ji."], ["If the lockers are full", "Use the Tourist Information Centre in the Kintetsu building. It is at Exit 3, 1F. It holds bags from 09:00 to 16:00. It takes the last bag at 14:00. Space is limited."], ["10:00–12:30", "Walk or take a taxi through Nara Park to Todai-ji. Keep the deer stop short."], ["12:30–15:00", "Buy fresh yomogi mochi. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]. Add kakinoha-zushi or a short Naramachi café only if you want it."], ["15:00–18:00", "Return to the West gate lockers. Collect the bags. Take the Kintetsu Kyoto Line to Kyoto Station. Check in at Hotel Monterey Kyoto. Do not go to To-ji today."]],
+    timeline: [["08:00–09:00", "Check out of the Osaka hotel. Take all luggage on the Kintetsu train to Kintetsu-Nara. Arrive before 10:00. The large lockers fill in the morning."], ["At Kintetsu-Nara", "Go out through the West ticket gate. Turn left to the coin-locker room. It has 23 extra-large lockers. An extra-large locker costs about ¥800 to ¥1,500 for one day. Pay with coins or an IC card. Suica and ICOCA work. Some lockers take IC cards only. Take a photo of the locker number. Then use the East gate side, Exit 2, for Nara Park and Todai-ji."], ["If the lockers are full", "Use the Tourist Information Centre in the Kintetsu building. It is at Exit 3, 1F. It holds bags from 09:00 to 16:00. It takes the last bag at 14:00. Space is limited."], ["10:00–12:30", "Walk or take a taxi through Nara Park to Todai-ji. Keep the deer stop short."], ["12:30–15:00", "Buy fresh yomogi mochi. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]. Add kakinoha-zushi or a short Naramachi café only if you want it."], ["15:00–18:00", "Return to the West gate lockers. Collect the bags. Take the Kintetsu Kyoto Line to Kyoto Station. Do not go to To-ji today."], ["Evening", "Check in at Hotel Monterey Kyoto.", "brianMai"], ["Evening", "Check in to your Kyoto room.", "parents"]],
     history: [
       "Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.",
       "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
@@ -865,8 +943,8 @@ const dayContext = {
     ]
   },
   day07: {
-    summary: "The maximum-coverage southeast day climbs Mt Inari, samples one Tofuku-ji section, then meets the parents for Kiyomizu and the old streets down to Gion. Hard pace checks at Yotsutsuji (07:20) and Tofuku-ji exit (09:50) protect the 10:30 reunion. Lunch is Tempura Endo Yasaka at 14:00, counter for 5. Everything after 16:00 in Gion is evening bonus, not schedule debt. Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch.",
-    timeline: [["05:45–06:15", "Wake, take a packed breakfast and leave promptly. Be at Fushimi Inari's main approach by 06:15; breakfast happens after the climb, not before it."], ["06:15–07:20", "Climb through the torii toward Yotsutsuji. Pace check: if Yotsutsuji is not reached by 07:20, turn around wherever you are—do not chase the summit."], ["07:20–08:15", "Descend and leave the shrine area. Use the train or a short taxi to Tofuku-ji and eat the portable breakfast in transit or before entry."], ["08:50–09:50", "Be at Tofuku-ji for its 09:00 opening. Choose the garden or Tsutenkyo area, not both; leave by 09:50 even if the visit began late."], ["09:50–10:30", "Go toward Kiyomizu. Message the parents. [parents meeting point — needs confirmation]. If you miss the 09:50 exit, take a taxi and still meet at 10:30."], ["10:30–12:00", "Visit Kiyomizu together. The panorama, main hall and Otowa waterfall are the complete visit; begin descending around noon."], ["12:00", "Walk down to Tempura Endo Yasaka."], ["14:00", "Counter for 5, booked."], ["15:30–16:00", "Continue Yasaka and Gion after lunch. The required sightseeing day ends here; anything after 16:00 is an evening bonus, not schedule debt."]],
+    summary: "Meet at Kiyomizu, walk the old streets, and sit down at Tempura Endo Yasaka at 14:00. Counter for 5. Everything after 16:00 in Gion is evening bonus, not schedule debt.",
+    timeline: [["05:45–06:15", "Wake, take a packed breakfast and leave promptly. Be at Fushimi Inari's main approach by 06:15; breakfast happens after the climb, not before it.", "brianMai"], ["06:15–07:20", "Climb through the torii toward Yotsutsuji. Pace check: if Yotsutsuji is not reached by 07:20, turn around wherever you are—do not chase the summit.", "brianMai"], ["07:20–08:15", "Descend and leave the shrine area. Use the train or a short taxi to Tofuku-ji and eat the portable breakfast in transit or before entry.", "brianMai"], ["08:50–09:50", "Be at Tofuku-ji for its 09:00 opening. Choose the garden or Tsutenkyo area, not both; leave by 09:50 even if the visit began late.", "brianMai"], ["09:50–10:30", "Go toward Kiyomizu. [parents meeting point — needs confirmation]. If you miss the 09:50 exit, take a taxi and still meet at 10:30.", "brianMai"], ["Morning", "Skip Inari and Tofuku-ji. Taxi toward Kiyomizu for 10:30.", "parents"], ["10:30–12:00", "Visit Kiyomizu together. The panorama, main hall and Otowa waterfall are the complete visit; begin descending around noon."], ["12:00", "Walk down to Tempura Endo Yasaka."], ["14:00", "Counter for 5, booked."], ["15:30–16:00", "Continue Yasaka and Gion after lunch. The required sightseeing day ends here; anything after 16:00 is an evening bonus, not schedule debt."]],
     history: [
       "Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Donated torii record hopes, gratitude, and commercial prosperity; foxes serve as Inari's messengers rather than the deity itself.",
       "Tofuku-ji was founded in the 13th century and later became a major Zen complex. Its name deliberately echoes Nara's Todai-ji and Kofuku-ji, claiming continuity with older capital authority while pursuing a different Buddhist path.",
@@ -874,8 +952,8 @@ const dayContext = {
     ]
   },
   day08: {
-    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Parents may skip Ryoan-ji and meet at Kinkaku-ji; Kamishichiken tea is optional atmosphere, not a third major stop.",
-    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward Hotel Monterey Kyoto. Be at Kani Doraku Kyoto Honten at 18:00."]],
+    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Kamishichiken tea is optional atmosphere, not a third major stop.",
+    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward the hotel. Be at Kani Doraku Kyoto Honten at 18:00."]],
     history: [
       "Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Aristocrats travelled from the capital to compose verses, admire blossoms and autumn leaves, and borrow mountain scenery into designed gardens and villas.",
       "Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes.",
@@ -883,7 +961,7 @@ const dayContext = {
     ]
   },
   day09: {
-    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki, and dinner at Kyoya in one north-to-south sequence. Enter Nijo at opening. Keep the palace to about one hour. Treat the 16:00–17:45 hotel reset as part of the plan. The Manga Museum is an optional split. Parents may skip the palace or the museum and rejoin for Nishiki or the Kamo River walk. After the reset, walk the Kamo River to Pontocho. Dinner is booked at Kyoya at 18:30. The shop is about 10 minutes from the Shijo end of Pontocho.",
+    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki, and dinner at Kyoya in one north-to-south sequence. Enter Nijo at opening. Keep the palace to about one hour. Treat the 16:00–17:45 hotel reset as part of the plan. The Manga Museum is an optional split. After the reset, walk the Kamo River to Pontocho. Dinner is booked at Kyoya at 18:30. The shop is about 10 minutes from the Shijo end of Pontocho.",
     timeline: [["08:25–08:45", "Arrive at Nijo before opening. Enter at 08:45. [Nijo ticket type and where to buy it — needs confirmation]. Do not start with breakfast or shopping nearby."], ["08:45–10:35", "See Ninomaru Palace, the nightingale corridors and a bounded garden loop. Hard exit by 10:35–10:45."], ["10:45–11:15", "Go to the Kyoto Imperial Palace. Enter through the current public gate after security. [Dad's rest/rejoin point — needs confirmation]."], ["11:15–12:15", "Make the palace a one-hour visit. Its October last admission is 15:20, but using that theoretical margin would break Nishiki and the reset."], ["12:15–13:10", "Take a seated lunch near Karasuma Oike. At 12:45 make the decision: Manga Museum only if everyone is on pace and interested."], ["13:10–14:25", "Optional Manga Museum visit or parent/couple rest split. If arrival would be after 13:30, shorten it to one exhibition plus the Manga Wall or skip it."], ["14:35–15:50", "Walk Nishiki in one direction with a short tasting list. Leave by 15:50 before more stalls begin winding down."], ["16:00–17:45", "Return to the hotel for a real reset. This protected break is part of the plan, not unused sightseeing time."], ["17:45–18:20", "Walk the central Kamo River to Pontocho. From the Shijo end of Pontocho, walk about 10 minutes to dinner."], ["18:30–20:30", KYOYA_NOTE]],
     history: [
       "Nijo Castle turned Tokugawa architecture into political theatre. The decorated Ninomaru rooms staged hierarchy through painted screens and famously squeaking nightingale floors that warned residents of movement; in 1867 the castle also hosted the announcement returning governing authority to the emperor.",
@@ -893,7 +971,7 @@ const dayContext = {
   },
   day10: {
     summary: "Mt Hiei receives a full day: assisted ascent, Enryaku-ji's forested precincts, one meaningful walk, and views toward Kyoto or Lake Biwa. Confirm live cable, ropeway and descent times at Demachiyanagi before boarding; the 15:15–16:00 regroup is the hard turnaround even if the forest walk feels unfinished. Pack for Himeji/Hiroshima tonight—do not borrow sleep from tomorrow's westbound transfer.",
-    timeline: [["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."], ["07:50–09:30", "Take the assisted ascent. [Eizan/Yase approach — needs confirmation]. If that ascent fails, use [Sakamoto-side or direct-bus fallback — needs confirmation]."], ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."], ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."], ["13:00–15:15", "Mai and Brian walk one forest route. [forest route — needs confirmation]. Dad uses the assisted core. Do not add a second precinct."], ["15:15–16:00", "Meet at the descent point. [descent transport point — needs confirmation]. This is the hard turnaround even if the walk feels unfinished."], ["16:00–18:30", "Descend with at least one-service margin and take the simplest route to the hotel. If returning via Demachiyanagi, dinner there is optional."], ["By 20:30", "Finish dinner, pack for Himeji/Hiroshima and set out the morning bags. Do not borrow sleep from the westbound transfer."]],
+    timeline: [["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."], ["07:50–09:30", "Take the assisted ascent. [Eizan/Yase approach — needs confirmation]. If that ascent fails, use [Sakamoto-side or direct-bus fallback — needs confirmation]."], ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."], ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."], ["13:00–15:15", "Walk one forest route. [forest route — needs confirmation]. Do not add a second precinct.", "brianMai"], ["13:00–15:15", "Use the assisted core. Do not add a second precinct.", "parents"], ["15:15–16:00", "Meet at the descent point. [descent transport point — needs confirmation]. This is the hard turnaround even if the walk feels unfinished."], ["16:00–18:30", "Descend with at least one-service margin and take the simplest route to the hotel. If returning via Demachiyanagi, dinner there is optional."], ["By 20:30", "Finish dinner, pack for Himeji/Hiroshima and set out the morning bags. Do not borrow sleep from the westbound transfer."]],
     history: [
       "Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning—not one building but a religious landscape.",
       "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic vantage. Emperors and warriors treated control of Hiei as control of the capital's spiritual flank.",
@@ -902,7 +980,7 @@ const dayContext = {
   },
   day11: {
     summary: "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49. Do not go to To-ji. Enter Himeji Castle between 09:30 and 10:00. The tickets are booked. Visit Koko-en before the castle or after the castle. Eat lunch in Himeji. Buy ekiben. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42. Check in at Hotel Granvia Hiroshima at about 16:00. Eat dinner at Reichan. Walk in. Do not reserve.",
-    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", `Check in at Hotel Granvia Hiroshima. ${REICHAN_DINNER_NOTE}`]],
+    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", "Check in at Hotel Granvia Hiroshima.", "brianMai"], ["About 16:00", "Check in to your Hiroshima room.", "parents"], ["Dinner", REICHAN_DINNER_NOTE]],
     history: [
       "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
       "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
@@ -966,6 +1044,7 @@ const dayContext = {
     ]
   },
   day17: {
+    timelineWho: "brianMai",
     summary: "The outbound Romancecar is booked. Take SuperHakone 9 (GSE) at 10:00. Mai and Brian stay 3 nights at Tokinoyu Setsugetsuka. The stay is booked. Take the small bags. The Hakone hotel is one minute on foot from Gora Station. Check-in closes at 19:30. Check out by 11:00 on Wed Nov 11. Breakfast and dinner are included.",
     timeline: [["By 09:00", "Leave APA Nishishinjuku by 09:00. The check-out time is 10:00. The Romancecar leaves Shinjuku at 10:00. Take the small bags. Ride the Toei Oedo line from Nishi-shinjuku-gochome to Shinjuku. Allow about 20 minutes, including the walk inside Shinjuku Station."], ["10:00–11:21", `${ROMANCECAR_OUT_NOTE} Then take the Hakone Tozan Railway to Gora.`], ["After the train", "Walk about one minute from Gora Station to Tokinoyu Setsugetsuka. Leave the small bags before check-in."], ["13:00–15:00", "Ride one stop to Chokoku-no-Mori. Give the Open-Air Museum 90–120 minutes."], ["15:00–19:30", `${SETSUGETSUKA_NOTE} Use the in-room bath or a private bath. Do not plan a public-bath visit.`]],
     history: [
@@ -975,6 +1054,7 @@ const dayContext = {
     ]
   },
   day18: {
+    timelineWho: "brianMai",
     summary: "Mai's sunrise Hakone Shrine visit is the non-negotiable anchor. On Nov 9, astronomical sunrise is about 06:13 JST and civil twilight begins around 05:45; surrounding mountains may delay direct sunlight. Prebook a taxi from Setsugetsuka for 05:30 and target a 06:00 arrival. The shrine's staffed amulet and goshuin counter normally begins at 08:15. Remaining at Moto-Hakone for the first practical cruise is the efficient full-day plan. Breakfast and dinner are included at the hotel. Do not buy another dinner. A return to Gora only for breakfast adds a long trip.",
     timeline: [["05:00–05:30", "Wake and dress. Breakfast is included. You leave at 05:30. That is before breakfast. Message the hotel through the Booking.com app. Ask for breakfast before the taxi. Do not buy another breakfast."], ["05:30–06:00", "Take a taxi from Setsugetsuka to Hakone Shrine. [05:30 taxi prebook — not booked]."], ["06:00–07:30", "Visit the cedar approach, main shrine and lakeshore through the 06:13 sunrise. Direct sun may clear the surrounding ridge later."], ["07:30–first practical cruise", "Preferred: remain near Moto-Hakone. Hotel breakfast is included. Buy coffee only if you want it. Do not buy a second breakfast. Use the amulet and goshuin counter after 08:15 only if Mai wants it."], ["Return-to-hotel option", "Before 10:00, board the H bus at Hakone Shrine Entrance or walk to Moto-Hakone Port. Ride toward Hakone-Yumoto/Odawara, get off at Kowakidani Station, then take the Hakone Tozan train uphill to Gora. Allow about an hour plus waiting and recheck the November timetable."], ["Late morning", "Cruise from Moto-Hakone to Togendai, then take the ropeway toward Owakudani."], ["Midday–afternoon", "Pause at Owakudani, continue to Sounzan, and descend by cable car to Gora."], ["Evening", "Return for the included dinner. Do not buy another dinner. Use the in-room bath or a private bath."], ["No-taxi fallback", "Take the earliest workable train and H-bus connection via Kowakidani. This preserves the shrine-first order but will not reach sunrise."]],
     history: [
@@ -984,10 +1064,9 @@ const dayContext = {
     ]
   },
   day19: {
-    summary: "Mount Kintoki is the headline hiking objective, normally a little under two hours each way with a famous Fuji-facing summit. Reach the trailhead by scheduled transport through Sengoku, start in the morning, and use museums as the no-regrets poor-weather substitute. Parents fly home from Haneda on Nov 10 on UA804 at 16:50.",
+    timelineWho: "brianMai",
+    summary: "Mount Kintoki is the headline hiking objective, normally a little under two hours each way with a famous Fuji-facing summit. Reach the trailhead by scheduled transport through Sengoku, start in the morning, and use museums as the no-regrets poor-weather substitute.",
     timeline: [["07:00–08:00", "Eat the included breakfast. Check the mountain weather and the live transport notices. Leave Gora on the sightseeing bus toward Sengoku."], ["08:00–09:15", "Transfer at Sengoku. [bus stop: Kintoki Shrine Entrance or Kintoki-Tozanguchi — needs confirmation]. Start the common route."], ["09:15–13:45", "Allow about four hours of walking plus a summit pause. Descend at the turnaround even if Fuji is hidden. [turnaround time — needs confirmation]."], ["13:45–16:00", "Use the scheduled buses back through Sengoku to Gora. Eat a simple snack if you need it."], ["Evening", "Tomorrow's return Romancecar is booked: Hakone 30 leaves Hakone-Yumoto at 10:10. Eat the included dinner at Setsugetsuka. Do not buy another dinner."], ["Weather cancellation", "Take the direct sightseeing bus from Gora to Pola Museum instead; do not combine the museum with a shortened unsafe hike."]],
-    slowLabel: "Parents' plan",
-    slowTimeline: [["Nov 10", PARENTS_HANEDA_NOTE], ["Morning", "Parents check out of APA Nishi-Shinjuku Gochome. Leave by about 13:30."], ["Departure", "UA804 leaves Haneda at 16:50. This panel is their Tokyo plan. It is not a slower hike."]],
     history: [
       "Mount Kintoki rises on Hakone's northern edge and is associated in folklore with the superhuman child Kintaro. Its open summit is famous for looking across toward Mt Fuji when weather cooperates.",
       "The Sengoku side offers established trailheads and scheduled bus access, making the hike more compatible with a Gora base than a taxi-dependent expedition.",
@@ -995,6 +1074,7 @@ const dayContext = {
     ]
   },
   day20: {
+    timelineWho: "brianMai",
     summary: "The return Romancecar is booked. Take Hakone 30 at 10:10. Check out of Setsugetsuka and reach Hakone-Yumoto before 10:10. Recover the large bags at APA Nishishinjuku and check in. If the transfer is on time, take Mai to Asakusa Engei Hall for 60–90 minutes.",
     timeline: [["07:00–10:10", "Eat the included breakfast, check out, and take the Hakone Tozan Railway down in time to reach Hakone-Yumoto before 10:10."], ["10:10–11:45", ROMANCECAR_BACK_NOTE], ["After Shinjuku", "Go to APA Nishishinjuku. Recover the large bags. Check in from 15:00. From Shinjuku Station, take the Toei Oedo line to Nishi-shinjuku-gochome. Allow about 20 minutes."], ["After check-in", "Go to Asakusa Engei Hall if the return is on time. Allow about 45 minutes from the hotel. Check the posted bill."], ["60–90 min", "Watch about 60–90 minutes of the night program. Leave between acts if energy is low."], ["After the hall", "Eat an easy dinner in Asakusa. The hotel is in Nishi-shinjuku. Do not add a second Asakusa sightseeing circuit."]],
     slowTimeline: [["Morning", "Breakfast, checkout and use the same rail route to Shinjuku without adding stops."], ["Early afternoon", "Reach APA Nishishinjuku, recover the large bags, check in, and make the hotel the rest base."], ["Evening", "Skip Asakusa if needed and make hotel rest the complete day."]],
@@ -1005,6 +1085,7 @@ const dayContext = {
     ]
   },
   day21: {
+    timelineWho: "brianMai",
     summary: "Check out of APA Nishishinjuku by 10:00. Put the bags in Shimbashi coin lockers. Enter teamLab Borderless between 12:30 and 13:00. Then go to Mai's melon-bread shop. Walk in at Kaiten Toyama Sushi Ginza at 17:00. Do not book that dinner. There is no hotel on the night of Nov 12. Flight BA4609 leaves Haneda at 01:00 on Nov 13.",
     timeline: [["By 10:00", "Check out of APA Nishishinjuku by 10:00. Take the bags to the coin lockers at Shimbashi Station. Use the large-suitcase lockers. Lockers can fill by late morning. If the lockers are full, reserve storage near Shimbashi with the ecbo cloak app. From the hotel, take the Toei Oedo line to Daimon or Shiodome. Or go to Shinjuku, then take JR to Shimbashi. Allow about 40 minutes with bags."], ["12:30–13:00", `${TEAMLAB_NOTE} teamLab is in Azabudai Hills. Take the Hibiya line to Kamiyacho. The ride from Shimbashi is about 10 minutes.`], ["After teamLab", "Go to the melon-bread shop. [melon-bread shop and branch — needs confirmation]. Check the same-day stock before you leave the previous stop. Score it in the passport."], ["17:00–20:30", TOYAMA_NOTE], ["20:30–22:00", AIRPORT_TONIGHT_NOTE]],
     history: [
@@ -1014,6 +1095,146 @@ const dayContext = {
     ]
   }
 };
+
+const DAY_VIEWS = {
+  day02: {
+    parents: {
+      title: "Shinagawa to Osaka",
+      summary: "Breakfast near Shinagawa with a friend, then Nozomi 261 from Shinagawa at about 14:07. Stay at Royal Park Hotel ICONIC Osaka Midosuji.",
+      theme: "Ride with Brian and Mai from Shinagawa to Osaka.",
+      clearPath: "Breakfast near Shinagawa, then Nozomi 261 at 14:07.",
+      mainGoal: "Reach Osaka and check in at Royal Park Hotel ICONIC Osaka Midosuji.",
+      places: ["Shinagawa Station", "Tokyo Station", "Shin-Osaka Station"],
+      hotel: { name: "Royal Park Hotel ICONIC Osaka Midosuji", url: ROYAL_PARK_MAP }
+    }
+  },
+  day03: {
+    parents: {
+      summary: "You can skip the castle interior or shorten Den Den. Meet at Shinsekai for kushikatsu. Do not add a fourth district."
+    }
+  },
+  day06: {
+    parents: {
+      summary: "Use Nara as the bridge from Osaka to Kyoto. Carry the bags to Kintetsu-Nara and store them in the coin lockers. Keep the deer stop short. Enter Todai-ji's Great Buddha Hall. Collect the bags, then check in to your Kyoto room. To-ji is not on this day."
+    }
+  },
+  day07: {
+    brianMai: {
+      summary: "Climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet at Kiyomizu. Lunch is Tempura Endo Yasaka at 14:00, counter for 5.",
+      clearPath: "Early Inari climb, compact Tofuku-ji, Kiyomizu, then Endo at 14:00."
+    },
+    parents: {
+      summary: "Skip Inari and Tofuku-ji. Taxi toward Kiyomizu for 10:30, then Tempura Endo Yasaka at 14:00. Counter for 5.",
+      clearPath: "Taxi toward Kiyomizu, then Tempura Endo at 14:00.",
+      mainGoal: "Meet at Kiyomizu, then sit down at Tempura Endo."
+    }
+  },
+  day08: {
+    parents: {
+      summary: "Bamboo and Togetsukyo in the morning. You can skip Ryoan-ji and meet at Kinkaku-ji. Dinner is Kani Doraku at 18:00."
+    }
+  },
+  day09: {
+    parents: {
+      summary: "Nijo is shared. You can skip the palace or the Manga Museum and rejoin for Nishiki or the Kamo River. Dinner is Kyoya at 18:30."
+    }
+  },
+  day10: {
+    parents: {
+      summary: "Use the assisted route on Mt Hiei. You can return earlier. The 15:15–16:00 regroup still stands."
+    }
+  },
+  day11: {
+    parents: {
+      summary: "Leave around 7:30. Hikari 733 leaves Kyoto at 08:01. Enter Himeji Castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46. Check in to your Hiroshima room, then walk in at Reichan."
+    }
+  },
+  day14: {
+    parents: {
+      summary: "Nozomi 90 leaves Hiroshima at 10:03 and reaches Tokyo at 13:57. Check in to your room at APA Nishi-Shinjuku Gochome. You stay through the morning of Nov 10."
+    }
+  },
+  day17: {
+    parents: {
+      title: "Tokyo on your own",
+      theme: "Brian and Mai leave for Hakone. You stay at APA Nishi-Shinjuku Gochome.",
+      summary: "Stay at APA Nishi-Shinjuku Gochome. The large bags stay in Tokyo.",
+      clearPath: "One easy place near Shinjuku, then back to the hotel.",
+      mainGoal: "Keep the day short and close to the hotel.",
+      places: [APA_HOTEL_NAME],
+      hotel: { name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL },
+      timeline: [["Morning", "Brian and Mai take the 10:00 Romancecar. You stay at APA Nishi-Shinjuku Gochome."], ["Day", "Shinjuku Gyoen, the Tocho observatories, or Shinjuku Central Park."], ["Bags", "The large bags stay in Tokyo."]]
+    }
+  },
+  day18: {
+    parents: {
+      title: "Tokyo on your own",
+      theme: "Another easy day from APA Nishi-Shinjuku Gochome.",
+      summary: "Stay at APA Nishi-Shinjuku Gochome. Pick one park or lookout.",
+      clearPath: "One park or lookout, then back to the hotel.",
+      mainGoal: "Keep the day short and seated when you want.",
+      places: [APA_HOTEL_NAME],
+      hotel: { name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL },
+      timeline: [["Day", "Shinjuku Gyoen, the Tocho observatories, or Shinjuku Central Park."], ["Evening", "A walk-in dinner near the hotel if you want it."]]
+    }
+  },
+  day19: {
+    parents: {
+      title: "Fly home",
+      theme: "UA804 leaves Haneda at 16:50.",
+      summary: "Leave APA Nishi-Shinjuku Gochome by about 13:30. UA804 leaves Haneda at 16:50.",
+      clearPath: "Leave the hotel by about 13:30.",
+      mainGoal: "Make the 16:50 Haneda flight.",
+      places: [APA_HOTEL_NAME, "Haneda Airport"],
+      hotel: { name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL },
+      timeline: [["By 13:30", "Leave APA Nishi-Shinjuku Gochome."], ["To Haneda", "Oedo line to Daimon, then the Asakusa line. About 50 minutes."], ["16:50", "UA804 leaves Haneda."]]
+    }
+  }
+};
+
+function dayView(day) {
+  const view = travelerView();
+  const key = view === "brian" || view === "mai" ? "brianMai" : view;
+  return DAY_VIEWS[day?.id]?.[key] || null;
+}
+
+function parentArrivalDay() {
+  return {
+    id: "oct23",
+    date: "2026-10-23",
+    short: "Oct 23",
+    title: "Haneda arrival",
+    theme: "UA803 lands at Haneda at 15:55. Stay at Shinagawa Prince Hotel.",
+    summary: "UA803 lands at Haneda at 15:55. Take the Keikyu line to Shinagawa, about 15 minutes, and stay at Shinagawa Prince Hotel.",
+    clearPath: "Keikyu from Haneda to Shinagawa.",
+    mainGoal: "Check in at Shinagawa Prince Hotel.",
+    places: ["Haneda Airport", "Shinagawa Station"],
+    groups: [],
+    timeline: [["15:55", "UA803 lands at Haneda."], ["Keikyu", "Haneda to Shinagawa, about 15 minutes."], ["Hotel", "Shinagawa Prince Hotel."]],
+    history: []
+  };
+}
+
+function guideSummary(day) {
+  const view = dayView(day);
+  if (view?.summary) return view.summary;
+  const context = dayContext[day.id];
+  return context?.summary || day.summary || day.theme;
+}
+
+function guideTimeline(day, kind) {
+  const context = dayContext[day.id] || {};
+  const view = dayView(day) || {};
+  if (kind === "slow") {
+    if (view.timeline && !view.slowTimeline) return [];
+    if (view.slowTimeline) return view.slowTimeline.filter((row) => sees(row[2]));
+    if (context.slowWho && !sees(context.slowWho)) return [];
+    return (context.slowTimeline || []).filter((row) => sees(row[2]));
+  }
+  if (view.timeline) return view.timeline.filter((row) => sees(row[2]));
+  if (context.timelineWho && !sees(context.timelineWho)) return [];
+  return (context.timeline || day.timeline || []).filter((row) => sees(row[2]));
+}
 
 const cityWrapQuestions = [
   "Best food moment in this city?",
@@ -1185,8 +1406,11 @@ function saveState() {
 function applyTheme() {
   state.theme = "light";
   document.body.dataset.theme = "light";
+  const view = travelerView();
+  if (view) document.body.dataset.traveler = view;
+  else delete document.body.dataset.traveler;
   document.documentElement.style.colorScheme = "only light";
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#fff0f6");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", view === "mai" ? "#fff6f8" : "#fff0f6");
 }
 
 function itemId(scope, groupIndex, itemIndex) {
@@ -1210,7 +1434,11 @@ function allTasks() {
   Object.entries(tripData).forEach(([cityId, city]) => {
     city.days.forEach((day) => {
       countableDayGroupEntries(day).forEach(({ group, groupIndex }) => {
-        group[2].forEach((text, itemIndex) => tasks.push({ id: itemId(day.id, groupIndex, itemIndex), type: group[1], text }));
+        group[2].forEach((item, itemIndex) => {
+          if (!sees(planWho(item))) return;
+          if (awayLine(day.date)) return;
+          tasks.push({ id: itemId(day.id, groupIndex, itemIndex), type: group[1], text: planText(item), who: planWho(item) });
+        });
       });
     });
   });
@@ -1621,6 +1849,7 @@ function clearGroup(selector) {
 }
 
 function findDay(dayId) {
+  if (dayId === "oct23") return { cityId: "tokyo", day: parentArrivalDay() };
   for (const [cityId, city] of Object.entries(tripData)) {
     const day = city.days.find((candidate) => candidate.id === dayId);
     if (day) return { cityId, city, day };
@@ -1656,16 +1885,31 @@ function roadmapStatus(goal) {
 }
 
 function deckPoolForDay(day) {
+  if (travelerView() === "parents" && HAKONE_QUEST_DAYS.has(day.id) && typeof PARENT_IDEAS !== "undefined") {
+    return PARENT_IDEAS.map((idea, index) => ({
+      id: `parent-${day.id}-${index}`,
+      type: "day",
+      text: `${idea.name}. ${idea.line}`,
+      areas: ["city"],
+      source: "Tokyo",
+      groupTitle: "Easy Tokyo",
+      dayId: day.id,
+      dayShort: day.short,
+      dayDate: day.date,
+      who: "parents"
+    }));
+  }
   const cityId = findDay(day.id)?.cityId || state.activeCity;
   const regionId = ({ day06: "nara", day11: "himeji", day12: "hiroshima", day13: "miyajima", day14: "rail" })[day.id] || cityId;
   const regionName = ({ nara: "Nara", himeji: "Himeji", miyajima: "Miyajima", rail: "Shinkansen" })[regionId] || tripData[cityId].name;
   const dayAreas = DAY_QUEST_AREAS[day.id] || [];
   const regional = (regionalQuestPools[regionId] || [])
-    .filter((entry) => !entry[3] || entry[3].includes(day.id))
+    .filter((entry) => (!entry[3] || entry[3].includes(day.id)) && sees(entry[5]))
     .map((entry) => ({
       id: entry[0],
       type: entry[1],
       text: entry[2],
+      who: entry[5] || "shared",
       areas: entry[4] || [],
       source: regionName,
       groupTitle: "Regional food",
@@ -1675,17 +1919,18 @@ function deckPoolForDay(day) {
     }));
   const daily = day.groups.flatMap(([title, type, items], groupIndex) => {
     if (type !== "side" && type !== "egg") return [];
-    return items.map((text, itemIndex) => ({
+    return items.flatMap((item, itemIndex) => sees(planWho(item)) ? [{
       id: `${day.id}-${type}-${groupIndex}-${itemIndex}`,
       type: type === "egg" ? "find" : "day",
-      text,
+      text: planText(item),
+      who: planWho(item),
       areas: dayAreas,
       source: title,
       groupTitle: type === "egg" ? "Lookout" : title,
       dayId: day.id,
       dayShort: day.short,
       dayDate: day.date
-    }));
+    }] : []);
   });
   return [...regional, ...daily].filter((quest, index, all) => all.findIndex((candidate) => candidate.id === quest.id) === index && quest.id !== "nara-yomogi" && quest.id !== "hiroshima-oyster" && quest.id !== "miyajima-oyster");
 }
@@ -1773,7 +2018,7 @@ function renderQuestDeck(day) {
 }
 
 function dayBookings(day) {
-  return walletBookings().filter((item) => String(item.at).slice(0, 10) === day.date);
+  return visibleWallet().filter((item) => String(item.at).slice(0, 10) === day.date);
 }
 
 function bookingClockTime(item) {
@@ -1825,9 +2070,10 @@ function wanderFoldHtml(day) {
 }
 
 function dailyGuide(day) {
-  const context = dayContext[day.id] || { summary: day.theme, timeline: [], history: ["Background notes can be added here later."] };
+  const context = dayContext[day.id] || { summary: day.summary || day.theme, timeline: day.timeline || [], history: day.history || [] };
   const usedTickets = new Set();
-  const slowTimeline = Array.isArray(context.slowTimeline) ? context.slowTimeline : [];
+  const slowTimeline = guideTimeline(day, "slow");
+  const mainTimeline = guideTimeline(day, "main");
   const hasSlowTimeline = slowTimeline.length > 0;
   const hasBookedTime = mustDoItems(day.id).some((item) => (item.markers || [item.marker]).includes("booked"));
   const card = document.createElement("section");
@@ -1837,7 +2083,7 @@ function dailyGuide(day) {
     <h3>${dayClearPath(day)}</h3>
     <section class="context-block merged-summary">
       <h4>Quick Summary</h4>
-      <div class="summary-body">${renderGuideHtml(context.summary)}</div>
+      <div class="summary-body">${renderGuideHtml(guideSummary(day))}</div>
     </section>
     <section class="context-block timeline-block">
       <div class="timeline-heading">
@@ -1847,15 +2093,15 @@ function dailyGuide(day) {
           <button type="button" role="tab" aria-selected="false" data-timeline-tab="slow">${escapeHtml(context.slowLabel || "Slow plan")}</button>
         </div>` : ""}
       </div>
-      <div data-timeline-panel="main" role="tabpanel"><ol class="day-timeline">${timelineMarkup(day, context.timeline, usedTickets)}</ol></div>
+      <div data-timeline-panel="main" role="tabpanel"><ol class="day-timeline">${timelineMarkup(day, mainTimeline, usedTickets)}</ol></div>
       ${hasSlowTimeline ? `<div data-timeline-panel="slow" role="tabpanel" hidden><ol class="day-timeline slow-day-timeline">${timelineMarkup(day, slowTimeline, usedTickets)}</ol></div>` : ""}
       <p class="timeline-note">${hasBookedTime ? "Booked times in this plan are fixed. Other times here are pacing windows. Move only the pacing windows." : "These times are pacing windows, not reservations. Move them around tickets, transport, weather, and energy."}</p>
     </section>
     ${wanderFoldHtml(day)}
-    <details class="day-fold">
+    ${(context.history || []).length ? `<details class="day-fold">
       <summary>The story behind today</summary>
       <div class="history-story">${context.history.map((paragraph) => `<p>${collapsedNoteHtml(paragraph, "More")}</p>`).join("")}</div>
-    </details>
+    </details>` : ""}
   `;
   const leftover = dayBookings(day).filter((item) => !usedTickets.has(item.id));
   if (leftover.length) {
@@ -1976,7 +2222,7 @@ function makeMainGoalCard(day) {
 function makeDayFrontPage(day) {
   const section = document.createElement("section");
   section.className = "day-front-page";
-  if (day.id === "day21") {
+  if (day.id === "day21" && sees("brianMai")) {
     const airport = document.createElement("section");
     airport.className = "today-card airport-tonight";
     airport.innerHTML = `<h3>Airport tonight</h3>${renderGuideHtml(AIRPORT_TONIGHT_NOTE)}`;
@@ -2418,10 +2664,10 @@ const RESTAURANT_BOOKINGS = [
   { id: "suishin-main", name: "Suishin main store", city: "hiroshima", slot: "Tue Nov 3 · 18:00 · table only · 4 guests", dayIds: ["day12"], strength: "Booked", why: SUISHIN_MAIN_NOTE, officialUrl: SUISHIN_TABLECHECK_URL, defaultStatus: "booked", confirmation: "TableCheck XJCU9T · Accepted" },
   { id: "kanawa", name: "Oyster Ship Kanawa Seto", city: "hiroshima", slot: "Tue Nov 3 dinner idea — skip", dayIds: ["day12"], strength: "Skip", why: "Mom hates oysters. Do not replace the cancelled station booking with another full oyster meal.", tabelogUrl: "https://tabelog.com/hiroshima/A3401/A340116/34000041/", officialUrl: "https://www.kanawa.co.jp/en/seto", defaultStatus: "skip" },
   { id: "kani-shin", name: "Hiroshima Kani Shin", city: "hiroshima", slot: "Wed Nov 4 dinner — skip", dayIds: ["day13"], strength: "Skip", why: "Crab is booked at Kani Doraku Kyoto. Do not stack a second crab kaiseki.", tabelogUrl: "https://tabelog.com/en/hiroshima/A3401/A340114/34033069/", defaultStatus: "skip" },
-  { id: "toyama-ginza", name: "Kaiten Toyama Sushi Ginza", city: "tokyo", slot: "Thu Nov 12 · walk in at 17:00 · 2 people", dayIds: ["day21"], strength: "Walk-in", why: TOYAMA_NOTE, defaultStatus: "walk_in" },
-  { id: "manten", name: "Manten Sushi Nihonbashi", city: "tokyo", slot: "Thu Nov 12 dinner idea — not the plan", dayIds: ["day21"], strength: "Considering", why: "Not the Nov 12 dinner. The plan is a walk-in at Kaiten Toyama Sushi Ginza. Keep this only if you do not eat at Toyama.", tabelogUrl: "https://tabelog.com/en/tokyo/A1302/A130202/13166422/", officialUrl: "https://www.manten-sushi.com/" },
-  { id: "imahan", name: "Ningyocho Imahan Main Store", city: "tokyo", slot: "Thu Nov 12 dinner idea — not the plan", dayIds: ["day21"], strength: "Considering", why: "Not the Nov 12 dinner. The plan is a walk-in at Kaiten Toyama Sushi Ginza. Imahan is in Ningyocho. It is not a few minutes from the hotel. The hotel is APA Nishishinjuku. Keep this only if you do not eat at Toyama.", tabelogUrl: "https://tabelog.com/en/tokyo/A1302/A130204/13003059/", officialUrl: "https://imahan-tokyo.com/official/" },
-  { id: "setsugetsuka-meals", name: "Tokinoyu Setsugetsuka", city: "tokyo", slot: "Sun Nov 8–Wed Nov 11 · 3 nights · 2 adults", dayIds: ["day17", "day18", "day19"], strength: "Booked", why: SETSUGETSUKA_NOTE, officialUrl: "https://dormy-hotels.com/resort/hotels/setsugetsuka/", defaultStatus: "booked", confirmation: "Booking.com 6890781811" }
+  { id: "toyama-ginza", name: "Kaiten Toyama Sushi Ginza", city: "tokyo", slot: "Thu Nov 12 · walk in at 17:00 · 2 people", dayIds: ["day21"], strength: "Walk-in", why: TOYAMA_NOTE, defaultStatus: "walk_in", who: "brianMai" },
+  { id: "manten", name: "Manten Sushi Nihonbashi", city: "tokyo", slot: "Thu Nov 12 dinner idea — not the plan", dayIds: ["day21"], strength: "Considering", why: "Not the Nov 12 dinner. The plan is a walk-in at Kaiten Toyama Sushi Ginza. Keep this only if you do not eat at Toyama.", tabelogUrl: "https://tabelog.com/en/tokyo/A1302/A130202/13166422/", officialUrl: "https://www.manten-sushi.com/", who: "brianMai" },
+  { id: "imahan", name: "Ningyocho Imahan Main Store", city: "tokyo", slot: "Thu Nov 12 dinner idea — not the plan", dayIds: ["day21"], strength: "Considering", why: "Not the Nov 12 dinner. The plan is a walk-in at Kaiten Toyama Sushi Ginza. Imahan is in Ningyocho. It is not a few minutes from the hotel. The hotel is APA Nishishinjuku. Keep this only if you do not eat at Toyama.", tabelogUrl: "https://tabelog.com/en/tokyo/A1302/A130204/13003059/", officialUrl: "https://imahan-tokyo.com/official/", who: "brianMai" },
+  { id: "setsugetsuka-meals", name: "Tokinoyu Setsugetsuka", city: "tokyo", slot: "Sun Nov 8–Wed Nov 11 · 3 nights · 2 adults", dayIds: ["day17", "day18", "day19"], strength: "Booked", why: SETSUGETSUKA_NOTE, officialUrl: "https://dormy-hotels.com/resort/hotels/setsugetsuka/", defaultStatus: "booked", confirmation: "Booking.com 6890781811", who: "brianMai" }
 ];
 
 function geoDistanceMeters(a, b) {
@@ -2545,10 +2791,11 @@ const DAY_PARTY = {
 
 const DAY_MUST_DOS = {
   day02: [
-    { marker: "done", label: "Flight record", detail: FLIGHT_NOTE },
+    { marker: "done", label: "Flight record", detail: FLIGHT_NOTE, who: "brianMai" },
     { marker: "booked", label: "Nozomi 261 Tokyo to Shin-Osaka", detail: SHINKANSEN_OCT24 },
-    { marker: "needs-confirmation", label: "Luggage", detail: "At Narita, choose forward or carry. [luggage service and deadline — needs confirmation]." },
-    { marker: "booked", label: "Hotel Cordia Osaka Hommachi", detail: "Check in after the train. Call the hotel if you will arrive late. Do not add Dotonbori. Do not add kaiten sushi. Kura Sushi Dotonbori has no date." }
+    { marker: "needs-confirmation", label: "Luggage", detail: "At Narita, choose forward or carry. [luggage service and deadline — needs confirmation].", who: "brianMai" },
+    { marker: "booked", label: "Hotel Cordia Osaka Hommachi", detail: "Check in after the train. Call the hotel if you will arrive late. Do not add Dotonbori. Do not add kaiten sushi. Kura Sushi Dotonbori has no date.", who: "brianMai" },
+    { marker: "booked", label: "Royal Park Hotel ICONIC Osaka Midosuji", detail: "Check in after Nozomi 261. Stay through Oct 28.", who: "parents" }
   ],
   day03: [
     { marker: "info", label: "Route limit", detail: "Do the castle, one Nippombashi lunch, Den Den, and Sankei Club. Do not add a fourth district." }
@@ -2574,7 +2821,7 @@ const DAY_MUST_DOS = {
   ],
   day09: [
     { marker: "needs-confirmation", label: "Nijo tickets", detail: "Enter at 08:45. [Nijo ticket type and where to buy it — needs confirmation]." },
-    { marker: "needs-confirmation", label: "Dad's rejoin point", detail: "[Dad's rest/rejoin point — needs confirmation]." }
+    { marker: "needs-confirmation", label: "Dad's rejoin point", detail: "[Dad's rest/rejoin point — needs confirmation].", who: "parents" }
   ],
   day10: [
     { marker: "needs-confirmation", label: "Ascent", detail: "Confirm the live cable, ropeway, and bus times at Demachiyanagi before you board. [Eizan/Yase approach — needs confirmation]. [Sakamoto-side or direct-bus fallback — needs confirmation]." },
@@ -2600,7 +2847,8 @@ const DAY_MUST_DOS = {
   ],
   day14: [
     { marker: "booked", label: "Nozomi 90 Hiroshima to Tokyo", detail: SHINKANSEN_NOV5 },
-    { marker: "booked", label: "APA Nishishinjuku", detail: APA_NOTE },
+    { marker: "booked", label: "APA Nishishinjuku", detail: APA_NOTE, who: "brianMai" },
+    { marker: "info", label: "APA Nishi-Shinjuku Gochome", detail: "Your room is booked through the morning of Nov 10.", who: "parents" },
     { marker: "info", label: "Ekiben scores", detail: "Score each box on packaging, regional character, variety, flavor, and train happiness. Write the scores in today's note." }
   ],
   day15: [
@@ -2610,26 +2858,26 @@ const DAY_MUST_DOS = {
     { marker: "needs-confirmation", label: "Leave Shibuya", detail: "Leave by 15:30. [Akko meeting point and time — needs confirmation]. The pin is provisional Chofu Station. [whether Yoshi joins — needs confirmation]. [who Yoshi is — needs confirmation]." }
   ],
   day17: [
-    { marker: "booked", label: "Outbound Romancecar", detail: ROMANCECAR_OUT_NOTE }
+    { marker: "booked", label: "Outbound Romancecar", detail: ROMANCECAR_OUT_NOTE, who: "brianMai" }
   ],
   day18: [
-    { marker: "not-booked", label: "05:30 taxi", detail: "Ask Setsugetsuka to book a taxi for 05:30 to Hakone Shrine. [05:30 taxi prebook — not booked]. Breakfast is included. You leave before breakfast. Message the hotel through the Booking.com app. Ask for breakfast before the taxi. Do not buy another breakfast." }
+    { marker: "not-booked", label: "05:30 taxi", detail: "Ask Setsugetsuka to book a taxi for 05:30 to Hakone Shrine. [05:30 taxi prebook — not booked]. Breakfast is included. You leave before breakfast. Message the hotel through the Booking.com app. Ask for breakfast before the taxi. Do not buy another breakfast.", who: "brianMai" }
   ],
   day19: [
-    { marker: "needs-confirmation", label: "Trailhead bus", detail: "Take the sightseeing bus from Gora to Sengoku. [bus stop: Kintoki Shrine Entrance or Kintoki-Tozanguchi — needs confirmation]." },
-    { marker: "needs-confirmation", label: "Turnaround", detail: "Descend on time even if Fuji is hidden. [turnaround time — needs confirmation]." },
-    { marker: "info", label: "Parents at Haneda", detail: PARENTS_HANEDA_NOTE }
+    { marker: "needs-confirmation", label: "Trailhead bus", detail: "Take the sightseeing bus from Gora to Sengoku. [bus stop: Kintoki Shrine Entrance or Kintoki-Tozanguchi — needs confirmation].", who: "brianMai" },
+    { marker: "needs-confirmation", label: "Turnaround", detail: "Descend on time even if Fuji is hidden. [turnaround time — needs confirmation].", who: "brianMai" },
+    { marker: "info", label: "Haneda flight", detail: PARENTS_HANEDA_NOTE, who: "parents" }
   ],
   day20: [
-    { marker: "booked", label: "Return Romancecar", detail: ROMANCECAR_BACK_NOTE },
-    { marker: "booked", label: "APA return stay", detail: APA_NOTE },
-    { marker: "needs-confirmation", label: "Asakusa Engei Hall", detail: "Check the Nov 11 bill. [Asakusa bill and stage times — needs confirmation]. Go only after the luggage is at the hotel." }
+    { marker: "booked", label: "Return Romancecar", detail: ROMANCECAR_BACK_NOTE, who: "brianMai" },
+    { marker: "booked", label: "APA return stay", detail: APA_NOTE, who: "brianMai" },
+    { marker: "needs-confirmation", label: "Asakusa Engei Hall", detail: "Check the Nov 11 bill. [Asakusa bill and stage times — needs confirmation]. Go only after the luggage is at the hotel.", who: "brianMai" }
   ],
   day21: [
-    { marker: "booked", label: "teamLab Borderless", detail: TEAMLAB_NOTE },
-    { marker: "info", label: "Airport tonight", detail: AIRPORT_TONIGHT_NOTE },
-    { marker: "needs-confirmation", label: "Melon bread", detail: "[melon-bread shop and branch — needs confirmation]. The Asakusabashi pin is a placeholder." },
-    { marker: "info", label: "Nov 13 flight", detail: "There is no Nov 13 day page. BA4609 is operated by JAL. It leaves HND at 01:00 on Fri Nov 13. It arrives at LHR at 06:25. Then IB3645 is operated by BA. It leaves LHR at 08:45. It arrives at MAD at 12:15. The booking code is {{copy:A3II92}}. Be at the airport by about 22:00. There is no hotel on the night of Nov 12." }
+    { marker: "booked", label: "teamLab Borderless", detail: TEAMLAB_NOTE, who: "brianMai" },
+    { marker: "info", label: "Airport tonight", detail: AIRPORT_TONIGHT_NOTE, who: "brianMai" },
+    { marker: "needs-confirmation", label: "Melon bread", detail: "[melon-bread shop and branch — needs confirmation]. The Asakusabashi pin is a placeholder.", who: "brianMai" },
+    { marker: "info", label: "Nov 13 flight", detail: "There is no Nov 13 day page. BA4609 is operated by JAL. It leaves HND at 01:00 on Fri Nov 13. It arrives at LHR at 06:25. Then IB3645 is operated by BA. It leaves LHR at 08:45. It arrives at MAD at 12:15. The booking code is {{copy:A3II92}}. Be at the airport by about 22:00. There is no hotel on the night of Nov 12.", who: "brianMai" }
   ]
 };
 
@@ -2800,7 +3048,7 @@ function bookingMustDo(booking) {
   let detail = `${booking.slot}. Party of ${party}. ${confirm}.`;
   if (booking.id === "endo") detail = `Be there at 14:00. Counter seating for 5. Booked. ${confirm}.`;
   if (booking.id === "edobori") {
-    return { id: "booking-edobori", markers: ["info"], marker: "info", label: booking.name, detail: EDOBORI_LUNCH_NOTE };
+    return { id: "booking-edobori", markers: ["info"], marker: "info", label: booking.name, detail: EDOBORI_LUNCH_NOTE, who: booking.who };
   }
   if (booking.id === "kura-dotonbori") detail = KURA_NOTE;
   if (booking.id === "toyama-ginza") detail = TOYAMA_NOTE;
@@ -2808,13 +3056,15 @@ function bookingMustDo(booking) {
   if (booking.id === "suishin-main") detail = SUISHIN_MAIN_NOTE;
   if (booking.id === "setsugetsuka-meals") detail = SETSUGETSUKA_NOTE;
   const marker = markers.find((item) => OPEN_MARKERS.has(item)) || markers[0];
-  return { id: `booking-${booking.id}`, markers, marker, label: booking.name, detail };
+  return { id: `booking-${booking.id}`, markers, marker, label: booking.name, detail, who: booking.who };
 }
 
 function mustDoItems(dayId) {
   const party = DAY_PARTY[dayId];
+  const context = dayContext[dayId] || {};
+  const showParty = party && !(context.timelineWho && !sees(context.timelineWho));
   const partyMarker = party && /needs confirmation|not booked/i.test(party) ? "needs-confirmation" : "info";
-  const partyItem = party ? [{ id: `${dayId}-party`, marker: partyMarker, markers: [partyMarker], label: "Headcount", detail: party }] : [];
+  const partyItem = showParty ? [{ id: `${dayId}-party`, marker: partyMarker, markers: [partyMarker], label: "Headcount", detail: party }] : [];
   const staticItems = (DAY_MUST_DOS[dayId] || []).map((item, index) => ({
     id: `${dayId}-must-${index}`,
     ...item,
@@ -2822,7 +3072,9 @@ function mustDoItems(dayId) {
   }));
   const bookings = RESTAURANT_BOOKINGS.filter((booking) => booking.dayIds.includes(dayId)).map(bookingMustDo).filter(Boolean);
   const rank = { "not-booked": 0, decision: 1, "needs-confirmation": 2, booked: 3, info: 4, done: 5 };
-  return [...partyItem, ...bookings, ...staticItems].sort((a, b) => (rank[a.marker] ?? 9) - (rank[b.marker] ?? 9));
+  return [...partyItem, ...bookings, ...staticItems]
+    .filter((item) => sees(item.who))
+    .sort((a, b) => (rank[a.marker] ?? 9) - (rank[b.marker] ?? 9));
 }
 
 function itemIsOpen(item) {
@@ -2853,6 +3105,7 @@ function openItems() {
       label: item.label,
       when: item.when || "",
       detail: item.detail,
+      who: item.who || "shared",
       dayIds: [...new Set(item.dayIds || [])]
     };
     items.push(row);
@@ -2867,6 +3120,7 @@ function openItems() {
       label: item.name,
       when: item.target,
       detail: item.note,
+      who: item.who,
       dayIds: COUNTDOWN_DAY_IDS[item.id] || []
     });
   });
@@ -2883,6 +3137,7 @@ function openItems() {
           label: item.label,
           when: day.short,
           detail: item.detail,
+          who: item.who,
           dayIds: [day.id]
         });
       });
@@ -2895,10 +3150,11 @@ function openItems() {
       label: item.label,
       when: item.scope,
       detail: item.detail,
+      who: item.who,
       dayIds: item.dayIds || []
     });
   });
-  return items;
+  return items.filter((item) => sees(item.who));
 }
 
 function openItemDayButtons(dayIds) {
@@ -3237,7 +3493,11 @@ function renderRestaurantBookings() {
   const legend = document.querySelector("#restaurantPartyLegend");
   if (!list) return;
   if (legend) {
-    legend.textContent = state.activeCity === "osaka"
+    if (travelerView() === "parents" && state.activeCity === "tokyo") {
+      legend.textContent = "Nov 5–7 is with everyone. Nov 8–10 is your Tokyo time.";
+    } else if (coupleView() && state.activeCity === "tokyo") {
+      legend.textContent = "Party of 6 through Nov 7. Hakone and Nov 12 are the two of you.";
+    } else legend.textContent = state.activeCity === "osaka"
       ? "Party: 5 in Osaka · 8 on the family meal"
       : state.activeCity === "kyoto"
         ? "Party: 5 · Endo lunch is locked at 5 (Paul cannot join) · tick family-of-8 only on the restaurant she asked to bring family to"
@@ -3247,9 +3507,11 @@ function renderRestaurantBookings() {
   }
   const bookingsIntro = document.querySelector("#restaurantBookingsIntro");
   if (bookingsIntro) {
-    bookingsIntro.innerHTML = collapsedNoteHtml("Booked meals: Sankei Club, Sun Oct 25, 17:00, 5 people, Resty {{copy:468118574}}. On-yasai, Tue Oct 27, 20:00, 5 people, Ebica {{copy:468119458}}. Endo, Thu Oct 29, 14:00, counter seating for 5. Kani Doraku, Fri Oct 30, 18:00, 5 people, SE0767510. Kanawa ekie is cancelled. Nov 2 dinner is a walk-in at Reichan in ekie. Nov 3 dinner at Suishin main store is booked. TableCheck {{copy:XJCU9T}}. Tue Nov 3 at 18:00. 4 guests. Table only. Sat Oct 31 dinner at Kyoya is booked. Tabelog {{copy:FP4YF2QHPJ}}. Sat Oct 31 at 18:30. 5 people. Menami is skipped. Kinmata is skipped. Tue Oct 27 lunch is a walk-in at Udon Izakaya Edobori. Honke Shibato is skipped. Kura Sushi Dotonbori is an idea. No date is picked. Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book Toyama. Not booked means there is no reservation. Chosen means buy this one now. Booked means the confirmation is saved. Walk-in means no booking is needed. Cancel means a live booking you may cancel. Skip means do not book. Cancelled means the reservation is already cancelled.");
+    let intro = "Booked meals: Sankei Club, Sun Oct 25, 17:00, 5 people, Resty {{copy:468118574}}. On-yasai, Tue Oct 27, 20:00, 5 people, Ebica {{copy:468119458}}. Endo, Thu Oct 29, 14:00, counter seating for 5. Kani Doraku, Fri Oct 30, 18:00, 5 people, SE0767510. Kanawa ekie is cancelled. Nov 2 dinner is a walk-in at Reichan in ekie. Nov 3 dinner at Suishin main store is booked. TableCheck {{copy:XJCU9T}}. Tue Nov 3 at 18:00. 4 guests. Table only. Sat Oct 31 dinner at Kyoya is booked. Tabelog {{copy:FP4YF2QHPJ}}. Sat Oct 31 at 18:30. 5 people. Menami is skipped. Kinmata is skipped. Tue Oct 27 lunch is a walk-in at Udon Izakaya Edobori. Honke Shibato is skipped. Kura Sushi Dotonbori is an idea. No date is picked. Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book Toyama. Not booked means there is no reservation. Chosen means buy this one now. Booked means the confirmation is saved. Walk-in means no booking is needed. Cancel means a live booking you may cancel. Skip means do not book. Cancelled means the reservation is already cancelled.";
+    if (!sees("brianMai")) intro = intro.replace("Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book Toyama. ", "");
+    bookingsIntro.innerHTML = collapsedNoteHtml(intro);
   }
-  const bookings = RESTAURANT_BOOKINGS.filter((item) => item.city === state.activeCity);
+  const bookings = RESTAURANT_BOOKINGS.filter((item) => item.city === state.activeCity && sees(item.who));
   const cityPlaces = CITY_FOOD_MAP_PROTOTYPE[state.activeCity] || [];
   list.replaceChildren();
   bookings.forEach((booking) => {
@@ -3686,9 +3948,10 @@ function renderLockedHotelsPanel() {
   const addAllButton = panel?.querySelector("#addAllReservationReminders");
   const badge = panel?.querySelector(".count-badge");
   if (!list) return;
-  const pendingReservations = RESERVATION_COUNTDOWN.filter((item) => !item.done);
-  if (badge) badge.textContent = `${LOCKED_HOTELS.length} locked · ${pendingReservations.length} still open`;
-  list.innerHTML = LOCKED_HOTELS.map((hotel) => `
+  const hotels = LOCKED_HOTELS.filter((hotel) => sees(hotel.who) && hotel.url);
+  const pendingReservations = RESERVATION_COUNTDOWN.filter((item) => !item.done && sees(item.who));
+  if (badge) badge.textContent = `${hotels.length} locked · ${pendingReservations.length} still open`;
+  list.innerHTML = hotels.map((hotel) => `
     <li>
       <span><strong>${hotel.dates}</strong><small>${collapsedNoteHtml(hotel.note, "Details")}</small></span>
       <a href="${hotel.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(hotel.name)} ↗</a>
@@ -3698,7 +3961,7 @@ function renderLockedHotelsPanel() {
   renderWalkInReminders();
   if (reservationList) {
     const today = Date.parse(`${todayIso()}T00:00:00Z`);
-    reservationList.innerHTML = RESERVATION_COUNTDOWN.filter((item) => showArchive || (item.attention || (item.done ? "done" : "needs-confirmation")) !== "done").map((item) => {
+    reservationList.innerHTML = RESERVATION_COUNTDOWN.filter((item) => sees(item.who) && (showArchive || (item.attention || (item.done ? "done" : "needs-confirmation")) !== "done")).map((item) => {
       const days = Math.ceil((Date.parse(`${item.recommendedOn}T00:00:00Z`) - today) / 86400000);
       const attention = item.attention || (item.done ? "done" : "needs-confirmation");
       const countdown = attention === "booked" ? "BOOKED" : item.done ? "Done" : days < 0 ? "Still open" : days === 0 ? "Do now" : `${days} days`;
@@ -4592,7 +4855,7 @@ function dayMapCenter(day) {
 
 function mapsRouteUrl(day) {
   const places = dayMapPlaces(day);
-  const fallbackHotel = STAY_HOTEL_BY_DAY[day.id] || (state.lodging[state.activeCity] || "").trim();
+  const fallbackHotel = stayPlaceForView(day) || (state.lodging[state.activeCity] || "").trim();
   const origin = places[0] || fallbackHotel || "Japan";
   const destination = places.at(-1) || origin;
   const waypoints = places.slice(1, -1).join("|");
@@ -4958,9 +5221,16 @@ function makeWindowCarousel(carouselId, windows, labels, storageGroup = "dayWind
 }
 
 function hotelForDay(day) {
+  const picked = dayView(day)?.hotel;
+  if (picked) return picked.url ? picked : null;
+  if (day.id === "oct23" && travelerView() === "parents") {
+    return { name: "Shinagawa Prince Hotel", url: SHINAGAWA_PRINCE_MAP };
+  }
   const name = STAY_HOTEL_BY_DAY[day.id];
   if (!name) return null;
-  return LOCKED_HOTELS.find((hotel) => hotel.name === name) || null;
+  const hotel = LOCKED_HOTELS.find((entry) => entry.name === name) || null;
+  if (hotel && !sees(hotel.who)) return null;
+  return hotel;
 }
 
 function reminderLinkForOpenItem(item) {
@@ -5349,7 +5619,7 @@ function makeDayDetails(day) {
   const reference = calendarReferenceLinks[day.id];
   const items = openItems().filter((item) => item.dayIds.includes(day.id));
   const walks = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id);
-  const luggageNote = day.id === "day17"
+  const luggageNote = day.id === "day17" && sees("brianMai")
     ? `<p>Luggage Nov 8–11: Brian's parents or Akko will handle it.</p>`
     : "";
   section.innerHTML = `
@@ -5368,11 +5638,18 @@ function makeDayDetails(day) {
 
 function mountDayView(host, day) {
   host.classList.add("day-view");
+  if (awayLine(day.date)) {
+    host.innerHTML = `<p class="away-line">${escapeHtml(day.short)} · ${escapeHtml(awayLine(day.date))}</p>`;
+    return;
+  }
+  const view = dayView(day);
+  const title = view?.title || day.title;
+  const theme = view?.theme || day.theme;
   host.innerHTML = `
     <div class="day-title">
       <p class="day-date-row"><span class="day-date">${day.short}</span></p>
-      <h2>${day.title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
-      <p>${day.theme}</p>
+      <h2>${title}${day.date === todayIso() ? '<span class="today-pill">Today</span>' : ""}</h2>
+      <p>${theme}</p>
     </div>
   `;
   const weather = document.createElement("span");
@@ -5381,13 +5658,16 @@ function mountDayView(host, day) {
   weather.setAttribute("aria-live", "polite");
   const dateRow = host.querySelector(".day-date-row");
   dateRow.append(weather);
-  host.append(
-    makeDayFrontPage(day),
-    foldSection("Quest", makeQuestPage(day)),
-    makeMapCard(day),
-    foldSection("Journal", makeDailyPhotoCard(day)),
-    makeDayDetails(day)
-  );
+  const parts = [makeDayFrontPage(day)];
+  if (day.id !== "oct23") {
+    parts.push(
+      foldSection("Quest", makeQuestPage(day)),
+      makeMapCard(day),
+      foldSection("Journal", makeDailyPhotoCard(day)),
+      makeDayDetails(day)
+    );
+  } else parts.push(makeMapCard(day));
+  host.append(...parts);
   paintDayWeather(day, weather, readWeatherCache());
   loadForecast().then(({ cache }) => {
     if (!weather.isConnected) return;
@@ -5425,7 +5705,7 @@ function renderNav() {
     button.classList.toggle("active", button.dataset.city === state.activeCity);
   });
   dayRail.innerHTML = "";
-  activeCity().days.forEach((day) => {
+  activeCity().days.filter((day) => !awayLine(day.date)).forEach((day) => {
     const button = document.createElement("button");
     button.className = "chip";
     button.type = "button";
@@ -5502,19 +5782,30 @@ function tripRows() {
   return rows.sort((a, b) => a.day.date.localeCompare(b.day.date));
 }
 
+function browseRows() {
+  const rows = tripRows();
+  if (!rows.some((row) => row.day.id === "oct23")) {
+    rows.unshift({ cityId: "tokyo", cityName: "Tokyo", day: parentArrivalDay() });
+  }
+  return rows;
+}
+
 function landingSelection() {
   const today = japanTodayIso();
-  const rows = tripRows();
-  const exact = rows.find((row) => row.day.date === today);
+  const rows = browseRows();
+  const todayRow = rows.find((row) => row.day.date === today);
+  if (todayRow && awayLine(today)) return { ...todayRow, phase: "away", today };
+  const visible = rows.filter((row) => !awayLine(row.day.date));
+  const exact = visible.find((row) => row.day.date === today);
   if (exact) return { ...exact, phase: "today", today };
-  if (today < rows[0].day.date) return { ...rows[0], phase: "before", today };
-  if (today > "2026-11-13") return { ...rows.at(-1), phase: "after", today };
-  return { ...(rows.find((row) => row.day.date >= today) || rows.at(-1)), phase: "today", today };
+  if (today < visible[0].day.date) return { ...visible[0], phase: "before", today };
+  if (today > tripEndIso()) return { ...visible.at(-1), phase: "after", today };
+  return { ...(visible.find((row) => row.day.date >= today) || visible.at(-1)), phase: "today", today };
 }
 
 function daysUntilTrip() {
   const today = Date.parse(`${japanTodayIso()}T00:00:00Z`);
-  const start = Date.parse("2026-10-23T00:00:00Z");
+  const start = Date.parse(`${tripStartIso()}T00:00:00Z`);
   return Math.round((start - today) / 86400000);
 }
 
@@ -5553,7 +5844,7 @@ function walletCards() {
   const cards = [];
   const seen = new Set();
   RESERVATION_COUNTDOWN.forEach((item) => {
-    if (item.attention !== "booked") return;
+    if (item.attention !== "booked" || !sees(item.who)) return;
     const codes = noteCopyCodes(item.note);
     cards.push({
       id: item.id,
@@ -5570,7 +5861,7 @@ function walletCards() {
   });
   RESTAURANT_BOOKINGS.forEach((booking) => {
     const record = reservationRecord(booking);
-    if (record.status !== "booked") return;
+    if (record.status !== "booked" || !sees(booking.who)) return;
     if (seen.has(booking.id)) return;
     const codes = noteCopyCodes(booking.why);
     if (codes.some((code) => seen.has(code))) return;
@@ -5653,30 +5944,41 @@ function walletIcon(kind) {
   return `<span class="wallet-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${paths[kind] || paths.ticket}</svg></span>`;
 }
 
+function visibleWallet() {
+  return walletBookings().filter((item) => sees(item.who));
+}
+
 function walletBookings() {
   return [
-    { id: "flight-out", kind: "flight", at: "2026-10-23T12:30:00+02:00", title: "JL7088 to Tokyo", when: "Fri Oct 23 · 12:30", route: "Madrid → Narita", detail: "Choose seats at online check-in.", code: "A3II92", how: "Show the boarding pass in the airline app." },
+    { id: "flight-out", kind: "flight", at: "2026-10-23T12:30:00+02:00", title: "JL7088 to Tokyo", when: "Fri Oct 23 · 12:30", route: "Madrid → Narita", detail: "Choose seats at online check-in.", code: "A3II92", how: "Show the boarding pass in the airline app.", who: "brianMai" },
+    { id: "ua803", kind: "flight", at: "2026-10-23T15:55:00+09:00", title: "UA803 to Haneda", when: "Fri Oct 23 · 15:55", route: "Lands at Haneda", detail: "Lands at 3:55 PM.", code: "", how: "Show the boarding pass in the airline app.", who: "parents" },
+    { id: "shinagawa-prince", kind: "hotel", at: "2026-10-23T16:30:00+09:00", title: "Shinagawa Prince Hotel", when: "Fri Oct 23", route: "Shinagawa, Tokyo", detail: "One night", code: "", how: "Check in after UA803.", who: "parents" },
     { id: "shinkansen-oct24", kind: "train", at: "2026-10-24T14:00:00+09:00", title: "Nozomi 261", when: "Sat Oct 24 · 14:00", route: "Tokyo Station → Shin-Osaka", detail: "Car 6 · seats 9-D, 9-E, 10-D, 10-E · 4 people", code: "2005", how: SHINKANSEN_BOARDING },
-    { id: "cordia", kind: "hotel", at: "2026-10-24T16:30:00+09:00", title: "Hotel Cordia Osaka Hommachi", when: "Sat Oct 24 · after 16:30", route: "Hommachi, Osaka", detail: "1 room", code: "", how: "Check in after the train. Call the hotel if you arrive late." },
+    { id: "cordia", kind: "hotel", at: "2026-10-24T16:30:00+09:00", title: "Hotel Cordia Osaka Hommachi", when: "Sat Oct 24 · after 16:30", route: "Hommachi, Osaka", detail: "1 room", code: "", how: "Check in after the train. Call the hotel if you arrive late.", who: "brianMai" },
+    { id: "royal-park", kind: "hotel", at: "2026-10-24T17:00:00+09:00", title: "Royal Park Hotel ICONIC Osaka Midosuji", when: "Sat Oct 24–Wed Oct 28", route: "Midosuji, Osaka", detail: "Your room", code: "", how: "Check in after Nozomi 261.", who: "parents" },
     { id: "sankei-club", kind: "meal", at: "2026-10-25T17:00:00+09:00", title: "Sankei Club", when: "Sun Oct 25 · 17:00", route: "Shinsekai, Osaka", detail: "5 people", code: "468118574", how: "Give this number at the restaurant." },
     { id: "onyasai", kind: "meal", at: "2026-10-27T20:00:00+09:00", title: "Shabushabu On-yasai", when: "Tue Oct 27 · 20:00", route: "Sennichimae, Osaka", detail: "5 people", code: "468119458", how: "Give this number at the restaurant." },
-    { id: "monterey", kind: "hotel", at: "2026-10-28T18:00:00+09:00", title: "Hotel Monterey Kyoto", when: "Wed Oct 28 · on arrival", route: "Kyoto", detail: "1 room", code: "", how: "Check in when you arrive from Nara." },
+    { id: "monterey", kind: "hotel", at: "2026-10-28T18:00:00+09:00", title: "Hotel Monterey Kyoto", when: "Wed Oct 28 · on arrival", route: "Kyoto", detail: "1 room", code: "", how: "Check in when you arrive from Nara.", who: "brianMai" },
+    { id: "parents-kyoto", kind: "hotel", at: "2026-10-28T18:00:00+09:00", title: "Kyoto room", when: "Wed Oct 28–Mon Nov 2", route: "Kyoto", detail: "Booked separately", code: "", how: "Check in to your Kyoto room.", who: "parents" },
     { id: "endo", kind: "meal", at: "2026-10-29T14:00:00+09:00", title: "Tempura Endo Yasaka", when: "Thu Oct 29 · 14:00", route: "Gion, Kyoto", detail: "Counter seating for 5", code: "", how: "Counter seating for 5. Booked." },
     { id: "kani-doraku", kind: "meal", at: "2026-10-30T18:00:00+09:00", title: "Kani Doraku Kyoto", when: "Fri Oct 30 · 18:00", route: "Kyoto", detail: "5 people", code: "SE0767510", how: "Give this number at the restaurant." },
     { id: "kyoya", kind: "meal", at: "2026-10-31T18:30:00+09:00", title: "Kyoya", when: "Sat Oct 31 · 18:30", route: "Yanaginobamba, Kyoto", detail: "5 people · seats only", code: "FP4YF2QHPJ", how: "Give this number at the restaurant." },
     { id: "shinkansen-nov2", kind: "train", at: "2026-11-02T08:01:00+09:00", title: "Hikari 733", when: "Mon Nov 2 · 08:01", route: "Kyoto → Himeji", detail: "Car 6 · seats 17-D, 17-E, 18-D, 18-E · 4 people", code: "2000", how: SHINKANSEN_BOARDING },
     { id: "himeji-tickets", kind: "ticket", at: "2026-11-02T09:30:00+09:00", title: "Himeji Castle", when: "Mon Nov 2 · 09:30", route: "Himeji Castle", detail: "4 adults", code: "SHLMXW4R", how: "Mom shows the live ticket on her phone at the gate." },
     { id: "shinkansen-himeji", kind: "train", at: "2026-11-02T14:46:00+09:00", title: "Nozomi 69", when: "Mon Nov 2 · 14:46", route: "Himeji → Hiroshima", detail: "Car 14 · seats 6-D, 6-E, 7-D, 7-E · 4 people", code: "2004", how: SHINKANSEN_BOARDING },
-    { id: "granvia", kind: "hotel", at: "2026-11-02T16:00:00+09:00", title: "Hotel Granvia Hiroshima", when: "Mon Nov 2 · 16:00", route: "Hiroshima Station", detail: "1 room", code: "", how: "Check in at about 16:00." },
+    { id: "granvia", kind: "hotel", at: "2026-11-02T16:00:00+09:00", title: "Hotel Granvia Hiroshima", when: "Mon Nov 2 · 16:00", route: "Hiroshima Station", detail: "1 room", code: "", how: "Check in at about 16:00.", who: "brianMai" },
+    { id: "parents-hiroshima", kind: "hotel", at: "2026-11-02T16:00:00+09:00", title: "Hiroshima room", when: "Mon Nov 2–Thu Nov 5", route: "Hiroshima", detail: "Booked separately", code: "", how: "Check in to your Hiroshima room.", who: "parents" },
     { id: "suishin-main", kind: "meal", at: "2026-11-03T18:00:00+09:00", title: "Suishin", when: "Tue Nov 3 · 18:00", route: "Tatemachi, Hiroshima", detail: "4 guests · table only", code: "XJCU9T", how: "Give this number at the restaurant." },
     { id: "shinkansen-nov5", kind: "train", at: "2026-11-05T10:03:00+09:00", title: "Nozomi 90", when: "Thu Nov 5 · 10:03", route: "Hiroshima → Tokyo", detail: "Car 6 · seats 5-D, 5-E, 6-D, 6-E · 4 people", code: "2007", how: SHINKANSEN_BOARDING },
-    { id: "apa-nov5", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishishinjuku", when: "Thu Nov 5 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 3 nights", code: "72078146459705", how: "Show this number at check-in." },
-    { id: "romancecar-out", kind: "train", at: "2026-11-08T10:00:00+09:00", title: "Super Hakone 9", when: "Sun Nov 8 · 10:00", route: "Shinjuku → Hakone-Yumoto", detail: "Car 5 · seats 8A, 8B · 2 adults", code: "00081", how: "Show this booking on your phone." },
-    { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Sun Nov 8 · 15:00", route: "Gora, Hakone", detail: "2 adults · 3 nights", code: "6890781811", how: "Check-in closes at 19:30. Show this number." },
-    { id: "romancecar-back", kind: "train", at: "2026-11-11T10:10:00+09:00", title: "Hakone 30", when: "Wed Nov 11 · 10:10", route: "Hakone-Yumoto → Shinjuku", detail: "Car 4 · seats 2A, 2B · 2 adults", code: "00002", how: "Show this booking on your phone." },
-    { id: "apa-nov11", kind: "hotel", at: "2026-11-11T15:00:00+09:00", title: "APA Nishishinjuku", when: "Wed Nov 11 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 1 night", code: "72078148127176", how: "Show this number at check-in." },
-    { id: "teamlab", kind: "ticket", at: "2026-11-12T12:30:00+09:00", title: "teamLab Borderless", when: "Thu Nov 12 · 12:30", route: "Azabudai Hills, Tokyo", detail: "2 adults", code: "A4WAUKWPLYPR-0001", how: "Open the ticket from the teamLab email." },
-    { id: "flight-back", kind: "flight", at: "2026-11-13T01:00:00+09:00", title: "BA4609 to London", when: "Fri Nov 13 · 01:00", route: "Haneda → London", detail: "Then IB3645 leaves London at 08:45.", code: "A3II92", how: "Show the boarding pass in the airline app." }
+    { id: "apa-nov5", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishishinjuku", when: "Thu Nov 5 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 3 nights", code: "72078146459705", how: "Show this number at check-in.", who: "brianMai" },
+    { id: "parents-apa", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishi-Shinjuku Gochome", when: "Thu Nov 5–Tue Nov 10", route: "Nishi-shinjuku, Tokyo", detail: "Your room", code: "", how: "Stay through the morning of Nov 10.", who: "parents" },
+    { id: "romancecar-out", kind: "train", at: "2026-11-08T10:00:00+09:00", title: "Super Hakone 9", when: "Sun Nov 8 · 10:00", route: "Shinjuku → Hakone-Yumoto", detail: "Car 5 · seats 8A, 8B · 2 adults", code: "00081", how: "Show this booking on your phone.", who: "brianMai" },
+    { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Sun Nov 8 · 15:00", route: "Gora, Hakone", detail: "2 adults · 3 nights", code: "6890781811", how: "Check-in closes at 19:30. Show this number.", who: "brianMai" },
+    { id: "ua804", kind: "flight", at: "2026-11-10T16:50:00+09:00", title: "UA804 home", when: "Tue Nov 10 · 16:50", route: "Haneda", detail: "Leaves at 4:50 PM.", code: "", how: "Leave APA by about 13:30.", who: "parents" },
+    { id: "romancecar-back", kind: "train", at: "2026-11-11T10:10:00+09:00", title: "Hakone 30", when: "Wed Nov 11 · 10:10", route: "Hakone-Yumoto → Shinjuku", detail: "Car 4 · seats 2A, 2B · 2 adults", code: "00002", how: "Show this booking on your phone.", who: "brianMai" },
+    { id: "apa-nov11", kind: "hotel", at: "2026-11-11T15:00:00+09:00", title: "APA Nishishinjuku", when: "Wed Nov 11 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 1 night", code: "72078148127176", how: "Show this number at check-in.", who: "brianMai" },
+    { id: "teamlab", kind: "ticket", at: "2026-11-12T12:30:00+09:00", title: "teamLab Borderless", when: "Thu Nov 12 · 12:30", route: "Azabudai Hills, Tokyo", detail: "2 adults", code: "A4WAUKWPLYPR-0001", how: "Open the ticket from the teamLab email.", who: "brianMai" },
+    { id: "flight-back", kind: "flight", at: "2026-11-13T01:00:00+09:00", title: "BA4609 to London", when: "Fri Nov 13 · 01:00", route: "Haneda → London", detail: "Then IB3645 leaves London at 08:45.", code: "A3II92", how: "Show the boarding pass in the airline app.", who: "brianMai" }
   ];
 }
 
@@ -5698,6 +6000,8 @@ const WALLET_FILTERS = [
 ];
 
 let walletTypeFilter = "all";
+let walletSelectedIso = "";
+let walletDialCentering = false;
 let ticketBookingId = "";
 
 const QR_TICKET_IDS = new Set([
@@ -5721,6 +6025,8 @@ function linkedBooking() {
 
 function savedTicketsForBooking(bookingId) {
   if (!bookingId) return [];
+  const booking = walletBookings().find((item) => item.id === bookingId);
+  if (booking && !sees(booking.who)) return [];
   return readMyTickets().filter((ticket) => ticket.bookingId === bookingId);
 }
 
@@ -5728,12 +6034,20 @@ function ticketHasPicture(ticket) {
   return ticket.kind === "image" || ticket.hasImage === true;
 }
 
-function walletReadyHtml() {
-  const ready = [...QR_TICKET_IDS].filter((id) => {
+function visibleQrIds() {
+  return [...QR_TICKET_IDS].filter((id) => {
+    const item = walletBookings().find((entry) => entry.id === id);
+    return item && sees(item.who);
+  });
+}
+
+function walletReadyCount() {
+  const ids = visibleQrIds();
+  const ready = ids.filter((id) => {
     const tickets = savedTicketsForBooking(id);
     return tickets.length > 0 && tickets.every(ticketHasPicture);
   }).length;
-  return `<p class="wallet-ready">Ready offline: ${ready} of ${QR_TICKET_IDS.size}</p>`;
+  return { ready, total: ids.length };
 }
 
 function ticketOpenControl(ticket) {
@@ -5765,7 +6079,7 @@ function dayTicketOpenHtml(item) {
 }
 
 function dayTicketsHtml(day) {
-  const items = walletBookings().filter((item) => String(item.at).slice(0, 10) === day.date);
+  const items = visibleWallet().filter((item) => String(item.at).slice(0, 10) === day.date);
   if (!items.length) return "";
   const rows = items.map((item) => {
     const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
@@ -5976,7 +6290,11 @@ function myTicketCardHtml(ticket) {
 }
 
 function myTicketsHtml() {
-  const tickets = sortMyTickets(readMyTickets());
+  const tickets = sortMyTickets(readMyTickets()).filter((ticket) => {
+    if (!ticket.bookingId) return true;
+    const booking = walletBookings().find((item) => item.id === ticket.bookingId);
+    return !booking || sees(booking.who);
+  });
   const list = tickets.length
     ? tickets.map(myTicketCardHtml).join("")
     : `<p class="my-ticket-empty">No tickets on this phone.</p>`;
@@ -5986,8 +6304,10 @@ function myTicketsHtml() {
   const linked = linkedBooking();
   const linkNote = linked ? `<p class="my-ticket-link">This ticket is for ${escapeHtml(linked.title)}.</p>` : "";
   const labelValue = linked ? ` value="${escapeHtml(`${linked.when} ${linked.title}`)}"` : "";
-  return `<section class="my-tickets" id="myTickets" aria-labelledby="myTicketsTitle">
-    <h3 id="myTicketsTitle" class="wallet-section">My tickets</h3>
+  const { ready, total } = walletReadyCount();
+  const open = ticketBookingId ? " open" : "";
+  return `<details class="my-tickets" id="myTickets"${open}>
+    <summary>My tickets · ${ready} of ${total} ready offline</summary>
     <p class="my-ticket-note">Saved only on this phone. Not shared.</p>
     <div class="paste-email">
       <button type="button" class="paste-email-open" id="pasteEmailButton">Paste from email</button>
@@ -6019,7 +6339,7 @@ function myTicketsHtml() {
     <p class="my-ticket-status${myTicketStatus.includes("Next:") ? " my-ticket-next" : ""}" id="myTicketStatus" role="status">${escapeHtml(myTicketStatus)}</p>
     <div id="myTicketList">${list}</div>
     ${clear}
-  </section>`;
+  </details>`;
 }
 
 async function hydrateMyTicketImages() {
@@ -6032,17 +6352,25 @@ async function hydrateMyTicketImages() {
   }));
 }
 
-function walletDayLabel(iso) {
+function walletSummaryDate(iso) {
   const { year, month, day } = isoParts(iso);
-  const text = new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
-    weekday: "short",
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     timeZone: "UTC"
-  }).replace(",", "");
-  const row = tripRows().find((entry) => entry.day.date === iso);
-  if (!row) return text;
-  return `${text} · Day ${Number(row.day.id.replace("day", ""))}`;
+  });
+}
+
+function walletPlaceName(iso, items) {
+  const names = { osaka: "Osaka", kyoto: "Kyoto", hiroshima: "Hiroshima", tokyo: "Tokyo", hakone: "Hakone" };
+  const row = browseRows().find((entry) => entry.day.date === iso);
+  if (row && !awayLine(row.day.date)) return names[stayCityForDay(row.day)] || names[row.cityId] || "Japan";
+  if (items.every((item) => item.kind === "flight")) return "Flight";
+  return "Japan";
+}
+
+function walletChipLabel(group) {
+  return `${walletSummaryDate(group.iso)} ${walletPlaceName(group.iso, group.items)}`;
 }
 
 function walletDayGroups(items) {
@@ -6061,9 +6389,125 @@ function walletDayGroups(items) {
   return groups;
 }
 
-function walletGroupsHtml(items) {
-  if (!items.length) return "";
-  return walletDayGroups(items).map((group) => `<h3 class="wallet-day">${escapeHtml(walletDayLabel(group.iso))}</h3>${group.items.map((item) => walletCardHtml(item, false)).join("")}`).join("");
+function walletPreparedItems() {
+  return visibleWallet()
+    .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
+    .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
+}
+
+function walletDefaultIso(groups) {
+  const today = japanTodayIso();
+  const isos = groups.map((group) => group.iso);
+  if (!isos.length) return "";
+  if (isos.includes(today)) return today;
+  const next = isos.find((iso) => iso > today) || "";
+  const prev = [...isos].reverse().find((iso) => iso < today) || "";
+  if (today < tripStartIso()) return next || prev;
+  if (today > tripEndIso()) return prev || next;
+  if (!next || !prev) return next || prev;
+  const todayMs = Date.parse(`${today}T00:00:00Z`);
+  const nextDist = Date.parse(`${next}T00:00:00Z`) - todayMs;
+  const prevDist = todayMs - Date.parse(`${prev}T00:00:00Z`);
+  return nextDist <= prevDist ? next : prev;
+}
+
+function walletDayMatchesFilter(group) {
+  if (walletTypeFilter === "all") return true;
+  return group.items.some((item) => item.kind === walletTypeFilter);
+}
+
+function walletDayCardsHtml(group) {
+  const shown = walletTypeFilter === "all" ? group.items : group.items.filter((item) => item.kind === walletTypeFilter);
+  if (!shown.length) return `<p class="my-ticket-empty">No tickets of this type.</p>`;
+  return shown.map((item) => walletCardHtml(item, false)).join("");
+}
+
+function walletDialHtml(groups) {
+  if (!groups.length) return "";
+  const chips = groups.map((group) => {
+    const on = group.iso === walletSelectedIso;
+    const dim = walletDayMatchesFilter(group) ? "" : " is-dim";
+    const label = walletChipLabel(group);
+    const count = group.items.length;
+    return `<button type="button" class="wallet-dial-chip${on ? " is-selected" : ""}${dim}" role="tab" id="wallet-day-${group.iso}" data-wallet-day="${group.iso}" aria-selected="${on}" aria-controls="walletDayItems" tabindex="${on ? "0" : "-1"}" title="${count} ${count === 1 ? "item" : "items"}">${escapeHtml(label)}</button>`;
+  }).join("");
+  return `<div class="wallet-dial-wrap"><div class="wallet-dial" role="tablist" aria-label="Trip days" aria-orientation="horizontal"><span class="wallet-dial-pad" aria-hidden="true"></span>${chips}<span class="wallet-dial-pad" aria-hidden="true"></span></div></div>`;
+}
+
+function walletDialCenterIso(dial) {
+  const mid = dial.getBoundingClientRect().left + dial.clientWidth / 2;
+  let best = "";
+  let bestDist = Infinity;
+  dial.querySelectorAll("[data-wallet-day]").forEach((chip) => {
+    const rect = chip.getBoundingClientRect();
+    const dist = Math.abs(rect.left + rect.width / 2 - mid);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = chip.dataset.walletDay;
+    }
+  });
+  return best;
+}
+
+function centerWalletDial(iso) {
+  const dial = ticketsPanel?.querySelector(".wallet-dial");
+  const chip = dial?.querySelector(`[data-wallet-day="${iso}"]`);
+  if (!dial || !chip || dial.clientWidth === 0) return;
+  const dialRect = dial.getBoundingClientRect();
+  const chipRect = chip.getBoundingClientRect();
+  const delta = chipRect.left + chipRect.width / 2 - (dialRect.left + dialRect.width / 2);
+  if (Math.abs(delta) < 1) return;
+  walletDialCentering = true;
+  dial.scrollLeft += delta;
+  window.requestAnimationFrame(() => {
+    walletDialCentering = false;
+  });
+}
+
+function paintWalletDay(iso) {
+  const group = walletDayGroups(walletPreparedItems()).find((entry) => entry.iso === iso);
+  ticketsPanel?.querySelectorAll("[data-wallet-day]").forEach((button) => {
+    const on = button.dataset.walletDay === iso;
+    button.classList.toggle("is-selected", on);
+    button.setAttribute("aria-selected", on ? "true" : "false");
+    button.tabIndex = on ? 0 : -1;
+  });
+  const host = ticketsPanel?.querySelector("#walletDayItems");
+  if (!host || !group) return;
+  host.setAttribute("aria-labelledby", `wallet-day-${iso}`);
+  host.innerHTML = walletDayCardsHtml(group);
+  void hydrateMyTicketImages();
+}
+
+function bindWalletDial(dial) {
+  let timer = 0;
+  const sync = () => {
+    if (walletDialCentering) return;
+    const iso = walletDialCenterIso(dial);
+    if (!iso || iso === walletSelectedIso) return;
+    walletSelectedIso = iso;
+    paintWalletDay(iso);
+  };
+  dial.addEventListener("scroll", () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(sync, 140);
+  }, { passive: true });
+  dial.addEventListener("scrollend", () => {
+    window.clearTimeout(timer);
+    sync();
+  });
+  dial.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const chips = [...dial.querySelectorAll("[data-wallet-day]")];
+    const index = chips.findIndex((chip) => chip.dataset.walletDay === walletSelectedIso);
+    const next = chips[index + (event.key === "ArrowRight" ? 1 : -1)];
+    if (!next) return;
+    event.preventDefault();
+    walletSelectedIso = next.dataset.walletDay;
+    paintWalletDay(walletSelectedIso);
+    centerWalletDial(walletSelectedIso);
+    next.focus({ preventScroll: true });
+  });
 }
 
 function walletFiltersHtml() {
@@ -6080,7 +6524,7 @@ function stillToBookHtml() {
   const items = openItems().filter((item) => !journeyIds.has(item.id));
   const toBook = items.filter((item) => item.group === "to-book");
   const awaiting = items.filter((item) => item.group === "awaiting");
-  const pending = RESERVATION_COUNTDOWN.filter((item) => !item.done);
+  const pending = RESERVATION_COUNTDOWN.filter((item) => !item.done && sees(item.who));
   const addAll = pending.length
     ? `<p><a class="day-ticket-open" href="${reservationCalendarHref(pending)}" download="japan-trip-reservation-reminders.ics">Add all reminders</a></p>`
     : "";
@@ -6102,21 +6546,21 @@ function stillToBookHtml() {
 function renderTickets() {
   if (!ticketsPanel) return;
   const now = japanNowMs();
-  const items = walletBookings()
-    .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
-    .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
-  const matches = walletTypeFilter === "all" ? items : items.filter((item) => item.kind === walletTypeFilter);
-  const upcoming = matches.filter((item) => item.atMs >= now);
-  const past = matches.filter((item) => item.atMs < now);
-  const nextSource = items.filter((item) => item.atMs >= now)[0];
+  const items = walletPreparedItems();
+  const groups = walletDayGroups(items);
+  if (!groups.some((group) => group.iso === walletSelectedIso)) walletSelectedIso = walletDefaultIso(groups);
+  const selected = groups.find((group) => group.iso === walletSelectedIso);
+  const nextSource = items.find((item) => item.atMs >= now);
   const nextHtml = nextSource
     ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
-  const done = past.length
-    ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
-    : "";
-  const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
+  const dayHtml = selected
+    ? `<div class="wallet-day-items" id="walletDayItems" role="tabpanel" aria-labelledby="wallet-day-${selected.iso}">${walletDayCardsHtml(selected)}</div>`
+    : `<p class="my-ticket-empty">No tickets yet.</p>`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletDialHtml(groups)}${dayHtml}`;
+  const dial = ticketsPanel.querySelector(".wallet-dial");
+  if (dial) bindWalletDial(dial);
+  centerWalletDial(walletSelectedIso);
   refreshEmailPreview();
   void hydrateMyTicketImages();
 }
@@ -6405,6 +6849,8 @@ function spokenDate(iso) {
 }
 
 function stayCityForDay(day) {
+  if (day?.id === "oct23") return "tokyo";
+  if (travelerView() === "parents" && HAKONE_QUEST_DAYS.has(day.id)) return "tokyo";
   const hotel = STAY_HOTEL_BY_DAY[day.id] || "";
   if (hotel.includes("Setsugetsuka")) return "hakone";
   if (hotel.includes("Monterey")) return "kyoto";
@@ -6416,7 +6862,8 @@ function stayCityForDay(day) {
 
 function tripDateCell(iso, today, beforeTrip, duringTrip) {
   const inRange = iso >= TRIP_CALENDAR_START && iso <= TRIP_CALENDAR_END;
-  const row = tripRows().find((entry) => entry.day.date === iso);
+  const row = browseRows().find((entry) => entry.day.date === iso);
+  const away = awayLine(iso);
   const cityId = row ? stayCityForDay(row.day) : "";
   const city = CALENDAR_CITIES[cityId];
   const cell = document.createElement(row ? "button" : "span");
@@ -6424,16 +6871,16 @@ function tripDateCell(iso, today, beforeTrip, duringTrip) {
   if (!inRange) cell.classList.add("is-outside");
   if (duringTrip && iso === today) cell.classList.add("is-today");
   if (row && state.openDayId === row.day.id) cell.classList.add("is-selected");
-  if (beforeTrip && iso === TRIP_CALENDAR_START) cell.classList.add("is-start");
+  if (beforeTrip && iso === tripStartIso() && !away) cell.classList.add("is-start");
   if (cityId) cell.dataset.city = cityId;
   if (row) {
     cell.type = "button";
     cell.dataset.day = row.day.id;
     cell.setAttribute("aria-pressed", String(state.openDayId === row.day.id));
-    cell.setAttribute("aria-label", `${spokenDate(iso)}, ${city ? city.name : ""}. Open this day.`);
+    cell.setAttribute("aria-label", away ? `${spokenDate(iso)}. ${away}` : `${spokenDate(iso)}, ${city ? city.name : ""}. Open this day.`);
     cell.addEventListener("click", () => showDay(row.day));
   } else if (inRange) {
-    const note = iso === TRIP_CALENDAR_START ? " Trip start." : iso === TRIP_CALENDAR_END ? " Trip end." : "";
+    const note = away ? ` ${away}` : iso === tripStartIso() ? " Trip start." : iso === tripEndIso() ? " Trip end." : "";
     cell.setAttribute("aria-label", `${spokenDate(iso)}.${note}`);
   } else cell.setAttribute("aria-hidden", "true");
   const isToday = duringTrip && iso === today;
@@ -6450,15 +6897,16 @@ function tripDateCell(iso, today, beforeTrip, duringTrip) {
   cell.appendChild(number);
   const mark = document.createElement("span");
   mark.className = "trip-date-city";
-  if (isToday) mark.textContent = "TODAY";
+  if (away) mark.textContent = away.startsWith("Flown") ? "Home" : "Away";
+  else if (isToday) mark.textContent = "TODAY";
   else if (city) mark.textContent = city.mark;
-  else if (beforeTrip && iso === TRIP_CALENDAR_START) mark.textContent = "Start";
-  else if (inRange && iso === TRIP_CALENDAR_END) mark.textContent = "End";
+  else if (beforeTrip && iso === tripStartIso()) mark.textContent = "Start";
+  else if (inRange && iso === tripEndIso()) mark.textContent = "End";
   if (mark.textContent) cell.appendChild(mark);
   if (isToday && row) {
     cell.setAttribute("aria-label", `Today. ${spokenDate(iso)}, ${city ? city.name : ""}. Open this day.`);
   } else if (isToday && inRange) {
-    const note = iso === TRIP_CALENDAR_START ? " Trip start." : iso === TRIP_CALENDAR_END ? " Trip end." : "";
+    const note = away ? ` ${away}` : iso === tripStartIso() ? " Trip start." : iso === tripEndIso() ? " Trip end." : "";
     cell.setAttribute("aria-label", `Today. ${spokenDate(iso)}.${note}`);
   }
   return cell;
@@ -6484,19 +6932,25 @@ function storyMarkIcon(kind) {
   return `<span class="story-icon" aria-label="${STORY_MARK_LABEL[kind]}"><svg viewBox="0 0 24 24" aria-hidden="true">${paths[kind]}</svg></span>`;
 }
 
+function countdownVisible(id) {
+  const item = RESERVATION_COUNTDOWN.find((entry) => entry.id === id);
+  return !item || sees(item.who);
+}
+
 function storyMarks(dayId) {
   const marks = [];
   const trains = ["shinkansen-oct24", "shinkansen-nov2", "shinkansen-himeji", "shinkansen-nov5", "romancecar-out", "romancecar-back"];
-  if (trains.some((id) => (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("train");
-  const meal = RESTAURANT_BOOKINGS.some((booking) => booking.id !== "setsugetsuka-meals" && booking.dayIds.includes(dayId) && reservationRecord(booking).status === "booked");
+  if (trains.some((id) => countdownVisible(id) && (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("train");
+  const meal = RESTAURANT_BOOKINGS.some((booking) => sees(booking.who) && booking.id !== "setsugetsuka-meals" && booking.dayIds.includes(dayId) && reservationRecord(booking).status === "booked");
   if (meal) marks.push("meal");
   const tickets = ["himeji-tickets", "teamlab"];
-  if (dayId === "day02" || tickets.some((id) => (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("ticket");
+  if ((dayId === "day02" && sees("brianMai")) || tickets.some((id) => countdownVisible(id) && (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("ticket");
   return marks;
 }
 
 function storyDayTitle(day) {
-  return day.title.replace(/^Day \d+\s*-\s*/, "");
+  const title = dayView(day)?.title || day.title;
+  return title.replace(/^Day \d+\s*-\s*/, "");
 }
 
 function storyTravelCard(card) {
@@ -6513,7 +6967,9 @@ function storyTravelCard(card) {
 }
 
 function storyDayCard(day, today, snippet) {
-  const number = Number(day.id.replace("day", ""));
+  const away = awayLine(day.date);
+  if (away) return `<p class="away-line">${escapeHtml(day.short)} · ${escapeHtml(away)}</p>`;
+  const number = /^day\d+$/.test(day.id) ? Number(day.id.replace("day", "")) : 0;
   const past = day.date < today;
   const marks = storyMarks(day.id).map(storyMarkIcon).join("");
   const photo = bundledPlanPhotoUrl(day.id);
@@ -6523,9 +6979,9 @@ function storyDayCard(day, today, snippet) {
     ${photo ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(planPhotoCredits[day.id] || "")}">` : ""}
     ${planPhotoCredits[day.id] ? `<span class="story-photo-credit">${escapeHtml(planPhotoCredits[day.id])}</span>` : ""}
     <span class="story-card-body">
-      <span class="story-card-meta">Day ${number} · ${escapeHtml(day.short)}</span>
+      <span class="story-card-meta">${number ? `Day ${number} · ` : ""}${escapeHtml(day.short)}</span>
       <span class="story-card-title">${escapeHtml(storyDayTitle(day))}</span>
-      <span class="story-summary">${escapeHtml(day.theme)}</span>
+      <span class="story-summary">${escapeHtml(dayView(day)?.summary || day.theme)}</span>
       ${marks ? `<span class="story-icons">${marks}</span>` : ""}
       ${journal}
     </span>
@@ -6538,22 +6994,23 @@ function storyChapterHtml(name, city, cards) {
 
 function storyDaysHtml(snippets) {
   const today = japanTodayIso();
-  const byId = Object.fromEntries(tripRows().map((row) => [row.day.id, row.day]));
-  const travelOut = storyTravelCard({
-    when: "Fri Oct 23",
-    title: "Fly to Japan",
-    summary: "JL7088 leaves Madrid at 12:30.",
-    marks: ["ticket"]
-  });
-  const travelHome = storyTravelCard({
-    when: "Fri Nov 13",
-    title: "Fly home",
-    summary: "BA4609 leaves Haneda at 01:00.",
-    marks: ["ticket"]
-  });
+  const byId = Object.fromEntries(browseRows().map((row) => [row.day.id, row.day]));
+  const travelOut = travelerView() === "parents"
+    ? storyDayCard(parentArrivalDay(), today, "")
+    : `<p class="away-line">Oct 23 · Not in Japan yet.</p>`;
+  const travelHome = travelerView() === "parents"
+    ? `<p class="away-line">Nov 13 · Flown home.</p>`
+    : storyTravelCard({
+      when: "Fri Nov 13",
+      title: "Fly home",
+      summary: "BA4609 leaves Haneda at 01:00.",
+      marks: ["ticket"]
+    });
   const chapters = STORY_CHAPTERS.map((chapter) => {
+    const name = travelerView() === "parents" && chapter.name === "Hakone" ? "Tokyo" : chapter.name;
+    const city = travelerView() === "parents" && chapter.city === "hakone" ? "tokyo" : chapter.city;
     const cards = chapter.dayIds.map((dayId) => storyDayCard(byId[dayId], today, snippets[dayId] || "")).join("");
-    return storyChapterHtml(chapter.name, chapter.city, cards);
+    return storyChapterHtml(name, city, cards);
   }).join("");
   return `${storyChapterHtml("To Japan", "travel", travelOut)}${chapters}${storyChapterHtml("Home", "travel", travelHome)}`;
 }
@@ -6726,6 +7183,10 @@ function renderStoryMap() {
       <button type="button" data-story-city-day="day17">Hakone</button>
       <button type="button" data-story-city-day="day20" aria-label="Tokyo return, open Nov 11">Tokyo return</button>
     </div>`;
+  if (travelerView() === "parents") {
+    host.querySelector("[data-story-city-day='day17']")?.remove();
+    host.querySelector("[data-story-city-day='day20']")?.remove();
+  }
 }
 
 function renderStoryPassport() {
@@ -6738,11 +7199,13 @@ function renderStoryPassport() {
     const done = quests.filter((quest) => state.deckDone[quest.id]).length;
     return `<li>${escapeHtml(tripData[cityId].name)} discoveries: ${done} of ${quests.length}</li>`;
   }).join("");
+  const passportQuests = coreExperienceQuests.filter((group) => sees(group.who));
+  document.querySelector("#melonPassportSection")?.toggleAttribute("hidden", !sees("brianMai"));
   home.innerHTML = `<section class="story-passport-goals">
     <h2>Main goals</h2>
     <p class="day-meta-line">Main goals: ${completed} of ${tasks.length}</p>
     <ul class="story-passport-list">
-      ${coreExperienceQuests.map((group) => `<li><strong>${escapeHtml(group.title)}</strong><p>${escapeHtml(group.description)}</p><ol>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol></li>`).join("")}
+      ${passportQuests.map((group) => `<li><strong>${escapeHtml(group.title)}</strong><p>${escapeHtml(group.description)}</p><ol>${group.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol></li>`).join("")}
     </ul>
     <h2>City discoveries</h2>
     <ul>${cities}</ul>
@@ -6772,8 +7235,8 @@ function renderStory() {
 function renderTripCalendar() {
   if (!tripCalendar) return;
   const today = japanTodayIso();
-  const beforeTrip = today < TRIP_CALENDAR_START;
-  const duringTrip = today >= TRIP_CALENDAR_START && today <= TRIP_CALENDAR_END;
+  const beforeTrip = today < tripStartIso();
+  const duringTrip = today >= tripStartIso() && today <= tripEndIso();
   tripCalendar.replaceChildren();
   if (beforeTrip) {
     const days = daysUntilTrip();
@@ -6829,7 +7292,7 @@ function renderTripCalendar() {
 let todayBrowseId = "";
 
 function todayBrowseRow() {
-  const rows = tripRows();
+  const rows = browseRows();
   if (todayBrowseId) {
     const found = rows.find((row) => row.day.id === todayBrowseId);
     if (found) return { ...found, phase: landingSelection().phase };
@@ -6852,7 +7315,7 @@ function currentBrowseDay() {
 }
 
 function stepTodayDay(delta) {
-  const rows = tripRows();
+  const rows = browseRows();
   const current = currentBrowseDay();
   if (!current?.day) return;
   const index = rows.findIndex((row) => row.day.id === current.day.id);
@@ -6872,7 +7335,7 @@ function updateHeaderDayStep() {
   const onDayPage = document.body.dataset.section === "today" || (document.body.dataset.section === "days" && daysShowsDay);
   if (step) step.hidden = !onDayPage;
   if (!onDayPage) return;
-  const rows = tripRows();
+  const rows = browseRows();
   const current = currentBrowseDay();
   const index = rows.findIndex((row) => row.day.id === current?.day?.id);
   const previous = document.querySelector("#headerPrevDay");
@@ -7135,8 +7598,8 @@ function openMenu() {
   if (!appMenu || !menuButton) return;
   appMenu.hidden = false;
   menuButton.setAttribute("aria-expanded", "true");
-  const current = appMenu.querySelector("[aria-current='page']") || menuButtons()[0];
-  current?.focus();
+  const current = appMenu.querySelector("[aria-current='page']") || appMenu.querySelector("nav button");
+  requestAnimationFrame(() => current?.focus());
 }
 
 function closeMenu(restoreFocus) {
@@ -7867,6 +8330,13 @@ ticketsPanel?.addEventListener("click", (event) => {
     renderTickets();
     return;
   }
+  const dayChip = event.target.closest("[data-wallet-day]");
+  if (dayChip) {
+    walletSelectedIso = dayChip.dataset.walletDay;
+    paintWalletDay(walletSelectedIso);
+    centerWalletDial(walletSelectedIso);
+    return;
+  }
   const saveQr = event.target.closest("[data-save-qr]");
   if (saveQr) {
     const guide = ticketsPanel.querySelector(`#qrGuide-${CSS.escape(saveQr.dataset.saveQr)}`);
@@ -7933,11 +8403,52 @@ storyShell?.addEventListener("click", (event) => {
   if (found) showDay(found.day);
 });
 
+function syncTravelerPressed() {
+  const view = travelerView();
+  document.querySelectorAll("[data-traveler]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.traveler === view));
+  });
+}
+
+function chooseTraveler(value) {
+  if (value !== "brian" && value !== "mai" && value !== "parents") return;
+  localStorage.setItem(TRAVELER_KEY, value);
+  const ask = document.querySelector("#travelerAsk");
+  if (ask) ask.hidden = true;
+  syncTravelerPressed();
+  applyTheme();
+  todayBrowseId = "";
+  closeMenu(false);
+  showSection(document.body.dataset.section || "today");
+  renderNav();
+}
+
+function ensureTraveler() {
+  syncTravelerPressed();
+  const ask = document.querySelector("#travelerAsk");
+  if (travelerView()) {
+    if (ask) ask.hidden = true;
+    return;
+  }
+  if (ask) {
+    ask.hidden = false;
+    ask.querySelector("[data-traveler]")?.focus();
+  }
+}
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-traveler]");
+  if (!button) return;
+  event.stopPropagation();
+  chooseTraveler(button.dataset.traveler);
+});
+
 applyTheme();
 renderNav();
 resetOverviewToCalendar();
 saveState();
 showSection("today");
+ensureTraveler();
 followLegacyRoute();
 window.addEventListener("hashchange", followLegacyRoute);
 window.addEventListener("popstate", () => {
