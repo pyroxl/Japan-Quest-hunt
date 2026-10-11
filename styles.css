@@ -3910,6 +3910,61 @@ h3 {
   font-size: 0.9rem;
   font-weight: 800;
   text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.wander-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wander-kicker {
+  margin: 10px 0 2px;
+  color: #1c0f14;
+  font-size: 0.95rem;
+}
+
+.wander-note,
+.wander-body > p {
+  margin: 0;
+  color: #1c0f14;
+  font-size: 0.9rem;
+}
+
+.wander-card {
+  margin: 6px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.wander-card h3 {
+  margin: 0 0 2px;
+  color: #1c0f14;
+  font-size: 0.95rem;
+}
+
+.wander-card p,
+.rain-idea p {
+  margin: 0 0 2px;
+  color: #1c0f14;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.wander-card a,
+.wander-body > p a {
+  display: inline;
+  color: #1c0f14;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.wander-row.is-rainy .wander-rain {
+  order: -1;
 }
 
 .day-title p {
