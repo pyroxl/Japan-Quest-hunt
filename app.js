@@ -694,7 +694,7 @@ const tripData = {
 
 const dayGoals = {
   day02: {
-    clearPath: "Narita Express to Tokyo Station, any train leaving by about 12:30, Nozomi 261 at 14:00, then Osaka check-in.",
+    clearPath: "Narita Express by about 12:30, then Nozomi 261 at 14:00.",
     mainGoal: "Reach Osaka smoothly and end the long travel day without adding another district.",
     photoHint: "First Japan train window, Shinkansen platform, or first Osaka hotel-room view."
   },
@@ -820,8 +820,8 @@ const sharedDayGroupTypes = new Set(["side", "egg"]);
 
 const dayContext = {
   day02: {
-    summary: "Parents arrived at Haneda at 15:55 on Oct 23 on UA803, from Dulles at 12:35, and stayed at Shinagawa Prince Hotel. On Oct 24 they have breakfast with a friend near Shinagawa. They can board Nozomi 261 at Shinagawa at about 14:07, or meet at Tokyo Station. The Yamanote ride is 10–15 minutes. Their Osaka hotel is Royal Park Hotel ICONIC Osaka Midosuji through Oct 28. JL7088 lands at Narita at 09:30. Take the Narita Express to Tokyo Station. The ride is about 55 minutes. Buy it at the JR counter. Any train leaving by about 12:30 works. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00 and reaches Shin-Osaka at 16:30. Reach Hotel Cordia Osaka Hommachi. Do not add Dotonbori.",
-    timeline: [["Oct 23", "Parents arrive at Haneda at 15:55 on UA803, from Dulles at 12:35, and stay at Shinagawa Prince Hotel beside the station."], ["To the hotel", "The Keikyu line from Haneda to Shinagawa takes about 15 minutes."], ["Oct 24 morning", "Parents have breakfast with a friend near Shinagawa."], ["Same train", "They can board Nozomi 261 at Shinagawa at about 14:07, or meet at Tokyo Station after 10–15 minutes on the JR Yamanote line."], ["Their Osaka hotel", "Their hotel through Oct 28 is Royal Park Hotel ICONIC Osaka Midosuji, and their Kyoto and Hiroshima rooms are booked."], ["09:30–12:00", "Land at Narita at 09:30 on JL7088, operated by Iberia. Clear immigration. Collect the bags. Choose forward or carry. [luggage service and deadline — needs confirmation]."], ["About 12:00", "Take the Narita Express from Narita Airport to Tokyo Station, about 55 minutes, bought at the JR counter on arrival, on any train leaving by about 12:30."], ["By 13:30", "Be at the Tokyo Station Shinkansen gates by about 13:30."], ["14:00–16:30", SHINKANSEN_OCT24], ["Evening", "Go to Hotel Cordia Osaka Hommachi. Check in. Stop. Eat near the hotel if you need food. Do not go to Dotonbori. Do not add kaiten sushi."]],
+    summary: "JL7088 lands at Narita at 09:30, then Nozomi 261 at 14:00 to Osaka.",
+    timeline: [["Oct 23", "UA803 lands Haneda 15:55, stay at Shinagawa Prince."], ["Keikyu", "Haneda to Shinagawa, about 15 minutes."], ["Oct 24", "Breakfast near Shinagawa with a friend."], ["14:07", "Nozomi 261 at Shinagawa, or meet at Tokyo."], ["Yamanote", "Shinagawa to Tokyo Station, 10–15 minutes."], ["Hotel", "Royal Park ICONIC Osaka Midosuji through Oct 28."], ["09:30", "Land at Narita on JL7088."], ["By 12:30", "Narita Express, about 55 minutes, JR counter."], ["By 13:30", "Be at the Shinkansen gates."], ["14:00–16:30", SHINKANSEN_OCT24], ["Evening", "Hotel Cordia, eat nearby, no Dotonbori."]],
     history: [
       "Narita opened in 1978 as Tokyo's principal international gateway. Reaching western Tokyo from it crosses much of the metropolis, so the transfer is a real part of the day's time budget.",
       "The Tokaido Shinkansen links Tokyo and Osaka in roughly two and a half hours, compressing a historic intercity corridor into the final chapter of a demanding but possible arrival day."
@@ -865,8 +865,8 @@ const dayContext = {
     ]
   },
   day07: {
-    summary: "The maximum-coverage southeast day climbs Mt Inari, samples one Tofuku-ji section, then meets the parents for Kiyomizu and the old streets down to Gion. Hard pace checks at Yotsutsuji (07:20) and Tofuku-ji exit (09:50) protect the 10:30 reunion. The seated meal is lunch at Tempura Endo Yasaka in Gion at 14:00, counter seating for 5. It is booked. Everything after 16:00 in Gion is evening bonus, not schedule debt. Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch.",
-    timeline: [["05:45–06:15", "Wake, take a packed breakfast and leave promptly. Be at Fushimi Inari's main approach by 06:15; breakfast happens after the climb, not before it."], ["06:15–07:20", "Climb through the torii toward Yotsutsuji. Pace check: if Yotsutsuji is not reached by 07:20, turn around wherever you are—do not chase the summit."], ["07:20–08:15", "Descend and leave the shrine area. Use the train or a short taxi to Tofuku-ji and eat the portable breakfast in transit or before entry."], ["08:50–09:50", "Be at Tofuku-ji for its 09:00 opening. Choose the garden or Tsutenkyo area, not both; leave by 09:50 even if the visit began late."], ["09:50–10:30", "Go toward Kiyomizu. Message the parents. [parents meeting point — needs confirmation]. If you miss the 09:50 exit, take a taxi and still meet at 10:30."], ["10:30–12:00", "Visit Kiyomizu together. The panorama, main hall and Otowa waterfall are the complete visit; begin descending around noon."], ["12:00–14:00", "Walk Sannenzaka and Ninenzaka downhill and be at Tempura Endo Yasaka in Gion for 14:00."], ["14:00–15:30", "Lunch at Tempura Endo Yasaka, counter seating for 5, booked for 14:00."], ["15:30–16:00", "Continue Yasaka and Gion after lunch. The required sightseeing day ends here; anything after 16:00 is an evening bonus, not schedule debt."]],
+    summary: "The maximum-coverage southeast day climbs Mt Inari, samples one Tofuku-ji section, then meets the parents for Kiyomizu and the old streets down to Gion. Hard pace checks at Yotsutsuji (07:20) and Tofuku-ji exit (09:50) protect the 10:30 reunion. Lunch is Tempura Endo Yasaka at 14:00, counter for 5. Everything after 16:00 in Gion is evening bonus, not schedule debt. Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch.",
+    timeline: [["05:45–06:15", "Wake, take a packed breakfast and leave promptly. Be at Fushimi Inari's main approach by 06:15; breakfast happens after the climb, not before it."], ["06:15–07:20", "Climb through the torii toward Yotsutsuji. Pace check: if Yotsutsuji is not reached by 07:20, turn around wherever you are—do not chase the summit."], ["07:20–08:15", "Descend and leave the shrine area. Use the train or a short taxi to Tofuku-ji and eat the portable breakfast in transit or before entry."], ["08:50–09:50", "Be at Tofuku-ji for its 09:00 opening. Choose the garden or Tsutenkyo area, not both; leave by 09:50 even if the visit began late."], ["09:50–10:30", "Go toward Kiyomizu. Message the parents. [parents meeting point — needs confirmation]. If you miss the 09:50 exit, take a taxi and still meet at 10:30."], ["10:30–12:00", "Visit Kiyomizu together. The panorama, main hall and Otowa waterfall are the complete visit; begin descending around noon."], ["12:00", "Walk down to Tempura Endo Yasaka."], ["14:00", "Counter for 5, booked."], ["15:30–16:00", "Continue Yasaka and Gion after lunch. The required sightseeing day ends here; anything after 16:00 is an evening bonus, not schedule debt."]],
     history: [
       "Fushimi Inari is the head shrine of thousands of Inari shrines across Japan. Donated torii record hopes, gratitude, and commercial prosperity; foxes serve as Inari's messengers rather than the deity itself.",
       "Tofuku-ji was founded in the 13th century and later became a major Zen complex. Its name deliberately echoes Nara's Todai-ji and Kofuku-ji, claiming continuity with older capital authority while pursuing a different Buddhist path.",
@@ -1816,9 +1816,12 @@ function timelineMarkup(day, timeline, used) {
 function wanderFoldHtml(day) {
   const inner = typeof wanderInnerHtml === "function" ? wanderInnerHtml(day) : "";
   const cities = [RAIN_CITY_BY_DAY[day.id]].filter(Boolean);
-  const rain = rainIdeasHtml(day, cities);
+  const rainLines = rainIdeasHtml(day, cities);
+  const rainCount = rainLines ? (rainLines.match(/class="wander-line"/g) || []).length : 0;
+  const rain = rainCount ? `<details class="wander-nest wander-rain"><summary>If it rains · ${rainCount} idea${rainCount === 1 ? "" : "s"}</summary><div class="wander-nest-body">${rainLines}</div></details>` : "";
   if (!inner && !rain) return "";
-  return `<details class="day-fold wander-row" data-wander><summary>If you feel like wandering</summary><div class="wander-body"><div class="wander-main">${inner}</div>${rain ? `<div class="wander-rain">${rain}</div>` : ""}</div></details>`;
+  const preview = typeof wanderSummary === "function" ? wanderSummary(day) : "Optional walks";
+  return `<details class="day-fold wander-row" data-wander><summary><span class="wander-sr">If you feel like wandering. </span><span class="wander-preview">${escapeHtml(preview)}</span></summary><div class="wander-body">${inner}${rain}</div></details>`;
 }
 
 function dailyGuide(day) {
@@ -4524,7 +4527,7 @@ const placeBackground = {
   "Miyajima Omotesando": "Omotesando is Miyajima's main merchant street for snacks, momiji manju and souvenir browsing. Shops close around 17:00–18:00. Do not feed the deer.",
   "Daisho-in Temple": "Daisho-in climbs the hillside behind the town with lanterns, halls and forest atmosphere away from the busiest waterfront. Go at about 12:30, after Fujitaya. Entry is free. The temple is open from 8:00 to 17:00.",
   "Miyajima Ropeway": "The Miyajima ropeway climbs toward Mount Misen for broad Seto Inland Sea views. Go up from 9:00 to 16:00. The last ride down is 16:30. Do not reserve. It stops in strong wind.",
-  "Tokyo Station": "Nozomi 261 leaves Tokyo Station at 14:00 on Oct 24. Nozomi 90 arrives at 13:57 on Nov 5. On Oct 24, take the Narita Express from Narita Airport. The ride is about 55 minutes. Buy the ticket at the JR counter. Any train leaving by about 12:30 works. Be at the Shinkansen gates by about 13:30. Parents can board Nozomi 261 at Shinagawa at about 14:07, or meet here. The Yamanote ride from Shinagawa is 10–15 minutes.",
+  "Tokyo Station": "Oct 24: Narita Express by about 12:30, then Nozomi 261 at 14:00. Parents can board at Shinagawa about 14:07.",
   [APA_HOTEL_NAME]: APA_NOTE,
   "Hotel Cordia Osaka Hommachi": "Hotel Cordia Osaka Hommachi is the confirmed Hommachi base for Oct 24–28. Hommachi subway puts Namba, Dotonbori and Tenma within easy reach without sleeping on the loudest nightlife blocks.",
   "Hotel Monterey Kyoto": "Hotel Monterey Kyoto is the confirmed Karasuma Oike / Sanjo base for Oct 28–Nov 2. The central location keeps Nijo, Nishiki, Kamo River and Pontocho practical without deep Higashiyama hills.",
@@ -5281,14 +5284,9 @@ function ideasForCity(cityId, day) {
 function rainIdeasHtml(day, cityIds) {
   const ids = cityIds || [];
   return ids.map((cityId) => ideasForCity(cityId, day).map((idea) => {
-    const travel = idea.travelByDay?.[day.id] || idea.travel;
-    const maps = typeof mapsQuery === "function" ? mapsQuery(idea.name) : "";
-    return `<article class="rain-idea">
-      <h3>${escapeHtml(idea.name)}</h3>
-      <p>${escapeHtml(idea.why)}</p>
-      <p>${escapeHtml(travel)}</p>
-      <p><a href="${escapeHtml(idea.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(idea.link)}</a>${maps ? ` · <a href="${escapeHtml(maps)}" target="_blank" rel="noopener noreferrer">Open in Maps</a>` : ""}</p>
-    </article>`;
+    const maps = typeof mapsQuery === "function" ? mapsQuery(idea.name) : idea.url;
+    const reason = String(idea.why || "").split(/[.!]/)[0].trim().split(/\s+/).slice(0, 6).join(" ");
+    return `<p class="wander-line"><strong>${escapeHtml(idea.name)}</strong> · ${escapeHtml(reason)} · <a href="${escapeHtml(maps)}" target="_blank" rel="noopener noreferrer">Maps</a></p>`;
   }).join("")).join("");
 }
 
@@ -5332,7 +5330,11 @@ function paintDayWeather(day, weather, cache) {
   if (wander) {
     const rainy = Boolean(rainRowHtml(day, cache));
     wander.classList.toggle("is-rainy", rainy);
-    if (rainy && wander.dataset.userSet !== "true") wander.open = true;
+    const rainNest = wander.querySelector(".wander-rain");
+    if (rainy && wander.dataset.userSet !== "true") {
+      wander.open = true;
+      if (rainNest) rainNest.open = true;
+    }
   }
   requestAnimationFrame(() => {
     if (weather.isConnected) fitForecastLine(weather.closest(".day-date-row"));

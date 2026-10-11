@@ -37,47 +37,47 @@ const WANDER_DAY = {
 
 const WANDER_IDEAS = {
   osaka: [
-    { id: "shinsaibashi-suji", name: "Shinsaibashi-suji", why: "A covered shopping street for a short look, then back.", travel: "About 10 minutes on foot from Hotel Cordia.", maps: mapsQuery("Shinsaibashi-suji Shopping Street Osaka"), areas: ["hommachi", "shinsaibashi"], energy: "low", when: ["evening", "afternoon"], rank: 0 },
-    { id: "namba-yasaka", name: "Namba Yasaka Shrine", why: "A small shrine stop. The lion stage is the whole visit.", travel: "About 15 minutes on foot from Hommachi.", maps: mapsQuery("Namba Yasaka Shrine Osaka"), areas: ["namba", "hommachi"], energy: "low", when: ["evening"], rank: 1 },
-    { id: "tenma-arcade", name: "Tenjinbashi-suji at Tenma", why: "A long covered arcade beside the dinner streets.", travel: "About 20 minutes from Hommachi by subway to Minami-morimachi.", maps: mapsQuery("Tenjinbashi-suji Shopping Street Osaka"), areas: ["tenma"], energy: "medium", when: ["afternoon", "evening"], rank: 0 }
+    { id: "shinsaibashi-suji", name: "Shinsaibashi-suji", line: "covered street, then back", why: "A covered shopping street for a short look, then back.", travel: "About 10 minutes on foot from Hotel Cordia.", maps: mapsQuery("Shinsaibashi-suji Shopping Street Osaka"), areas: ["hommachi", "shinsaibashi"], energy: "low", when: ["evening", "afternoon"], rank: 0 },
+    { id: "namba-yasaka", name: "Namba Yasaka Shrine", line: "small shrine, lion stage", why: "A small shrine stop. The lion stage is the whole visit.", travel: "About 15 minutes on foot from Hommachi.", maps: mapsQuery("Namba Yasaka Shrine Osaka"), areas: ["namba", "hommachi"], energy: "low", when: ["evening"], rank: 1 },
+    { id: "tenma-arcade", name: "Tenjinbashi-suji", line: "covered arcade near dinner", why: "A long covered arcade beside the dinner streets.", travel: "About 20 minutes from Hommachi by subway to Minami-morimachi.", maps: mapsQuery("Tenjinbashi-suji Shopping Street Osaka"), areas: ["tenma"], energy: "medium", when: ["afternoon", "evening"], rank: 0 }
   ],
   kyoto: [
-    { id: "shirakawa", name: "Shirakawa lane", why: "The willow canal in Gion. Walk one block and turn around.", travel: "You are already in Gion after lunch.", maps: mapsQuery("Shirakawa River Gion Kyoto"), areas: ["gion"], energy: "low", when: ["evening"], rank: 0 },
-    { id: "yasaka-lanterns", name: "Yasaka Shrine lanterns", why: "The shrine is open, and the lanterns are the evening view.", travel: "A few minutes from Shirakawa or Gion-Shijo.", maps: mapsQuery("Yasaka Shrine Kyoto"), areas: ["gion"], energy: "low", when: ["evening"], rank: 1 },
-    { id: "kiyamachi", name: "Kiyamachi canal", why: "A flat walk east of the hotel along the canal.", travel: "About 10 minutes on foot from Hotel Monterey Kyoto.", maps: mapsQuery("Kiyamachi Sanjo Kyoto"), areas: ["kiyamachi", "karasuma"], energy: "low", when: ["evening"], rank: 0 }
+    { id: "shirakawa", name: "Shirakawa lane", line: "willow canal, one block", why: "The willow canal in Gion. Walk one block and turn around.", travel: "You are already in Gion after lunch.", maps: mapsQuery("Shirakawa River Gion Kyoto"), areas: ["gion"], energy: "low", when: ["evening"], rank: 0 },
+    { id: "yasaka-lanterns", name: "Yasaka lanterns", line: "evening lanterns at the shrine", why: "The shrine is open, and the lanterns are the evening view.", travel: "A few minutes from Shirakawa or Gion-Shijo.", maps: mapsQuery("Yasaka Shrine Kyoto"), areas: ["gion"], energy: "low", when: ["evening"], rank: 1 },
+    { id: "kiyamachi", name: "Kiyamachi canal", line: "flat canal walk from the hotel", why: "A flat walk east of the hotel along the canal.", travel: "About 10 minutes on foot from Hotel Monterey Kyoto.", maps: mapsQuery("Kiyamachi Sanjo Kyoto"), areas: ["kiyamachi", "karasuma"], energy: "low", when: ["evening"], rank: 0 }
   ],
   hiroshima: [
-    { id: "hondori", name: "Hondori arcade", why: "A covered street if you want ten minutes out of the hotel.", travel: "About 10 minutes on foot from Hotel Granvia Hiroshima.", maps: mapsQuery("Hondori Shopping Street Hiroshima"), areas: ["station"], energy: "low", when: ["evening"], rank: 0 }
+    { id: "hondori", name: "Hondori arcade", line: "covered street by the hotel", why: "A covered street if you want ten minutes out of the hotel.", travel: "About 10 minutes on foot from Hotel Granvia Hiroshima.", maps: mapsQuery("Hondori Shopping Street Hiroshima"), areas: ["station"], energy: "low", when: ["evening"], rank: 0 }
   ],
   tokyo: [
-    { id: "hotel-block", name: "Hotel-block loop", why: "Stay on the streets around the hotel. Stop at the first place to sit.", travel: "Starts at Nishi-shinjuku-gochome Station, next to the hotel.", maps: mapsQuery("Nishi-shinjuku-gochome Station"), areas: ["nishi-shinjuku"], energy: "low", when: ["evening"], rank: 0 },
-    { id: "tocho", name: "Metropolitan Government observatories", why: "Free lookouts with seats inside. Cafes are downstairs.", travel: "Toei Oedo line from Nishi-shinjuku-gochome to Tochomae, about 10 minutes.", maps: mapsQuery("Tokyo Metropolitan Government Building"), areas: ["nishi-shinjuku"], energy: "low", when: ["evening", "afternoon"], rank: 1 },
-    { id: "hachimangu", name: "Musashino Hachimangu", why: "A small shrine at the edge of Inokashira Park.", travel: "About 8 minutes on foot from Kichijoji Station.", maps: mapsQuery("Musashino Hachimangu Kichijoji"), areas: ["kichijoji"], energy: "low", when: ["day", "afternoon"], rank: 0 },
-    { id: "nakamichi", name: "Nakamichi-dori", why: "A covered shopping street for one snack or a bakery check.", travel: "About 3 minutes on foot from Kichijoji Station.", maps: mapsQuery("Nakamichi-dori Kichijoji"), areas: ["kichijoji"], energy: "medium", when: ["day", "afternoon", "evening"], rank: 1 }
+    { id: "hotel-block", name: "Hotel block", line: "streets around the hotel", why: "Stay on the streets around the hotel. Stop at the first place to sit.", travel: "Starts at Nishi-shinjuku-gochome Station, next to the hotel.", maps: mapsQuery("Nishi-shinjuku-gochome Station"), areas: ["nishi-shinjuku"], energy: "low", when: ["evening"], rank: 0 },
+    { id: "tocho", name: "Tocho observatories", line: "free lookouts with seats", why: "Free lookouts with seats inside. Cafes are downstairs.", travel: "Toei Oedo line from Nishi-shinjuku-gochome to Tochomae, about 10 minutes.", maps: mapsQuery("Tokyo Metropolitan Government Building"), areas: ["nishi-shinjuku"], energy: "low", when: ["evening", "afternoon"], rank: 1 },
+    { id: "hachimangu", name: "Musashino Hachimangu", line: "small shrine by the park", why: "A small shrine at the edge of Inokashira Park.", travel: "About 8 minutes on foot from Kichijoji Station.", maps: mapsQuery("Musashino Hachimangu Kichijoji"), areas: ["kichijoji"], energy: "low", when: ["day", "afternoon"], rank: 0 },
+    { id: "nakamichi", name: "Nakamichi-dori", line: "covered street for a snack", why: "A covered shopping street for one snack or a bakery check.", travel: "About 3 minutes on foot from Kichijoji Station.", maps: mapsQuery("Nakamichi-dori Kichijoji"), areas: ["kichijoji"], energy: "medium", when: ["day", "afternoon", "evening"], rank: 1 }
   ],
   hakone: [
-    { id: "gora-park", name: "Gora Park", why: "A short garden walk if the museum ends early.", travel: "About 10 minutes on foot from Tokinoyu Setsugetsuka.", maps: mapsQuery("Gora Park Hakone"), areas: ["gora"], energy: "low", when: ["afternoon"], rank: 0 }
+    { id: "gora-park", name: "Gora Park", line: "short garden if time", why: "A short garden walk if the museum ends early.", travel: "About 10 minutes on foot from Tokinoyu Setsugetsuka.", maps: mapsQuery("Gora Park Hakone"), areas: ["gora"], energy: "low", when: ["afternoon"], rank: 0 }
   ]
 };
 
 const WALKING_LOOPS = [
-  { name: "Kichijoji–Inokashira Park", areas: ["kichijoji"], minutes: "About 50 minutes", exit: "Turn back along the pond path to Kichijoji Station whenever you want.", url: mapsWalk("Kichijoji Station", "Kichijoji Station", "Inokashira Park") },
-  { name: "Gion–Shirakawa–Kamo River", areas: ["gion"], minutes: "About 40 minutes", exit: "Leave at Shijo Bridge or Gion-Shijo Station.", url: mapsWalk("Gion-Shijo Station", "Gion-Shijo Station", "Shirakawa River Gion|Shijo Ohashi Bridge") },
-  { name: "Hommachi–Shinsaibashi", areas: ["hommachi"], minutes: "About 30 minutes", exit: "Turn around at Shinsaibashi and walk back to the hotel.", url: mapsWalk("Hotel Cordia Osaka Hommachi", "Hotel Cordia Osaka Hommachi", "Shinsaibashi-suji Shopping Street") },
-  { name: "Kiyamachi–Kamo River", areas: ["kiyamachi", "karasuma"], minutes: "About 35 minutes", exit: "Cross back at Sanjo or Oike and walk to the hotel.", url: mapsWalk("Hotel Monterey Kyoto", "Hotel Monterey Kyoto", "Kiyamachi Sanjo|Sanjo Ohashi") },
-  { name: "Hondori and back", areas: ["station"], minutes: "About 25 minutes", exit: "The arcade is straight. Walk back to Hiroshima Station.", url: mapsWalk("Hotel Granvia Hiroshima", "Hotel Granvia Hiroshima", "Hondori Shopping Street Hiroshima") },
-  { name: "Nishi-Shinjuku south loop", areas: ["nishi-shinjuku"], minutes: "About 30 minutes", exit: "The hotel is on the loop. Stop when you want to sit down.", url: mapsWalk("Nishi-shinjuku-gochome Station", "Nishi-shinjuku-gochome Station", "Shinjuku Central Park") },
-  { name: "Gora station loop", areas: ["gora"], minutes: "About 25 minutes", exit: "Walk back to Gora Station. The hotel is about one minute from there.", url: mapsWalk("Gora Station", "Gora Station", "Gora Park Hakone") }
+  { name: "Kichijoji–Inokashira Park", short: "Kichijoji loop", areas: ["kichijoji"], minutes: "about 50 min", exit: "Turn back to the station anytime", url: mapsWalk("Kichijoji Station", "Kichijoji Station", "Inokashira Park") },
+  { name: "Gion–Shirakawa–Kamo River", short: "Gion loop", areas: ["gion"], minutes: "about 40 min", exit: "Leave at Shijo or Gion-Shijo", url: mapsWalk("Gion-Shijo Station", "Gion-Shijo Station", "Shirakawa River Gion|Shijo Ohashi Bridge") },
+  { name: "Hommachi–Shinsaibashi", short: "Hommachi loop", areas: ["hommachi"], minutes: "about 30 min", exit: "Turn around at Shinsaibashi", url: mapsWalk("Hotel Cordia Osaka Hommachi", "Hotel Cordia Osaka Hommachi", "Shinsaibashi-suji Shopping Street") },
+  { name: "Kiyamachi–Kamo River", short: "Kiyamachi loop", areas: ["kiyamachi", "karasuma"], minutes: "about 35 min", exit: "Cross back at Sanjo or Oike", url: mapsWalk("Hotel Monterey Kyoto", "Hotel Monterey Kyoto", "Kiyamachi Sanjo|Sanjo Ohashi") },
+  { name: "Hondori and back", short: "Hondori loop", areas: ["station"], minutes: "about 25 min", exit: "Walk straight back to the station", url: mapsWalk("Hotel Granvia Hiroshima", "Hotel Granvia Hiroshima", "Hondori Shopping Street Hiroshima") },
+  { name: "Nishi-Shinjuku south loop", short: "Nishi-Shinjuku loop", areas: ["nishi-shinjuku"], minutes: "about 30 min", exit: "Stop when you want to sit", url: mapsWalk("Nishi-shinjuku-gochome Station", "Nishi-shinjuku-gochome Station", "Shinjuku Central Park") },
+  { name: "Gora station loop", short: "Gora loop", areas: ["gora"], minutes: "about 25 min", exit: "Walk back to Gora Station", url: mapsWalk("Gora Station", "Gora Station", "Gora Park Hakone") }
 ];
 
 const EVENING_OPTIONS = {
-  day02: { mode: "later", note: "One short walk after check-in, then dinner. Stop when you are tired." },
-  day06: { mode: "later", note: "Only after you are checked in at Hotel Monterey." },
-  day07: { mode: "after", anchor: "Tempura Endo", note: "The sightseeing day is already done. Stay around Gion if you want to keep walking." },
-  day10: { mode: "later", note: "Only after you are back from Mt Hiei." },
-  day14: { mode: "after", anchor: "check-in", note: "One short walk near the hotel, then dinner." },
-  day16: { mode: "after", anchor: "Shibuya", note: "Use these if the evening with Akko does not happen." },
-  day20: { mode: "later", note: "Only if the Romancecar gets you back with time to spare." }
+  day02: { mode: "later", note: "after check-in, then stop" },
+  day06: { mode: "later", note: "after Monterey check-in" },
+  day07: { mode: "after", anchor: "Tempura Endo", note: "stay around Gion" },
+  day10: { mode: "later", note: "after you are back" },
+  day14: { mode: "after", anchor: "check-in", note: "short walk, then dinner" },
+  day16: { mode: "after", anchor: "Shibuya", note: "if Akko's evening falls through" },
+  day20: { mode: "later", note: "if the Romancecar is early" }
 };
 
 const DINNER_NOTE = "A walk-in does not guarantee a table.";
@@ -86,32 +86,32 @@ const WALK_IN_DINNERS = {
   osaka: {
     title: "Walk-in dinner near Hommachi",
     places: [
-      { name: "Kyo Chabana Shinsaibashi", why: "Okonomiyaki, including a tomato one. Non-smoking on Tabelog. Open daily from 17:00. About 10 minutes on foot from Hommachi.", maps: mapsQuery("お好み焼き 京ちゃばな 心斎橋南船場店") },
-      { name: "Okonomiyaki Dan", why: "Okonomiyaki. Non-smoking on Tabelog. Opens at 17:00. Closed Sunday. About 15 minutes on foot from Hommachi.", maps: mapsQuery("お好み焼だん 心斎橋筋") }
+      { name: "Kyo Chabana", line: "okonomiyaki, including tomato", why: "Okonomiyaki, including a tomato one. Non-smoking on Tabelog. Open daily from 17:00. About 10 minutes on foot from Hommachi.", maps: mapsQuery("お好み焼き 京ちゃばな 心斎橋南船場店") },
+      { name: "Okonomiyaki Dan", line: "okonomiyaki, closed Sunday", why: "Okonomiyaki. Non-smoking on Tabelog. Opens at 17:00. Closed Sunday. About 15 minutes on foot from Hommachi.", maps: mapsQuery("お好み焼だん 心斎橋筋") }
     ]
   },
   kyoto: {
     title: "Walk-in dinner near Karasuma",
     places: [
-      { name: "Motoi Gyoza", why: "Gyoza. Non-smoking on Tabelog. No reservations. Closed Wednesday. About 5 minutes on foot from Karasuma Station.", maps: mapsQuery("モトイギョーザ 京都 柳馬場") },
-      { name: "DONGURI Shijo Karasuma", why: "Okonomiyaki. Non-smoking on Tabelog. Opens at 17:00. Closed days vary. About 2 minutes on foot from Shijo Station.", maps: mapsQuery("どんぐり 四条烏丸店") },
-      { name: "Kiten Ya", why: "Tempura. Non-smoking on Tabelog. Closed Sunday. About 5 minutes on foot from Karasuma Station.", maps: mapsQuery("奇天屋 京都 高倉") }
+      { name: "Motoi Gyoza", line: "gyoza, closed Wednesday", why: "Gyoza. Non-smoking on Tabelog. No reservations. Closed Wednesday. About 5 minutes on foot from Karasuma Station.", maps: mapsQuery("モトイギョーザ 京都 柳馬場") },
+      { name: "DONGURI", line: "okonomiyaki near Shijo", why: "Okonomiyaki. Non-smoking on Tabelog. Opens at 17:00. Closed days vary. About 2 minutes on foot from Shijo Station.", maps: mapsQuery("どんぐり 四条烏丸店") },
+      { name: "Kiten Ya", line: "tempura, closed Sunday", why: "Tempura. Non-smoking on Tabelog. Closed Sunday. About 5 minutes on foot from Karasuma Station.", maps: mapsQuery("奇天屋 京都 高倉") }
     ]
   },
   hiroshima: {
     title: "Walk-in dinner at Hiroshima Station",
     places: [
-      { name: "Denkosekka ekie", why: "Hiroshima okonomiyaki. Non-smoking on Tabelog. No reservations. Inside ekie at the station.", maps: mapsQuery("電光石火 ekie広島店") },
-      { name: "Micchan Sohonten ekie", why: "Hiroshima okonomiyaki. Non-smoking on Tabelog. No reservations. On the ekie 1st floor.", maps: mapsQuery("お好み焼みっちゃん総本店 ekie") },
-      { name: "Hiroshima Gyoza Ryu ekie", why: "Gyoza. Non-smoking on Tabelog. No reservations. On the ekie 2nd floor.", maps: mapsQuery("ひろしまギョウザ 餃子家 龍 ekie") }
+      { name: "Denkosekka", line: "okonomiyaki inside ekie", why: "Hiroshima okonomiyaki. Non-smoking on Tabelog. No reservations. Inside ekie at the station.", maps: mapsQuery("電光石火 ekie広島店") },
+      { name: "Micchan Sohonten", line: "okonomiyaki on the 1st floor", why: "Hiroshima okonomiyaki. Non-smoking on Tabelog. No reservations. On the ekie 1st floor.", maps: mapsQuery("お好み焼みっちゃん総本店 ekie") },
+      { name: "Gyoza Ryu", line: "gyoza on the 2nd floor", why: "Gyoza. Non-smoking on Tabelog. No reservations. On the ekie 2nd floor.", maps: mapsQuery("ひろしまギョウザ 餃子家 龍 ekie") }
     ]
   },
   tokyo: {
     title: "Walk-in dinner near Nishi-Shinjuku",
     places: [
-      { name: "Ebisu Gyoza Daifuki", why: "Gyoza. Non-smoking on Tabelog. Beside Nishi-shinjuku-gochome Station.", maps: mapsQuery("恵比寿餃子 大豊記 西新宿") },
-      { name: "Shibuya Gyoza Shinjuku West", why: "Gyoza, and mapo tofu. Non-smoking on Tabelog. About 15 minutes on foot, or one train stop to Shinjuku.", maps: mapsQuery("渋谷餃子 新宿西口店") },
-      { name: "Tofu Kichiza, Keio Department Store", why: "Tofu and tempura on the restaurant floor. Non-smoking on Tabelog. About 15 minutes on foot to Shinjuku, then the 8th floor.", maps: mapsQuery("とうふ料理 吉座 京王百貨店新宿店") }
+      { name: "Ebisu Gyoza Daifuki", line: "gyoza beside the station", why: "Gyoza. Non-smoking on Tabelog. Beside Nishi-shinjuku-gochome Station.", maps: mapsQuery("恵比寿餃子 大豊記 西新宿") },
+      { name: "Shibuya Gyoza", line: "gyoza and mapo tofu", why: "Gyoza, and mapo tofu. Non-smoking on Tabelog. About 15 minutes on foot, or one train stop to Shinjuku.", maps: mapsQuery("渋谷餃子 新宿西口店") },
+      { name: "Tofu Kichiza", line: "tofu and tempura upstairs", why: "Tofu and tempura on the restaurant floor. Non-smoking on Tabelog. About 15 minutes on foot to Shinjuku, then the 8th floor.", maps: mapsQuery("とうふ料理 吉座 京王百貨店新宿店") }
     ]
   }
 };
@@ -130,16 +130,16 @@ const DINNER_DAYS = {
 };
 
 const DINNER_LEAD = {
-  day11: "Reichan is still the plan. These are other non-smoking walk-ins at the station.",
-  day13: "For a station dinner on the way back from Miyajima."
+  day11: "Reichan stays the plan",
+  day13: "station dinner after Miyajima"
 };
 
 const PARENT_DAYS = new Set(["day17", "day18", "day19"]);
 
 const PARENT_IDEAS = [
-  { name: "Shinjuku Gyoen", why: "Benches and a greenhouse. Go in the morning. The garden closes in the late afternoon.", travel: "Toei Oedo line from Nishi-shinjuku-gochome to Shinjuku, then walk about 12 minutes.", maps: mapsQuery("Shinjuku Gyoen") },
-  { name: "Metropolitan Government observatories", why: "Free lookouts with seats inside. Cafes are downstairs.", travel: "Toei Oedo line from Nishi-shinjuku-gochome to Tochomae, about 10 minutes.", maps: mapsQuery("Tokyo Metropolitan Government Building") },
-  { name: "Shinjuku Central Park", why: "A flat park with benches, beside the government towers.", travel: "Same Tochomae ride, about 10 minutes. Or walk north from the hotel.", maps: mapsQuery("Shinjuku Central Park") }
+  { name: "Shinjuku Gyoen", line: "benches and a greenhouse", route: "Oedo to Shinjuku, then about 12 minutes on foot. Morning.", maps: mapsQuery("Shinjuku Gyoen") },
+  { name: "Tocho observatories", line: "free seats and cafes", route: "Oedo to Tochomae, about 10 minutes.", maps: mapsQuery("Tokyo Metropolitan Government Building") },
+  { name: "Shinjuku Central Park", line: "flat park with benches", route: "Same Tochomae ride, or walk north.", maps: mapsQuery("Shinjuku Central Park") }
 ];
 
 function wanderProfile(dayId) {
@@ -175,13 +175,53 @@ function wanderLoop(dayId) {
   return WALKING_LOOPS.find((loop) => loop.areas.some((area) => profile.areas.includes(area))) || null;
 }
 
-function wanderCard(item) {
-  return `<article class="wander-card">
-    <h3>${escapeHtml(item.name)}</h3>
-    <p>${escapeHtml(item.why)}</p>
-    ${item.travel ? `<p>${escapeHtml(item.travel)}</p>` : ""}
-    <p><a href="${escapeHtml(item.maps || item.url)}" target="_blank" rel="noopener noreferrer">Open in Maps</a></p>
-  </article>`;
+function mapsLink(url, label) {
+  return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label || "Maps")}</a>`;
+}
+
+function wanderLine(name, reason, url, label) {
+  const link = url ? ` · ${mapsLink(url, label)}` : "";
+  return `<p class="wander-line"><strong>${escapeHtml(name)}</strong> · ${escapeHtml(reason)}${link}</p>`;
+}
+
+function wanderNest(title, body, extraClass) {
+  const classes = ["wander-nest", extraClass].filter(Boolean).join(" ");
+  return `<details class="${classes}"><summary>${escapeHtml(title)}</summary><div class="wander-nest-body">${body}</div></details>`;
+}
+
+function dinnerNest(dayId, dinner) {
+  const lead = DINNER_LEAD[dayId] ? `<p class="wander-line">${escapeHtml(DINNER_LEAD[dayId])}</p>` : "";
+  const lines = dinner.places.map((place) => wanderLine(place.name, place.line, place.maps)).join("");
+  const count = dinner.places.length;
+  return wanderNest(`${count} dinner pick${count === 1 ? "" : "s"} · table not guaranteed`, `${lead}${lines}`);
+}
+
+function loopNest(loop) {
+  return wanderNest(`${loop.short} · ${loop.minutes}`, wanderLine(loop.short, loop.exit, loop.url, "Directions"));
+}
+
+function parentNest() {
+  const ideas = PARENT_IDEAS.map((idea) => wanderLine(idea.name, idea.line, idea.maps) + wanderNest("Route", `<p class="wander-line">${escapeHtml(idea.route)}</p>`)).join("");
+  const haneda = wanderLine("Haneda", "UA804 leaves at 16:50", mapsQuery("Haneda Airport Terminal 3"));
+  const route = wanderNest("Route", `<p class="wander-line">Leave by 13:30. Oedo to Daimon, then Asakusa. About 50 min.</p>`);
+  const base = `<p class="wander-line"><strong>Base</strong> · APA Nishi-Shinjuku Gochome</p>`;
+  return wanderNest("Parents · Nov 8–10", `${base}${ideas}${haneda}${route}${dinnerNest("", WALK_IN_DINNERS.tokyo)}`, "wander-parents");
+}
+
+function wanderSummary(day) {
+  const bits = [];
+  if (PARENT_DAYS.has(day.id)) bits.push("Parents' Tokyo ideas");
+  const loop = wanderLoop(day.id);
+  if (loop) bits.push(loop.short);
+  const dinnerKey = DINNER_DAYS[day.id];
+  let count = dinnerKey && WALK_IN_DINNERS[dinnerKey] ? WALK_IN_DINNERS[dinnerKey].places.length : 0;
+  if (!count && PARENT_DAYS.has(day.id)) count = WALK_IN_DINNERS.tokyo.places.length;
+  if (count && bits.length < 2) bits.push(`${count} dinner pick${count === 1 ? "" : "s"}`);
+  if (!bits.length) {
+    const pick = bestWanderPicks(day.id)[0];
+    if (pick) bits.push(pick.name);
+  }
+  return bits.slice(0, 2).join(" · ");
 }
 
 function wanderInnerHtml(day) {
@@ -190,38 +230,17 @@ function wanderInnerHtml(day) {
   const parts = [];
   const evening = EVENING_OPTIONS[day.id];
   if (evening) {
-    const heading = evening.mode === "after" ? `After ${evening.anchor}: options` : "Later, if you feel like it";
-    parts.push(`<h3 class="wander-kicker">${escapeHtml(heading)}</h3>`);
-    if (evening.note) parts.push(`<p class="wander-note">${escapeHtml(evening.note)}</p>`);
+    const heading = evening.mode === "after" ? `After ${evening.anchor}` : "Later, if you feel like it";
+    parts.push(`<p class="wander-line"><strong>${escapeHtml(heading)}</strong> · ${escapeHtml(evening.note)}</p>`);
   }
-  const picks = bestWanderPicks(day.id);
-  if (picks.length) {
-    parts.push(`<h3 class="wander-kicker">Best fit today</h3>`);
-    parts.push(picks.map(wanderCard).join(""));
-  }
+  bestWanderPicks(day.id).forEach((idea) => {
+    parts.push(wanderLine(idea.name, idea.line, idea.maps));
+  });
   const loop = wanderLoop(day.id);
-  if (loop) {
-    parts.push(`<h3 class="wander-kicker">A short loop</h3>`);
-    parts.push(wanderCard({ name: loop.name, why: loop.exit, travel: loop.minutes, url: loop.url }));
-  }
+  if (loop) parts.push(loopNest(loop));
   const dinnerKey = DINNER_DAYS[day.id];
   const dinner = dinnerKey ? WALK_IN_DINNERS[dinnerKey] : null;
-  if (dinner) {
-    const lead = DINNER_LEAD[day.id] ? `${DINNER_LEAD[day.id]} ` : "";
-    parts.push(`<h3 class="wander-kicker">${escapeHtml(dinner.title)}</h3>`);
-    parts.push(`<p class="wander-note">${escapeHtml(`${lead}${DINNER_NOTE}`)}</p>`);
-    parts.push(dinner.places.map(wanderCard).join(""));
-  }
-  if (PARENT_DAYS.has(day.id)) {
-    parts.push(`<h3 class="wander-kicker">Parents in Tokyo · Nov 8–10</h3>`);
-    parts.push(`<p class="wander-note">Easy ideas near Nishi-Shinjuku, each with a place to sit. Parents are at APA Nishi-Shinjuku Gochome through Nov 10.</p>`);
-    parts.push(PARENT_IDEAS.map(wanderCard).join(""));
-    parts.push(`<h3 class="wander-kicker">${escapeHtml(WALK_IN_DINNERS.tokyo.title)}</h3>`);
-    parts.push(`<p class="wander-note">${escapeHtml(DINNER_NOTE)}</p>`);
-    parts.push(WALK_IN_DINNERS.tokyo.places.map(wanderCard).join(""));
-    parts.push(`<h3 class="wander-kicker">Nov 10 · Haneda</h3>`);
-    parts.push(`<p class="wander-note">UA804 leaves Haneda at 16:50. Leave the hotel by about 13:30. Take the Toei Oedo line to Daimon, then the Asakusa line to Haneda. Allow about 50 minutes.</p>`);
-    parts.push(`<p><a href="${escapeHtml(mapsQuery("Haneda Airport Terminal 3"))}" target="_blank" rel="noopener noreferrer">Open Haneda in Maps</a></p>`);
-  }
+  if (dinner) parts.push(dinnerNest(day.id, dinner));
+  if (PARENT_DAYS.has(day.id)) parts.push(parentNest());
   return parts.join("");
 }

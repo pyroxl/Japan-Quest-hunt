@@ -3916,51 +3916,79 @@ h3 {
 .wander-body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
+  min-width: 0;
 }
 
-.wander-kicker {
-  margin: 10px 0 2px;
-  color: #1c0f14;
-  font-size: 0.95rem;
+.wander-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.wander-note,
-.wander-body > p {
+.wander-row > summary {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wander-preview {
+  font-weight: 750;
+}
+
+.wander-line {
   margin: 0;
   color: #1c0f14;
   font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.wander-card {
-  margin: 6px 0 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-
-.wander-card h3 {
-  margin: 0 0 2px;
+.wander-line a,
+.wander-nest > summary {
   color: #1c0f14;
-  font-size: 0.95rem;
 }
 
-.wander-card p,
-.rain-idea p {
-  margin: 0 0 2px;
-  color: #1c0f14;
-  font-size: 0.9rem;
-  overflow-wrap: anywhere;
-}
-
-.wander-card a,
-.wander-body > p a {
-  display: inline;
-  color: #1c0f14;
-  font-size: 0.9rem;
+.wander-line a {
   font-weight: 800;
   text-decoration: underline;
-  overflow-wrap: anywhere;
+}
+
+.wander-nest {
+  margin: 0;
+  border: 0;
+  background: transparent;
+  min-width: 0;
+}
+
+.wander-nest > summary {
+  display: block;
+  min-height: 32px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 32px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.wander-nest-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 0 0 4px 12px;
 }
 
 .wander-row.is-rainy .wander-rain {
@@ -5040,6 +5068,14 @@ button.trip-date {
   min-height: 44px;
   color: #1c0f14;
   font-weight: 800;
+}
+
+.day-fold.wander-row > summary {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 44px;
 }
 
 .day-fold > .daily-photo-card {
