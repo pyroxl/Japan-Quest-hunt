@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v197";
+const APP_VERSION = "japan-quest-v198";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -6122,6 +6122,7 @@ function walletCardHtml(item, featured) {
 }
 
 const MY_TICKET_KEY = "japanQuestMyTickets";
+const PASTE_EMAIL_OPEN_KEY = "japanQuestPasteEmailOpen";
 const MY_TICKET_DB = "japanQuestMyTickets";
 const MY_TICKET_STORE = "images";
 const SMARTEX_TICKET_HOST = "shinkansen2.jr-central.co.jp";
@@ -6306,22 +6307,25 @@ function myTicketsHtml() {
   const labelValue = linked ? ` value="${escapeHtml(`${linked.when} ${linked.title}`)}"` : "";
   const { ready, total } = walletReadyCount();
   const open = ticketBookingId ? " open" : "";
+  const pasteOpen = pasteEmailIsOpen() ? " open" : "";
   return `<details class="my-tickets" id="myTickets"${open}>
     <summary>My tickets · ${ready} of ${total} ready offline</summary>
     <p class="my-ticket-note">Saved only on this phone. Not shared.</p>
-    <div class="paste-email">
-      <button type="button" class="paste-email-open" id="pasteEmailButton">Paste from email</button>
-      <ol class="paste-email-steps">
-        <li>Open the ticket email.</li>
-        <li>Select all text and copy it.</li>
-        <li>Tap Paste from email.</li>
-      </ol>
-      <button type="button" class="paste-email-read" id="pasteEmailRead">Paste</button>
-      <label>Ticket email
-        <textarea id="pasteEmailText" rows="8" placeholder="Paste the email here.">${escapeHtml(emailPasteDraft)}</textarea>
-      </label>
-      <div id="pasteEmailPreview"></div>
-    </div>
+    <details class="paste-email" id="pasteEmail"${pasteOpen}>
+      <summary>Paste from email</summary>
+      <div class="paste-email-body">
+        <ol class="paste-email-steps">
+          <li>Open the ticket email.</li>
+          <li>Select all text and copy it.</li>
+          <li>Tap Paste.</li>
+        </ol>
+        <button type="button" class="paste-email-read" id="pasteEmailRead">Paste</button>
+        <label>Ticket email
+          <textarea id="pasteEmailText" rows="8" placeholder="Paste the email here.">${escapeHtml(emailPasteDraft)}</textarea>
+        </label>
+        <div id="pasteEmailPreview"></div>
+      </div>
+    </details>
     <p class="my-ticket-help">Or paste one QR-ticket link on each line. Add a label for one link. Choose a QR image from your photo library.</p>
     ${linkNote}
     <form id="myTicketForm">
@@ -6422,6 +6426,20 @@ function walletDayCardsHtml(group) {
   return shown.map((item) => walletCardHtml(item, false)).join("");
 }
 
+function pasteEmailIsOpen() {
+  try {
+    return localStorage.getItem(PASTE_EMAIL_OPEN_KEY) === "open";
+  } catch {
+    return false;
+  }
+}
+
+function walletDialArrow(step, disabled) {
+  const label = step < 0 ? "Previous day" : "Next day";
+  const path = step < 0 ? "M14.5 6.5 9 12l5.5 5.5" : "M9.5 6.5 15 12l-5.5 5.5";
+  return `<button type="button" class="wallet-dial-arrow" data-wallet-dial-step="${step}" aria-label="${label}"${disabled ? " disabled" : ""}><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="${path}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+}
+
 function walletDialHtml(groups) {
   if (!groups.length) return "";
   const chips = groups.map((group) => {
@@ -6431,7 +6449,27 @@ function walletDialHtml(groups) {
     const count = group.items.length;
     return `<button type="button" class="wallet-dial-chip${on ? " is-selected" : ""}${dim}" role="tab" id="wallet-day-${group.iso}" data-wallet-day="${group.iso}" aria-selected="${on}" aria-controls="walletDayItems" tabindex="${on ? "0" : "-1"}" title="${count} ${count === 1 ? "item" : "items"}">${escapeHtml(label)}</button>`;
   }).join("");
-  return `<div class="wallet-dial-wrap"><div class="wallet-dial" role="tablist" aria-label="Trip days" aria-orientation="horizontal"><span class="wallet-dial-pad" aria-hidden="true"></span>${chips}<span class="wallet-dial-pad" aria-hidden="true"></span></div></div>`;
+  const index = groups.findIndex((group) => group.iso === walletSelectedIso);
+  return `<section class="wallet-dial-block">
+    <h3 id="walletDialLabel">Pick a day</h3>
+    <div class="wallet-dial-wrap">
+      ${walletDialArrow(-1, index <= 0)}
+      <div class="wallet-dial-scroller">
+        <div class="wallet-dial" role="tablist" aria-labelledby="walletDialLabel" aria-orientation="horizontal"><span class="wallet-dial-pad" aria-hidden="true"></span>${chips}<span class="wallet-dial-pad" aria-hidden="true"></span></div>
+      </div>
+      ${walletDialArrow(1, index < 0 || index >= groups.length - 1)}
+    </div>
+  </section>`;
+}
+
+function updateWalletDialArrows() {
+  const chips = [...(ticketsPanel?.querySelectorAll("[data-wallet-day]") || [])];
+  const index = chips.findIndex((chip) => chip.dataset.walletDay === walletSelectedIso);
+  ticketsPanel?.querySelectorAll("[data-wallet-dial-step]").forEach((button) => {
+    const step = Number(button.dataset.walletDialStep);
+    const disabled = index < 0 || (step < 0 ? index <= 0 : index >= chips.length - 1);
+    button.disabled = disabled;
+  });
 }
 
 function walletDialCenterIso(dial) {
@@ -6476,6 +6514,7 @@ function paintWalletDay(iso) {
   if (!host || !group) return;
   host.setAttribute("aria-labelledby", `wallet-day-${iso}`);
   host.innerHTML = walletDayCardsHtml(group);
+  updateWalletDialArrows();
   void hydrateMyTicketImages();
 }
 
@@ -6557,10 +6596,12 @@ function renderTickets() {
   const dayHtml = selected
     ? `<div class="wallet-day-items" id="walletDayItems" role="tabpanel" aria-labelledby="wallet-day-${selected.iso}">${walletDayCardsHtml(selected)}</div>`
     : `<p class="my-ticket-empty">No tickets yet.</p>`;
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletDialHtml(groups)}${dayHtml}`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletDialHtml(groups)}${walletFiltersHtml()}${dayHtml}`;
   const dial = ticketsPanel.querySelector(".wallet-dial");
   if (dial) bindWalletDial(dial);
   centerWalletDial(walletSelectedIso);
+  updateWalletDialArrows();
+  bindPasteEmailMemory();
   refreshEmailPreview();
   void hydrateMyTicketImages();
 }
@@ -8309,9 +8350,32 @@ ticketsPanel?.addEventListener("input", (event) => {
   refreshEmailPreview();
 });
 
+function bindPasteEmailMemory() {
+  const node = ticketsPanel?.querySelector("#pasteEmail");
+  if (!node) return;
+  node.addEventListener("toggle", () => {
+    try {
+      localStorage.setItem(PASTE_EMAIL_OPEN_KEY, node.open ? "open" : "closed");
+    } catch {
+      /* this phone may block storage */
+    }
+  });
+}
+
 ticketsPanel?.addEventListener("click", (event) => {
-  if (event.target.closest("#pasteEmailButton") || event.target.closest("#pasteEmailRead")) {
+  if (event.target.closest("#pasteEmailRead")) {
     void pasteEmailFromClipboard();
+    return;
+  }
+  const dialStep = event.target.closest("[data-wallet-dial-step]");
+  if (dialStep && !dialStep.disabled) {
+    const chips = [...ticketsPanel.querySelectorAll("[data-wallet-day]")];
+    const index = chips.findIndex((chip) => chip.dataset.walletDay === walletSelectedIso);
+    const next = chips[index + Number(dialStep.dataset.walletDialStep)];
+    if (!next) return;
+    walletSelectedIso = next.dataset.walletDay;
+    paintWalletDay(walletSelectedIso);
+    centerWalletDial(walletSelectedIso);
     return;
   }
   const phone = event.target.closest("input[name=ticketPhone]");

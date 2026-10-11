@@ -5564,36 +5564,99 @@ body[data-traveler="mai"] .next-stop {
 .tickets-panel {
   min-width: 0;
   max-width: 100%;
+  gap: 8px;
+}
+
+.tickets-panel .section-heading h2,
+.tickets-panel .next-stop,
+.tickets-panel .my-tickets {
+  margin-bottom: 0;
+}
+
+.wallet-dial-block {
+  margin: 0;
+  padding: 8px 8px 10px;
+  border: 2px solid #1c0f14;
+  border-radius: 14px;
+  background: #fff;
+  color: #1c0f14;
+}
+
+.wallet-dial-block h3 {
+  margin: 0 0 6px;
+  color: #1c0f14;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 .wallet-dial-wrap {
-  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 4px;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  margin: 0 0 12px;
+  margin: 0;
   overflow: hidden;
 }
 
-.wallet-dial-wrap::before,
-.wallet-dial-wrap::after {
+.wallet-dial-arrow {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid #1c0f14;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c0f14;
+  cursor: pointer;
+}
+
+.wallet-dial-arrow:disabled {
+  opacity: 1;
+  border-color: #8a7068;
+  background: #fff;
+  color: #5c4036;
+  cursor: default;
+}
+
+.wallet-dial-arrow:focus-visible,
+.wallet-dial-chip:focus-visible,
+.my-tickets > summary:focus-visible,
+.paste-email > summary:focus-visible {
+  outline: 2px solid #285b96;
+  outline-offset: 2px;
+}
+
+.wallet-dial-scroller {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.wallet-dial-scroller::before,
+.wallet-dial-scroller::after {
   content: "";
   position: absolute;
   top: 0;
-  bottom: 10px;
-  width: 18px;
+  bottom: 0;
+  width: 36px;
   z-index: 1;
   pointer-events: none;
 }
 
-.wallet-dial-wrap::before {
+.wallet-dial-scroller::before {
   left: 0;
-  background: linear-gradient(90deg, var(--paper), transparent);
+  background: linear-gradient(90deg, #fff 10%, rgba(255, 255, 255, 0));
 }
 
-.wallet-dial-wrap::after {
+.wallet-dial-scroller::after {
   right: 0;
-  background: linear-gradient(270deg, var(--paper), transparent);
+  background: linear-gradient(270deg, #fff 10%, rgba(255, 255, 255, 0));
 }
 
 .wallet-dial {
@@ -5605,13 +5668,16 @@ body[data-traveler="mai"] .next-stop {
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
-  padding: 2px 0 8px;
-  scrollbar-width: thin;
-  scrollbar-color: #1c0f14 transparent;
+  padding: 0;
+  scrollbar-width: none;
+}
+
+.wallet-dial::-webkit-scrollbar {
+  display: none;
 }
 
 .wallet-dial-pad {
-  flex: 0 0 calc(50% - 0.25rem);
+  flex: 0 0 calc(50% - 3.4rem);
 }
 
 .wallet-dial-chip {
@@ -5619,7 +5685,7 @@ body[data-traveler="mai"] .next-stop {
   scroll-snap-align: center;
   min-height: 44px;
   padding: 8px 14px;
-  border: 1px solid #1c0f14;
+  border: 2px solid #1c0f14;
   border-radius: 999px;
   background: #fff;
   color: #1c0f14;
@@ -5640,12 +5706,6 @@ body[data-traveler="mai"] .next-stop {
 .wallet-dial-chip.is-dim:not(.is-selected) {
   border-color: #8a7068;
   color: #5c4036;
-}
-
-.wallet-dial-chip:focus-visible,
-.my-tickets > summary:focus-visible {
-  outline: 2px solid #285b96;
-  outline-offset: 2px;
 }
 
 .wallet-day-items .wallet-card:last-child {
@@ -5677,8 +5737,25 @@ body[data-traveler="mai"] .next-stop {
   cursor: pointer;
 }
 
-body[data-traveler="mai"] .wallet-dial {
-  scrollbar-color: #8e2f58 transparent;
+body[data-traveler="mai"] .wallet-dial-block {
+  border-color: #8e2f58;
+  background: #fff;
+  color: #351f2c;
+}
+
+body[data-traveler="mai"] .wallet-dial-block h3,
+body[data-traveler="mai"] .wallet-dial-arrow {
+  color: #351f2c;
+}
+
+body[data-traveler="mai"] .wallet-dial-arrow {
+  border-color: #8e2f58;
+  background: #fff;
+}
+
+body[data-traveler="mai"] .wallet-dial-arrow:disabled {
+  border-color: #8e2f58;
+  color: #6b3e54;
 }
 
 body[data-traveler="mai"] .wallet-dial-chip {
@@ -5703,8 +5780,18 @@ body[data-traveler="mai"] .my-tickets {
   background: #fff;
 }
 
-body[data-traveler="mai"] .my-tickets > summary {
+body[data-traveler="mai"] .my-tickets > summary,
+body[data-traveler="mai"] .paste-email > summary {
   color: #351f2c;
+}
+
+body[data-traveler="mai"] .paste-email {
+  border-color: #8e2f58;
+  background: #fff;
+}
+
+body[data-traveler="mai"] .paste-email[open] > summary {
+  border-bottom-color: #8e2f58;
 }
 
 body[data-traveler="mai"] .wallet-filters button[aria-pressed="true"] {
@@ -5737,7 +5824,49 @@ body[data-traveler="mai"] .wallet-filters button[aria-pressed="true"] {
   font-weight: 800;
 }
 
-.paste-email-open,
+.paste-email {
+  margin: 0 0 8px;
+  border: 1px solid #1c0f14;
+  border-radius: 10px;
+  background: #fff;
+  color: #1c0f14;
+}
+
+.paste-email > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 8px 12px;
+  color: #1c0f14;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+  list-style: none;
+}
+
+.paste-email > summary::-webkit-details-marker {
+  display: none;
+}
+
+.paste-email > summary::after {
+  content: "▸";
+  margin-left: 8px;
+  font-weight: 800;
+}
+
+.paste-email[open] > summary::after {
+  content: "▾";
+}
+
+.paste-email[open] > summary {
+  border-bottom: 1px solid #1c0f14;
+}
+
+.paste-email-body {
+  padding: 10px 12px 4px;
+}
+
 .paste-email-save {
   display: flex;
   align-items: center;
