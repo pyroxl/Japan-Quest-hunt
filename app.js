@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v196";
+const APP_VERSION = "japan-quest-v197";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -6000,6 +6000,8 @@ const WALLET_FILTERS = [
 ];
 
 let walletTypeFilter = "all";
+let walletSelectedIso = "";
+let walletDialCentering = false;
 let ticketBookingId = "";
 
 const QR_TICKET_IDS = new Set([
@@ -6359,50 +6361,16 @@ function walletSummaryDate(iso) {
   });
 }
 
-function walletShortName(item) {
-  if (item.kind === "train" && /Nozomi|Hikari/.test(item.title)) return "Shinkansen";
-  if (item.kind === "flight") return item.title.split(" ")[0];
-  const named = {
-    "royal-park": "Royal Park",
-    "shinagawa-prince": "Shinagawa Prince",
-    cordia: "Cordia",
-    monterey: "Monterey",
-    granvia: "Granvia",
-    "parents-kyoto": "Kyoto room",
-    "parents-hiroshima": "Hiroshima room",
-    "apa-nov5": "APA",
-    "apa-nov11": "APA",
-    "parents-apa": "APA",
-    setsugetsuka: "Setsugetsuka",
-    "himeji-tickets": "Himeji Castle",
-    teamlab: "teamLab"
-  };
-  return named[item.id] || item.title;
-}
-
-function walletSummaryNames(items) {
-  const counts = [];
-  items.forEach((item) => {
-    const name = walletShortName(item);
-    const last = counts.at(-1);
-    if (last && last.name === name) last.count += 1;
-    else counts.push({ name, count: 1 });
-  });
-  return counts.map((entry) => entry.count > 1 ? `${entry.count} ${entry.name}` : entry.name).join(", ");
-}
-
 function walletPlaceName(iso, items) {
   const names = { osaka: "Osaka", kyoto: "Kyoto", hiroshima: "Hiroshima", tokyo: "Tokyo", hakone: "Hakone" };
   const row = browseRows().find((entry) => entry.day.date === iso);
-  if (row && !awayLine(row.day.date)) return names[stayCityForDay(row.day)] || "Japan";
+  if (row && !awayLine(row.day.date)) return names[stayCityForDay(row.day)] || names[row.cityId] || "Japan";
   if (items.every((item) => item.kind === "flight")) return "Flight";
   return "Japan";
 }
 
-function walletDaySummary(group) {
-  const count = group.items.length;
-  const noun = count === 1 ? "item" : "items";
-  return `${walletSummaryDate(group.iso)} · ${walletPlaceName(group.iso, group.items)} · ${count} ${noun}: ${walletSummaryNames(group.items)}`;
+function walletChipLabel(group) {
+  return `${walletSummaryDate(group.iso)} ${walletPlaceName(group.iso, group.items)}`;
 }
 
 function walletDayGroups(items) {
@@ -6421,19 +6389,125 @@ function walletDayGroups(items) {
   return groups;
 }
 
-function walletOpenIso(groups) {
-  const today = japanTodayIso();
-  return groups.find((group) => group.iso === today)?.iso
-    || groups.find((group) => group.iso > today)?.iso
-    || "";
+function walletPreparedItems() {
+  return visibleWallet()
+    .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
+    .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
 }
 
-function walletGroupsHtml(items, openIso = "") {
-  if (!items.length) return "";
-  return walletDayGroups(items).map((group) => {
-    const open = group.iso === openIso ? " open" : "";
-    return `<details class="wallet-day-fold"${open}><summary>${escapeHtml(walletDaySummary(group))}</summary>${group.items.map((item) => walletCardHtml(item, false)).join("")}</details>`;
+function walletDefaultIso(groups) {
+  const today = japanTodayIso();
+  const isos = groups.map((group) => group.iso);
+  if (!isos.length) return "";
+  if (isos.includes(today)) return today;
+  const next = isos.find((iso) => iso > today) || "";
+  const prev = [...isos].reverse().find((iso) => iso < today) || "";
+  if (today < tripStartIso()) return next || prev;
+  if (today > tripEndIso()) return prev || next;
+  if (!next || !prev) return next || prev;
+  const todayMs = Date.parse(`${today}T00:00:00Z`);
+  const nextDist = Date.parse(`${next}T00:00:00Z`) - todayMs;
+  const prevDist = todayMs - Date.parse(`${prev}T00:00:00Z`);
+  return nextDist <= prevDist ? next : prev;
+}
+
+function walletDayMatchesFilter(group) {
+  if (walletTypeFilter === "all") return true;
+  return group.items.some((item) => item.kind === walletTypeFilter);
+}
+
+function walletDayCardsHtml(group) {
+  const shown = walletTypeFilter === "all" ? group.items : group.items.filter((item) => item.kind === walletTypeFilter);
+  if (!shown.length) return `<p class="my-ticket-empty">No tickets of this type.</p>`;
+  return shown.map((item) => walletCardHtml(item, false)).join("");
+}
+
+function walletDialHtml(groups) {
+  if (!groups.length) return "";
+  const chips = groups.map((group) => {
+    const on = group.iso === walletSelectedIso;
+    const dim = walletDayMatchesFilter(group) ? "" : " is-dim";
+    const label = walletChipLabel(group);
+    const count = group.items.length;
+    return `<button type="button" class="wallet-dial-chip${on ? " is-selected" : ""}${dim}" role="tab" id="wallet-day-${group.iso}" data-wallet-day="${group.iso}" aria-selected="${on}" aria-controls="walletDayItems" tabindex="${on ? "0" : "-1"}" title="${count} ${count === 1 ? "item" : "items"}">${escapeHtml(label)}</button>`;
   }).join("");
+  return `<div class="wallet-dial-wrap"><div class="wallet-dial" role="tablist" aria-label="Trip days" aria-orientation="horizontal"><span class="wallet-dial-pad" aria-hidden="true"></span>${chips}<span class="wallet-dial-pad" aria-hidden="true"></span></div></div>`;
+}
+
+function walletDialCenterIso(dial) {
+  const mid = dial.getBoundingClientRect().left + dial.clientWidth / 2;
+  let best = "";
+  let bestDist = Infinity;
+  dial.querySelectorAll("[data-wallet-day]").forEach((chip) => {
+    const rect = chip.getBoundingClientRect();
+    const dist = Math.abs(rect.left + rect.width / 2 - mid);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = chip.dataset.walletDay;
+    }
+  });
+  return best;
+}
+
+function centerWalletDial(iso) {
+  const dial = ticketsPanel?.querySelector(".wallet-dial");
+  const chip = dial?.querySelector(`[data-wallet-day="${iso}"]`);
+  if (!dial || !chip || dial.clientWidth === 0) return;
+  const dialRect = dial.getBoundingClientRect();
+  const chipRect = chip.getBoundingClientRect();
+  const delta = chipRect.left + chipRect.width / 2 - (dialRect.left + dialRect.width / 2);
+  if (Math.abs(delta) < 1) return;
+  walletDialCentering = true;
+  dial.scrollLeft += delta;
+  window.requestAnimationFrame(() => {
+    walletDialCentering = false;
+  });
+}
+
+function paintWalletDay(iso) {
+  const group = walletDayGroups(walletPreparedItems()).find((entry) => entry.iso === iso);
+  ticketsPanel?.querySelectorAll("[data-wallet-day]").forEach((button) => {
+    const on = button.dataset.walletDay === iso;
+    button.classList.toggle("is-selected", on);
+    button.setAttribute("aria-selected", on ? "true" : "false");
+    button.tabIndex = on ? 0 : -1;
+  });
+  const host = ticketsPanel?.querySelector("#walletDayItems");
+  if (!host || !group) return;
+  host.setAttribute("aria-labelledby", `wallet-day-${iso}`);
+  host.innerHTML = walletDayCardsHtml(group);
+  void hydrateMyTicketImages();
+}
+
+function bindWalletDial(dial) {
+  let timer = 0;
+  const sync = () => {
+    if (walletDialCentering) return;
+    const iso = walletDialCenterIso(dial);
+    if (!iso || iso === walletSelectedIso) return;
+    walletSelectedIso = iso;
+    paintWalletDay(iso);
+  };
+  dial.addEventListener("scroll", () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(sync, 140);
+  }, { passive: true });
+  dial.addEventListener("scrollend", () => {
+    window.clearTimeout(timer);
+    sync();
+  });
+  dial.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const chips = [...dial.querySelectorAll("[data-wallet-day]")];
+    const index = chips.findIndex((chip) => chip.dataset.walletDay === walletSelectedIso);
+    const next = chips[index + (event.key === "ArrowRight" ? 1 : -1)];
+    if (!next) return;
+    event.preventDefault();
+    walletSelectedIso = next.dataset.walletDay;
+    paintWalletDay(walletSelectedIso);
+    centerWalletDial(walletSelectedIso);
+    next.focus({ preventScroll: true });
+  });
 }
 
 function walletFiltersHtml() {
@@ -6472,22 +6546,21 @@ function stillToBookHtml() {
 function renderTickets() {
   if (!ticketsPanel) return;
   const now = japanNowMs();
-  const items = visibleWallet()
-    .map((item) => ({ ...item, atMs: Date.parse(item.at) }))
-    .sort((a, b) => a.atMs - b.atMs || a.title.localeCompare(b.title));
-  const matches = walletTypeFilter === "all" ? items : items.filter((item) => item.kind === walletTypeFilter);
-  const upcoming = matches.filter((item) => item.atMs >= now);
-  const past = matches.filter((item) => item.atMs < now);
-  const nextSource = items.filter((item) => item.atMs >= now)[0];
+  const items = walletPreparedItems();
+  const groups = walletDayGroups(items);
+  if (!groups.some((group) => group.iso === walletSelectedIso)) walletSelectedIso = walletDefaultIso(groups);
+  const selected = groups.find((group) => group.iso === walletSelectedIso);
+  const nextSource = items.find((item) => item.atMs >= now);
   const nextHtml = nextSource
     ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
-  const done = past.length
-    ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
-    : "";
-  const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
-  const openIso = walletOpenIso(walletDayGroups(upcoming));
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming, openIso)}${empty}${done}`;
+  const dayHtml = selected
+    ? `<div class="wallet-day-items" id="walletDayItems" role="tabpanel" aria-labelledby="wallet-day-${selected.iso}">${walletDayCardsHtml(selected)}</div>`
+    : `<p class="my-ticket-empty">No tickets yet.</p>`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletDialHtml(groups)}${dayHtml}`;
+  const dial = ticketsPanel.querySelector(".wallet-dial");
+  if (dial) bindWalletDial(dial);
+  centerWalletDial(walletSelectedIso);
   refreshEmailPreview();
   void hydrateMyTicketImages();
 }
@@ -8255,6 +8328,13 @@ ticketsPanel?.addEventListener("click", (event) => {
   if (filter) {
     walletTypeFilter = filter.dataset.walletFilter;
     renderTickets();
+    return;
+  }
+  const dayChip = event.target.closest("[data-wallet-day]");
+  if (dayChip) {
+    walletSelectedIso = dayChip.dataset.walletDay;
+    paintWalletDay(walletSelectedIso);
+    centerWalletDial(walletSelectedIso);
     return;
   }
   const saveQr = event.target.closest("[data-save-qr]");
