@@ -10,7 +10,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v193">
+    <link rel="stylesheet" href="styles.css?v194">
   </head>
   <body>
     <div class="app-shell">
@@ -29,6 +29,11 @@
           <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
         <div class="app-menu" id="appMenu" hidden>
+          <div class="traveler-toggle" role="group" aria-label="Who is using this phone">
+            <button type="button" data-traveler="brianMai" aria-pressed="false">Brian &amp; Mai</button>
+            <button type="button" data-traveler="parents" aria-pressed="false">Parents</button>
+          </div>
+          <hr>
           <nav aria-label="Planning tools">
             <button type="button" data-section="admin">Trip admin</button>
             <button type="button" data-section="food">Food</button>
@@ -36,7 +41,7 @@
           </nav>
           <hr>
           <button type="button" id="archiveToggle" aria-pressed="false">Show skipped</button>
-          <p class="menu-version">v193</p>
+          <p class="menu-version">v194</p>
         </div>
       </header>
 
@@ -157,6 +162,15 @@
         </button>
       </nav>
       </div>
+      <div class="traveler-ask" id="travelerAsk" hidden>
+        <div class="traveler-ask-card" role="dialog" aria-modal="true" aria-labelledby="travelerAskTitle">
+          <h2 id="travelerAskTitle">Who is using this phone?</h2>
+          <div class="traveler-toggle" role="group" aria-label="Who is using this phone">
+            <button type="button" data-traveler="brianMai">Brian &amp; Mai</button>
+            <button type="button" data-traveler="parents">Parents</button>
+          </div>
+        </div>
+      </div>
       <div class="ticket-viewer" id="ticketViewer" hidden>
         <p class="ticket-brightness">Turn screen brightness up.</p>
         <button type="button" id="ticketViewerClose">Close</button>
@@ -167,8 +181,8 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="ticket-email.js?v193"></script>
-    <script src="wander.js?v193"></script>
-    <script src="app.js?v193"></script>
+    <script src="ticket-email.js?v194"></script>
+    <script src="wander.js?v194"></script>
+    <script src="app.js?v194"></script>
   </body>
 </html>

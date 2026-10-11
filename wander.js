@@ -56,7 +56,7 @@ const WANDER_IDEAS = {
     { id: "nakamichi", name: "Nakamichi-dori", line: "covered street for a snack", why: "A covered shopping street for one snack or a bakery check.", travel: "About 3 minutes on foot from Kichijoji Station.", maps: mapsQuery("Nakamichi-dori Kichijoji"), areas: ["kichijoji"], energy: "medium", when: ["day", "afternoon", "evening"], rank: 1 }
   ],
   hakone: [
-    { id: "gora-park", name: "Gora Park", line: "short garden if time", why: "A short garden walk if the museum ends early.", travel: "About 10 minutes on foot from Tokinoyu Setsugetsuka.", maps: mapsQuery("Gora Park Hakone"), areas: ["gora"], energy: "low", when: ["afternoon"], rank: 0 }
+    { id: "gora-park", name: "Gora Park", line: "short garden if time", why: "A short garden walk if the museum ends early.", travel: "About 10 minutes on foot from Tokinoyu Setsugetsuka.", maps: mapsQuery("Gora Park Hakone"), areas: ["gora"], energy: "low", when: ["afternoon"], rank: 0, who: "brianMai" }
   ]
 };
 
@@ -208,9 +208,18 @@ function parentNest() {
   return wanderNest("Parents · Nov 8–10", `${base}${ideas}${haneda}${route}${dinnerNest("", WALK_IN_DINNERS.tokyo)}`, "wander-parents");
 }
 
+function parentsWanderView() {
+  return typeof travelerView === "function" && travelerView() === "parents";
+}
+
+function coupleWanderView() {
+  return typeof travelerView === "function" && travelerView() === "brianMai";
+}
+
 function wanderSummary(day) {
   const bits = [];
-  if (PARENT_DAYS.has(day.id)) bits.push("Parents' Tokyo ideas");
+  if (PARENT_DAYS.has(day.id) && parentsWanderView()) return "Shinjuku Gyoen · Tocho";
+  if (PARENT_DAYS.has(day.id) && !coupleWanderView()) bits.push("Parents' Tokyo ideas");
   const loop = wanderLoop(day.id);
   if (loop) bits.push(loop.short);
   const dinnerKey = DINNER_DAYS[day.id];
@@ -227,6 +236,7 @@ function wanderSummary(day) {
 function wanderInnerHtml(day) {
   const profile = wanderProfile(day.id);
   if (!profile) return "";
+  if (PARENT_DAYS.has(day.id) && parentsWanderView()) return parentNest();
   const parts = [];
   const evening = EVENING_OPTIONS[day.id];
   if (evening) {
@@ -234,6 +244,7 @@ function wanderInnerHtml(day) {
     parts.push(`<p class="wander-line"><strong>${escapeHtml(heading)}</strong> · ${escapeHtml(evening.note)}</p>`);
   }
   bestWanderPicks(day.id).forEach((idea) => {
+    if (idea.who && typeof sees === "function" && !sees(idea.who)) return;
     parts.push(wanderLine(idea.name, idea.line, idea.maps));
   });
   const loop = wanderLoop(day.id);
@@ -241,6 +252,6 @@ function wanderInnerHtml(day) {
   const dinnerKey = DINNER_DAYS[day.id];
   const dinner = dinnerKey ? WALK_IN_DINNERS[dinnerKey] : null;
   if (dinner) parts.push(dinnerNest(day.id, dinner));
-  if (PARENT_DAYS.has(day.id)) parts.push(parentNest());
+  if (PARENT_DAYS.has(day.id) && !coupleWanderView()) parts.push(parentNest());
   return parts.join("");
 }

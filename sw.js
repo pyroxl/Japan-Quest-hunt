@@ -1,11 +1,11 @@
-const CACHE_NAME = "japan-quest-v193";
+const CACHE_NAME = "japan-quest-v194";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v193",
-  "./ticket-email.js?v193",
-  "./wander.js?v193",
-  "./app.js?v193",
+  "./styles.css?v194",
+  "./ticket-email.js?v194",
+  "./wander.js?v194",
+  "./app.js?v194",
   "./leaflet.css",
   "./leaflet.js",
   "./place-coordinates.js",
