@@ -1,28 +1,38 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v194";
+const APP_VERSION = "japan-quest-v195";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
   const saved = localStorage.getItem(TRAVELER_KEY);
-  return saved === "parents" || saved === "brianMai" ? saved : "";
+  if (saved === "brianMai") {
+    localStorage.setItem(TRAVELER_KEY, "brian");
+    return "brian";
+  }
+  return saved === "brian" || saved === "mai" || saved === "parents" ? saved : "";
+}
+
+function coupleView() {
+  const view = travelerView();
+  return view === "brian" || view === "mai";
 }
 
 function sees(who) {
   if (!who || who === "shared") return true;
   const view = travelerView();
   if (!view) return true;
+  if (who === "brianMai") return coupleView();
   return who === view;
 }
 
 function awayLine(iso) {
   const view = travelerView();
-  if (view === "brianMai" && iso === "2026-10-23") return "Not in Japan yet.";
+  if (coupleView() && iso === "2026-10-23") return "Not in Japan yet.";
   if (view === "parents" && iso >= "2026-11-11" && iso <= "2026-11-13") return "Flown home.";
   return "";
 }
 
 function tripStartIso() {
-  return travelerView() === "brianMai" ? "2026-10-24" : "2026-10-23";
+  return coupleView() ? "2026-10-24" : "2026-10-23";
 }
 
 function tripEndIso() {
@@ -1183,7 +1193,9 @@ const DAY_VIEWS = {
 };
 
 function dayView(day) {
-  return DAY_VIEWS[day?.id]?.[travelerView()] || null;
+  const view = travelerView();
+  const key = view === "brian" || view === "mai" ? "brianMai" : view;
+  return DAY_VIEWS[day?.id]?.[key] || null;
 }
 
 function parentArrivalDay() {
@@ -1394,8 +1406,11 @@ function saveState() {
 function applyTheme() {
   state.theme = "light";
   document.body.dataset.theme = "light";
+  const view = travelerView();
+  if (view) document.body.dataset.traveler = view;
+  else delete document.body.dataset.traveler;
   document.documentElement.style.colorScheme = "only light";
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", "#fff0f6");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", view === "mai" ? "#fff6f8" : "#fff0f6");
 }
 
 function itemId(scope, groupIndex, itemIndex) {
@@ -3480,7 +3495,7 @@ function renderRestaurantBookings() {
   if (legend) {
     if (travelerView() === "parents" && state.activeCity === "tokyo") {
       legend.textContent = "Nov 5–7 is with everyone. Nov 8–10 is your Tokyo time.";
-    } else if (travelerView() === "brianMai" && state.activeCity === "tokyo") {
+    } else if (coupleView() && state.activeCity === "tokyo") {
       legend.textContent = "Party of 6 through Nov 7. Hakone and Nov 12 are the two of you.";
     } else legend.textContent = state.activeCity === "osaka"
       ? "Party: 5 in Osaka · 8 on the family meal"
@@ -7455,8 +7470,8 @@ function openMenu() {
   if (!appMenu || !menuButton) return;
   appMenu.hidden = false;
   menuButton.setAttribute("aria-expanded", "true");
-  const current = appMenu.querySelector("[aria-current='page']") || menuButtons()[0];
-  current?.focus();
+  const current = appMenu.querySelector("[aria-current='page']") || appMenu.querySelector("nav button");
+  requestAnimationFrame(() => current?.focus());
 }
 
 function closeMenu(restoreFocus) {
@@ -8261,11 +8276,12 @@ function syncTravelerPressed() {
 }
 
 function chooseTraveler(value) {
-  if (value !== "brianMai" && value !== "parents") return;
+  if (value !== "brian" && value !== "mai" && value !== "parents") return;
   localStorage.setItem(TRAVELER_KEY, value);
   const ask = document.querySelector("#travelerAsk");
   if (ask) ask.hidden = true;
   syncTravelerPressed();
+  applyTheme();
   todayBrowseId = "";
   closeMenu(false);
   showSection(document.body.dataset.section || "today");
@@ -8286,7 +8302,7 @@ function ensureTraveler() {
 }
 
 document.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-traveler]");
+  const button = event.target.closest("button[data-traveler]");
   if (!button) return;
   event.stopPropagation();
   chooseTraveler(button.dataset.traveler);

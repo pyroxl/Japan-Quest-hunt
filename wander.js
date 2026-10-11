@@ -213,7 +213,7 @@ function parentsWanderView() {
 }
 
 function coupleWanderView() {
-  return typeof travelerView === "function" && travelerView() === "brianMai";
+  return typeof coupleView === "function" ? coupleView() : typeof travelerView === "function" && (travelerView() === "brian" || travelerView() === "mai");
 }
 
 function wanderSummary(day) {
