@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v195";
+const APP_VERSION = "japan-quest-v196";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -6039,13 +6039,13 @@ function visibleQrIds() {
   });
 }
 
-function walletReadyHtml() {
+function walletReadyCount() {
   const ids = visibleQrIds();
   const ready = ids.filter((id) => {
     const tickets = savedTicketsForBooking(id);
     return tickets.length > 0 && tickets.every(ticketHasPicture);
   }).length;
-  return `<p class="wallet-ready">Ready offline: ${ready} of ${ids.length}</p>`;
+  return { ready, total: ids.length };
 }
 
 function ticketOpenControl(ticket) {
@@ -6302,8 +6302,10 @@ function myTicketsHtml() {
   const linked = linkedBooking();
   const linkNote = linked ? `<p class="my-ticket-link">This ticket is for ${escapeHtml(linked.title)}.</p>` : "";
   const labelValue = linked ? ` value="${escapeHtml(`${linked.when} ${linked.title}`)}"` : "";
-  return `<section class="my-tickets" id="myTickets" aria-labelledby="myTicketsTitle">
-    <h3 id="myTicketsTitle" class="wallet-section">My tickets</h3>
+  const { ready, total } = walletReadyCount();
+  const open = ticketBookingId ? " open" : "";
+  return `<details class="my-tickets" id="myTickets"${open}>
+    <summary>My tickets · ${ready} of ${total} ready offline</summary>
     <p class="my-ticket-note">Saved only on this phone. Not shared.</p>
     <div class="paste-email">
       <button type="button" class="paste-email-open" id="pasteEmailButton">Paste from email</button>
@@ -6335,7 +6337,7 @@ function myTicketsHtml() {
     <p class="my-ticket-status${myTicketStatus.includes("Next:") ? " my-ticket-next" : ""}" id="myTicketStatus" role="status">${escapeHtml(myTicketStatus)}</p>
     <div id="myTicketList">${list}</div>
     ${clear}
-  </section>`;
+  </details>`;
 }
 
 async function hydrateMyTicketImages() {
@@ -6348,17 +6350,59 @@ async function hydrateMyTicketImages() {
   }));
 }
 
-function walletDayLabel(iso) {
+function walletSummaryDate(iso) {
   const { year, month, day } = isoParts(iso);
-  const text = new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
-    weekday: "short",
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     timeZone: "UTC"
-  }).replace(",", "");
-  const row = tripRows().find((entry) => entry.day.date === iso);
-  if (!row) return text;
-  return `${text} · Day ${Number(row.day.id.replace("day", ""))}`;
+  });
+}
+
+function walletShortName(item) {
+  if (item.kind === "train" && /Nozomi|Hikari/.test(item.title)) return "Shinkansen";
+  if (item.kind === "flight") return item.title.split(" ")[0];
+  const named = {
+    "royal-park": "Royal Park",
+    "shinagawa-prince": "Shinagawa Prince",
+    cordia: "Cordia",
+    monterey: "Monterey",
+    granvia: "Granvia",
+    "parents-kyoto": "Kyoto room",
+    "parents-hiroshima": "Hiroshima room",
+    "apa-nov5": "APA",
+    "apa-nov11": "APA",
+    "parents-apa": "APA",
+    setsugetsuka: "Setsugetsuka",
+    "himeji-tickets": "Himeji Castle",
+    teamlab: "teamLab"
+  };
+  return named[item.id] || item.title;
+}
+
+function walletSummaryNames(items) {
+  const counts = [];
+  items.forEach((item) => {
+    const name = walletShortName(item);
+    const last = counts.at(-1);
+    if (last && last.name === name) last.count += 1;
+    else counts.push({ name, count: 1 });
+  });
+  return counts.map((entry) => entry.count > 1 ? `${entry.count} ${entry.name}` : entry.name).join(", ");
+}
+
+function walletPlaceName(iso, items) {
+  const names = { osaka: "Osaka", kyoto: "Kyoto", hiroshima: "Hiroshima", tokyo: "Tokyo", hakone: "Hakone" };
+  const row = browseRows().find((entry) => entry.day.date === iso);
+  if (row && !awayLine(row.day.date)) return names[stayCityForDay(row.day)] || "Japan";
+  if (items.every((item) => item.kind === "flight")) return "Flight";
+  return "Japan";
+}
+
+function walletDaySummary(group) {
+  const count = group.items.length;
+  const noun = count === 1 ? "item" : "items";
+  return `${walletSummaryDate(group.iso)} · ${walletPlaceName(group.iso, group.items)} · ${count} ${noun}: ${walletSummaryNames(group.items)}`;
 }
 
 function walletDayGroups(items) {
@@ -6377,9 +6421,19 @@ function walletDayGroups(items) {
   return groups;
 }
 
-function walletGroupsHtml(items) {
+function walletOpenIso(groups) {
+  const today = japanTodayIso();
+  return groups.find((group) => group.iso === today)?.iso
+    || groups.find((group) => group.iso > today)?.iso
+    || "";
+}
+
+function walletGroupsHtml(items, openIso = "") {
   if (!items.length) return "";
-  return walletDayGroups(items).map((group) => `<h3 class="wallet-day">${escapeHtml(walletDayLabel(group.iso))}</h3>${group.items.map((item) => walletCardHtml(item, false)).join("")}`).join("");
+  return walletDayGroups(items).map((group) => {
+    const open = group.iso === openIso ? " open" : "";
+    return `<details class="wallet-day-fold"${open}><summary>${escapeHtml(walletDaySummary(group))}</summary>${group.items.map((item) => walletCardHtml(item, false)).join("")}</details>`;
+  }).join("");
 }
 
 function walletFiltersHtml() {
@@ -6432,7 +6486,8 @@ function renderTickets() {
     ? `<details class="wallet-done"><summary>Done</summary>${walletGroupsHtml(past)}</details>`
     : "";
   const empty = !upcoming.length && !past.length ? `<p class="my-ticket-empty">No tickets of this type.</p>` : "";
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${walletReadyHtml()}${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming)}${empty}${done}`;
+  const openIso = walletOpenIso(walletDayGroups(upcoming));
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletFiltersHtml()}${walletGroupsHtml(upcoming, openIso)}${empty}${done}`;
   refreshEmailPreview();
   void hydrateMyTicketImages();
 }
