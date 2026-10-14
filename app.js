@@ -6066,7 +6066,7 @@ function walletBookings() {
     { id: "shinkansen-nov5", kind: "train", at: "2026-11-05T10:03:00+09:00", title: "Nozomi 90", when: "Thu Nov 5 · 10:03", route: "Hiroshima → Tokyo", detail: "Car 6 · seats 5-D, 5-E, 6-D, 6-E · 4 people", code: "2007", how: SHINKANSEN_BOARDING },
     { id: "apa-nov5", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishishinjuku", when: "Thu Nov 5 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 3 nights", code: "72078146459705", how: "Show this number at check-in.", who: "brianMai" },
     { id: "parents-apa", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishi-Shinjuku Gochome", when: "Thu Nov 5–Tue Nov 10", route: "Nishi-shinjuku, Tokyo", detail: "Your room", code: "", how: "Stay through the morning of Nov 10.", who: "parents" },
-    { id: "takeshima-dinner", kind: "meal", at: "2026-11-07T12:00:00+09:00", title: "Dinner with Akiko & Yoshi Takeshima", when: "Sat Nov 7", route: "", detail: "", code: "", how: "Hiroki and Yushin may join. Time and place TBD.", note: "Hiroki and Yushin may join. Time and place TBD.", who: "parents" },
+    { id: "takeshima-dinner", kind: "meal", at: "2026-11-07T23:59:00+09:00", title: "Dinner with Akiko & Yoshi Takeshima", when: "Sat Nov 7", route: "", detail: "", code: "", how: "Hiroki and Yushin may join. Time and place TBD.", note: "Hiroki and Yushin may join. Time and place TBD.", untimed: true, who: "parents" },
     { id: "romancecar-out", kind: "train", at: "2026-11-08T10:00:00+09:00", title: "Super Hakone 9", when: "Sun Nov 8 · 10:00", route: "Shinjuku → Hakone-Yumoto", detail: "Car 5 · seats 8A, 8B · 2 adults", code: "00081", how: "Show this booking on your phone.", who: "brianMai" },
     { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Sun Nov 8 · 15:00", route: "Gora, Hakone", detail: "2 adults · 3 nights", code: "6890781811", how: "Check-in closes at 19:30. Show this number.", who: "brianMai" },
     { id: "ua804", kind: "flight", at: "2026-11-10T16:50:00+09:00", title: "UA804 home", when: "Tue Nov 10 · 16:50", route: "Haneda", detail: "Leaves at 4:50 PM.", code: "", how: "Leave APA by about 13:30.", who: "parents" },
@@ -6685,7 +6685,7 @@ function renderTickets() {
   const groups = walletDayGroups(items);
   if (!groups.some((group) => group.iso === walletSelectedIso)) walletSelectedIso = walletDefaultIso(groups);
   const selected = groups.find((group) => group.iso === walletSelectedIso);
-  const nextSource = items.find((item) => item.atMs >= now);
+  const nextSource = items.find((item) => item.atMs >= now && !item.untimed);
   const nextHtml = nextSource
     ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
