@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v198";
+const APP_VERSION = "japan-quest-v199";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -2046,6 +2046,7 @@ function inlineTicketHtml(item) {
     <p class="ticket-meta">${escapeHtml(bookingClock(item))}${item.route ? ` · ${escapeHtml(item.route)}` : ""}</p>
     ${code ? `<div class="ticket-links">${code}</div>` : ""}
     ${dayTicketOpenHtml(item)}
+    ${mealAskHtml(bookingForWallet(item))}
   </article>`;
 }
 
@@ -2053,7 +2054,7 @@ function timelineMarkup(day, timeline, used) {
   return timeline.map(([time, activity]) => {
     const matches = dayBookings(day).filter((item) => !used.has(item.id) && bookingMatchesStep(item, time, activity));
     matches.forEach((item) => used.add(item.id));
-    const tickets = matches.map(inlineTicketHtml).join("");
+    const tickets = matches.map(inlineTicketHtml).join("") + timelineMealAskCard(day, activity);
     return `<li><time>${escapeHtml(time)}</time><div class="timeline-body"><div class="timeline-text">${renderGuideHtml(activity)}</div>${tickets}</div></li>`;
   }).join("");
 }
@@ -2746,6 +2747,78 @@ function reservationRecord(booking) {
     confirmation = "Booking.com 6890781811";
   }
   return { status, confirmation, notes };
+}
+
+const MEAL_BOOKING_BY_WALLET = {
+  "sankei-club": "sankei-club",
+  onyasai: "onyasai-sennichimae",
+  endo: "endo",
+  "kani-doraku": "kani-doraku",
+  kyoya: "kyoya",
+  "suishin-main": "suishin-main",
+  setsugetsuka: "setsugetsuka-meals"
+};
+
+function bookingForWallet(item) {
+  const id = MEAL_BOOKING_BY_WALLET[item?.id];
+  if (!id) return null;
+  return RESTAURANT_BOOKINGS.find((booking) => booking.id === id) || null;
+}
+
+function showsMealAsk(booking) {
+  if (!booking) return false;
+  if (booking.id === "edobori") return true;
+  return reservationRecord(booking).status === "booked";
+}
+
+function mealAskSource(booking) {
+  if (booking.id === "setsugetsuka-meals") return SETSUGETSUKA_NOTE;
+  if (booking.id === "kyoya") return KYOYA_NOTE;
+  if (booking.id === "suishin-main") return SUISHIN_MAIN_NOTE;
+  return booking.why || "";
+}
+
+function cancelDeadlineSentence(text) {
+  const source = String(text || "");
+  const patterns = [
+    /You can cancel at no charge until [^.]+\./i,
+    /Cancel before [^.]+\./,
+    /Cancel by [^.]+\./i
+  ];
+  for (const pattern of patterns) {
+    const match = source.match(pattern);
+    if (match) return match[0];
+  }
+  return "";
+}
+
+function mealAskText(booking) {
+  if (!showsMealAsk(booking)) return "";
+  const line = "Ask Sayaka if she's joining. Update the party size if not.";
+  const deadline = cancelDeadlineSentence(mealAskSource(booking));
+  return deadline ? `${line} ${deadline}` : line;
+}
+
+function mealAskHtml(booking) {
+  const text = mealAskText(booking);
+  if (!text) return "";
+  return `<p class="meal-ask">${escapeHtml(text)}</p>`;
+}
+
+function timelineMealAskCard(day, activity) {
+  const blob = String(activity || "").toLowerCase();
+  const backed = new Set(Object.values(MEAL_BOOKING_BY_WALLET));
+  const booking = RESTAURANT_BOOKINGS.find((item) => {
+    if (!showsMealAsk(item) || !item.dayIds.includes(day.id) || backed.has(item.id)) return false;
+    return blob.includes(item.name.toLowerCase());
+  });
+  if (!booking) return "";
+  return `<article class="day-ticket inline-ticket">
+    <p class="wallet-type">Restaurant</p>
+    <h3>${escapeHtml(booking.name)}</h3>
+    <p class="ticket-meta">${escapeHtml(booking.slot)}</p>
+    ${mealAskHtml(booking)}
+  </article>`;
 }
 
 function setReservationRecord(bookingId, patch) {
@@ -3532,6 +3605,7 @@ function renderRestaurantBookings() {
         <span class="restaurant-booking-flags">${markers.map(attentionFlag).join("")}<span class="restaurant-party-pill">${party} people</span></span>
       </div>
       <p class="restaurant-booking-slot">${escapeHtml(booking.slot)} · ${escapeHtml(booking.strength)}</p>
+      ${mealAskHtml(booking)}
       <p>${collapsedNoteHtml(booking.why, "Details")}</p>
       ${hotelLine ? `<details class="booking-distances"><summary>Distances</summary><p class="city-food-distances">${escapeHtml(hotelLine)}${sightLines.length ? `<br>${sightLines.map((line) => escapeHtml(line)).join("<br>")}` : ""}</p></details>` : ""}
       <div class="restaurant-booking-actions">
@@ -5620,7 +5694,7 @@ function makeDayDetails(day) {
   const items = openItems().filter((item) => item.dayIds.includes(day.id));
   const walks = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id);
   const luggageNote = day.id === "day17" && sees("brianMai")
-    ? `<p>Luggage Nov 8–11: Brian's parents or Akko will handle it.</p>`
+    ? `<p>Luggage Nov 10–11: Akko, Airporter, or luggage storage.</p>`
     : "";
   section.innerHTML = `
     <summary>Details</summary>
@@ -6114,6 +6188,7 @@ function walletCardHtml(item, featured) {
         ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
         ${code ? `<div class="ticket-links">${code}</div>` : ""}
         <p class="wallet-how">${escapeHtml(item.how)}</p>
+        ${mealAskHtml(bookingForWallet(item))}
         ${hotelLink}
         ${walletPhoneStatusHtml(item)}
       </div>

@@ -3655,6 +3655,10 @@ h3 {
   font-weight: 800;
 }
 .restaurant-booking p { margin: 6px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.4; }
+.restaurant-booking p.meal-ask,
+.wallet-card .meal-ask,
+.next-stop .meal-ask,
+.day-ticket .meal-ask { color: #1c0f14; font-size: 0.86rem; }
 .restaurant-party-pill {
   display: inline-flex;
   align-items: center;
@@ -5230,6 +5234,13 @@ button.trip-date {
 
 .inline-ticket .ticket-meta {
   white-space: nowrap;
+}
+
+.meal-ask {
+  margin: 4px 0 0;
+  color: #1c0f14;
+  font-size: 0.86rem;
+  line-height: 1.35;
 }
 
 .story-switch {
