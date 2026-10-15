@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v202";
+const APP_VERSION = "japan-quest-v203";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1205,6 +1205,23 @@ function dayView(day) {
   return DAY_VIEWS[day?.id]?.[key] || null;
 }
 
+function parentDepartureDay() {
+  return {
+    id: "oct22",
+    date: "2026-10-22",
+    short: "Oct 22",
+    title: "Fly out",
+    theme: "Fly out of Dulles.",
+    summary: "Fly out of Dulles.",
+    clearPath: "Fly out of Dulles.",
+    mainGoal: "Fly out of Dulles.",
+    places: [],
+    groups: [],
+    timeline: [["Dulles", "Fly out of Dulles."]],
+    history: []
+  };
+}
+
 function parentArrivalDay() {
   return {
     id: "oct23",
@@ -1856,6 +1873,7 @@ function clearGroup(selector) {
 }
 
 function findDay(dayId) {
+  if (dayId === "oct22") return { cityId: "tokyo", day: parentDepartureDay() };
   if (dayId === "oct23") return { cityId: "tokyo", day: parentArrivalDay() };
   for (const [cityId, city] of Object.entries(tripData)) {
     const day = city.days.find((candidate) => candidate.id === dayId);
@@ -2059,11 +2077,45 @@ function inlineTicketHtml(item) {
   </article>`;
 }
 
+function visitJapanSpotDay(day) {
+  const view = travelerView();
+  if (view === "parents") return day?.date === "2026-10-22" || day?.date === "2026-10-23";
+  if (view === "brian" || view === "mai") return day?.date === "2026-10-24";
+  return false;
+}
+
+function visitJapanSpotPlace(day) {
+  if (day?.date === "2026-10-22") return "Dulles";
+  if (day?.date === "2026-10-23") return "Haneda";
+  return "Narita";
+}
+
+function visitJapanSpotStep(day, time, activity) {
+  if (!visitJapanSpotDay(day)) return false;
+  const text = `${time} ${activity}`.toLowerCase();
+  if (day.date === "2026-10-22") return text.includes("dulles");
+  if (day.date === "2026-10-23") return text.includes("haneda");
+  return text.includes("narita");
+}
+
+function visitJapanSpotShell(day) {
+  return `<article class="day-ticket inline-ticket" data-vjw-spot>
+    <p class="wallet-type">QR</p>
+    <h3>Visit Japan Web QR</h3>
+    <p class="ticket-meta">${escapeHtml(visitJapanSpotPlace(day))}</p>
+    <button type="button" class="vjw-wallet-link" data-vjw-empty hidden>Add in Wallet</button>
+  </article>`;
+}
+
 function timelineMarkup(day, timeline, used) {
   return timeline.map(([time, activity]) => {
     const matches = dayBookings(day).filter((item) => !used.has(item.id) && bookingMatchesStep(item, time, activity));
     matches.forEach((item) => used.add(item.id));
-    const tickets = matches.map(inlineTicketHtml).join("") + timelineMealAskCard(day, activity);
+    let tickets = matches.map(inlineTicketHtml).join("") + timelineMealAskCard(day, activity);
+    if (!used.has("vjw-spot") && visitJapanSpotStep(day, time, activity)) {
+      used.add("vjw-spot");
+      tickets += visitJapanSpotShell(day);
+    }
     return `<li><time>${escapeHtml(time)}</time><div class="timeline-body"><div class="timeline-text">${renderGuideHtml(activity)}</div>${tickets}</div></li>`;
   }).join("");
 }
@@ -3088,6 +3140,15 @@ document.addEventListener("click", (event) => {
   const showTicket = event.target.closest?.("[data-show-ticket]");
   if (showTicket) {
     void showMyTicketImage(showTicket.dataset.showTicket);
+    return;
+  }
+  const vjwOpen = event.target.closest?.("[data-vjw-open]");
+  if (vjwOpen && !vjwOpen.closest("#ticketsPanel")) {
+    void showVisitJapanShot(vjwOpen.dataset.vjwOpen);
+    return;
+  }
+  if (event.target.closest?.("[data-vjw-empty]")) {
+    openVisitJapanWallet();
     return;
   }
   const button = event.target.closest?.("button[data-copy-code]");
@@ -5746,22 +5807,29 @@ function mountDayView(host, day) {
       <p>${theme}</p>
     </div>
   `;
-  const weather = document.createElement("span");
-  weather.className = "day-forecast";
-  weather.hidden = true;
-  weather.setAttribute("aria-live", "polite");
-  const dateRow = host.querySelector(".day-date-row");
-  dateRow.append(weather);
-  const parts = [makeDayFrontPage(day)];
-  if (day.id !== "oct23") {
-    parts.push(
-      foldSection("Quest", makeQuestPage(day)),
-      makeMapCard(day),
-      foldSection("Journal", makeDailyPhotoCard(day)),
-      makeDayDetails(day)
-    );
-  } else parts.push(makeMapCard(day));
+  const parts = [];
+  let weather = null;
+  if (day.id === "oct22") {
+    parts.push(dailyGuide(day));
+  } else {
+    weather = document.createElement("span");
+    weather.className = "day-forecast";
+    weather.hidden = true;
+    weather.setAttribute("aria-live", "polite");
+    host.querySelector(".day-date-row").append(weather);
+    parts.push(makeDayFrontPage(day));
+    if (day.id !== "oct23") {
+      parts.push(
+        foldSection("Quest", makeQuestPage(day)),
+        makeMapCard(day),
+        foldSection("Journal", makeDailyPhotoCard(day)),
+        makeDayDetails(day)
+      );
+    } else parts.push(makeMapCard(day));
+  }
   host.append(...parts);
+  void hydrateVisitJapanSpots(host);
+  if (!weather) return;
   paintDayWeather(day, weather, readWeatherCache());
   loadForecast().then(({ cache }) => {
     if (!weather.isConnected) return;
@@ -5880,6 +5948,9 @@ function browseRows() {
   const rows = tripRows();
   if (!rows.some((row) => row.day.id === "oct23")) {
     rows.unshift({ cityId: "tokyo", cityName: "Tokyo", day: parentArrivalDay() });
+  }
+  if (travelerView() === "parents" && !rows.some((row) => row.day.id === "oct22")) {
+    rows.unshift({ cityId: "tokyo", cityName: "Tokyo", day: parentDepartureDay() });
   }
   return rows;
 }
@@ -6409,6 +6480,7 @@ const TAX_IMAGES = "taxImages";
 let visitJapanShots = [];
 let vjwStatus = "";
 let vjwRenderToken = 0;
+let vjwSpotToken = 0;
 let taxFreeShots = [];
 let taxStatus = "";
 let taxOpen = false;
@@ -6557,6 +6629,77 @@ async function deleteVisitJapanShot(id) {
   }
   vjwStatus = "";
   renderTickets();
+}
+
+function openVisitJapanWallet() {
+  const item = visitJapanWalletItem();
+  walletTypeFilter = "all";
+  if (item) walletSelectedIso = String(item.at).slice(0, 10);
+  showSection("tickets");
+  ticketsPanel?.querySelector("[data-vjw-card]")?.scrollIntoView({ block: "start" });
+}
+
+async function hydrateVisitJapanSpots(root) {
+  const spots = [...(root?.querySelectorAll("[data-vjw-spot]") || [])];
+  if (!spots.length) return;
+  const token = ++vjwSpotToken;
+  const showEmpty = () => {
+    spots.forEach((spot) => {
+      if (token !== vjwSpotToken || !spot.isConnected) return;
+      const empty = spot.querySelector("[data-vjw-empty]");
+      if (empty) empty.hidden = false;
+    });
+  };
+  let ready = [];
+  try {
+    await loadVisitJapanShots();
+    if (token !== vjwSpotToken) return;
+    const mine = [];
+    visitJapanPeople().forEach((who) => {
+      visitJapanShots.filter((shot) => shot.who === who).forEach((shot) => mine.push(shot));
+    });
+    const loaded = await Promise.all(mine.map(async (shot) => {
+      const record = await readVisitJapanImage(shot.id).catch(() => null);
+      return record?.dataUrl ? { id: shot.id, who: shot.who, dataUrl: record.dataUrl } : null;
+    }));
+    if (token !== vjwSpotToken) return;
+    ready = loaded.filter(Boolean);
+  } catch {
+    showEmpty();
+    return;
+  }
+  if (!ready.length) {
+    showEmpty();
+    return;
+  }
+  const showNames = new Set(ready.map((shot) => shot.who)).size > 1;
+  spots.forEach((spot) => {
+    if (!spot.isConnected) return;
+    const empty = spot.querySelector("[data-vjw-empty]");
+    if (empty) empty.hidden = true;
+    spot.querySelectorAll(".vjw-spot-shot").forEach((node) => node.remove());
+    ready.forEach((shot) => {
+      const wrap = document.createElement("div");
+      wrap.className = "vjw-spot-shot";
+      if (showNames) {
+        const name = document.createElement("p");
+        name.className = "ticket-meta";
+        name.textContent = VJW_LABEL[shot.who] || "";
+        wrap.appendChild(name);
+      }
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "vjw-open";
+      button.dataset.vjwOpen = shot.id;
+      button.setAttribute("aria-label", "View screenshot full screen");
+      const image = document.createElement("img");
+      image.alt = "Visit Japan Web QR";
+      image.src = shot.dataUrl;
+      button.appendChild(image);
+      wrap.appendChild(button);
+      spot.appendChild(wrap);
+    });
+  });
 }
 
 async function showVisitJapanShot(id) {
@@ -7412,6 +7555,10 @@ function closeMyTicketImage() {
 }
 
 const TRIP_CALENDAR_START = "2026-10-23";
+
+function calendarRangeStart() {
+  return travelerView() === "parents" ? "2026-10-22" : TRIP_CALENDAR_START;
+}
 const TRIP_CALENDAR_END = "2026-11-13";
 const CALENDAR_CITIES = {
   osaka: { name: "Osaka", mark: "Osaka" },
@@ -7462,7 +7609,7 @@ function stayCityForDay(day) {
 }
 
 function tripDateCell(iso, today, beforeTrip, duringTrip) {
-  const inRange = iso >= TRIP_CALENDAR_START && iso <= TRIP_CALENDAR_END;
+  const inRange = iso >= calendarRangeStart() && iso <= TRIP_CALENDAR_END;
   const row = browseRows().find((entry) => entry.day.date === iso);
   const away = awayLine(iso);
   const cityId = row ? stayCityForDay(row.day) : "";
@@ -7608,7 +7755,7 @@ function storyDaysHtml(snippets) {
   const today = japanTodayIso();
   const byId = Object.fromEntries(browseRows().map((row) => [row.day.id, row.day]));
   const travelOut = travelerView() === "parents"
-    ? storyDayCard(parentArrivalDay(), today, "")
+    ? `${storyDayCard(parentDepartureDay(), today, "")}${storyDayCard(parentArrivalDay(), today, "")}`
     : `<p class="away-line">Oct 23 · Not in Japan yet.</p>`;
   const travelHome = travelerView() === "parents"
     ? `<p class="away-line">Nov 13 · Flown home.</p>`
@@ -7871,7 +8018,7 @@ function renderTripCalendar() {
     weekdays.appendChild(span);
   });
   board.appendChild(weekdays);
-  const gridStart = shiftIso(TRIP_CALENDAR_START, -mondayIndex(TRIP_CALENDAR_START));
+  const gridStart = shiftIso(calendarRangeStart(), -mondayIndex(calendarRangeStart()));
   const gridEnd = shiftIso(TRIP_CALENDAR_END, 6 - mondayIndex(TRIP_CALENDAR_END));
   let previousLabel = "";
   for (let weekStart = gridStart; weekStart <= gridEnd; weekStart = shiftIso(weekStart, 7)) {
