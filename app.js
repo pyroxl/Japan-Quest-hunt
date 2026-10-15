@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v199";
+const APP_VERSION = "japan-quest-v200";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1036,7 +1036,7 @@ const dayContext = {
   },
   day16: {
     summary: "Dad's Shibuya Crossing is the morning anchor, with Hachiko, lunch and one focused Mai-friendly stop before a hard 15:30 departure for Akko. Do not turn Shibuya into a full shopping marathon—the evening meetup is the capstone and should begin without anyone already exhausted.",
-    timeline: [["10:00–10:30", "Go from APA Nishishinjuku to Shibuya. Take the Toei Oedo line to Shinjuku. Then take the JR Yamanote line to Shibuya. Allow about 25–35 minutes. Do not set an early alarm after the Kichijoji day."], ["10:30–11:15", "See Hachiko, cross the Scramble, watch one full signal cycle, and take Dad's group photo."], ["11:15–13:30", "Have a seated lunch, then choose exactly one Mai-facing stop; Shibuya PARCO is the default."], ["13:30–15:15", "Use a cafe/rest buffer or one short Shibuya browse—do not add Harajuku."], ["By 15:30", "Leave Shibuya by 15:30. [Akko meeting point and time — needs confirmation]. The map pin is provisional Chofu Station. [whether Yoshi joins — needs confirmation]. [who Yoshi is — needs confirmation]."], ["Evening", "Let Akko choose the neighborhood and dinner; keep it seated, social and unhurried."]],
+    timeline: [["10:00–10:30", "Go from APA Nishishinjuku to Shibuya. Take the Toei Oedo line to Shinjuku. Then take the JR Yamanote line to Shibuya. Allow about 25–35 minutes. Do not set an early alarm after the Kichijoji day."], ["10:30–11:15", "See Hachiko, cross the Scramble, watch one full signal cycle, and take Dad's group photo."], ["11:15–13:30", "Have a seated lunch, then choose exactly one Mai-facing stop; Shibuya PARCO is the default."], ["13:30–15:15", "Use a cafe/rest buffer or one short Shibuya browse—do not add Harajuku."], ["By 15:30", "Leave Shibuya by 15:30. [Akko meeting point and time — needs confirmation]. The map pin is provisional Chofu Station. [whether Yoshi joins — needs confirmation]. [who Yoshi is — needs confirmation].", "brianMai"], ["Evening", "Let Akko choose the neighborhood and dinner; keep it seated, social and unhurried.", "brianMai"], ["Evening", "Dinner with Akiko & Yoshi Takeshima.", "parents"]],
     history: [
       "Tokyo's residential neighborhoods are as important to understanding the city as its famous districts. Stations, shotengai, temples, parks, and favourite restaurants reveal everyday Japan more honestly than another imported sightseeing plan.",
       "Being shown those routines by friends who live there turns travel into hospitality. The meal they choose carries more cultural weight than any guidebook ranking because it encodes memory, budget, and pride in a local spot.",
@@ -1152,6 +1152,13 @@ const DAY_VIEWS = {
   day14: {
     parents: {
       summary: "Nozomi 90 leaves Hiroshima at 10:03 and reaches Tokyo at 13:57. Check in to your room at APA Nishi-Shinjuku Gochome. You stay through the morning of Nov 10."
+    }
+  },
+  day16: {
+    parents: {
+      summary: "Shibuya in the daytime. Dinner with Akiko & Yoshi Takeshima. Time and place TBD.",
+      clearPath: "Shibuya Crossing, then dinner with Akiko & Yoshi Takeshima.",
+      mainGoal: "Have dinner with Akiko and Yoshi Takeshima."
     }
   },
   day17: {
@@ -2040,11 +2047,13 @@ function bookingMatchesStep(item, timeLabel, activity) {
 function inlineTicketHtml(item) {
   const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
   const code = item.code ? copyCodeButton(item.code) : "";
+  const note = item.note ? `<p class="ticket-note">${escapeHtml(item.note)}</p>` : "";
   return `<article class="day-ticket inline-ticket">
     <p class="wallet-type">${escapeHtml(type)}</p>
     <h3>${escapeHtml(item.title)}</h3>
     <p class="ticket-meta">${escapeHtml(bookingClock(item))}${item.route ? ` · ${escapeHtml(item.route)}` : ""}</p>
     ${code ? `<div class="ticket-links">${code}</div>` : ""}
+    ${note}
     ${dayTicketOpenHtml(item)}
     ${mealAskHtml(bookingForWallet(item))}
   </article>`;
@@ -2928,7 +2937,8 @@ const DAY_MUST_DOS = {
     { marker: "info", label: "No timed ticket", detail: "Walk Inokashira Park. Pause at a café. Browse one Kichijoji street. Do not add a timed attraction." }
   ],
   day16: [
-    { marker: "needs-confirmation", label: "Leave Shibuya", detail: "Leave by 15:30. [Akko meeting point and time — needs confirmation]. The pin is provisional Chofu Station. [whether Yoshi joins — needs confirmation]. [who Yoshi is — needs confirmation]." }
+    { marker: "needs-confirmation", label: "Leave Shibuya", detail: "Leave by 15:30. [Akko meeting point and time — needs confirmation]. The pin is provisional Chofu Station. [whether Yoshi joins — needs confirmation]. [who Yoshi is — needs confirmation].", who: "brianMai" },
+    { marker: "needs-confirmation", label: "Dinner with Akiko & Yoshi Takeshima", detail: "Hiroki and Yushin may join. Time and place TBD.", who: "parents" }
   ],
   day17: [
     { marker: "booked", label: "Outbound Romancecar", detail: ROMANCECAR_OUT_NOTE, who: "brianMai" }
@@ -2954,7 +2964,17 @@ const DAY_MUST_DOS = {
   ]
 };
 
-const TRIP_OPEN_ITEMS = [];
+const TRIP_OPEN_ITEMS = [
+  {
+    id: "autumn-scenery-takeshima",
+    marker: "needs-confirmation",
+    label: "Autumn scenery day with Akiko & Yoshi",
+    scope: "Nov 5–10 · TBD day",
+    detail: "Tentative. The day and the place are not chosen yet.",
+    who: "parents",
+    dayIds: []
+  }
+];
 
 function escapeAndHighlight(value) {
   return escapeHtml(value).replace(/\[([^\]]+)\]/g, '<span class="confirm-placeholder">[$1]</span>');
@@ -6046,6 +6066,7 @@ function walletBookings() {
     { id: "shinkansen-nov5", kind: "train", at: "2026-11-05T10:03:00+09:00", title: "Nozomi 90", when: "Thu Nov 5 · 10:03", route: "Hiroshima → Tokyo", detail: "Car 6 · seats 5-D, 5-E, 6-D, 6-E · 4 people", code: "2007", how: SHINKANSEN_BOARDING },
     { id: "apa-nov5", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishishinjuku", when: "Thu Nov 5 · 15:00", route: "Nishi-shinjuku, Tokyo", detail: "2 adults · 3 nights", code: "72078146459705", how: "Show this number at check-in.", who: "brianMai" },
     { id: "parents-apa", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishi-Shinjuku Gochome", when: "Thu Nov 5–Tue Nov 10", route: "Nishi-shinjuku, Tokyo", detail: "Your room", code: "", how: "Stay through the morning of Nov 10.", who: "parents" },
+    { id: "takeshima-dinner", kind: "meal", at: "2026-11-07T23:59:00+09:00", title: "Dinner with Akiko & Yoshi Takeshima", when: "Sat Nov 7", route: "", detail: "", code: "", how: "Hiroki and Yushin may join. Time and place TBD.", note: "Hiroki and Yushin may join. Time and place TBD.", untimed: true, who: "parents" },
     { id: "romancecar-out", kind: "train", at: "2026-11-08T10:00:00+09:00", title: "Super Hakone 9", when: "Sun Nov 8 · 10:00", route: "Shinjuku → Hakone-Yumoto", detail: "Car 5 · seats 8A, 8B · 2 adults", code: "00081", how: "Show this booking on your phone.", who: "brianMai" },
     { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Sun Nov 8 · 15:00", route: "Gora, Hakone", detail: "2 adults · 3 nights", code: "6890781811", how: "Check-in closes at 19:30. Show this number.", who: "brianMai" },
     { id: "ua804", kind: "flight", at: "2026-11-10T16:50:00+09:00", title: "UA804 home", when: "Tue Nov 10 · 16:50", route: "Haneda", detail: "Leaves at 4:50 PM.", code: "", how: "Leave APA by about 13:30.", who: "parents" },
@@ -6184,7 +6205,7 @@ function walletCardHtml(item, featured) {
         <p class="wallet-type">${escapeHtml(type)}</p>
         <h3>${escapeHtml(item.title)}</h3>
         <p class="ticket-meta">${escapeHtml(item.when)}</p>
-        <p class="wallet-route">${escapeHtml(item.route)}</p>
+        ${item.route ? `<p class="wallet-route">${escapeHtml(item.route)}</p>` : ""}
         ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
         ${code ? `<div class="ticket-links">${code}</div>` : ""}
         <p class="wallet-how">${escapeHtml(item.how)}</p>
@@ -6664,7 +6685,7 @@ function renderTickets() {
   const groups = walletDayGroups(items);
   if (!groups.some((group) => group.iso === walletSelectedIso)) walletSelectedIso = walletDefaultIso(groups);
   const selected = groups.find((group) => group.iso === walletSelectedIso);
-  const nextSource = items.find((item) => item.atMs >= now);
+  const nextSource = items.find((item) => item.atMs >= now && !item.untimed);
   const nextHtml = nextSource
     ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
@@ -7069,6 +7090,17 @@ function storyDayTitle(day) {
   return title.replace(/^Day \d+\s*-\s*/, "");
 }
 
+function storyTentativeCard(item) {
+  return `<article class="story-card" data-city="tokyo">
+    <span class="story-card-band" aria-hidden="true"></span>
+    <div class="story-card-body">
+      <p class="story-card-meta">${escapeHtml(item.when || "TBD day")}</p>
+      <h3>${escapeHtml(item.label)}</h3>
+      <p class="story-summary">${escapeHtml(item.detail)}</p>
+    </div>
+  </article>`;
+}
+
 function storyTravelCard(card) {
   const marks = (card.marks || []).map(storyMarkIcon).join("");
   return `<article class="story-card is-travel" data-city="travel">
@@ -7122,13 +7154,16 @@ function storyDaysHtml(snippets) {
       summary: "BA4609 leaves Haneda at 01:00.",
       marks: ["ticket"]
     });
-  const chapters = STORY_CHAPTERS.map((chapter) => {
+  const tentative = openItems().filter((item) => !item.dayIds.length).map(storyTentativeCard).join("");
+  const chapters = [];
+  STORY_CHAPTERS.forEach((chapter, index) => {
     const name = travelerView() === "parents" && chapter.name === "Hakone" ? "Tokyo" : chapter.name;
     const city = travelerView() === "parents" && chapter.city === "hakone" ? "tokyo" : chapter.city;
     const cards = chapter.dayIds.map((dayId) => storyDayCard(byId[dayId], today, snippets[dayId] || "")).join("");
-    return storyChapterHtml(name, city, cards);
-  }).join("");
-  return `${storyChapterHtml("To Japan", "travel", travelOut)}${chapters}${storyChapterHtml("Home", "travel", travelHome)}`;
+    chapters.push(storyChapterHtml(name, city, cards));
+    if (index === 3 && tentative) chapters.push(storyChapterHtml("Tentative", "tokyo", tentative));
+  });
+  return `${storyChapterHtml("To Japan", "travel", travelOut)}${chapters.join("")}${storyChapterHtml("Home", "travel", travelHome)}`;
 }
 
 async function storyJournalSnippets() {

@@ -5236,7 +5236,8 @@ button.trip-date {
   white-space: nowrap;
 }
 
-.meal-ask {
+.meal-ask,
+.ticket-note {
   margin: 4px 0 0;
   color: #1c0f14;
   font-size: 0.86rem;
