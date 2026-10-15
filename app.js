@@ -6142,7 +6142,6 @@ const QR_TICKET_IDS = new Set([
   "shinkansen-nov2",
   "shinkansen-himeji",
   "shinkansen-nov5",
-  "himeji-tickets",
   "teamlab",
   "romancecar-out"
 ]);
