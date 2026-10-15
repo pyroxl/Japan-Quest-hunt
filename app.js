@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v201";
+const APP_VERSION = "japan-quest-v202";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -6272,6 +6272,42 @@ function visitJapanCardHtml(item) {
   </article>`;
 }
 
+function taxFreeSummaryLabel() {
+  const people = new Set(visitJapanPeople());
+  const count = taxFreeShots.filter((shot) => people.has(shot.who)).length;
+  return count ? `Tax-free QR · ${count}` : "Tax-free QR";
+}
+
+function taxFreeShotHtml(shot) {
+  return `<div class="vjw-shot">
+    <button type="button" class="vjw-open" data-tax-open="${escapeHtml(shot.id)}" aria-label="View screenshot full screen"><img alt="Tax-free QR"></button>
+    <button type="button" class="vjw-delete" data-tax-delete="${escapeHtml(shot.id)}">Delete</button>
+  </div>`;
+}
+
+function taxFreePersonHtml(who) {
+  const shots = taxFreeShots.filter((shot) => shot.who === who);
+  return `<section class="vjw-person" data-tax-person="${escapeHtml(who)}">
+    <h4>${escapeHtml(VJW_LABEL[who] || "")}</h4>
+    ${shots.map(taxFreeShotHtml).join("")}
+    <label class="vjw-add">Add screenshot
+      <input type="file" accept="image/*" multiple data-tax-file="${escapeHtml(who)}">
+    </label>
+  </section>`;
+}
+
+function taxFreeRowHtml() {
+  const people = visitJapanPeople();
+  if (!people.length) return "";
+  return `<details class="tax-qr" data-tax-qr${taxOpen ? " open" : ""}>
+    <summary>${escapeHtml(taxFreeSummaryLabel())}</summary>
+    <p class="vjw-private">Saved only on this phone.</p>
+    <p class="tax-qr-note">Show at the shop.</p>
+    <p class="vjw-status" data-tax-status role="status"${taxStatus ? "" : " hidden"}>${escapeHtml(taxStatus)}</p>
+    <div class="vjw-people" data-tax-people>${people.map(taxFreePersonHtml).join("")}</div>
+  </details>`;
+}
+
 function walletCardHtml(item, featured) {
   if (item.kind === "vjw") return visitJapanCardHtml(item);
   const code = item.code ? copyCodeButton(item.code) : "";
@@ -6369,17 +6405,25 @@ function clearMyTicketImages() {
 const VJW_DB = "japanQuestVisitJapan";
 const VJW_META = "shots";
 const VJW_IMAGES = "images";
+const TAX_META = "taxShots";
+const TAX_IMAGES = "taxImages";
 let visitJapanShots = [];
 let vjwStatus = "";
 let vjwRenderToken = 0;
+let taxFreeShots = [];
+let taxStatus = "";
+let taxOpen = false;
+let taxRenderToken = 0;
 
 function openVisitJapanDb() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(VJW_DB, 1);
+    const request = indexedDB.open(VJW_DB, 2);
     request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains(VJW_META)) db.createObjectStore(VJW_META, { keyPath: "id" });
       if (!db.objectStoreNames.contains(VJW_IMAGES)) db.createObjectStore(VJW_IMAGES, { keyPath: "id" });
+      if (!db.objectStoreNames.contains(TAX_META)) db.createObjectStore(TAX_META, { keyPath: "id" });
+      if (!db.objectStoreNames.contains(TAX_IMAGES)) db.createObjectStore(TAX_IMAGES, { keyPath: "id" });
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
@@ -6525,6 +6569,164 @@ async function showVisitJapanShot(id) {
   if (!record?.dataUrl || !viewer || !image) return;
   image.alt = "Visit Japan Web QR";
   image.dataset.vjwId = id;
+  delete image.dataset.taxId;
+  image.src = record.dataUrl;
+  if (link) {
+    link.hidden = true;
+    link.removeAttribute("href");
+  }
+  viewer.hidden = false;
+  document.querySelector("#ticketViewerClose")?.focus();
+}
+
+function withTaxFreeStores(mode, action) {
+  return openVisitJapanDb().then((db) => new Promise((resolve, reject) => {
+    const transaction = db.transaction([TAX_META, TAX_IMAGES], mode);
+    const result = action(transaction);
+    transaction.oncomplete = () => {
+      db.close();
+      resolve(result);
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  }));
+}
+
+function readTaxFreeMeta() {
+  return withTaxFreeStores("readonly", (tx) => storeRequest(tx.objectStore(TAX_META).getAll()));
+}
+
+function readTaxFreeImage(id) {
+  return withTaxFreeStores("readonly", (tx) => storeRequest(tx.objectStore(TAX_IMAGES).get(id)));
+}
+
+function writeTaxFreeShot(meta, dataUrl) {
+  return withTaxFreeStores("readwrite", (tx) => {
+    tx.objectStore(TAX_META).put({ id: meta.id, who: meta.who, addedAt: meta.addedAt });
+    tx.objectStore(TAX_IMAGES).put({ id: meta.id, dataUrl });
+  });
+}
+
+function deleteTaxFreeShotRecord(id) {
+  return withTaxFreeStores("readwrite", (tx) => {
+    tx.objectStore(TAX_META).delete(id);
+    tx.objectStore(TAX_IMAGES).delete(id);
+  });
+}
+
+function newTaxFreeId() {
+  return `tax-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function setTaxStatus(text) {
+  taxStatus = text;
+  const node = ticketsPanel?.querySelector("[data-tax-status]");
+  if (!node) return;
+  node.textContent = text;
+  node.hidden = !text;
+}
+
+function bindTaxFreeRow() {
+  const node = ticketsPanel?.querySelector("[data-tax-qr]");
+  if (!node) return;
+  node.addEventListener("toggle", () => {
+    taxOpen = node.open;
+  });
+}
+
+async function loadTaxFreeShots() {
+  const people = new Set(visitJapanPeople());
+  const rows = await readTaxFreeMeta();
+  taxFreeShots = (Array.isArray(rows) ? rows : [])
+    .filter((row) => row && people.has(row.who) && row.id)
+    .map((row) => ({ id: row.id, who: row.who, addedAt: row.addedAt || 0 }))
+    .sort((a, b) => a.addedAt - b.addedAt || String(a.id).localeCompare(String(b.id)));
+}
+
+async function hydrateTaxFreeThumbs(token) {
+  const buttons = [...(ticketsPanel?.querySelectorAll("[data-tax-open]") || [])];
+  await Promise.all(buttons.map(async (button) => {
+    const id = button.dataset.taxOpen;
+    if (!taxFreeShots.some((shot) => shot.id === id)) return;
+    const record = await readTaxFreeImage(id).catch(() => null);
+    const image = button.querySelector("img");
+    if (token !== taxRenderToken || !image?.isConnected || !record?.dataUrl) return;
+    image.src = record.dataUrl;
+  }));
+}
+
+function refreshTaxFreeRow() {
+  const token = ++taxRenderToken;
+  const people = visitJapanPeople();
+  return loadTaxFreeShots().then(() => {
+    if (token !== taxRenderToken) return;
+    const summary = ticketsPanel?.querySelector("[data-tax-qr] > summary");
+    if (summary) summary.textContent = taxFreeSummaryLabel();
+    const host = ticketsPanel?.querySelector("[data-tax-people]");
+    if (!host?.isConnected) return;
+    host.innerHTML = people.map(taxFreePersonHtml).join("");
+    return hydrateTaxFreeThumbs(token);
+  }).catch(() => {
+    if (token !== taxRenderToken) return;
+    setTaxStatus("Could not open saved screenshots.");
+  });
+}
+
+async function addTaxFreeFiles(who, fileList) {
+  if (!visitJapanPeople().includes(who)) return;
+  const files = [...(fileList || [])].filter(isScreenshotFile);
+  if (!files.length) {
+    taxStatus = "Choose a screenshot.";
+    taxOpen = true;
+    renderTickets();
+    return;
+  }
+  let failed = false;
+  for (const file of files) {
+    const id = newTaxFreeId();
+    try {
+      const dataUrl = await compressTicketImage(file);
+      await writeTaxFreeShot({ id, who, addedAt: Date.now() }, dataUrl);
+    } catch {
+      failed = true;
+      await deleteTaxFreeShotRecord(id).catch(() => {});
+    }
+  }
+  taxStatus = failed ? "Could not save a screenshot." : "";
+  taxOpen = true;
+  renderTickets();
+}
+
+async function deleteTaxFreeShot(id) {
+  const shot = taxFreeShots.find((item) => item.id === id);
+  if (!shot || !visitJapanPeople().includes(shot.who)) return;
+  const image = document.querySelector("#ticketViewerImage");
+  if (image?.dataset.taxId === id) closeMyTicketImage();
+  try {
+    await deleteTaxFreeShotRecord(id);
+  } catch {
+    taxStatus = "Could not delete the screenshot.";
+    taxOpen = true;
+    renderTickets();
+    return;
+  }
+  taxStatus = "";
+  taxOpen = true;
+  renderTickets();
+}
+
+async function showTaxFreeShot(id) {
+  if (!taxFreeShots.some((shot) => shot.id === id)) return;
+  const record = await readTaxFreeImage(id).catch(() => null);
+  const viewer = document.querySelector("#ticketViewer");
+  const image = document.querySelector("#ticketViewerImage");
+  const link = document.querySelector("#ticketViewerLink");
+  if (!record?.dataUrl || !viewer || !image) return;
+  image.alt = "Tax-free QR";
+  delete image.dataset.vjwId;
+  image.dataset.taxId = id;
   image.src = record.dataUrl;
   if (link) {
     link.hidden = true;
@@ -6944,15 +7146,17 @@ function renderTickets() {
   const dayHtml = selected
     ? `<div class="wallet-day-items" id="walletDayItems" role="tabpanel" aria-labelledby="wallet-day-${selected.iso}">${walletDayCardsHtml(selected)}</div>`
     : `<p class="my-ticket-empty">No tickets yet.</p>`;
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletDialHtml(groups)}${walletFiltersHtml()}${dayHtml}`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletDialHtml(groups)}${walletFiltersHtml()}${dayHtml}${taxFreeRowHtml()}`;
   const dial = ticketsPanel.querySelector(".wallet-dial");
   if (dial) bindWalletDial(dial);
   centerWalletDial(walletSelectedIso);
   updateWalletDialArrows();
   bindPasteEmailMemory();
+  bindTaxFreeRow();
   refreshEmailPreview();
   void hydrateMyTicketImages();
   void refreshVisitJapanCard();
+  void refreshTaxFreeRow();
 }
 
 function emailPasteSelection() {
@@ -7176,6 +7380,7 @@ async function showMyTicketImage(id) {
   if (!viewer || !image) return;
   image.alt = "QR ticket";
   delete image.dataset.vjwId;
+  delete image.dataset.taxId;
   image.src = record.dataUrl;
   if (link) {
     if (ticket?.url) {
@@ -7199,6 +7404,7 @@ function closeMyTicketImage() {
     image.removeAttribute("src");
     image.alt = "QR ticket";
     delete image.dataset.vjwId;
+    delete image.dataset.taxId;
   }
   if (link) {
     link.hidden = true;
@@ -8693,6 +8899,18 @@ ticketsPanel?.addEventListener("submit", (event) => {
 });
 
 ticketsPanel?.addEventListener("change", (event) => {
+  const taxFile = event.target.closest("[data-tax-file]");
+  if (taxFile) {
+    const files = [...(taxFile.files || [])];
+    const who = taxFile.dataset.taxFile;
+    taxFile.value = "";
+    void addTaxFreeFiles(who, files).catch(() => {
+      taxStatus = "Could not save a screenshot.";
+      taxOpen = true;
+      renderTickets();
+    });
+    return;
+  }
   const vjwFile = event.target.closest("[data-vjw-file]");
   if (vjwFile) {
     const files = [...(vjwFile.files || [])];
@@ -8743,6 +8961,16 @@ function bindPasteEmailMemory() {
 }
 
 ticketsPanel?.addEventListener("click", (event) => {
+  const taxOpenButton = event.target.closest("[data-tax-open]");
+  if (taxOpenButton) {
+    void showTaxFreeShot(taxOpenButton.dataset.taxOpen);
+    return;
+  }
+  const taxDelete = event.target.closest("[data-tax-delete]");
+  if (taxDelete) {
+    void deleteTaxFreeShot(taxDelete.dataset.taxDelete);
+    return;
+  }
   const vjwOpen = event.target.closest("[data-vjw-open]");
   if (vjwOpen) {
     void showVisitJapanShot(vjwOpen.dataset.vjwOpen);
@@ -8868,6 +9096,9 @@ function chooseTraveler(value) {
   if (value !== "brian" && value !== "mai" && value !== "parents") return;
   visitJapanShots = [];
   vjwStatus = "";
+  taxFreeShots = [];
+  taxStatus = "";
+  taxOpen = false;
   localStorage.setItem(TRAVELER_KEY, value);
   const ask = document.querySelector("#travelerAsk");
   if (ask) ask.hidden = true;

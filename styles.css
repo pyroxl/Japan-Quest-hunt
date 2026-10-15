@@ -6440,9 +6440,56 @@ body[data-traveler="mai"] .wallet-filters button[aria-pressed="true"] {
 
 .vjw-open:focus-visible,
 .vjw-delete:focus-visible,
-.vjw-add:focus-visible {
+.vjw-add:focus-visible,
+.tax-qr > summary:focus-visible {
   outline: 2px solid #285b96;
   outline-offset: 2px;
+}
+
+.tax-qr {
+  margin: 12px 0 0;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c0f14;
+  color-scheme: only light;
+}
+
+.tax-qr[open] {
+  border-radius: 12px;
+  padding: 0 12px 12px;
+}
+
+.tax-qr > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  color: #1c0f14;
+  font-size: 0.9rem;
+  font-weight: 800;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.tax-qr[open] > summary {
+  margin: 0 -12px;
+}
+
+.tax-qr-note {
+  margin: 2px 0 0;
+  color: #1c0f14;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+body[data-traveler="mai"] .tax-qr,
+body[data-traveler="mai"] .tax-qr > summary,
+body[data-traveler="mai"] .tax-qr-note {
+  background: #fff;
+  color: #1c0f14;
+  border-color: #1c0f14;
 }
 
 .my-ticket-link {
