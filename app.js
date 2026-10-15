@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v200";
+const APP_VERSION = "japan-quest-v201";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -2025,7 +2025,7 @@ function renderQuestDeck(day) {
 }
 
 function dayBookings(day) {
-  return visibleWallet().filter((item) => String(item.at).slice(0, 10) === day.date);
+  return visibleWallet().filter((item) => item.kind !== "vjw" && String(item.at).slice(0, 10) === day.date);
 }
 
 function bookingClockTime(item) {
@@ -6033,13 +6033,50 @@ function walletIcon(kind) {
     train: `<rect x="6" y="3" width="12" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 12h12M8 20l-2 2M16 20l2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
     hotel: `<path d="M4 18V9m0 9h16M8 18v-4h8v4M8 9V6h8v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
     meal: `<path d="M8 3v8a2 2 0 0 0 4 0V3M10 11v10M16 3c2 2 2 5 2 7s-2 3-2 3v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`,
-    ticket: `<path d="M4 8a2 2 0 0 0 2-2h12a2 2 0 0 0 2 2v2a2 2 0 0 1 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" fill="none" stroke="currentColor" stroke-width="2"/>`
+    ticket: `<path d="M4 8a2 2 0 0 0 2-2h12a2 2 0 0 0 2 2v2a2 2 0 0 1 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" fill="none" stroke="currentColor" stroke-width="2"/>`,
+    vjw: `<rect x="4" y="4" width="6" height="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="4" width="6" height="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="4" y="14" width="6" height="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14 14h2.2v2.2H14zM17.8 14H20v2.2h-2.2zM14 17.8h2.2V20H14zM17.8 17.8H20V20h-2.2z" fill="currentColor"/>`
   };
   return `<span class="wallet-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${paths[kind] || paths.ticket}</svg></span>`;
 }
 
+function visitJapanWalletItem() {
+  const view = travelerView();
+  if (view === "parents") {
+    return {
+      id: "visit-japan-web",
+      kind: "vjw",
+      at: "2026-10-23T15:40:00+09:00",
+      title: "Visit Japan Web QR",
+      when: "Fri Oct 23",
+      route: "Haneda",
+      detail: "",
+      code: "",
+      how: "Immigration and customs.",
+      who: "parents"
+    };
+  }
+  if (view === "brian" || view === "mai") {
+    return {
+      id: "visit-japan-web",
+      kind: "vjw",
+      at: "2026-10-24T09:20:00+09:00",
+      title: "Visit Japan Web QR",
+      when: "Sat Oct 24",
+      route: "Narita",
+      detail: "",
+      code: "",
+      how: "Immigration and customs.",
+      who: view
+    };
+  }
+  return null;
+}
+
 function visibleWallet() {
-  return walletBookings().filter((item) => sees(item.who));
+  const items = walletBookings().filter((item) => sees(item.who));
+  const visitJapan = visitJapanWalletItem();
+  if (visitJapan && sees(visitJapan.who)) items.push(visitJapan);
+  return items;
 }
 
 function walletBookings() {
@@ -6082,7 +6119,8 @@ const WALLET_TYPE_LABEL = {
   train: "Train",
   hotel: "Hotel",
   ticket: "Attraction",
-  meal: "Restaurant"
+  meal: "Restaurant",
+  vjw: "QR"
 };
 
 const WALLET_FILTERS = [
@@ -6174,7 +6212,7 @@ function dayTicketOpenHtml(item) {
 }
 
 function dayTicketsHtml(day) {
-  const items = visibleWallet().filter((item) => String(item.at).slice(0, 10) === day.date);
+  const items = visibleWallet().filter((item) => item.kind !== "vjw" && String(item.at).slice(0, 10) === day.date);
   if (!items.length) return "";
   const rows = items.map((item) => {
     const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
@@ -6190,7 +6228,52 @@ function dayTicketsHtml(day) {
   return `<section class="day-tickets" aria-label="Tickets for today"><h3>Tickets for today</h3>${rows}</section>`;
 }
 
+const VJW_LABEL = { brian: "Brian", mai: "Mai", mom: "Mom", dad: "Dad" };
+
+function visitJapanPeople() {
+  const view = travelerView();
+  if (view === "parents") return ["mom", "dad"];
+  if (view === "brian" || view === "mai") return [view];
+  return [];
+}
+
+function visitJapanShotHtml(shot) {
+  return `<div class="vjw-shot">
+    <button type="button" class="vjw-open" data-vjw-open="${escapeHtml(shot.id)}" aria-label="View screenshot full screen"><img alt="Visit Japan Web QR"></button>
+    <button type="button" class="vjw-delete" data-vjw-delete="${escapeHtml(shot.id)}">Delete</button>
+  </div>`;
+}
+
+function visitJapanPersonHtml(who) {
+  const shots = visitJapanShots.filter((shot) => shot.who === who);
+  return `<section class="vjw-person" data-vjw-person="${escapeHtml(who)}">
+    <h4>${escapeHtml(VJW_LABEL[who] || "")}</h4>
+    ${shots.map(visitJapanShotHtml).join("")}
+    <label class="vjw-add">Add screenshot
+      <input type="file" accept="image/*" multiple data-vjw-file="${escapeHtml(who)}">
+    </label>
+  </section>`;
+}
+
+function visitJapanCardHtml(item) {
+  return `<article class="wallet-card vjw-card" data-vjw-card>
+    <div class="wallet-card-row">
+      ${walletIcon("vjw")}
+      <div>
+        <p class="wallet-type">QR</p>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p class="ticket-meta">${escapeHtml(item.when)}${item.route ? ` · ${escapeHtml(item.route)}` : ""}</p>
+        <p class="wallet-how">${escapeHtml(item.how)}</p>
+        <p class="vjw-private">Saved only on this phone.</p>
+        <p class="vjw-status" data-vjw-status role="status"${vjwStatus ? "" : " hidden"}>${escapeHtml(vjwStatus)}</p>
+        <div class="vjw-people" data-vjw-people>${visitJapanPeople().map(visitJapanPersonHtml).join("")}</div>
+      </div>
+    </div>
+  </article>`;
+}
+
 function walletCardHtml(item, featured) {
+  if (item.kind === "vjw") return visitJapanCardHtml(item);
   const code = item.code ? copyCodeButton(item.code) : "";
   const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
   const hotelSite = HOTEL_SITE_BY_BOOKING[item.id];
@@ -6281,6 +6364,174 @@ function deleteMyTicketImage(id) {
 
 function clearMyTicketImages() {
   return withMyTicketStore("readwrite", (store) => storeRequest(store.clear()));
+}
+
+const VJW_DB = "japanQuestVisitJapan";
+const VJW_META = "shots";
+const VJW_IMAGES = "images";
+let visitJapanShots = [];
+let vjwStatus = "";
+let vjwRenderToken = 0;
+
+function openVisitJapanDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(VJW_DB, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(VJW_META)) db.createObjectStore(VJW_META, { keyPath: "id" });
+      if (!db.objectStoreNames.contains(VJW_IMAGES)) db.createObjectStore(VJW_IMAGES, { keyPath: "id" });
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function withVisitJapanStores(mode, action) {
+  return openVisitJapanDb().then((db) => new Promise((resolve, reject) => {
+    const transaction = db.transaction([VJW_META, VJW_IMAGES], mode);
+    const result = action(transaction);
+    transaction.oncomplete = () => {
+      db.close();
+      resolve(result);
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  }));
+}
+
+function readVisitJapanMeta() {
+  return withVisitJapanStores("readonly", (tx) => storeRequest(tx.objectStore(VJW_META).getAll()));
+}
+
+function readVisitJapanImage(id) {
+  return withVisitJapanStores("readonly", (tx) => storeRequest(tx.objectStore(VJW_IMAGES).get(id)));
+}
+
+function writeVisitJapanShot(meta, dataUrl) {
+  return withVisitJapanStores("readwrite", (tx) => {
+    tx.objectStore(VJW_META).put({ id: meta.id, who: meta.who, addedAt: meta.addedAt });
+    tx.objectStore(VJW_IMAGES).put({ id: meta.id, dataUrl });
+  });
+}
+
+function deleteVisitJapanShotRecord(id) {
+  return withVisitJapanStores("readwrite", (tx) => {
+    tx.objectStore(VJW_META).delete(id);
+    tx.objectStore(VJW_IMAGES).delete(id);
+  });
+}
+
+function newVisitJapanId() {
+  return `vjw-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function isScreenshotFile(file) {
+  const type = String(file?.type || "");
+  if (type.startsWith("image/")) return true;
+  return /\.(png|jpe?g|webp|gif|heic|heif)$/i.test(String(file?.name || ""));
+}
+
+function setVjwStatus(text) {
+  vjwStatus = text;
+  const node = ticketsPanel?.querySelector("[data-vjw-status]");
+  if (!node) return;
+  node.textContent = text;
+  node.hidden = !text;
+}
+
+async function loadVisitJapanShots() {
+  const people = new Set(visitJapanPeople());
+  const rows = await readVisitJapanMeta();
+  visitJapanShots = (Array.isArray(rows) ? rows : [])
+    .filter((row) => row && people.has(row.who) && row.id)
+    .map((row) => ({ id: row.id, who: row.who, addedAt: row.addedAt || 0 }))
+    .sort((a, b) => a.addedAt - b.addedAt || String(a.id).localeCompare(String(b.id)));
+}
+
+async function hydrateVisitJapanThumbs(token) {
+  const buttons = [...(ticketsPanel?.querySelectorAll("[data-vjw-open]") || [])];
+  await Promise.all(buttons.map(async (button) => {
+    const id = button.dataset.vjwOpen;
+    if (!visitJapanShots.some((shot) => shot.id === id)) return;
+    const record = await readVisitJapanImage(id).catch(() => null);
+    const image = button.querySelector("img");
+    if (token !== vjwRenderToken || !image?.isConnected || !record?.dataUrl) return;
+    image.src = record.dataUrl;
+  }));
+}
+
+function refreshVisitJapanCard() {
+  const token = ++vjwRenderToken;
+  const people = visitJapanPeople();
+  return loadVisitJapanShots().then(() => {
+    if (token !== vjwRenderToken) return;
+    const host = ticketsPanel?.querySelector("[data-vjw-people]");
+    if (!host?.isConnected) return;
+    host.innerHTML = people.map(visitJapanPersonHtml).join("");
+    return hydrateVisitJapanThumbs(token);
+  }).catch(() => {
+    if (token !== vjwRenderToken) return;
+    setVjwStatus("Could not open saved screenshots.");
+  });
+}
+
+async function addVisitJapanFiles(who, fileList) {
+  if (!visitJapanPeople().includes(who)) return;
+  const files = [...(fileList || [])].filter(isScreenshotFile);
+  if (!files.length) {
+    vjwStatus = "Choose a screenshot.";
+    renderTickets();
+    return;
+  }
+  let failed = false;
+  for (const file of files) {
+    const id = newVisitJapanId();
+    try {
+      const dataUrl = await compressTicketImage(file);
+      await writeVisitJapanShot({ id, who, addedAt: Date.now() }, dataUrl);
+    } catch {
+      failed = true;
+      await deleteVisitJapanShotRecord(id).catch(() => {});
+    }
+  }
+  vjwStatus = failed ? "Could not save a screenshot." : "";
+  renderTickets();
+}
+
+async function deleteVisitJapanShot(id) {
+  const shot = visitJapanShots.find((item) => item.id === id);
+  if (!shot || !visitJapanPeople().includes(shot.who)) return;
+  const image = document.querySelector("#ticketViewerImage");
+  if (image?.dataset.vjwId === id) closeMyTicketImage();
+  try {
+    await deleteVisitJapanShotRecord(id);
+  } catch {
+    vjwStatus = "Could not delete the screenshot.";
+    renderTickets();
+    return;
+  }
+  vjwStatus = "";
+  renderTickets();
+}
+
+async function showVisitJapanShot(id) {
+  if (!visitJapanShots.some((shot) => shot.id === id)) return;
+  const record = await readVisitJapanImage(id).catch(() => null);
+  const viewer = document.querySelector("#ticketViewer");
+  const image = document.querySelector("#ticketViewerImage");
+  const link = document.querySelector("#ticketViewerLink");
+  if (!record?.dataUrl || !viewer || !image) return;
+  image.alt = "Visit Japan Web QR";
+  image.dataset.vjwId = id;
+  image.src = record.dataUrl;
+  if (link) {
+    link.hidden = true;
+    link.removeAttribute("href");
+  }
+  viewer.hidden = false;
+  document.querySelector("#ticketViewerClose")?.focus();
 }
 
 function isMyTicketUrl(value) {
@@ -6612,6 +6863,7 @@ function paintWalletDay(iso) {
   host.innerHTML = walletDayCardsHtml(group);
   updateWalletDialArrows();
   void hydrateMyTicketImages();
+  void refreshVisitJapanCard();
 }
 
 function bindWalletDial(dial) {
@@ -6685,7 +6937,7 @@ function renderTickets() {
   const groups = walletDayGroups(items);
   if (!groups.some((group) => group.iso === walletSelectedIso)) walletSelectedIso = walletDefaultIso(groups);
   const selected = groups.find((group) => group.iso === walletSelectedIso);
-  const nextSource = items.find((item) => item.atMs >= now && !item.untimed);
+  const nextSource = items.find((item) => item.atMs >= now && !item.untimed && item.kind !== "vjw");
   const nextHtml = nextSource
     ? walletCardHtml({ ...nextSource, countdown: walletCountdown(nextSource.atMs, now) }, true)
     : `<article class="next-stop"><p class="wallet-kicker">Next stop</p><p class="wallet-countdown">No more bookings.</p></article>`;
@@ -6700,6 +6952,7 @@ function renderTickets() {
   bindPasteEmailMemory();
   refreshEmailPreview();
   void hydrateMyTicketImages();
+  void refreshVisitJapanCard();
 }
 
 function emailPasteSelection() {
@@ -6921,6 +7174,8 @@ async function showMyTicketImage(id) {
     return;
   }
   if (!viewer || !image) return;
+  image.alt = "QR ticket";
+  delete image.dataset.vjwId;
   image.src = record.dataUrl;
   if (link) {
     if (ticket?.url) {
@@ -6940,7 +7195,11 @@ function closeMyTicketImage() {
   const image = document.querySelector("#ticketViewerImage");
   const link = document.querySelector("#ticketViewerLink");
   if (viewer) viewer.hidden = true;
-  if (image) image.removeAttribute("src");
+  if (image) {
+    image.removeAttribute("src");
+    image.alt = "QR ticket";
+    delete image.dataset.vjwId;
+  }
   if (link) {
     link.hidden = true;
     link.removeAttribute("href");
@@ -8434,6 +8693,17 @@ ticketsPanel?.addEventListener("submit", (event) => {
 });
 
 ticketsPanel?.addEventListener("change", (event) => {
+  const vjwFile = event.target.closest("[data-vjw-file]");
+  if (vjwFile) {
+    const files = [...(vjwFile.files || [])];
+    const who = vjwFile.dataset.vjwFile;
+    vjwFile.value = "";
+    void addVisitJapanFiles(who, files).catch(() => {
+      vjwStatus = "Could not save a screenshot.";
+      renderTickets();
+    });
+    return;
+  }
   const qrFile = event.target.closest("[data-qr-file]");
   if (qrFile) {
     const file = qrFile.files?.[0];
@@ -8473,6 +8743,16 @@ function bindPasteEmailMemory() {
 }
 
 ticketsPanel?.addEventListener("click", (event) => {
+  const vjwOpen = event.target.closest("[data-vjw-open]");
+  if (vjwOpen) {
+    void showVisitJapanShot(vjwOpen.dataset.vjwOpen);
+    return;
+  }
+  const vjwDelete = event.target.closest("[data-vjw-delete]");
+  if (vjwDelete) {
+    void deleteVisitJapanShot(vjwDelete.dataset.vjwDelete);
+    return;
+  }
   if (event.target.closest("#pasteEmailRead")) {
     void pasteEmailFromClipboard();
     return;
@@ -8586,6 +8866,8 @@ function syncTravelerPressed() {
 
 function chooseTraveler(value) {
   if (value !== "brian" && value !== "mai" && value !== "parents") return;
+  visitJapanShots = [];
+  vjwStatus = "";
   localStorage.setItem(TRAVELER_KEY, value);
   const ask = document.querySelector("#travelerAsk");
   if (ask) ask.hidden = true;

@@ -6341,6 +6341,110 @@ body[data-traveler="mai"] .wallet-filters button[aria-pressed="true"] {
   font-weight: 800;
 }
 
+.vjw-card {
+  color-scheme: only light;
+  color: #1c0f14;
+}
+
+.vjw-private {
+  margin: 6px 0 0;
+  color: #1c0f14;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.vjw-status {
+  margin: 6px 0 0;
+  color: #9a3412;
+  font-weight: 800;
+}
+
+.vjw-people {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.vjw-person {
+  display: grid;
+  gap: 8px;
+}
+
+.vjw-person h4 {
+  margin: 0;
+  color: #1c0f14;
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.vjw-add {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  background: #fff;
+  color: #1c0f14;
+  font-weight: 800;
+}
+
+.vjw-add input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.vjw-shot {
+  display: grid;
+  gap: 6px;
+}
+
+.vjw-open {
+  width: 100%;
+  padding: 0;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.vjw-open img {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.vjw-delete {
+  justify-self: start;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.vjw-open:focus-visible,
+.vjw-delete:focus-visible,
+.vjw-add:focus-visible {
+  outline: 2px solid #285b96;
+  outline-offset: 2px;
+}
+
 .my-ticket-link {
   margin: 0 0 8px;
   color: #1c0f14;
