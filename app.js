@@ -2025,7 +2025,7 @@ function renderQuestDeck(day) {
 }
 
 function dayBookings(day) {
-  return visibleWallet().filter((item) => String(item.at).slice(0, 10) === day.date);
+  return visibleWallet().filter((item) => item.kind !== "vjw" && String(item.at).slice(0, 10) === day.date);
 }
 
 function bookingClockTime(item) {
