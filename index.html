@@ -10,7 +10,7 @@
     <title>Japan Trip Hunt</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="leaflet.css">
-    <link rel="stylesheet" href="styles.css?v206">
+    <link rel="stylesheet" href="styles.css?v207">
   </head>
   <body>
     <div class="app-shell">
@@ -42,7 +42,7 @@
           </nav>
           <hr>
           <button type="button" id="archiveToggle" aria-pressed="false">Show skipped</button>
-          <p class="menu-version">v206</p>
+          <p class="menu-version">v207</p>
         </div>
       </header>
 
@@ -65,6 +65,7 @@
 
       <main>
         <section class="panel today-panel" id="todayPanel" aria-live="polite"></section>
+        <section class="panel roll-panel hidden" id="rollPanel" aria-live="polite"></section>
         <div class="screen-filters" id="daysFilters"></div>
         <p class="days-hint" id="daysHint">Choose a day.</p>
         <section class="story-shell hidden" id="storyShell" aria-label="Story">
@@ -183,8 +184,9 @@
 
     <script src="leaflet.js"></script>
     <script src="place-coordinates.js"></script>
-    <script src="ticket-email.js?v206"></script>
-    <script src="wander.js?v206"></script>
-    <script src="app.js?v206"></script>
+    <script src="ticket-email.js?v207"></script>
+    <script src="wander.js?v207"></script>
+    <script src="roll-call.js?v207"></script>
+    <script src="app.js?v207"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v206";
+const APP_VERSION = "japan-quest-v207";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1289,6 +1289,7 @@ const dayPanel = document.querySelector("#dayPanel");
 const todayPanel = document.querySelector("#todayPanel");
 const journalPanel = document.querySelector("#journalPanel");
 const ticketsPanel = document.querySelector("#ticketsPanel");
+const rollPanel = document.querySelector("#rollPanel");
 const adminPanel = document.querySelector("#adminPanel");
 const foodPanel = document.querySelector("#foodPanel");
 const tripCalendar = document.querySelector("#tripCalendar");
@@ -7303,7 +7304,7 @@ function renderTickets() {
   const dayHtml = selected
     ? `<div class="wallet-day-items" id="walletDayItems" role="tabpanel" aria-labelledby="wallet-day-${selected.iso}">${walletDayCardsHtml(selected)}</div>`
     : `<p class="my-ticket-empty">No tickets yet.</p>`;
-  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${nextHtml}${myTicketsHtml()}${walletDialHtml(groups)}${walletFiltersHtml()}${dayHtml}${taxFreeRowHtml()}`;
+  ticketsPanel.innerHTML = `<div class="section-heading"><p class="label">Travel documents</p><h2>Wallet</h2></div>${rollEntryHtml()}${nextHtml}${myTicketsHtml()}${walletDialHtml(groups)}${walletFiltersHtml()}${dayHtml}${taxFreeRowHtml()}`;
   const dial = ticketsPanel.querySelector(".wallet-dial");
   if (dial) bindWalletDial(dial);
   centerWalletDial(walletSelectedIso);
@@ -8067,6 +8068,8 @@ function renderTripCalendar() {
 }
 
 let todayBrowseId = "";
+let rollReturn = "today";
+const ROLL_STORAGE_KEY = "japanQuestRollCall.v1";
 
 function todayBrowseRow() {
   const rows = browseRows();
@@ -8123,7 +8126,13 @@ function updateHeaderDayStep() {
 
 function updateTabBar() {
   const section = document.body.dataset.section;
-  const tab = section === "today" ? "today" : section === "days" ? "story" : section === "tickets" ? "wallet" : "";
+  const tab = section === "today" || (section === "rollcall" && rollReturn !== "tickets")
+    ? "today"
+    : section === "days"
+      ? "story"
+      : section === "tickets" || section === "rollcall"
+        ? "wallet"
+        : "";
   document.querySelectorAll(".tab-bar button").forEach((button) => {
     const on = button.dataset.tab === tab;
     button.classList.toggle("active", on);
@@ -8132,12 +8141,174 @@ function updateTabBar() {
   });
 }
 
+function readRollStore() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ROLL_STORAGE_KEY) || "{}");
+    return {
+      checks: saved.checks && typeof saved.checks === "object" ? saved.checks : {},
+      choice: saved.choice && typeof saved.choice === "object" ? saved.choice : {}
+    };
+  } catch {
+    return { checks: {}, choice: {} };
+  }
+}
+
+function writeRollStore(store) {
+  localStorage.setItem(ROLL_STORAGE_KEY, JSON.stringify(store));
+  const status = document.querySelector("#saveStatus");
+  if (status) status.textContent = "Saved on this phone";
+}
+
+function activeRollList(iso) {
+  const choice = readRollStore().choice[iso];
+  if (choice === "transit" || choice === "day" || choice === "hakone") return choice;
+  return rollAutoList(iso);
+}
+
+function rollCheckKey(listId, iso) {
+  return `${listId}|${iso}`;
+}
+
+function visibleRollIds(nodes) {
+  return new Set(rollFlatten(nodes).map((node) => node.id));
+}
+
+function rollCheckedSet(listId, iso) {
+  const tree = rollTree(listId, iso);
+  const raw = new Set(readRollStore().checks[rollCheckKey(listId, iso)] || []);
+  const normalized = rollNormalize(tree, raw);
+  const visible = visibleRollIds(tree);
+  raw.forEach((id) => {
+    if (!visible.has(id)) normalized.add(id);
+  });
+  return normalized;
+}
+
+function saveRollChecks(key, checked) {
+  const store = readRollStore();
+  store.checks[key] = [...checked];
+  writeRollStore(store);
+}
+
+function setRollChoice(iso, listId) {
+  const store = readRollStore();
+  if (listId === rollAutoList(iso)) delete store.choice[iso];
+  else store.choice[iso] = listId;
+  writeRollStore(store);
+}
+
+function resetRollRun(iso, listId) {
+  const store = readRollStore();
+  delete store.checks[rollCheckKey(listId, iso)];
+  if (rollSweepOn(iso, listId)) delete store.checks[`sweep|${iso}`];
+  writeRollStore(store);
+}
+
+function sweepCheckedSet(iso) {
+  const tree = rollSweepTree();
+  const raw = new Set(readRollStore().checks[`sweep|${iso}`] || []);
+  return rollNormalize(tree, raw);
+}
+
+function rollDateLabel(iso) {
+  const [year, month, day] = iso.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC"
+  });
+}
+
+function rollEntryHtml() {
+  if (!coupleView() || typeof rollTree !== "function") return "";
+  const iso = japanTodayIso();
+  const listId = activeRollList(iso);
+  const tree = rollTree(listId, iso);
+  const stats = rollStats(tree, rollCheckedSet(listId, iso));
+  return `<button type="button" class="roll-entry" data-open-roll>
+    <span class="roll-entry-copy"><span class="label">Packing</span><strong>Roll call</strong></span>
+    <small>${escapeHtml(rollListLabel(listId))} · ${stats.done} of ${stats.total}</small>
+  </button>`;
+}
+
+function rollRowsHtml(nodes, checked, kind) {
+  let previous = null;
+  return rollFlatten(nodes).map((node) => {
+    const on = checked.has(node.id);
+    const ready = rollReady(node, checked);
+    const locked = !node.leaf && !on && !ready;
+    const groupBreak = previous && node.level < previous.level;
+    previous = node;
+    const classes = [
+      "roll-node",
+      node.leaf ? "is-leaf" : "is-container",
+      node.buy ? "is-buy" : "",
+      on ? "is-checked" : "",
+      locked ? "is-locked" : "",
+      groupBreak ? "is-break" : ""
+    ].filter(Boolean).join(" ");
+    const tag = node.undecided ? `<span class="roll-tag">undecided</span>` : "";
+    const lock = locked ? `<span class="roll-lock">Locked</span>` : "";
+    const label = locked ? `${node.name}, locked until everything inside is checked` : node.name;
+    return `<li class="${classes}" data-level="${node.level}" style="--depth:${node.level}">
+      <label>
+        <input type="checkbox" data-roll-kind="${kind}" data-roll-id="${escapeHtml(node.id)}" aria-label="${escapeHtml(label)}" ${on ? "checked" : ""} ${!on && !ready ? "disabled" : ""}>
+        <span class="roll-name">${escapeHtml(node.name)}${tag}</span>
+        ${lock}
+      </label>
+    </li>`;
+  }).join("");
+}
+
+function renderRollCall() {
+  if (!rollPanel || typeof rollTree !== "function") return;
+  const iso = japanTodayIso();
+  const listId = activeRollList(iso);
+  const tree = rollTree(listId, iso);
+  const checked = rollCheckedSet(listId, iso);
+  const stats = rollStats(tree, checked);
+  const sweepOn = rollSweepOn(iso, listId);
+  const sweepTree = sweepOn ? rollSweepTree() : [];
+  const sweepChecked = sweepOn ? sweepCheckedSet(iso) : new Set();
+  const swap = rollSwapLine(iso);
+  const back = rollReturn === "tickets" ? "Wallet" : "Today";
+  const switches = ["transit", "day", "hakone"].map((id) => {
+    const on = id === listId;
+    return `<button type="button" data-roll-list="${id}" aria-pressed="${on}">${escapeHtml(rollListLabel(id))}</button>`;
+  }).join("");
+  const carry = rollCarryOn(iso, listId) ? `<p class="roll-note">Carry-on only</p>` : "";
+  const swapHtml = swap ? `<p class="roll-swap">${escapeHtml(swap)}</p>` : "";
+  const sweepHtml = sweepOn ? `<section class="roll-sweep" id="rollSweep" aria-label="Checkout room sweep">
+      <h3>Checkout room sweep</h3>
+      <ul class="roll-tree">${rollRowsHtml(sweepTree, sweepChecked, "sweep")}</ul>
+    </section>` : "";
+  const scrollY = window.scrollY;
+  rollPanel.innerHTML = `<button type="button" class="calendar-back" data-roll-back>${back}</button>
+    <div class="section-heading"><p class="label">Packing</p><h2>Roll call</h2></div>
+    <p class="roll-date">${escapeHtml(rollDateLabel(iso))}</p>
+    <div class="roll-switch" role="group" aria-label="Packing list">${switches}</div>
+    ${swapHtml}
+    ${carry}
+    <p class="roll-progress">${stats.done} of ${stats.total} checked</p>
+    <ul class="roll-tree" aria-label="${escapeHtml(rollListLabel(listId))} packing list">${rollRowsHtml(tree, checked, "list")}</ul>
+    ${sweepHtml}
+    <button type="button" class="roll-reset" data-roll-reset>Reset</button>`;
+  if (document.body.dataset.section === "rollcall") window.scrollTo({ top: scrollY, behavior: "auto" });
+}
+
+function openRollCall(from) {
+  if (!coupleView()) return;
+  rollReturn = from === "tickets" ? "tickets" : "today";
+  showSection("rollcall");
+}
+
 function renderToday() {
   if (!todayPanel) return;
   const landed = landingSelection();
   const selected = todayBrowseRow();
   const { day, cityId } = selected;
-  todayPanel.innerHTML = "";
+  todayPanel.innerHTML = rollEntryHtml();
   if (landed.phase === "before") {
     const days = daysUntilTrip();
     const line = document.createElement("p");
@@ -8216,6 +8387,7 @@ function showSection(name) {
     openStoryView(storyViewForOverview(state.overviewWindows?.overview ?? 0));
     return;
   }
+  if (name === "rollcall" && !coupleView()) name = rollReturn === "tickets" ? "tickets" : "today";
   document.body.dataset.section = name;
   const dateLabel = document.querySelector("#headerCalendarDate");
   if (dateLabel) dateLabel.textContent = headerDateLabel();
@@ -8232,6 +8404,7 @@ function showSection(name) {
   updateHeaderDayStep();
   placeScreenFilters(name);
   todayPanel?.classList.toggle("hidden", name !== "today");
+  rollPanel?.classList.toggle("hidden", name !== "rollcall");
   journalPanel?.classList.toggle("hidden", name !== "journal");
   ticketsPanel?.classList.toggle("hidden", name !== "tickets");
   adminPanel?.classList.toggle("hidden", name !== "admin");
@@ -8241,6 +8414,7 @@ function showSection(name) {
   dayPanel.classList.toggle("hidden", !viewingDay);
   storyShell?.classList.toggle("hidden", name !== "days" || viewingDay);
   if (name === "today") renderToday();
+  if (name === "rollcall") renderRollCall();
   if (name === "tickets") renderTickets();
   if (name === "admin") renderAdmin();
   if (name === "food") {
@@ -8402,6 +8576,46 @@ appMenu?.addEventListener("click", (event) => {
   if (sectionButton.dataset.section === "days") daysShowsDay = false;
   closeMenu(false);
   showSection(sectionButton.dataset.section);
+});
+
+todayPanel?.addEventListener("click", (event) => {
+  if (event.target.closest("[data-open-roll]")) openRollCall("today");
+});
+
+rollPanel?.addEventListener("click", (event) => {
+  if (event.target.closest("[data-roll-back]")) {
+    showSection(rollReturn === "tickets" ? "tickets" : "today");
+    return;
+  }
+  const pick = event.target.closest("[data-roll-list]");
+  if (pick) {
+    setRollChoice(japanTodayIso(), pick.dataset.rollList);
+    renderRollCall();
+    window.scrollTo({ top: 0, behavior: "auto" });
+    return;
+  }
+  if (event.target.closest("[data-roll-reset]")) {
+    const iso = japanTodayIso();
+    resetRollRun(iso, activeRollList(iso));
+    renderRollCall();
+  }
+});
+
+rollPanel?.addEventListener("change", (event) => {
+  const input = event.target.closest("input[data-roll-id]");
+  if (!input) return;
+  const iso = japanTodayIso();
+  const listId = activeRollList(iso);
+  if (input.dataset.rollKind === "sweep") {
+    const tree = rollSweepTree();
+    const next = rollToggle(tree, input.dataset.rollId, sweepCheckedSet(iso));
+    saveRollChecks(`sweep|${iso}`, next);
+  } else {
+    const tree = rollTree(listId, iso);
+    const next = rollToggle(tree, input.dataset.rollId, rollCheckedSet(listId, iso));
+    saveRollChecks(rollCheckKey(listId, iso), next);
+  }
+  renderRollCall();
 });
 
 document.querySelector(".tab-bar")?.addEventListener("click", (event) => {
@@ -9122,6 +9336,10 @@ function bindPasteEmailMemory() {
 }
 
 ticketsPanel?.addEventListener("click", (event) => {
+  if (event.target.closest("[data-open-roll]")) {
+    openRollCall("tickets");
+    return;
+  }
   const taxOpenButton = event.target.closest("[data-tax-open]");
   if (taxOpenButton) {
     void showTaxFreeShot(taxOpenButton.dataset.taxOpen);

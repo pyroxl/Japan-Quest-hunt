@@ -1,11 +1,12 @@
-const CACHE_NAME = "japan-quest-v206";
+const CACHE_NAME = "japan-quest-v207";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v206",
-  "./ticket-email.js?v206",
-  "./wander.js?v206",
-  "./app.js?v206",
+  "./styles.css?v207",
+  "./ticket-email.js?v207",
+  "./wander.js?v207",
+  "./roll-call.js?v207",
+  "./app.js?v207",
   "./leaflet.css",
   "./leaflet.js",
   "./place-coordinates.js",
@@ -47,7 +48,7 @@ function fileName(url) {
 
 function isShellFile(url) {
   const name = fileName(url);
-  return name === "index.html" || name === "app.js" || name === "wander.js" || name === "ticket-email.js" || name === "styles.css" || name === "sw.js" || name === "manifest.webmanifest";
+  return name === "index.html" || name === "app.js" || name === "wander.js" || name === "roll-call.js" || name === "ticket-email.js" || name === "styles.css" || name === "sw.js" || name === "manifest.webmanifest";
 }
 
 function isDocumentRequest(request, url) {
