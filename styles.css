@@ -6518,9 +6518,23 @@ body[data-traveler="mai"] .wallet-filters button[aria-pressed="true"] {
   line-height: 1.35;
 }
 
+.tax-qr-tip,
+.day-soft-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.tax-qr-tip {
+  color: #5c4a52;
+}
+
 body[data-traveler="mai"] .tax-qr,
 body[data-traveler="mai"] .tax-qr > summary,
-body[data-traveler="mai"] .tax-qr-note {
+body[data-traveler="mai"] .tax-qr-note,
+body[data-traveler="mai"] .tax-qr-tip {
   background: #fff;
   color: #1c0f14;
   border-color: #1c0f14;
