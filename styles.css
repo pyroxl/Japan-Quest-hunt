@@ -6586,6 +6586,31 @@ body[data-traveler="mai"] .tax-qr-tip {
   font-weight: 750;
 }
 
+@keyframes roll-entry-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--green) 0%, transparent);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, var(--green) 16%, transparent),
+      0 0 18px 3px color-mix(in srgb, var(--green) 38%, transparent);
+  }
+}
+
+.roll-entry.is-pulse {
+  animation: roll-entry-pulse 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-entry.is-pulse {
+    animation: none;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
 .roll-date,
 .roll-progress,
 .roll-note,

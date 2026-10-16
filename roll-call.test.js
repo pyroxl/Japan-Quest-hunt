@@ -6,6 +6,7 @@ const {
   rollSweepOn,
   rollCarryOn,
   rollSwapLine,
+  rollPulseAt,
   rollReady,
   rollToggle,
   rollNormalize,
@@ -167,6 +168,19 @@ assert.strictEqual(rollSwapLine("2026-11-04"), "Move them back to Kroser");
 assert.strictEqual(rollSwapLine("2026-11-11"), "Move them back to Kroser");
 assert.strictEqual(rollSwapLine("2026-11-07"), "Pack Hakone cube + hand suitcases to Akko");
 assert.strictEqual(rollSwapLine("2026-10-25"), "");
+
+["2026-10-24", "2026-10-28", "2026-11-02", "2026-11-05", "2026-11-08", "2026-11-11", "2026-11-12", "2026-11-13"].forEach((iso) => {
+  assert.strictEqual(rollPulseAt(iso, 8 * 60), true, iso);
+  assert.strictEqual(rollPulseAt(iso, 18 * 60), true, iso);
+});
+["2026-10-27", "2026-11-01", "2026-11-04", "2026-11-07"].forEach((iso) => {
+  assert.strictEqual(rollPulseAt(iso, 17 * 60 + 59), false, iso);
+  assert.strictEqual(rollPulseAt(iso, 18 * 60), true, iso);
+});
+["2026-10-16", "2026-10-25", "2026-10-26", "2026-11-06", "2026-11-09", "2026-11-10"].forEach((iso) => {
+  assert.strictEqual(rollPulseAt(iso, 12 * 60), false, iso);
+  assert.strictEqual(rollPulseAt(iso, 20 * 60), false, iso);
+});
 
 const pouch = byName(transit, "Passport pouch");
 const passport = byName(transit, "Passport");

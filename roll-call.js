@@ -123,6 +123,17 @@
   ];
   const ARRIVE_NIGHTS = ["2026-10-24", "2026-10-28", "2026-11-02", "2026-11-05"];
   const PACK_BACK_NIGHTS = ["2026-10-27", "2026-11-01", "2026-11-04", "2026-11-11"];
+  const PULSE_TRANSIT = [
+    "2026-10-24",
+    "2026-10-28",
+    "2026-11-02",
+    "2026-11-05",
+    "2026-11-08",
+    "2026-11-11",
+    "2026-11-12",
+    "2026-11-13"
+  ];
+  const PULSE_EVENING = ["2026-10-27", "2026-11-01", "2026-11-04", "2026-11-07"];
   const CARRY_ON = new Set(["Kroser", "Travel Flame money belt", "Mai's pink backpack"]);
   const LIST_LABELS = { transit: "Transit", day: "Day-to-day", hakone: "Hakone" };
 
@@ -217,6 +228,12 @@
     return "";
   }
 
+  function rollPulseAt(iso, minutes) {
+    if (PULSE_TRANSIT.includes(iso)) return true;
+    if (PULSE_EVENING.includes(iso)) return minutes >= 18 * 60;
+    return false;
+  }
+
   function rollListLabel(listId) {
     return LIST_LABELS[listId] || LIST_LABELS.transit;
   }
@@ -304,6 +321,7 @@
     rollSweepOn,
     rollCarryOn,
     rollSwapLine,
+    rollPulseAt,
     rollListLabel,
     rollReady,
     rollToggle,

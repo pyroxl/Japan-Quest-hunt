@@ -8220,13 +8220,26 @@ function rollDateLabel(iso) {
   });
 }
 
-function rollEntryHtml() {
-  if (!coupleView() || typeof rollTree !== "function") return "";
+function japanClockMinutes() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tokyo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(new Date());
+  const hour = Number(parts.find((part) => part.type === "hour")?.value);
+  const minute = Number(parts.find((part) => part.type === "minute")?.value);
+  return ((hour === 24 ? 0 : hour) * 60) + minute;
+}
+
+function rollEntryHtml(surface) {
+  if (travelerView() !== "brian" || typeof rollTree !== "function") return "";
   const iso = japanTodayIso();
   const listId = activeRollList(iso);
   const tree = rollTree(listId, iso);
   const stats = rollStats(tree, rollCheckedSet(listId, iso));
-  return `<button type="button" class="roll-entry" data-open-roll>
+  const pulse = surface === "today" && rollPulseAt(iso, japanClockMinutes()) && stats.done < stats.total;
+  return `<button type="button" class="roll-entry${pulse ? " is-pulse" : ""}" data-open-roll>
     <span class="roll-entry-copy"><span class="label">Packing</span><strong>Roll call</strong></span>
     <small>${escapeHtml(rollListLabel(listId))} · ${stats.done} of ${stats.total}</small>
   </button>`;
@@ -8298,7 +8311,7 @@ function renderRollCall() {
 }
 
 function openRollCall(from) {
-  if (!coupleView()) return;
+  if (travelerView() !== "brian") return;
   rollReturn = from === "tickets" ? "tickets" : "today";
   showSection("rollcall");
 }
@@ -8308,7 +8321,7 @@ function renderToday() {
   const landed = landingSelection();
   const selected = todayBrowseRow();
   const { day, cityId } = selected;
-  todayPanel.innerHTML = rollEntryHtml();
+  todayPanel.innerHTML = rollEntryHtml("today");
   if (landed.phase === "before") {
     const days = daysUntilTrip();
     const line = document.createElement("p");
@@ -8387,7 +8400,7 @@ function showSection(name) {
     openStoryView(storyViewForOverview(state.overviewWindows?.overview ?? 0));
     return;
   }
-  if (name === "rollcall" && !coupleView()) name = rollReturn === "tickets" ? "tickets" : "today";
+  if (name === "rollcall" && travelerView() !== "brian") name = rollReturn === "tickets" ? "tickets" : "today";
   document.body.dataset.section = name;
   const dateLabel = document.querySelector("#headerCalendarDate");
   if (dateLabel) dateLabel.textContent = headerDateLabel();
