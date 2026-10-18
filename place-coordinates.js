@@ -24,6 +24,22 @@ window.PLACE_COORDINATES = {
     34.684601,
     135.498514
   ],
+  "Udon Izakaya Edobori": [
+    34.689194,
+    135.493264
+  ],
+  "Osakako Station": [
+    34.6544,
+    135.4316
+  ],
+  "Osaka Aquarium Kaiyukan": [
+    34.6545,
+    135.429
+  ],
+  "Shabushabu On-yasai Sennichimae": [
+    34.6669,
+    135.5017
+  ],
   "Namba Station Osaka": [
     34.6636625,
     135.5017751
