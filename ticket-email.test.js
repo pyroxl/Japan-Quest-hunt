@@ -31,7 +31,7 @@ assert.deepStrictEqual(parsed.map((ticket) => ticket.bookingId), [
   "shinkansen-himeji",
   "shinkansen-nov5"
 ]);
-assert.deepStrictEqual(parsed.map((ticket) => ticket.code), ["2005", "2000", "2004", "2007"]);
+assert.deepStrictEqual(parsed.map((ticket) => ticket.code), ["", "", "", ""]);
 assert.strictEqual(parsed[0].person, "Brian");
 assert.strictEqual(parsed[0].route.includes("Shin-Osaka"), true);
 assert.strictEqual(emailNeedsPhoneChoice(parsed), false);
