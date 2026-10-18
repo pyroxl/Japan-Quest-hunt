@@ -928,9 +928,9 @@ const dayContext = {
     ]
   },
   day05: {
-    summary: "Easy morning at Hotel Cordia Osaka Hommachi. Walk in at Edobori at 11:00 for 5 with Sayaka. Chuo Line to Kaiyukan until about 16:30. Say bye at Osakako around 5 PM, rest by about 17:30, then On-yasai at 20:00 for 4. Confirmation in Gmail.",
-    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka. About a 15-minute walk from Hotel Cordia Osaka Hommachi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon."], ["~12:15", "Subway to Osakako. Chuo Line from Hommachi, about 15–20 minutes. Walk to Kaiyukan."], ["~12:45–16:30", "Osaka Aquarium Kaiyukan. Whale sharks in the 9 m Pacific Ocean tank. The Tempozan Ferris wheel next door is optional. Buy tickets at the door or online."], ["~16:45–17:00", "Say bye to Sayaka at Osakako Station. She leaves around 5 PM for her daughter's activity."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi. Rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji. Rest.", "parents"], ["~19:40", "Head to Namba / Sennichimae."], ["20:00", "Be at Shabushabu On-yasai Sennichimae. Party of 4. No Sayaka. Confirmation in Gmail."]],
-    slowTimeline: [["Morning", "Easy morning at Hotel Cordia Osaka Hommachi.", "brianMai"], ["Morning", "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji.", "parents"], ["11:00", "Walk in at Udon Izakaya Edobori. Party of 5. Sayaka joins."], ["Afternoon", "Kaiyukan. Spot the whale shark. The ferris wheel is optional. Say bye to Sayaka at Osakako around 5 PM."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi. Rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji. Rest.", "parents"], ["20:00", "On-yasai Sennichimae. Party of 4. No Sayaka. Confirmation in Gmail."]],
+    summary: "Easy morning at Hotel Cordia Osaka Hommachi, Edobori lunch at 11:00 for 5 with Sayaka, Kaiyukan until about 16:30, then On-yasai at 20:00 for 4.",
+    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, about 15 minutes from Hotel Cordia Osaka Hommachi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon."], ["~12:15", "Chuo Line from Hommachi to Osakako, about 15–20 minutes, then walk to Kaiyukan."], ["~12:45–16:30", "Osaka Aquarium Kaiyukan, with whale sharks in the 9 m Pacific Ocean tank, an optional Tempozan Ferris wheel, and tickets at the door or online."], ["~16:45–17:00", "Say bye to Sayaka at Osakako Station around 5 PM, before her daughter's activity."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["~19:40", "Head to Namba / Sennichimae."], ["20:00", "Be at Shabushabu On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
+    slowTimeline: [["Morning", "Easy morning at Hotel Cordia Osaka Hommachi.", "brianMai"], ["Morning", "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji.", "parents"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka."], ["Afternoon", "Kaiyukan to spot the whale shark, with an optional ferris wheel, then say bye to Sayaka at Osakako around 5 PM."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["20:00", "On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
     history: [
       "Osaka Aquarium Kaiyukan opened in 1990 on the Tempozan waterfront. The building is a spiral walk through Pacific habitats, ending at one large tank.",
       "That Pacific Ocean tank is about 9 meters deep. Whale sharks circle in it with smaller fish. The Tempozan Ferris wheel next door is optional. Dinner is the booked On-yasai table in Sennichimae."
@@ -1119,7 +1119,7 @@ const DAY_VIEWS = {
   },
   day05: {
     parents: {
-      summary: "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji. Join Edobori lunch at 11:00 and Kaiyukan until about 16:30. Sayaka leaves around 5 PM. Rest at the hotel, then On-yasai at 20:00 for 4. Confirmation in Gmail.",
+      summary: "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji, then Edobori lunch at 11:00 and Kaiyukan until about 16:30, and On-yasai at 20:00 for 4.",
       clearPath: "Edobori at 11:00 → Kaiyukan → On-yasai at 20:00.",
       mainGoal: "Spot the whale shark in the Pacific Ocean tank.",
       hotel: { name: "Royal Park Hotel ICONIC Osaka Midosuji", url: ROYAL_PARK_MAP }
@@ -2883,7 +2883,7 @@ function mealAskText(booking) {
     endo: ENDO_PARTY,
     kyoya: SAYAKA_CONFIRMED,
     edobori: "Party of 5. Sayaka joins and leaves around 5 PM.",
-    "onyasai-sennichimae": "Party of 4. No Sayaka.",
+    "onyasai-sennichimae": "Party of 4. No Sayaka. Confirmation in Gmail.",
     "kani-doraku": "Party of 4. No Sayaka. Course and seats unchanged.",
     "bochi-bochi": "Booked by Sayaka. Sayaka and her family are joining. The 4 of us plus her family."
   };
