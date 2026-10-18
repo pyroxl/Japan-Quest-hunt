@@ -4,10 +4,10 @@
   Object.assign(root, api);
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const TRAIN_BOOKINGS = [
-    { id: "shinkansen-oct24", date: "2026-10-24", train: "Nozomi 261", code: "2005" },
-    { id: "shinkansen-nov2", date: "2026-11-02", train: "Hikari 733", code: "2000" },
-    { id: "shinkansen-himeji", date: "2026-11-02", train: "Nozomi 69", code: "2004" },
-    { id: "shinkansen-nov5", date: "2026-11-05", train: "Nozomi 90", code: "2007" }
+    { id: "shinkansen-oct24", date: "2026-10-24", train: "Nozomi 261", code: "" },
+    { id: "shinkansen-nov2", date: "2026-11-02", train: "Hikari 733", code: "" },
+    { id: "shinkansen-himeji", date: "2026-11-02", train: "Nozomi 69", code: "" },
+    { id: "shinkansen-nov5", date: "2026-11-05", train: "Nozomi 90", code: "" }
   ];
 
   const SEAT_PERSON = {

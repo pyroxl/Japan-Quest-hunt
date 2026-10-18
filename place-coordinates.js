@@ -72,6 +72,18 @@ window.PLACE_COORDINATES = {
     34.6951897,
     135.5209676
   ],
+  "Tennoji Station": [
+    34.6467,
+    135.514
+  ],
+  "Sakai-shi Station": [
+    34.577824,
+    135.498684
+  ],
+  "Bochi bochi": [
+    34.57873,
+    135.50421
+  ],
   "Shin-Kobe Station": [
     34.7061386,
     135.1958713
