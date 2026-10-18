@@ -15,7 +15,7 @@ function mapsWalk(origin, destination, waypoints) {
 const WANDER_DAY = {
   day02: { city: "osaka", areas: ["hommachi"], energy: "low", window: "evening", count: 1 },
   day03: { city: "osaka", areas: ["shinsekai"], energy: "medium", window: "afternoon", count: 0 },
-  day04: { city: "osaka", areas: ["tenma", "shinsaibashi"], energy: "medium", window: "afternoon", count: 1 },
+  day04: { city: "osaka", areas: ["shinsaibashi"], energy: "medium", window: "afternoon", count: 1 },
   day05: { city: "osaka", areas: ["hommachi"], energy: "low", window: "evening", count: 1 },
   day06: { city: "kyoto", areas: ["kiyamachi", "karasuma"], energy: "low", window: "evening", count: 1 },
   day07: { city: "kyoto", areas: ["gion"], energy: "low", window: "evening", count: 2 },
@@ -39,7 +39,7 @@ const WANDER_IDEAS = {
   osaka: [
     { id: "shinsaibashi-suji", name: "Shinsaibashi-suji", line: "covered street, then back", why: "A covered shopping street for a short look, then back.", travel: "About 10 minutes on foot from Hotel Cordia.", maps: mapsQuery("Shinsaibashi-suji Shopping Street Osaka"), areas: ["hommachi", "shinsaibashi"], energy: "low", when: ["evening", "afternoon"], rank: 0 },
     { id: "namba-yasaka", name: "Namba Yasaka Shrine", line: "small shrine, lion stage", why: "A small shrine stop. The lion stage is the whole visit.", travel: "About 15 minutes on foot from Hommachi.", maps: mapsQuery("Namba Yasaka Shrine Osaka"), areas: ["namba", "hommachi"], energy: "low", when: ["evening"], rank: 1 },
-    { id: "tenma-arcade", name: "Tenjinbashi-suji", line: "covered arcade near dinner", why: "A long covered arcade beside the dinner streets.", travel: "About 20 minutes from Hommachi by subway to Minami-morimachi.", maps: mapsQuery("Tenjinbashi-suji Shopping Street Osaka"), areas: ["tenma"], energy: "medium", when: ["afternoon", "evening"], rank: 0 }
+    { id: "tenma-arcade", name: "Tenjinbashi-suji", line: "covered arcade", why: "A long covered arcade in Tenma. Oct 26 dinner is Bochi bochi, not here.", travel: "About 20 minutes from Hommachi by subway to Minami-morimachi.", maps: mapsQuery("Tenjinbashi-suji Shopping Street Osaka"), areas: ["tenma"], energy: "medium", when: ["afternoon", "evening"], rank: 0 }
   ],
   kyoto: [
     { id: "shirakawa", name: "Shirakawa lane", line: "willow canal, one block", why: "The willow canal in Gion. Walk one block and turn around.", travel: "You are already in Gion after lunch.", maps: mapsQuery("Shirakawa River Gion Kyoto"), areas: ["gion"], energy: "low", when: ["evening"], rank: 0 },

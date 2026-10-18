@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v207";
+const APP_VERSION = "japan-quest-v208";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -53,11 +53,11 @@ const SUISHIN_MAIN_NOTE = `BOOKED. The TableCheck reservation ID is {{copy:XJCU9
 const HIROSHIMA_WEATHER_SWAP = "You can swap Nov 3 and Nov 4 if the Nov 4 forecast is bad. If you swap, do Miyajima on Nov 3. More people come on the holiday. The shrine floats from about 15:00 to 19:45. The Nov 3 high tide is 17:20 (305 cm). On Nov 4 the Peace Memorial Museum is open from 7:30 to 19:00. Entry is JPY 200. Suishin main store is closed on Wednesdays. If Peace Park moves to Wed Nov 4, eat dinner at Suishin ekie. Suishin main store is booked for Tue Nov 3 at 18:00. If you swap the days, cancel that booking before 18:00 JST on Mon Nov 2. Decide from Oct 30 to Nov 1. Use the JMA weekly forecast or tenki.jp for Hatsukaichi. Check the forecast again on the evening of Nov 2.";
 const KYOYA_TABELOG_URL = "https://tabelog.com/kyoto/A2601/A260201/26016279/";
 const KYOYA_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Kyoya Kiyomizu Yanaginobamba Honke, 207-5 Ayazaimoku-cho, Yanaginobamba-dori Ayanokoji sagaru, Shimogyo-ku, Kyoto")}`;
-const KYOYA_NOTE = `BOOKED. Eat dinner at Kyoya Kiyomizu Yanaginobamba Honke (京家 きよみず 柳馬場本家). The Tabelog reservation number is {{copy:FP4YF2QHPJ}}. The time is Sat Oct 31 at 18:30. The party is 5 people. The booking is for seats only. Order a la carte. Order obanzai and yuba. You requested a table with chairs. The table time limit is 2 hours. The section is non-smoking. There is no table charge. A typical dinner is JPY 4,000–5,000 per person. Do not order the set courses. The set courses are built around a pork hot pot. Mai avoids sliced meat. If you cancel on Oct 30, the fee is JPY 2,500 per person. If you cancel on Oct 31, the fee is JPY 5,000 per person. Cancel through Tabelog My Page. The address is 207-5 Ayazaimoku-cho, Yanaginobamba-dori Ayanokoji sagaru, Shimogyo-ku, Kyoto. The shop is just south of Shijo, near Nishiki. {{link:${KYOYA_MAP_URL}|Open the map}} {{link:${KYOYA_TABELOG_URL}|Open the Tabelog page}} The shop phone is 075-352-6556.`;
+const KYOYA_NOTE = `BOOKED. Eat dinner at Kyoya Kiyomizu Yanaginobamba Honke (京家 きよみず 柳馬場本家). The Tabelog reservation number is {{copy:FP4YF2QHPJ}}. The time is Sat Oct 31 at 18:30. The party is 5 people. Sayaka is confirmed. The booking is for seats only. Order a la carte. Order obanzai and yuba. You requested a table with chairs. The table time limit is 2 hours. The section is non-smoking. There is no table charge. A typical dinner is JPY 4,000–5,000 per person. Do not order the set courses. The set courses are built around a pork hot pot. Mai avoids sliced meat. If you cancel on Oct 30, the fee is JPY 2,500 per person. If you cancel on Oct 31, the fee is JPY 5,000 per person. Cancel through Tabelog My Page. The address is 207-5 Ayazaimoku-cho, Yanaginobamba-dori Ayanokoji sagaru, Shimogyo-ku, Kyoto. The shop is just south of Shijo, near Nishiki. {{link:${KYOYA_MAP_URL}|Open the map}} {{link:${KYOYA_TABELOG_URL}|Open the Tabelog page}} The shop phone is 075-352-6556.`;
 const MENAMI_SKIP_NOTE = "Skipped. Menami takes bookings by phone only. Do not call Menami. The Oct 31 dinner is Kyoya.";
 const EDOBORI_TABELOG_URL = "https://tabelog.com/en/osaka/A2701/A270102/27094721/";
 const EDOBORI_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Udon Izakaya Edobori, Osaka")}`;
-const EDOBORI_LUNCH_NOTE = `CHOSEN. Walk in at Udon Izakaya Edobori on Tue Oct 27 at 11:00. Do not reserve this lunch. The shop does not take lunch reservations. A meal is about JPY 1,100 per person. The party is 5 people. The shop is open Monday to Saturday from 11:00 to 14:00. Walk about 15 minutes from Hotel Cordia Osaka Hommachi. The room is non-smoking. Mai orders kitsune udon or chikuwa udon. Do not order the chicken tempura. Do not order the meat udon. Do not order tonkatsu. Do not order katsudon. Do not book Honke Shibato. {{link:${EDOBORI_MAP_URL}|Open the map}} {{link:${EDOBORI_TABELOG_URL}|Open the Tabelog page}}`;
+const EDOBORI_LUNCH_NOTE = `CHOSEN. Walk in at Udon Izakaya Edobori on Tue Oct 27 at 11:00. Do not reserve this lunch. The shop does not take lunch reservations. A meal is about JPY 1,100 per person. The party is 5 people. Sayaka joins and leaves around 5 PM. The shop is open Monday to Saturday from 11:00 to 14:00. Walk about 15 minutes from Hotel Cordia Osaka Hommachi. The room is non-smoking. Mai orders kitsune udon or chikuwa udon. Do not order the chicken tempura. Do not order the meat udon. Do not order tonkatsu. Do not order katsudon. Do not book Honke Shibato. {{link:${EDOBORI_MAP_URL}|Open the map}} {{link:${EDOBORI_TABELOG_URL}|Open the Tabelog page}}`;
 const SHIBATO_SKIP_NOTE = "Skipped. Honke Shibato takes bookings by phone only. The price is about JPY 4,920–7,450. Do not call Honke Shibato. Tue Oct 27 lunch is Udon Izakaya Edobori.";
 const KURA_TABELOG_URL = "https://tabelog.com/en/osaka/A2701/A270202/27121586/";
 const SAKAE_TABELOG_URL = "https://tabelog.com/en/osaka/A2701/A270101/27002305/";
@@ -103,7 +103,9 @@ const JOURNAL_QUEUE_STORE = "journalQueue";
 const JOURNAL_CACHE_STORE = "journalCache";
 const JOURNAL_PREFS_KEY = "japanQuestJournal";
 const JOURNAL_NAMES = ["Brian", "Mai", "Mom", "Dad"];
-const ENDO_PARTY = "Brian, Mai, Mom (Cindy), and Dad (David), with the booking held for 5 seats so Sayaka can join if she comes.";
+const ENDO_PARTY = "Party of 5. Sayaka is confirmed.";
+const SAYAKA_CONFIRMED = "Party of 5. Sayaka is confirmed.";
+const BOCHI_NOTE = "Bochi bochi at 19:30, near Sakai-shi Station. Booked by Sayaka for everyone. Sayaka and her family are joining. The 4 of us plus her family. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk.";
 const TRIP_GUIDE_AUTHOR = "Trip Guide";
 
 const HOTEL_PLACES = new Set([
@@ -321,9 +323,9 @@ const coreExperienceQuests = [
 ];
 
 const roadmapGoals = [
-  { id: "osaka-food", goal: "Maximum-pop Osaka and regional food", days: ["day02", "day03", "day04"], status: "Ready", why: "Castle, Den Den, and Shinsekai are the loud Osaka arc. Day 2 does not include Dotonbori. Kuromon and Tenma supply the scored food quest.", blocker: "Day 3 and Day 4 both involve substantial standing.", fallback: "Keep the category limits, hotel reset and first seated Tenma venue." },
+  { id: "osaka-food", goal: "Maximum-pop Osaka and regional food", days: ["day02", "day03", "day04"], status: "Ready", why: "Castle, Den Den, and Shinsekai are the loud Osaka arc. Day 2 does not include Dotonbori. Kuromon supplies the scored food quest. Dinner on Oct 26 is Bochi bochi.", blocker: "Day 3 and Day 4 both involve substantial standing.", fallback: "Keep the category limits, the hotel reset, and the 19:30 Bochi bochi booking." },
   { id: "kobe-nunobiki", goal: "Kobe Nunobiki romantic outing", days: ["day05"], status: "Needs Route Checks", why: "The selected soft outing trades a wider Kobe checklist for ropeway views and gardens. Dinner is On-yasai in Osaka at 20:00.", blocker: "Recheck ropeway and herb-garden hours and maintenance notices.", fallback: "Use the ropeway/view/café version only; parents can take an independent easy Osaka day." },
-  { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Tenma izakaya dinner is the Day 4 capstone after the scored snack mission.", blocker: "", fallback: "Keep the first seated Tenma venue even if the daytime tasting runs long." },
+  { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Bochi bochi on Oct 26 is the izakaya night, booked by Sayaka.", blocker: "", fallback: "Keep the 19:30 booking even if the daytime tasting runs long." },
   { id: "konbini", goal: "7-Eleven and konbini food experience", days: ["day02"], status: "Ready", why: "The first small everyday-Japan ritual begins immediately.", blocker: "", fallback: "Build breakfast from the nearest station or hotel konbini." },
   { id: "nara", goal: "Nara Park", days: ["day06"], status: "Ready", why: "Nara bridges Osaka and Kyoto with one iconic first-trip experience.", blocker: "", fallback: "Use taxis and keep the visit to the park and Todai-ji approach." },
   { id: "nijo", goal: "Nijo Castle", days: ["day09"], status: "Ready", why: "It is Kyoto's strongest non-temple historic anchor and opens the compact central-Kyoto day.", blocker: "", fallback: "Keep Nijo, then skip either the palace or Manga Museum and rejoin at Nishiki or dinner." },
@@ -426,7 +428,7 @@ const regionalQuestPools = {
 const DAY_QUEST_AREAS = {
   day02: ["hommachi"],
   day03: ["shinsekai", "namba"],
-  day04: ["kuromon", "shinsaibashi", "tenma"],
+  day04: ["kuromon", "shinsaibashi"],
   day05: ["hommachi"],
   day06: ["nara"],
   day07: ["gion", "fushimi", "higashiyama"],
@@ -471,7 +473,7 @@ const snackLeagueSlots = [
   ["sweet", "Fruit / sweet", "Kuromon · hard exit 11:30"],
   ["shinsaibashi", "Shinsaibashi checkpoint", "One depachika or food-hall bite"],
   ["amerikamura", "Amerikamura wildcard", "One drink or snack only"],
-  ["tenma", "Tenma champion", "The dinner bite worth reordering"]
+  ["tenma", "Bochi bochi", "The shared plate worth reordering"]
 ];
 
 // Days spent outside the tab's main city receive only a subtle visual treatment.
@@ -688,8 +690,8 @@ const tripData = {
     days: [
       questDay("day02", "2026-10-24", "Narita to Osaka", "Land in Tokyo, take the Narita Express to Tokyo Station, then ride Nozomi 261 to Osaka.", ["Narita International Airport", "Tokyo Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, then take the Narita Express to Tokyo Station. The ride is about 55 minutes. Buy the ticket at the JR counter. Any train leaving by about 12:30 works. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00.", [{ text: "Keep a full buffer for immigration and bags", who: "brianMai" }, { text: "Buy the Narita Express at the JR counter. Any train leaving by about 12:30 works", who: "brianMai" }, { text: "Be at the Shinkansen gates by about 13:30", who: "brianMai" }, "Eat during the transfer or on the train", { text: "Call Hotel Cordia if check-in will be late", who: "brianMai" }, { text: "Stop after check-in. Do not add Dotonbori. Kura Sushi Dotonbori has no date", who: "brianMai" }], ["The first Japan train window", "The Shinkansen platform", "The first Osaka hotel-room view"], "Mai gets a calm first day instead of a cross-Tokyo deadline.", "The reserved train is Nozomi 261 at 14:00 from Tokyo Station. Parents can board it at Shinagawa at about 14:07, or meet at Tokyo Station. Keep the evening empty."),
       questDay("day03", "2026-10-25", "Castle to Neon", "Monumental, pop-culture and retro-food Osaka in one strong arc.", ["Osaka Castle", "Nippombashi Osaka", "Nipponbashi Denden Town", "Shinsekai Osaka"], "Start at the castle near opening, eat a seated Nippombashi lunch, browse Den Den Town, and be at Sankei Club at 17:00.", ["Photograph the castle across the moat", "Choose the interior by interest", "Find one Den Den display that makes Mai stop", "Share one Osaka snack"], ["Golden castle ornament", "A character detail", "Tsutenkaku framed by signs"], "Mai gets history, games/anime culture and loud Osaka streets.", "Parents can skip Den Den. Still reach Sankei Club in Shinsekai at 17:00."),
-      questDay("day04", "2026-10-26", "Kuromon Scores, Tenma Pours", "A timed, scored tasting route with a real finish line and appetite left for dinner.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tenma Osaka"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then finish at no more than two Tenma venues.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Share plates at one Tenma izakaya", "Choose one optional specialist finish"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "The Tenma dish worth reordering"], "Mai gets a playful food hunt rather than an aimless market wander.", "Parents use a seated Kuromon base, skip Amerikamura if useful and rejoin the first Tenma venue."),
-      questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, and café time. Dinner is On-yasai in Osaka at 20:00.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing. Return to Osaka for the booked On-yasai dinner.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day. Dinner is still On-yasai at 20:00."),
+      questDay("day04", "2026-10-26", "Kuromon Scores, Sakai Izakaya", "A timed, scored tasting route, then a booked izakaya dinner in Sakai.", ["Kuromon Ichiba Market", "Daimaru Shinsaibashi", "Amerikamura", "Hotel Cordia Osaka Hommachi", "Tennoji Station", "Sakai-shi Station", "Bochi bochi"], "Complete four shared Kuromon categories by 11:30, one Shinsaibashi food-hall checkpoint and one Amerikamura wildcard; reset at the hotel, then dinner at Bochi bochi at 19:30.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Choose one food-hall checkpoint", "Use one Amerikamura wildcard", "Photograph each item and price", "Reset at the hotel", "Be at Bochi bochi at 19:30"], ["A market preparation detail", "The best value surprise", "A youth-culture snack or drink", "A shared plate at Bochi bochi"], "Mai gets a playful food hunt, then a seated izakaya with Sayaka's family.", "Parents use a seated Kuromon base, skip Amerikamura if useful, and meet at Bochi bochi at 19:30."),
+      questDay("day05", "2026-10-27", "Kobe Above the Clouds", "Ropeway views, gardens, and café time. Dinner is On-yasai in Osaka at 20:00 for 4.", ["Hotel Cordia Osaka Hommachi", "Shin-Kobe Station", "Nunobiki Ropeway", "Kobe Nunobiki Herb Gardens"], "Make Nunobiki the one contained Kobe outing. Return to Osaka for the booked On-yasai dinner.", ["Ride the ropeway", "Find the best city/harbor view", "Pause at a garden café or terrace", "Choose a Kobe sweet"], ["A ropeway-window reveal", "A garden detail", "Kobe and the harbor below"], "Mai gets the romantic scenic outing already selected.", "Parents use the ropeway/view/café version or take an independent Osaka day. Sayaka joins Edobori lunch and leaves around 5 PM. Dinner is On-yasai at 20:00 for 4."),
       questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Keep the deer stop short", "Try kakinoha-zushi if you want it", "Find a cafe near Naramachi"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if legs become the story. The bags stay in the Kintetsu-Nara lockers until you leave.")
     ]
   },
@@ -779,9 +781,9 @@ const dayGoals = {
     photoHint: "Tsutenkaku, kushikatsu plate, or the castle across the moat."
   },
   day04: {
-    clearPath: "Four Kuromon scores by 11:30, one food-hall stop, hotel reset, two-stop Tenma finish.",
-    mainGoal: "Complete the Snack League scorecard and photograph the winning Tenma bite.",
-    photoHint: "Scorecard, Kuromon bite, or the Tenma dish worth reordering."
+    clearPath: "Four Kuromon scores by 11:30, one food-hall stop, hotel reset, Bochi bochi at 19:30.",
+    mainGoal: "Complete the Snack League scorecard, then dinner at Bochi bochi.",
+    photoHint: "Scorecard, Kuromon bite, or a shared plate at Bochi bochi."
   },
   day05: {
     clearPath: "Edobori walk-in at 11:00 → Nunobiki ropeway → On-yasai at 20:00.",
@@ -912,7 +914,7 @@ const dayContext = {
   },
   day03: {
     summary: "Castle, character culture and retro food give Osaka one intentionally big day—monumental history in the morning, Den Den browsing in the afternoon, Shinsekai kushikatsu at blue hour. Do not add a fourth district; the arc works because each stop has a different emotional register.",
-    timeline: [["08:30–11:30", "Reach Osaka Castle near opening. Photograph the moat view. Enter the keep only if you want the interior."], ["11:30–13:00", "Near Nippombashi, pick a ramen spot (not oyster ramen; Mom hates oysters)."], ["13:00–16:00", "Browse one defined part of Den Den Town."], ["17:00", "Be at Shinsekai Kushikatsu Okonomi Sankei Club. Party of 5. Confirmation Resty {{copy:468118574}}. Do not add a fourth district."]],
+    timeline: [["08:30–11:30", "Reach Osaka Castle near opening. Photograph the moat view. Enter the keep only if you want the interior."], ["11:30–13:00", "Near Nippombashi, pick a ramen spot (not oyster ramen; Mom hates oysters)."], ["13:00–16:00", "Browse one defined part of Den Den Town."], ["17:00", "Be at Shinsekai Kushikatsu Okonomi Sankei Club. Party of 5. Sayaka is confirmed. Confirmation Resty {{copy:468118574}}. Do not add a fourth district."]],
     history: [
       "Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan. The current keep is a reconstruction and museum, but its moat and walls still establish Osaka's monumental scale.",
       "Shinsekai was unveiled in 1912 as a vision of the new world, with Tsutenkaku tower as its symbol. Den Den Town tells a later popular-culture story, shifting from postwar electronics into games, anime and collector culture.",
@@ -920,18 +922,18 @@ const dayContext = {
     ]
   },
   day04: {
-    summary: "The Osaka Snack League turns Kuromon, Shinsaibashi and Amerikamura into a bounded five-taste quest before a protected Tenma dinner. Four Kuromon categories by 11:30, one depachika checkpoint, one Amerikamura wildcard, then a real hotel reset before izakaya—not more grazing. The scorecard and hard exits turn market abundance into a game Mai can actually win without ruining appetite for dinner.",
-    timeline: [["10:00–11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave at 11:30."], ["12:00–14:30", "At Daimaru Shinsaibashi, complete one food-hall stop. Then take one Amerikamura wildcard only."], ["15:00–17:00", "Return to Hotel Cordia Osaka Hommachi. Rest. Stop eating.", "brianMai"], ["15:00–17:00", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest. Stop eating.", "parents"], ["17:30–21:00", "Go to Tenma. Share plates at one izakaya. Add at most one specialist finish."]],
+    summary: "Kuromon scores by 11:30, one Shinsaibashi stop, one Amerikamura wildcard, then a hotel reset. Dinner is Bochi bochi at 19:30, booked by Sayaka. Sayaka and her family join. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk.",
+    timeline: [["10:00–11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave at 11:30."], ["12:00–14:30", "At Daimaru Shinsaibashi, complete one food-hall stop. Then take one Amerikamura wildcard only."], ["15:00–17:00", "Return to Hotel Cordia Osaka Hommachi. Rest. Stop eating.", "brianMai"], ["15:00–17:00", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest. Stop eating.", "parents"], ["19:30", BOCHI_NOTE]],
     history: [
       "Kuromon Ichiba began as a wholesale fish market and became one of Osaka's most famous public market streets. Merchants built reputations on freshness, knife work, and the theatre of preparation behind glass counters.",
-      "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Markets, neighborhood restaurants and compact bars make it a strong lived-in dinner district without needing Dotonbori energy.",
-      "The Snack League turns that merchant culture into a game: categories, shared bites, photographed receipts, and a hard exit before the body rebels. Tenma then answers a different Osaka instinct—sitting down, sharing plates, and letting the day become conversation rather than consumption."
+      "Dinner is not a Tenma walk-in. It is Bochi bochi, an izakaya near Sakai-shi Station, booked by Sayaka.",
+      "The Snack League turns the market into a game: categories, shared bites, and a hard exit before dinner. The evening is the booked table in Sakai."
     ]
   },
   day05: {
-    summary: "Walk in at Udon Izakaya Edobori at 11:00 for 5. Mai orders kitsune udon or chikuwa udon. Honke Shibato is skipped. Then ride the Nunobiki ropeway and pause in the gardens. Dinner is booked: Shabushabu On-yasai Sennichimae at 20:00 for 5. Do not add a Kobe dinner.",
-    timeline: [["11:00", EDOBORI_LUNCH_NOTE], ["After lunch–15:30", "Go to Shin-Kobe. Allow 60–75 minutes each way. Ride the Nunobiki ropeway. Pause at one garden café or terrace. [ropeway and garden hours — needs confirmation]."], ["15:30–18:00", "Descend. Choose one Kobe sweet if you want it. Do not book a Kobe dinner."], ["20:00", "Be at Shabushabu On-yasai Sennichimae. Party of 5. Confirmation Ebica {{copy:468119458}}."]],
-    slowTimeline: [["10:00–11:30", "Sleep in. Eat near Hotel Cordia Osaka Hommachi. Leave when everyone is ready.", "brianMai"], ["10:00–11:30", "Sleep in. Eat near Royal Park Hotel ICONIC Osaka Midosuji. Leave when everyone is ready.", "parents"], ["Late morning", "Go to Shin-Kobe. Ride the ropeway both ways. The view is the main event."], ["Midday–15:00", "Use one terrace or café. Use only the shortest garden section."], ["Afternoon", "Return to Hotel Cordia Osaka Hommachi. Rest.", "brianMai"], ["Afternoon", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest.", "parents"], ["20:00", "Be at On-yasai Sennichimae. Do not add a Kobe dinner."]],
+    summary: "Walk in at Udon Izakaya Edobori at 11:00 for 5. Sayaka joins and leaves around 5 PM. Mai orders kitsune udon or chikuwa udon. Honke Shibato is skipped. Then ride the Nunobiki ropeway and pause in the gardens. Dinner is Shabushabu On-yasai Sennichimae at 20:00 for 4. No Sayaka. Do not add a Kobe dinner.",
+    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5. Sayaka joins and leaves around 5 PM. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon."], ["After lunch–15:30", "Go to Shin-Kobe. Allow 60–75 minutes each way. Ride the Nunobiki ropeway. Pause at one garden café or terrace. [ropeway and garden hours — needs confirmation]."], ["15:30–18:00", "Descend. Choose one Kobe sweet if you want it. Do not book a Kobe dinner. Sayaka leaves around 5 PM."], ["20:00", "Be at Shabushabu On-yasai Sennichimae. Party of 4. No Sayaka. Confirmation Ebica {{copy:468119458}}."]],
+    slowTimeline: [["10:00–11:30", "Sleep in. Eat near Hotel Cordia Osaka Hommachi. Leave when everyone is ready.", "brianMai"], ["10:00–11:30", "Sleep in. Eat near Royal Park Hotel ICONIC Osaka Midosuji. Leave when everyone is ready.", "parents"], ["Late morning", "Go to Shin-Kobe. Ride the ropeway both ways. The view is the main event."], ["Midday–15:00", "Use one terrace or café. Use only the shortest garden section."], ["Afternoon", "Return to Hotel Cordia Osaka Hommachi. Rest.", "brianMai"], ["Afternoon", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest.", "parents"], ["20:00", "Be at On-yasai Sennichimae. Party of 4. No Sayaka. Do not add a Kobe dinner."]],
     history: [
       "The Nunobiki slopes rise immediately behind Shin-Kobe, making mountain scenery unusually close to the city and port. For centuries the ridge was admired in poetry and travel writing as a sudden vertical escape from harbour commerce.",
       "The modern ropeway and herb gardens turn that steep terrain into an assisted scenic outing with broad views over Kobe and Osaka Bay. Kobe itself grew as one of Japan's first treaty ports, mixing foreign architecture, hillside neighbourhoods and harbour light.",
@@ -957,8 +959,8 @@ const dayContext = {
     ]
   },
   day08: {
-    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Kamishichiken tea is optional atmosphere, not a third major stop.",
-    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward the hotel. Be at Kani Doraku Kyoto Honten at 18:00."]],
+    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Kamishichiken tea is optional atmosphere, not a third major stop. Dinner is Kani Doraku Kyoto Honten at 18:00 for 4. No Sayaka. Course and seats unchanged.",
+    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward the hotel. Be at Kani Doraku Kyoto Honten at 18:00. Party of 4. No Sayaka. Course and seats unchanged."]],
     history: [
       "Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Aristocrats travelled from the capital to compose verses, admire blossoms and autumn leaves, and borrow mountain scenery into designed gardens and villas.",
       "Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes.",
@@ -966,7 +968,7 @@ const dayContext = {
     ]
   },
   day09: {
-    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki, and dinner at Kyoya in one north-to-south sequence. Enter Nijo at opening. Keep the palace to about one hour. Treat the 16:00–17:45 hotel reset as part of the plan. The Manga Museum is an optional split. After the reset, walk the Kamo River to Pontocho. Dinner is booked at Kyoya at 18:30. The shop is about 10 minutes from the Shijo end of Pontocho.",
+    summary: "Central Kyoto links Nijo, the Imperial Palace, optional manga culture, Nishiki, and dinner at Kyoya in one north-to-south sequence. Enter Nijo at opening. Keep the palace to about one hour. Treat the 16:00–17:45 hotel reset as part of the plan. The Manga Museum is an optional split. After the reset, walk the Kamo River to Pontocho. Dinner is booked at Kyoya at 18:30. Party of 5. Sayaka is confirmed. The shop is about 10 minutes from the Shijo end of Pontocho.",
     timeline: [["08:25–08:45", "Arrive at Nijo before opening. Enter at 08:45. [Nijo ticket type and where to buy it — needs confirmation]. Do not start with breakfast or shopping nearby."], ["08:45–10:35", "See Ninomaru Palace, the nightingale corridors and a bounded garden loop. Hard exit by 10:35–10:45."], ["10:45–11:15", "Go to the Kyoto Imperial Palace. Enter through the current public gate after security. [Dad's rest/rejoin point — needs confirmation]."], ["11:15–12:15", "Make the palace a one-hour visit. Its October last admission is 15:20, but using that theoretical margin would break Nishiki and the reset."], ["12:15–13:10", "Take a seated lunch near Karasuma Oike. At 12:45 make the decision: Manga Museum only if everyone is on pace and interested."], ["13:10–14:25", "Optional Manga Museum visit or parent/couple rest split. If arrival would be after 13:30, shorten it to one exhibition plus the Manga Wall or skip it."], ["14:35–15:50", "Walk Nishiki in one direction with a short tasting list. Leave by 15:50 before more stalls begin winding down."], ["16:00–17:45", "Return to the hotel for a real reset. This protected break is part of the plan, not unused sightseeing time."], ["17:45–18:20", "Walk the central Kamo River to Pontocho. From the Shijo end of Pontocho, walk about 10 minutes to dinner."], ["18:30–20:30", KYOYA_NOTE]],
     history: [
       "Nijo Castle turned Tokugawa architecture into political theatre. The decorated Ninomaru rooms staged hierarchy through painted screens and famously squeaking nightingale floors that warned residents of movement; in 1867 the castle also hosted the announcement returning governing authority to the emperor.",
@@ -1137,12 +1139,12 @@ const DAY_VIEWS = {
   },
   day08: {
     parents: {
-      summary: "Bamboo and Togetsukyo in the morning. You can skip Ryoan-ji and meet at Kinkaku-ji. Dinner is Kani Doraku at 18:00."
+      summary: "Bamboo and Togetsukyo in the morning. You can skip Ryoan-ji and meet at Kinkaku-ji. Dinner is Kani Doraku at 18:00 for 4. No Sayaka."
     }
   },
   day09: {
     parents: {
-      summary: "Nijo is shared. You can skip the palace or the Manga Museum and rejoin for Nishiki or the Kamo River. Dinner is Kyoya at 18:30."
+      summary: "Nijo is shared. You can skip the palace or the Manga Museum and rejoin for Nishiki or the Kamo River. Dinner is Kyoya at 18:30. Party of 5. Sayaka is confirmed."
     }
   },
   day10: {
@@ -1332,8 +1334,8 @@ function defaultState() {
         },
         "onyasai-sennichimae": {
           status: "booked",
-          confirmation: "Ebica 468119458 · Tue Oct 27 20:00 · 5",
-          notes: "Seats only. 難波3-4-13 味わいばしビル2F · 06-4396-8311"
+          confirmation: "Ebica 468119458 · Tue Oct 27 20:00 · 4",
+          notes: "Seats only. Party of 4. No Sayaka. 難波3-4-13 味わいばしビル2F · 06-4396-8311"
         },
         "endo": {
           status: "booked",
@@ -1342,8 +1344,8 @@ function defaultState() {
         },
         "kani-doraku": {
           status: "booked",
-          confirmation: "SE0767510 · Fri Oct 30 18:00 · 5 · 光華 ¥7590",
-          notes: "Horigotatsu. Shop 075-211-0671. Phone on file is Hotel Monterey 075-251-7111. Cancel by 2026-10-30 00:00."
+          confirmation: "SE0767510 · Fri Oct 30 18:00 · 4 · 光華 ¥7590",
+          notes: "Party of 4. No Sayaka. Horigotatsu. Course and seats unchanged. Shop 075-211-0671. Phone on file is Hotel Monterey 075-251-7111. Cancel by 2026-10-30 00:00."
         },
         "kanawa-ekie": {
           status: "cancelled",
@@ -2716,16 +2718,17 @@ const CITY_HOTEL_BY_CITY = {
 };
 
 const RESTAURANT_BOOKINGS = [
-  { id: "sankei-club", name: "Shinsekai Kushikatsu Okonomi Sankei Club", city: "osaka", slot: "Sun Oct 25 · 17:00 · 5 people", dayIds: ["day03"], strength: "Booked", why: "Janjan Yokocho kushikatsu + okonomiyaki after Castle and Den Den. Seats only. Resty {{copy:468118574}}. Shop 06-7777-7125. 恵美須東3-2-17.", tabelogUrl: "https://tabelog.com/osaka/A2701/A270206/27150625/", officialUrl: "https://shinsekai-sankeiclub.jp/shinsekai/", defaultStatus: "booked", confirmation: "Resty 468118574 · Sun Oct 25 17:00 · 5" },
+  { id: "sankei-club", name: "Shinsekai Kushikatsu Okonomi Sankei Club", city: "osaka", slot: "Sun Oct 25 · 17:00 · 5 people", dayIds: ["day03"], strength: "Booked", why: "Janjan Yokocho kushikatsu + okonomiyaki after Castle and Den Den. Seats only. Party of 5. Sayaka is confirmed. Resty {{copy:468118574}}. Shop 06-7777-7125. 恵美須東3-2-17.", tabelogUrl: "https://tabelog.com/osaka/A2701/A270206/27150625/", officialUrl: "https://shinsekai-sankeiclub.jp/shinsekai/", defaultStatus: "booked", confirmation: "Resty 468118574 · Sun Oct 25 17:00 · 5" },
   { id: "edobori", name: "Udon Izakaya Edobori", city: "osaka", slot: "Tue Oct 27 · 11:00 walk-in · 5 people", dayIds: ["day05"], strength: "Walk-in", why: EDOBORI_LUNCH_NOTE, tabelogUrl: EDOBORI_TABELOG_URL, defaultStatus: "walk_in" },
   { id: "shibato", name: "Honke Shibato", city: "osaka", slot: "Tue Oct 27 lunch — skip", dayIds: ["day05"], strength: "Skip", why: SHIBATO_SKIP_NOTE, tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270102/27000005/", officialUrl: "http://www.shibato.net/", defaultStatus: "skip" },
   { id: "kura-dotonbori", name: "Kura Sushi Global Flagship Dotonbori", city: "osaka", slot: "Osaka idea · no date picked · 5 people", dayIds: [], strength: "Idea", why: KURA_NOTE },
   { id: "nakashou", name: "Unagi no Nakashou Namba", city: "osaka", slot: "Flexible Osaka meal", dayIds: ["day03", "day04"], strength: "Considering", why: "Easier Kansai-style unagi backup. Do not stack with Kitan or the Day 4 snack mission.", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27150606/" },
   { id: "nakata", name: "Nikushou Nakata Honten", city: "osaka", slot: "Tue Oct 27 dinner — skip", dayIds: ["day05"], strength: "Skip", why: "Same night as On-yasai. Do not book. Yakiniku can still be a later evening if you want it.", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27001305/", officialUrl: "https://nikusyo-nakata.jp/nanba_honten.html", defaultStatus: "skip" },
-  { id: "onyasai-sennichimae", name: "Shabushabu On-yasai Sennichimae", city: "osaka", slot: "Tue Oct 27 · 20:00 · 5 people", dayIds: ["day05"], strength: "Booked", why: "Vegetable-forward shabu after Kobe. Seats only. Ebica {{copy:468119458}}. Shop 06-4396-8311. 難波3-4-13 味わいばしビル2F. Do not also book Nakata or Daibokujou.", tabelogUrl: "https://tabelog.com/osaka/A2701/A270202/27040112/", officialUrl: "https://map.reins.co.jp/onyasai/detail/643968311", defaultStatus: "booked", confirmation: "Ebica 468119458 · Tue Oct 27 20:00 · 5" },
-  { id: "kani-jo", name: "Kani Kani Jo", city: "osaka", slot: "Mon Oct 26 dinner — skip", dayIds: ["day04"], strength: "Skip", why: "Crab is booked at Kani Doraku Kyoto. Keep Day 4 as Tenma walk-in.", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27144240/", officialUrl: "https://www.tablecheck.com/en/shops/kanikanijo/reserve", defaultStatus: "skip" },
+  { id: "onyasai-sennichimae", name: "Shabushabu On-yasai Sennichimae", city: "osaka", slot: "Tue Oct 27 · 20:00 · 4 people", dayIds: ["day05"], strength: "Booked", why: "Vegetable-forward shabu after Kobe. Seats only. Party of 4. No Sayaka. Ebica {{copy:468119458}}. Shop 06-4396-8311. 難波3-4-13 味わいばしビル2F. Do not also book Nakata or Daibokujou.", tabelogUrl: "https://tabelog.com/osaka/A2701/A270202/27040112/", officialUrl: "https://map.reins.co.jp/onyasai/detail/643968311", defaultStatus: "booked", confirmation: "Ebica 468119458 · Tue Oct 27 20:00 · 4" },
+  { id: "bochi-bochi", name: "Bochi bochi", city: "osaka", slot: "Mon Oct 26 · 19:30", dayIds: ["day04"], strength: "Booked", why: BOCHI_NOTE, defaultStatus: "booked" },
+  { id: "kani-jo", name: "Kani Kani Jo", city: "osaka", slot: "Mon Oct 26 dinner — skip", dayIds: ["day04"], strength: "Skip", why: "Crab is booked at Kani Doraku Kyoto. Day 4 dinner is Bochi bochi.", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27144240/", officialUrl: "https://www.tablecheck.com/en/shops/kanikanijo/reserve", defaultStatus: "skip" },
   { id: "endo", name: "Tempura Endo Yasaka", city: "kyoto", slot: "Thu Oct 29 · 14:00 · counter · 5", dayIds: ["day07"], strength: "Booked", why: `Lunch in Gion at 14:00. ${ENDO_PARTY}`, tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260301/26000592/", officialUrl: "https://www.gion-endo.com/", defaultStatus: "booked", confirmation: "Thu Oct 29 · 14:00 · counter · 5" },
-  { id: "kani-doraku", name: "Kani Doraku Kyoto Honten", city: "kyoto", slot: "Fri Oct 30 · 18:00 · 5 people", dayIds: ["day08"], strength: "Booked", why: "HotPepper SE0767510. 光華 course ¥7,590, 9 dishes, horigotatsu non-smoking. After Arashiyama; walk from Hotel Monterey. Shop 075-211-0671. Phone on file is the hotel. Cancel by 2026-10-30 00:00.", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", officialUrl: "https://kanikyoto.owst.jp/", defaultStatus: "booked", confirmation: "SE0767510 · Fri Oct 30 18:00 · 5 · 光華 ¥7590" },
+  { id: "kani-doraku", name: "Kani Doraku Kyoto Honten", city: "kyoto", slot: "Fri Oct 30 · 18:00 · 4 people", dayIds: ["day08"], strength: "Booked", why: "HotPepper SE0767510. Party of 4. No Sayaka. 光華 course ¥7,590, 9 dishes, horigotatsu non-smoking. Course and seats unchanged. After Arashiyama; walk from Hotel Monterey. Shop 075-211-0671. Phone on file is the hotel. Cancel by 2026-10-30 00:00.", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", officialUrl: "https://kanikyoto.owst.jp/", defaultStatus: "booked", confirmation: "SE0767510 · Fri Oct 30 18:00 · 4 · 光華 ¥7590" },
   { id: "kyoya", name: "Kyoya Kiyomizu Yanaginobamba Honke", city: "kyoto", slot: "Sat Oct 31 · 18:30 · seats only · 5 people", dayIds: ["day09"], strength: "Booked", why: KYOYA_NOTE, tabelogUrl: KYOYA_TABELOG_URL, defaultStatus: "booked", confirmation: "Tabelog FP4YF2QHPJ" },
   { id: "menami", name: "Menami", city: "kyoto", slot: "Sat Oct 31 dinner — skip", dayIds: ["day09"], strength: "Skip", why: MENAMI_SKIP_NOTE, tabelogUrl: "https://tabelog.com/kyoto/A2601/A260201/26001266/", officialUrl: "https://www.menami.jp/menu1", defaultStatus: "skip" },
   { id: "kinmata", name: "Kinmata", city: "kyoto", slot: "Sat Oct 31 dinner — skip", dayIds: ["day09"], strength: "Skip", why: KINMATA_SKIP_NOTE, tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26000452/", officialUrl: "https://www.kinmata.com/en/", defaultStatus: "skip" },
@@ -2776,6 +2779,8 @@ function bookingForPlace(place) {
 
 function defaultPartySize(booking) {
   if (state.reservations?.familyOf8Id === booking.id) return 8;
+  if (booking.id === "onyasai-sennichimae" || booking.id === "kani-doraku") return 4;
+  if (booking.id === "bochi-bochi") return 0;
   if (booking.id === "endo") return 5;
   if (booking.id === "setsugetsuka-meals") return 2;
   if (booking.city === "tokyo") {
@@ -2794,9 +2799,12 @@ function reservationRecord(booking) {
   let confirmation = stored.confirmation || booking.confirmation || "";
   let notes = stored.notes || booking.notes || "";
   if (booking.id === "endo") {
-    const staleEndo = /13:30|pending|do not chase|paul|\b6\b/i.test(`${confirmation}\n${notes}`);
+    const staleEndo = /13:30|pending|do not chase|paul|\b6\b|if she comes/i.test(`${confirmation}\n${notes}`);
     if (staleEndo || !confirmation.trim()) confirmation = booking.confirmation;
     if (staleEndo || !notes.trim()) notes = ENDO_PARTY;
+  }
+  if (booking.id === "onyasai-sennichimae" || booking.id === "kani-doraku") {
+    confirmation = String(confirmation || booking.confirmation).replace(/· 5\b/, "· 4");
   }
   if (booking.id === "kanawa-ekie") {
     status = "cancelled";
@@ -2824,6 +2832,7 @@ function reservationRecord(booking) {
 
 const MEAL_BOOKING_BY_WALLET = {
   "sankei-club": "sankei-club",
+  "bochi-bochi": "bochi-bochi",
   onyasai: "onyasai-sennichimae",
   endo: "endo",
   "kani-doraku": "kani-doraku",
@@ -2867,10 +2876,16 @@ function cancelDeadlineSentence(text) {
 
 function mealAskText(booking) {
   if (!showsMealAsk(booking)) return "";
-  if (booking.id === "endo") return ENDO_PARTY;
-  const line = "Ask Sayaka if she's joining. Update the party size if not.";
-  const deadline = cancelDeadlineSentence(mealAskSource(booking));
-  return deadline ? `${line} ${deadline}` : line;
+  const notes = {
+    "sankei-club": SAYAKA_CONFIRMED,
+    endo: ENDO_PARTY,
+    kyoya: SAYAKA_CONFIRMED,
+    edobori: "Party of 5. Sayaka joins and leaves around 5 PM.",
+    "onyasai-sennichimae": "Party of 4. No Sayaka.",
+    "kani-doraku": "Party of 4. No Sayaka. Course and seats unchanged.",
+    "bochi-bochi": "Booked by Sayaka. Sayaka and her family are joining. The 4 of us plus her family."
+  };
+  return notes[booking.id] || "";
 }
 
 function mealAskHtml(booking) {
@@ -2915,13 +2930,13 @@ const OPEN_MARKERS = new Set(["needs-confirmation", "not-booked", "decision"]);
 
 const DAY_PARTY = {
   day02: "5. This is the Osaka default, including parents.",
-  day03: "5. Sankei Club is booked for 5.",
-  day04: "5.",
-  day05: "5. On-yasai is booked for 5.",
+  day03: "5. Sankei Club is booked for 5. Sayaka is confirmed.",
+  day04: "The 4 of us plus Sayaka's family. Exact count unknown.",
+  day05: "5 at Edobori lunch. Sayaka joins and leaves around 5 PM. On-yasai dinner is 4. No Sayaka.",
   day06: "5.",
   day07: ENDO_PARTY,
-  day08: "5. Kani Doraku is booked for 5.",
-  day09: "5.",
+  day08: "4. Kani Doraku is booked for 4. No Sayaka.",
+  day09: "5. Kyoya is booked for 5. Sayaka is confirmed.",
   day10: "5.",
   day11: "4 in Hiroshima.",
   day12: "4.",
@@ -2949,11 +2964,11 @@ const DAY_MUST_DOS = {
   ],
   day04: [
     { marker: "info", label: "Hotel reset", detail: "Return to Hotel Cordia Osaka Hommachi between 15:00 and 17:00. Rest. Stop eating. The hotel is in Hommachi, not Namba." },
-    { marker: "info", label: "Tenma dinner", detail: "Go to Tenma after the reset. Share plates at one izakaya. This dinner is a walk-in plan, not a reservation." }
+    { marker: "booked", label: "Bochi bochi", detail: BOCHI_NOTE }
   ],
   day05: [
     { marker: "needs-confirmation", label: "Nunobiki hours", detail: "Leave from Hotel Cordia Osaka Hommachi. Allow 60–75 minutes each way via Umeda to Shin-Kobe. [ropeway and garden hours — needs confirmation]." },
-    { marker: "info", label: "No Kobe dinner", detail: "Do not add a Kobe dinner. Dinner is On-yasai in Osaka at 20:00." }
+    { marker: "info", label: "No Kobe dinner", detail: "Do not add a Kobe dinner. Dinner is On-yasai in Osaka at 20:00 for 4. No Sayaka." }
   ],
   day06: [
     { marker: "info", label: "Luggage", detail: "Carry the big bags to Kintetsu-Nara Station. Store them in the coin lockers by the West ticket gate. The room has 23 extra-large lockers. Pay about ¥800 to ¥1,500 with coins or an IC card. Take a photo of the locker number. If the lockers are full, use the Tourist Information Centre at Exit 3, 1F. It holds bags from 09:00 to 16:00 and takes the last bag at 14:00. Collect the bags before the Kintetsu train to Kyoto." },
@@ -3193,6 +3208,7 @@ function bookingAttention(booking, record) {
   if (record.status === "cancelled") return ["cancelled"];
   if (record.status === "cancel_needed") return ["decision"];
   if (record.status === "booked") {
+    if (booking.id === "bochi-bochi") return ["booked"];
     const text = `${record.confirmation || ""} ${booking.confirmation || ""}`;
     const pending = /pending|needs confirmation|not booked/i.test(text) || !String(record.confirmation || booking.confirmation || "").trim();
     return pending ? ["booked", "needs-confirmation"] : ["booked"];
@@ -3216,6 +3232,9 @@ function bookingMustDo(booking) {
   const confirm = record.confirmation || booking.confirmation || "[confirmation number — needs confirmation]";
   let detail = `${booking.slot}. Party of ${party}. ${confirm}.`;
   if (booking.id === "endo") detail = ENDO_PARTY;
+  if (booking.id === "bochi-bochi") detail = BOCHI_NOTE;
+  if (booking.id === "sankei-club" || booking.id === "kyoya") detail = `${detail} Sayaka is confirmed.`;
+  if (booking.id === "onyasai-sennichimae" || booking.id === "kani-doraku") detail = `${booking.slot}. Party of 4. No Sayaka. ${confirm}.`;
   if (booking.id === "edobori") {
     return { id: "booking-edobori", markers: ["info"], marker: "info", label: booking.name, detail: EDOBORI_LUNCH_NOTE, who: booking.who };
   }
@@ -3415,7 +3434,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "R Baker Osaka Castle Park", type: "cafe", category: "cafe", typeLabel: "Castle breakfast", area: "Day 3 · Osaka Castle", price: "¥", note: "A bakery-café inside the park near Osakajokoen Station. Useful before the castle or as the parents' seated rest stop.", coordinates: [34.68842, 135.53305], officialUrl: "https://r-baker.com/shops/" },
     { name: "LiLo Coffee Kissa", type: "cafe", category: "cafe", typeLabel: "Shinsaibashi coffee", area: "Day 4 · Shinsaibashi", price: "¥¥", note: "Retro kissaten atmosphere with serious specialty coffee, close to Daimaru and Amerikamura. This is the intentional café, not another snack mission.", coordinates: [34.6710513, 135.5010541], officialUrl: "https://coffee.liloinveve.com/pages/lilo-coffee-kissa-1" },
     { name: "Sennariya Coffee", type: "cafe", category: "cafe", typeLabel: "Historic kissaten", area: "Day 3 · Shinsekai", price: "¥", note: "Founded in 1948 and identifies itself as the birthplace of mixed juice. A strong non-alcoholic pause before the Shinsekai evening.", coordinates: [34.65077, 135.50476], officialUrl: "https://www.sennariya-coffee.jp/" },
-    { name: "Sanwa Coffee Works Tenma", type: "cafe", category: "cafe", typeLabel: "Tenma coffee", area: "Day 4 · Tenma", price: "¥¥", note: "Long-running roastery café near the Tenjinbashisuji route. Use only before dinner; after the hotel reset, protect appetite for the Tenma finish.", coordinates: [34.7082518, 135.5124233], officialUrl: "https://store.sanwacoffeeworks.com/pages/about-scw" },
+    { name: "Sanwa Coffee Works Tenma", type: "cafe", category: "cafe", typeLabel: "Tenma coffee", area: "Day 4 · Tenma", price: "¥¥", note: "Long-running roastery café near Tenjinbashisuji. Not the Oct 26 dinner. Dinner is Bochi bochi.", coordinates: [34.7082518, 135.5124233], officialUrl: "https://store.sanwacoffeeworks.com/pages/about-scw" },
     { name: "CAFE ANNON Namba Main Store", type: "sweet", category: "dessert", typeLabel: "Soufflé dessert", area: "Day 3 · Namba / Den Den", price: "¥¥", note: "A cute soufflé-pancake option near the Namba end of Den Den Town. Treat it as a dessert stop; queues can make it an easy skip.", coordinates: [34.66383, 135.50345] },
     { name: "Uncle Rikuro's Namba Main Store", type: "sweet", category: "cheesecake", typeLabel: "Osaka cheesecake", area: "Day 2/3 · Namba · Ebisubashi-suji", price: "¥¥", note: "Osaka's famous warm, jiggly cheesecake with raisins at the base. One cake is made for sharing, so use this as the group's signature Osaka sweet rather than adding another individual dessert stop.", coordinates: [34.6663213, 135.5005897], officialUrl: "https://www.rikuro.co.jp/shoplist/134.html" },
     { name: "ÉCHIRÉ Marché au Beurre", type: "sweet", category: "bakery", typeLabel: "French butter bakery · Umeda", area: "Hankyu Umeda Main Store · B2F", price: "¥¥¥", note: "Mai's Umeda butter-and-pastry pick inside the depachika. Treat the branch-limited items as a bonus, not a queue obligation.", coordinates: [34.70272, 135.49815], officialUrl: "https://website.hankyu-dept.co.jp/fl/english/honten/store/floorb2.html" },
@@ -3427,7 +3446,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Okonomiyaki Mizuno", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki checklist", area: "Dotonbori · not on Day 2", price: "¥¥", note: "A Dotonbori institution operating since 1945. Day 2 does not go to Dotonbori. Use this pin only if you add Dotonbori on a later Osaka day.", coordinates: [34.6684527, 135.5030691], officialUrl: "https://www.mizuno-osaka.com/" },
     { name: "Chibo Dotonbori Building", type: "restaurant", category: "okonomiyaki", typeLabel: "Okonomiyaki · wife's pick", area: "Dotonbori · not on Day 2", price: "¥¥", note: "The multi-floor Dotonbori flagship. Day 2 does not go to Dotonbori. Choose Chibo or Mizuno on a later day, not both, and not on arrival night.", coordinates: [34.6688364, 135.5039025], officialUrl: "https://www.chibo.com/" },
     { name: "Kushikatsu Daruma Shinsekai Main Store", type: "restaurant", category: "kushikatsu", typeLabel: "Kushikatsu checklist", area: "Day 3 · Shinsekai", price: "¥¥", note: "The classic specialist in the planned evening neighborhood. Walk-in only. Day 3's reserved table is Sankei Club, not Daruma.", coordinates: [34.65208, 135.50616], officialUrl: "https://www.kushikatu-daruma.com/location/" },
-    { name: "Shinsekai Kushikatsu Okonomi Sankei Club", type: "restaurant", category: "kushikatsu", typeLabel: "Kushikatsu · booked", area: "Day 3 · Shinsekai / Janjan Yokocho", price: "¥¥", note: "Booked Sun Oct 25 at 17:00 for 5, seats only. Resty 468118574. Address 恵美須東3-2-17. Shop 06-7777-7125.", coordinates: [34.65155, 135.50535], officialUrl: "https://shinsekai-sankeiclub.jp/shinsekai/", tabelogUrl: "https://tabelog.com/osaka/A2701/A270206/27150625/", slotDays: ["day03"], reserve: "yes" },
+    { name: "Shinsekai Kushikatsu Okonomi Sankei Club", type: "restaurant", category: "kushikatsu", typeLabel: "Kushikatsu · booked", area: "Day 3 · Shinsekai / Janjan Yokocho", price: "¥¥", note: "Booked Sun Oct 25 at 17:00 for 5, seats only. Sayaka is confirmed. Resty 468118574. Address 恵美須東3-2-17. Shop 06-7777-7125.", coordinates: [34.65155, 135.50535], officialUrl: "https://shinsekai-sankeiclub.jp/shinsekai/", tabelogUrl: "https://tabelog.com/osaka/A2701/A270206/27150625/", slotDays: ["day03"], reserve: "yes" },
     { name: "Fukutaro Honten", type: "restaurant", category: "okonomiyaki", typeLabel: "Negiyaki checklist", area: "Day 3/4 · Sennichimae", price: "¥¥", note: "Known for both negiyaki and okonomiyaki near Kuromon and Den Den. Best checklist backup when Mizuno's queue or Dotonbori timing does not work.", coordinates: [34.6655928, 135.5045307], officialUrl: "https://2951.jp/" },
     { name: "Yaki Yaki Haru no Hana", type: "restaurant", typeLabel: "Okonomiyaki · video pick", area: "Kyomachibori · west of hotel", price: "¥¥¥", note: "The original video pick and reservable, but inconvenient from the Namba sightseeing arc. Keep it only if this specific restaurant matters more than easy routing.", coordinates: [34.6887, 135.4918], officialUrl: "http://www.haru-no-hana.com/" },
     { name: "Ajinoya Honten", type: "restaurant", typeLabel: "Okonomiyaki · classic", area: "Day 2/3 · Namba", price: "¥¥", note: "Classic Namba choice with a light, cabbage-forward style. Strong option, but plan for a queue or check its current advance-booking rules.", coordinates: [34.66665, 135.50055], officialUrl: "https://ajinoya-okonomiyaki.com/" },
@@ -3445,10 +3464,11 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Tengu", type: "restaurant", typeLabel: "Kushikatsu · atmosphere", area: "Day 3 · Shinsekai", price: "¥", note: "Traditional Janjan Yokocho counter energy and the strongest atmosphere pick. Choose Tengu over Daruma when old-school Shinsekai character matters most.", coordinates: [34.65072, 135.5045], officialUrl: "https://insideosaka.com/tengu/" },
     { name: "Kushikatsu Tanaka Amerikamura", type: "restaurant", typeLabel: "Kushikatsu · chain backup", area: "Day 4 · Amerikamura", price: "¥¥", note: "Reliable national-chain backup directly on the Day 4 route. Convenient, family-friendly and reservable, but not a destination over Tengu or Daruma.", coordinates: [34.6739, 135.4981], officialUrl: "https://restaurant.kushi-tanaka.com/" },
     { name: "DEARBROS Sennichimae", type: "restaurant", typeLabel: "Omurice · flexible lunch", area: "Day 2/3/4 · Namba", price: "¥¥", note: "Rich, meat-heavy omurice near Namba. A flexible lunch fallback when the group wants a filling break from flour dishes, skewers and ramen.", coordinates: [34.66705, 135.50425], officialUrl: "https://www.instagram.com/dearbros_official/" },
-    { name: "Shabushabu On-yasai Sennichimae", type: "restaurant", category: "sukiyaki", typeLabel: "Shabu-shabu · booked", area: "Day 5 · Namba / Sennichimae · 味わいばしビル2F", price: "¥¥", note: "Booked Tue Oct 27 at 20:00 for 5, seats only. Ebica 468119458. Vegetable-forward chain shabu after Kobe. Address 難波3-4-13. Shop 06-4396-8311.", coordinates: [34.6669, 135.5017], officialUrl: "https://map.reins.co.jp/onyasai/detail/643968311", tabelogUrl: "https://tabelog.com/osaka/A2701/A270202/27040112/", slotDays: ["day05"], reserve: "yes" },
-    { name: "Kani Kani Jo", type: "restaurant", category: "sushi", typeLabel: "Crab · private rooms", area: "Day 4 · Nihonbashi / Kuromon", price: "¥¥¥¥", note: "Crab sashimi, tempura, charcoal grill and sukiyaki in private rooms. Booking this dinner replaces the Tenma food crawl. Party of 5.", coordinates: [34.6659, 135.5066], officialUrl: "https://www.tablecheck.com/en/shops/kanikanijo/reserve", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27144240/", slotDays: ["day04"], reserve: "yes" },
+    { name: "Bochi bochi", type: "restaurant", category: "izakaya", typeLabel: "Izakaya · booked", area: "Day 4 · Sakai-shi · 19:30", price: "¥¥", note: BOCHI_NOTE, coordinates: [34.57873, 135.50421], slotDays: ["day04"], reserve: "yes" },
+    { name: "Shabushabu On-yasai Sennichimae", type: "restaurant", category: "sukiyaki", typeLabel: "Shabu-shabu · booked", area: "Day 5 · Namba / Sennichimae · 味わいばしビル2F", price: "¥¥", note: "Booked Tue Oct 27 at 20:00 for 4, seats only. No Sayaka. Ebica 468119458. Vegetable-forward chain shabu after Kobe. Address 難波3-4-13. Shop 06-4396-8311.", coordinates: [34.6669, 135.5017], officialUrl: "https://map.reins.co.jp/onyasai/detail/643968311", tabelogUrl: "https://tabelog.com/osaka/A2701/A270202/27040112/", slotDays: ["day05"], reserve: "yes" },
+    { name: "Kani Kani Jo", type: "restaurant", category: "sushi", typeLabel: "Crab · private rooms", area: "Day 4 · Nihonbashi / Kuromon", price: "¥¥¥¥", note: "Crab sashimi, tempura, charcoal grill and sukiyaki in private rooms. Not the Oct 26 plan. Dinner is Bochi bochi.", coordinates: [34.6659, 135.5066], officialUrl: "https://www.tablecheck.com/en/shops/kanikanijo/reserve", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27144240/", slotDays: ["day04"], reserve: "yes" },
     { name: "Maruyoshi Sushi", type: "restaurant", category: "sushi", typeLabel: "Market sushi · early meal", area: "Kizu Wholesale Market · Daikokucho", price: "¥¥", note: "A small market sushi and seafood-bowl stop with very early hours. Use it as breakfast or early lunch and recheck the market calendar before making the trip.", coordinates: [34.6553, 135.5005] },
-    { name: "Udon Izakaya Edobori", type: "restaurant", category: "noodles", typeLabel: "Udon · chosen walk-in", area: "Day 5 · about 15 min from the hotel", price: "¥", note: "CHOSEN. Tue Oct 27 at 11:00. Walk in. Do not reserve lunch. About JPY 1,100 per person. Party of 5. Non-smoking. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", coordinates: [34.689194, 135.493264], officialUrl: EDOBORI_TABELOG_URL, tabelogUrl: EDOBORI_TABELOG_URL, slotDays: ["day05"], reserve: "no" },
+    { name: "Udon Izakaya Edobori", type: "restaurant", category: "noodles", typeLabel: "Udon · chosen walk-in", area: "Day 5 · about 15 min from the hotel", price: "¥", note: "CHOSEN. Tue Oct 27 at 11:00. Walk in. Do not reserve lunch. About JPY 1,100 per person. Party of 5. Sayaka joins and leaves around 5 PM. Non-smoking. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", coordinates: [34.689194, 135.493264], officialUrl: EDOBORI_TABELOG_URL, tabelogUrl: EDOBORI_TABELOG_URL, slotDays: ["day05"], reserve: "no" },
     { name: "Kura Sushi Global Flagship Dotonbori", type: "restaurant", category: "sushi", typeLabel: "Kaiten sushi · idea", area: "Dotonbori 1-4-22 2F · no date picked", price: "¥¥", note: "Idea only. No date is picked. Party of 5. Open 11:00–24:00. About JPY 1,000–3,000 per person. Non-smoking. This is not a booking task.", coordinates: [34.668694, 135.503571], tabelogUrl: KURA_TABELOG_URL, reserve: "no" },
     { name: "Kaiten Sushi Sakae Hankyu Higashi-dori", type: "restaurant", category: "sushi", typeLabel: "Kaiten sushi · walk-in backup", area: "Umeda · Hankyu Higashi-dori", price: "¥¥", note: "Walk-in backup if you later choose Kura. Closed on Wednesday. 30 seats. Non-smoking.", coordinates: [34.702991, 135.501007], tabelogUrl: SAKAE_TABELOG_URL, reserve: "no" },
     { name: "Unagi no Nakashou Namba", type: "restaurant", category: "unagi", typeLabel: "Kansai-style eel · backup", area: "Day 3/4 · Namba Ebisubashi", price: "¥¥¥", note: "Easier hours and lower cost than Shibato. Reserve only if this becomes the unagi meal; do not stack it with Kitan.", coordinates: [34.6665, 135.5009], officialUrl: "https://tabelog.com/en/osaka/A2701/A270202/27150606/", tabelogUrl: "https://tabelog.com/en/osaka/A2701/A270202/27150606/", slotDays: ["day03", "day04"], reserve: "yes" },
@@ -3468,8 +3488,8 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Izuju", type: "restaurant", category: "kyoto-sushi", typeLabel: "Saba-zushi · high priority", area: "Day 7 · Yasaka Shrine", price: "¥¥¥", note: "Traditional Kyoto pressed sushi beside Yasaka. Share saba-zushi or hako-zushi as a tasting; current last order is early enough that this is lunch or early dinner, not a post-show fallback.", coordinates: [35.00362, 135.77853], officialUrl: "https://gion-izuju.com/english-page/" },
     { name: "Kiyomizu Junsei Okabeya", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu & yuba · skip if Endo lunch holds", area: "Day 7 · Kiyomizu-dera approach", price: "¥¥¥", note: "Yudofu and yuba on the Kiyomizu approach. Do not use this as Day 7 lunch if Tempura Endo is booked; a kaiseki lunch already fills that slot.", coordinates: [34.99616, 135.78082], officialUrl: "https://www.okabeya.com/lang/en.html" },
     { name: "Yudofu Sagano", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu · timing-risk option", area: "Day 8 · Arashiyama / Tenryu-ji", price: "¥¥¥", note: "Classic garden yudofu beside the Arashiyama sights, but it opens at 11:00 and your hard exit is 11:20. Keep the pin for context; do not queue or sacrifice Ryoan-ji and Kinkaku-ji for it.", coordinates: [35.01558, 135.67446], officialUrl: "https://kyoto-sagano.jp/access" },
-    { name: "Kani Doraku Kyoto Honten", type: "restaurant", category: "kani", typeLabel: "Crab · booked", area: "Day 8 · Sanjo / Kawaramachi", price: "¥¥¥", note: "Booked Fri Oct 30 at 18:00 for 5. HotPepper SE0767510. 光華 course ¥7,590, 9 dishes, horigotatsu. Shop 075-211-0671. Walk from Hotel Monterey after Arashiyama.", coordinates: [35.008705, 135.766995], officialUrl: "https://kanikyoto.owst.jp/", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", slotDays: ["day08"], reserve: "yes" },
-    { name: "Kyoya Kiyomizu Yanaginobamba Honke", type: "restaurant", category: "obanzai", typeLabel: "Obanzai · booked", area: "Day 9 · Yanaginobamba · south of Shijo", price: "¥¥", note: "BOOKED. Sat Oct 31 at 18:30. The party is 5 people. The booking is for seats only. Order a la carte. Order obanzai and yuba. Do not order the set courses. The set courses are built around a pork hot pot. Mai avoids sliced meat. The Tabelog reservation number is FP4YF2QHPJ. The shop is just south of Shijo, near Nishiki. Walk about 10 minutes from the Shijo end of Pontocho.", coordinates: [35.002341, 135.763886], tabelogUrl: KYOYA_TABELOG_URL, slotDays: ["day09"], reserve: "yes" },
+    { name: "Kani Doraku Kyoto Honten", type: "restaurant", category: "kani", typeLabel: "Crab · booked", area: "Day 8 · Sanjo / Kawaramachi", price: "¥¥¥", note: "Booked Fri Oct 30 at 18:00 for 4. No Sayaka. 光華 course ¥7,590, 9 dishes, horigotatsu. Course and seats unchanged. HotPepper SE0767510. Shop 075-211-0671. Walk from Hotel Monterey after Arashiyama.", coordinates: [35.008705, 135.766995], officialUrl: "https://kanikyoto.owst.jp/", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", slotDays: ["day08"], reserve: "yes" },
+    { name: "Kyoya Kiyomizu Yanaginobamba Honke", type: "restaurant", category: "obanzai", typeLabel: "Obanzai · booked", area: "Day 9 · Yanaginobamba · south of Shijo", price: "¥¥", note: "BOOKED. Sat Oct 31 at 18:30. The party is 5 people. Sayaka is confirmed. The booking is for seats only. Order a la carte. Order obanzai and yuba. Do not order the set courses. The set courses are built around a pork hot pot. Mai avoids sliced meat. The Tabelog reservation number is FP4YF2QHPJ. The shop is just south of Shijo, near Nishiki. Walk about 10 minutes from the Shijo end of Pontocho.", coordinates: [35.002341, 135.763886], tabelogUrl: KYOYA_TABELOG_URL, slotDays: ["day09"], reserve: "yes" },
     { name: "Menami", type: "restaurant", category: "obanzai", typeLabel: "Obanzai · skip", area: "Day 9 · Sanjo / Kiyamachi", price: "¥¥¥", note: "Skipped. Menami takes bookings by phone only. Do not call Menami. The Oct 31 dinner is Kyoya.", coordinates: [35.00904, 135.77055], officialUrl: "https://www.menami.jp/menu1", tabelogUrl: "https://tabelog.com/kyoto/A2601/A260201/26001266/", slotDays: ["day09"], reserve: "no" },
     { name: "Nishiki Hirano", type: "restaurant", category: "obanzai", typeLabel: "Obanzai & dashimaki", area: "Day 9 · Nishiki Market", price: "¥¥", note: "Useful seated counterpoint to market snacking: a Kyoto-style set or dashimaki omelet without leaving the planned Nishiki window.", coordinates: [35.00498, 135.76242], officialUrl: "https://nishikihirano.com/en/" },
     { name: "Konnamonja", type: "sweet", category: "soy-sweets", typeLabel: "Soy-milk sweets · share", area: "Day 9 · Nishiki Market", price: "¥", note: "Tofu-shop snack stop for soy-milk doughnuts and soft serve. Share one item and eat at the shop; Nishiki asks visitors not to eat while walking.", coordinates: [35.00496, 135.76418], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/konnamonja/" },
@@ -3666,16 +3686,16 @@ function renderRestaurantBookings() {
     } else if (coupleView() && state.activeCity === "tokyo") {
       legend.textContent = "Party of 6 through Nov 7. Hakone and Nov 12 are the two of you.";
     } else legend.textContent = state.activeCity === "osaka"
-      ? "Party: 5 in Osaka · 8 on the family meal"
+      ? "Sankei and Edobori are 5. On-yasai is 4. Bochi bochi is the 4 of us plus Sayaka's family."
       : state.activeCity === "kyoto"
-        ? `Party: 5 · ${ENDO_PARTY} · tick family-of-8 only on the restaurant she asked to bring family to`
+        ? "Endo and Kyoya are 5. Sayaka is confirmed. Kani Doraku is 4. No Sayaka."
         : state.activeCity === "tokyo"
           ? "Party: 6 while parents are in Tokyo · 2 for the Nov 12 finale unless extra guests join"
           : "Party: 4 in Hiroshima · Hakone dinners are couple-only (2)";
   }
   const bookingsIntro = document.querySelector("#restaurantBookingsIntro");
   if (bookingsIntro) {
-    let intro = "Booked meals: Sankei Club, Sun Oct 25, 17:00, 5 people, Resty {{copy:468118574}}. On-yasai, Tue Oct 27, 20:00, 5 people, Ebica {{copy:468119458}}. Endo, Thu Oct 29, 14:00, counter seating for 5. Brian, Mai, Mom (Cindy), and Dad (David), with the booking held for 5 seats so Sayaka can join if she comes. Kani Doraku, Fri Oct 30, 18:00, 5 people, SE0767510. Kanawa ekie is cancelled. Nov 2 dinner is a walk-in at Reichan in ekie. Nov 3 dinner at Suishin main store is booked. TableCheck {{copy:XJCU9T}}. Tue Nov 3 at 18:00. 4 guests. Table only. Sat Oct 31 dinner at Kyoya is booked. Tabelog {{copy:FP4YF2QHPJ}}. Sat Oct 31 at 18:30. 5 people. Menami is skipped. Kinmata is skipped. Tue Oct 27 lunch is a walk-in at Udon Izakaya Edobori. Honke Shibato is skipped. Kura Sushi Dotonbori is an idea. No date is picked. Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book Toyama. Not booked means there is no reservation. Chosen means buy this one now. Booked means the confirmation is saved. Walk-in means no booking is needed. Cancel means a live booking you may cancel. Skip means do not book. Cancelled means the reservation is already cancelled.";
+    let intro = "Booked meals: Sankei Club, Sun Oct 25, 17:00, 5 people. Sayaka is confirmed. Bochi bochi, Mon Oct 26, 19:30, booked by Sayaka. The 4 of us plus her family. On-yasai, Tue Oct 27, 20:00, 4 people. No Sayaka. Edobori lunch is a walk-in for 5. Sayaka joins and leaves around 5 PM. Endo, Thu Oct 29, 14:00, counter seating for 5. Sayaka is confirmed. Kani Doraku, Fri Oct 30, 18:00, 4 people. No Sayaka. Course and seats unchanged. Kyoya, Sat Oct 31, 18:30, 5 people. Sayaka is confirmed. Kanawa ekie is cancelled. Nov 2 dinner is a walk-in at Reichan in ekie. Nov 3 dinner at Suishin main store is booked. TableCheck {{copy:XJCU9T}}. Tue Nov 3 at 18:00. 4 guests. Table only. Menami is skipped. Kinmata is skipped. Honke Shibato is skipped. Kura Sushi Dotonbori is an idea. No date is picked. Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book Toyama. Not booked means there is no reservation. Chosen means buy this one now. Booked means the confirmation is saved. Walk-in means no booking is needed. Cancel means a live booking you may cancel. Skip means do not book. Cancelled means the reservation is already cancelled.";
     if (!sees("brianMai")) intro = intro.replace("Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book Toyama. ", "");
     bookingsIntro.innerHTML = collapsedNoteHtml(intro);
   }
@@ -3697,7 +3717,7 @@ function renderRestaurantBookings() {
     item.innerHTML = `
       <div class="restaurant-booking-topline">
         <strong>${escapeHtml(booking.name)}</strong>
-        <span class="restaurant-booking-flags">${markers.map(attentionFlag).join("")}<span class="restaurant-party-pill">${booking.id === "endo" ? "5 seats" : `${party} people`}</span></span>
+        <span class="restaurant-booking-flags">${markers.map(attentionFlag).join("")}<span class="restaurant-party-pill">${booking.id === "bochi-bochi" ? "4 + Sayaka's family" : booking.id === "endo" ? "5 seats" : `${party} people`}</span></span>
       </div>
       <p class="restaurant-booking-slot">${escapeHtml(booking.slot)} · ${escapeHtml(booking.strength)}</p>
       ${mealAskHtml(booking)}
@@ -4926,7 +4946,7 @@ const placeBackground = {
   "Shin-Osaka Station": "Shin-Osaka is the Tokaido Shinkansen terminus for the arrival-day transfer. Continue to Hommachi and notify Hotel Cordia in advance that check-in will be late.",
   "Kansai International Airport": "KIX sits on an artificial island in Osaka Bay and is the main international gateway for the Kansai region. This itinerary does not land at KIX. The Oct 24 arrival is Narita, then the Shinkansen to Osaka.",
   "Namba Station Osaka": "Namba links the Midosuji subway, private railways toward Nara, and the Namba entertainment zone. The hotel is Hotel Cordia in Hommachi, not a Namba hotel. Day 2 does not include a Dotonbori walk.",
-  "Namba Osaka": "Namba is a south-Osaka hub, not the hotel. The reset point is Hotel Cordia Osaka Hommachi. Return to Hommachi to rest and stop eating before Tenma or the Kobe day.",
+  "Namba Osaka": "Namba is a south-Osaka hub, not the hotel. The reset point is Hotel Cordia Osaka Hommachi. Return to Hommachi to rest and stop eating before the Sakai dinner or the Kobe day.",
   "Ebisu Bridge Osaka": "Ebisu Bridge spans the Dotonbori canal and is one of the district's classic photo points, with neon, canal reflections and the running Glico sign nearby. On arrival night it works as a single contained reveal rather than the start of a long crawl.",
   "Dotonbori Osaka": "Dotonbori grew from a 17th-century canal project into Osaka's loudest food-and-entertainment strip. Day 2 does not go to Dotonbori. Do not treat this pin as an arrival-night plan.",
   "Osaka Castle": "Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan; the present keep is a reconstruction and museum, but the moat, walls and distant reveal still establish Osaka's monumental scale. Arrive near opening for the best light and fewer crowds on the approach.",
@@ -4936,7 +4956,10 @@ const placeBackground = {
   "Kuromon Ichiba Market": "Kuromon began as a wholesale fish market and became one of Osaka's most famous public market streets. The Snack League works here because shared portions, category limits and a hard 11:30 exit turn abundance into a game instead of a blur.",
   "Daimaru Shinsaibashi": "Daimaru's Shinsaibashi flagship is a classic depachika-and-department-store food hall stop between Kuromon and Amerikamura. Use it for one controlled seated checkpoint—not a second full food mission.",
   "Amerikamura": "Amerikamura ('American Village') is Osaka's youth-fashion and casual-snack pocket near Shinsaibashi. One wildcard taste or drink here completes the afternoon arc before the hotel reset.",
-  "Tenma Osaka": "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Compact izakaya streets and neighborhood bars make it the right lived-in dinner finish after a scored tasting day—not another Dotonbori night.",
+  "Tenma Osaka": "Tenma grew around Osaka Tenmangu Shrine and its long shopping arcade. Oct 26 dinner is not here. Dinner is Bochi bochi near Sakai-shi Station.",
+  "Tennoji Station": "JR Tennoji is the transfer for the Hanwa Line to Sakai-shi. The ride is about 10 minutes. Oct 26 dinner is Bochi bochi.",
+  "Sakai-shi Station": "JR Hanwa Line from Tennoji, about 10 minutes. Bochi bochi is about a 10-minute walk from the station.",
+  "Bochi bochi": BOCHI_NOTE,
   "Shin-Kobe Station": "Shin-Kobe is the Shinkansen station on Kobe's northern slope, immediately below the Nunobiki ropeway. It is the cleanest access point for the selected romantic outing without turning Kobe into a multi-district checklist.",
   "Nunobiki Ropeway": "The Nunobiki ropeway climbs from behind Shin-Kobe in minutes, opening broad views over the city, port and inland mountains. The ride itself is part of the payoff—pause at the window rather than treating it as pure transport.",
   "Kobe Nunobiki Herb Gardens": "Terraced herb and flower gardens sit above the upper ropeway station with café terraces and seasonal planting. One garden segment plus a seated pause is enough; the harbor view does the emotional work.",
@@ -6049,7 +6072,7 @@ function walletCards() {
       id: booking.id,
       name: booking.name,
       when: booking.slot,
-      party: `${defaultPartySize(booking)} people`,
+      party: booking.id === "bochi-bochi" ? "4 of us + Sayaka's family" : `${defaultPartySize(booking)} people`,
       codes: codes.length ? codes : (plainCode ? [plainCode] : []),
       note: booking.why,
       map: noteMapUrl(booking.why) || mapsSearchUrl(`${booking.name}, Japan`),
@@ -6063,11 +6086,12 @@ function ticketCardHtml(card) {
   const copies = (card.codes || []).map((code) => copyCodeButton(code)).join(" ");
   const map = card.map ? ` <a class="guide-link" href="${escapeHtml(card.map)}" target="_blank" rel="noopener noreferrer">Open the map</a>` : "";
   const status = card.status ? `<p class="ticket-meta">${escapeHtml(card.status)}</p>` : "";
+  const codeLine = copies || (card.id === "bochi-bochi" ? "<span>Booked by Sayaka.</span>" : "<span>No confirmation number yet.</span>");
   return `<article class="ticket-card">
     <h3>${escapeHtml(card.name)}</h3>
     <p class="ticket-meta">${escapeHtml(card.when)}${card.party ? ` · ${escapeHtml(card.party)}` : ""}</p>
     ${status}
-    <div class="ticket-links">${copies || "<span>No confirmation number yet.</span>"}${map}</div>
+    <div class="ticket-links">${codeLine}${map}</div>
     ${collapsedNoteHtml(card.note, "More")}
   </article>`;
 }
@@ -6173,11 +6197,12 @@ function walletBookings() {
     { id: "cordia", kind: "hotel", at: "2026-10-24T16:30:00+09:00", title: "Hotel Cordia Osaka Hommachi", when: "Sat Oct 24 · after 16:30", route: "Hommachi, Osaka", detail: "1 room", code: "", how: "Check in after the train. Call the hotel if you arrive late.", who: "brianMai" },
     { id: "royal-park", kind: "hotel", at: "2026-10-24T17:00:00+09:00", title: "Royal Park Hotel ICONIC Osaka Midosuji", when: "Sat Oct 24–Wed Oct 28", route: "Midosuji, Osaka", detail: "Your room", code: "", how: "Check in after Nozomi 261.", who: "parents" },
     { id: "sankei-club", kind: "meal", at: "2026-10-25T17:00:00+09:00", title: "Sankei Club", when: "Sun Oct 25 · 17:00", route: "Shinsekai, Osaka", detail: "5 people", code: "468118574", how: "Give this number at the restaurant." },
-    { id: "onyasai", kind: "meal", at: "2026-10-27T20:00:00+09:00", title: "Shabushabu On-yasai", when: "Tue Oct 27 · 20:00", route: "Sennichimae, Osaka", detail: "5 people", code: "468119458", how: "Give this number at the restaurant." },
+    { id: "bochi-bochi", kind: "meal", at: "2026-10-26T19:30:00+09:00", title: "Bochi bochi", when: "Mon Oct 26 · 19:30", route: "Sakai-shi, Osaka", detail: "4 of us + Sayaka's family", code: "", how: "Booked by Sayaka.", note: "JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk." },
+    { id: "onyasai", kind: "meal", at: "2026-10-27T20:00:00+09:00", title: "Shabushabu On-yasai", when: "Tue Oct 27 · 20:00", route: "Sennichimae, Osaka", detail: "4 people", code: "468119458", how: "Give this number at the restaurant." },
     { id: "monterey", kind: "hotel", at: "2026-10-28T18:00:00+09:00", title: "Hotel Monterey Kyoto", when: "Wed Oct 28 · on arrival", route: "Kyoto", detail: "1 room", code: "", how: "Check in when you arrive from Nara.", who: "brianMai" },
     { id: "parents-kyoto", kind: "hotel", at: "2026-10-28T18:00:00+09:00", title: "Kyoto room", when: "Wed Oct 28–Mon Nov 2", route: "Kyoto", detail: "Booked separately", code: "", how: "Check in to your Kyoto room.", who: "parents" },
     { id: "endo", kind: "meal", at: "2026-10-29T14:00:00+09:00", title: "Tempura Endo Yasaka", when: "Thu Oct 29 · 14:00", route: "Gion, Kyoto", detail: "5 seats", code: "", how: "Booked." },
-    { id: "kani-doraku", kind: "meal", at: "2026-10-30T18:00:00+09:00", title: "Kani Doraku Kyoto", when: "Fri Oct 30 · 18:00", route: "Kyoto", detail: "5 people", code: "SE0767510", how: "Give this number at the restaurant." },
+    { id: "kani-doraku", kind: "meal", at: "2026-10-30T18:00:00+09:00", title: "Kani Doraku Kyoto", when: "Fri Oct 30 · 18:00", route: "Kyoto", detail: "4 people", code: "SE0767510", how: "Give this number at the restaurant." },
     { id: "kyoya", kind: "meal", at: "2026-10-31T18:30:00+09:00", title: "Kyoya", when: "Sat Oct 31 · 18:30", route: "Yanaginobamba, Kyoto", detail: "5 people · seats only", code: "FP4YF2QHPJ", how: "Give this number at the restaurant." },
     { id: "shinkansen-nov2", kind: "train", at: "2026-11-02T08:01:00+09:00", title: "Hikari 733", when: "Mon Nov 2 · 08:01", route: "Kyoto → Himeji", detail: "Car 6 · seats 17-D, 17-E, 18-D, 18-E · 4 people", code: "2000", how: SHINKANSEN_BOARDING },
     { id: "himeji-tickets", kind: "ticket", at: "2026-11-02T09:30:00+09:00", title: "Himeji Castle", when: "Mon Nov 2 · 09:30", route: "Himeji Castle", detail: "4 adults", code: "SHLMXW4R", how: "Mom shows the live ticket on her phone at the gate." },
