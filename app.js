@@ -929,7 +929,7 @@ const dayContext = {
   },
   day05: {
     summary: "Easy morning at Hotel Cordia Osaka Hommachi, Edobori lunch at 11:00 for 5 with Sayaka, Kaiyukan until about 16:30, then On-yasai at 20:00 for 4.",
-    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, about 15 minutes from Hotel Cordia Osaka Hommachi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon."], ["~12:15", "Chuo Line from Hommachi to Osakako, about 15–20 minutes, then walk to Kaiyukan."], ["~12:45–16:30", "Osaka Aquarium Kaiyukan, with whale sharks in the 9 m Pacific Ocean tank, an optional Tempozan Ferris wheel, and tickets at the door or online."], ["~16:45–17:00", "Say bye to Sayaka at Osakako Station around 5 PM, before her daughter's activity."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["~19:40", "Head to Namba / Sennichimae."], ["20:00", "Be at Shabushabu On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
+    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, about 15 minutes from Hotel Cordia Osaka Hommachi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", "brianMai"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, from Royal Park Hotel ICONIC Osaka Midosuji by subway Midosuji Line to Hommachi then a short walk, or a short taxi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", "parents"], ["~12:15", "Chuo Line from Hommachi to Osakako, about 15–20 minutes, then walk to Kaiyukan."], ["~12:45–16:30", "Osaka Aquarium Kaiyukan, with whale sharks in the 9 m Pacific Ocean tank, an optional Tempozan Ferris wheel, and tickets at the door or online."], ["~16:45–17:00", "Say bye to Sayaka at Osakako Station around 5 PM, before her daughter's activity."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["~19:40", "Head to Namba / Sennichimae."], ["20:00", "Be at Shabushabu On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
     slowTimeline: [["Morning", "Easy morning at Hotel Cordia Osaka Hommachi.", "brianMai"], ["Morning", "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji.", "parents"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka."], ["Afternoon", "Kaiyukan to spot the whale shark, with an optional ferris wheel, then say bye to Sayaka at Osakako around 5 PM."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["20:00", "On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
     history: [
       "Osaka Aquarium Kaiyukan opened in 1990 on the Tempozan waterfront. The building is a spiral walk through Pacific habitats, ending at one large tank.",
@@ -1552,6 +1552,7 @@ const dailyPhotoSlots = [
 const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"]);
 
 const planPhotoCredits = {
+  day05: "Kaiyukan whale shark tank. Photo by SR EXR, CC0.",
   day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0."
 };
 

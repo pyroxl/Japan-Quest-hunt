@@ -100,18 +100,6 @@ window.PLACE_COORDINATES = {
     34.57873,
     135.50421
   ],
-  "Shin-Kobe Station": [
-    34.7061386,
-    135.1958713
-  ],
-  "Nunobiki Ropeway": [
-    34.7106994,
-    135.192074
-  ],
-  "Kobe Nunobiki Herb Gardens": [
-    34.7150568,
-    135.1923434
-  ],
   "Kintetsu Nara Station": [
     34.6849624,
     135.8260516
