@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v211";
+const APP_VERSION = "japan-quest-v212";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -47,6 +47,7 @@ const UENO_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Anagomeshi
 const SETSUGETSUKA_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Gora 1300-34, Hakone, Kanagawa")}`;
 const HIMEJI_TICKET_NOTE = `BOOKED by Mom (Cynthia King) on the Shirasagi Ticket site. Confirmation in Gmail. The party is 4 adults. The total is JPY 10,400. That is JPY 2,600 per person. Enter Koko-en Garden at any time from 09:00. Last entry is 30 minutes before the garden closes. The garden closes at 17:00. Enter Himeji Castle between 09:30 and 10:00. The castle is open from 09:00 to 17:00. Last entry is 16:00. The gate does not accept a screenshot. The gate does not accept a printed ticket. Mom logs in to My Page on her phone. Mom shows the live 2D code in the browser. The phone must have data. Log in on the Shinkansen before you arrive. The signal can be weak in a crowd. Press Entry at each gate. You can cancel at no charge until the castle entry time. Remove your shoes in the main keep. Bring socks with grip. Do not go in again after you leave.`;
 const REICHAN_DINNER_NOTE = "Eat an early dinner at Reichan in ekie at Hiroshima Station. Walk in. Do not make a reservation. This is the one Hiroshima okonomiyaki meal on this trip. Allow about JPY 1,000–2,000 per person. Eat lunch in Himeji. Kanawa ekie stays cancelled.";
+const REICHAN_MAI_NOTE = "Mai orders the okonomiyaki without pork, or with squid or shrimp.";
 const SUISHIN_MAIN_NOTE = `BOOKED. Confirmation in Gmail. The status is Accepted. Eat dinner at Suishin main store in Tatemachi. The time is Tue Nov 3 at 18:00. The party is 4 guests. The booking is for a table only. Order a la carte at the table. Do not order okonomiyaki. Anago kamameshi is JPY 2,700. Premium anago-ju is JPY 3,800. That is about $17–24 per person. Nov 3 is a holiday. Do not order a set meal in a private room. The store is open from 11:30 to 22:00. Last order is 20:30. The store is closed on Wednesdays. Do not order the oyster items. Mom hates oysters. You can also call 082-247-4411. The cancellation fee is JPY 2,000 per guest. The fee applies if you cancel within 24 hours. Cancel before 18:00 JST on Mon Nov 2 if the plan changes. Amend or cancel from the confirmation email.`;
 const HIROSHIMA_WEATHER_SWAP = "You can swap Nov 3 and Nov 4 if the Nov 4 forecast is bad. If you swap, do Miyajima on Nov 3. More people come on the holiday. The shrine floats from about 15:00 to 19:45. The Nov 3 high tide is 17:20 (305 cm). On Nov 4 the Peace Memorial Museum is open from 7:30 to 19:00. Entry is JPY 200. Suishin main store is closed on Wednesdays. If Peace Park moves to Wed Nov 4, eat dinner at Suishin ekie. Suishin main store is booked for Tue Nov 3 at 18:00. If you swap the days, cancel that booking before 18:00 JST on Mon Nov 2. Decide from Oct 30 to Nov 1. Use the JMA weekly forecast or tenki.jp for Hatsukaichi. Check the forecast again on the evening of Nov 2.";
 const KYOYA_TABELOG_URL = "https://tabelog.com/kyoto/A2601/A260201/26016279/";
@@ -73,7 +74,7 @@ const TOYAMA_NOTE = `Walk in at Kaiten Toyama Sushi Ginza on Thu Nov 12 at 17:00
 const APA_HOTEL_NAME = "APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower";
 const APA_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower, 3-14-1 Honmachi, Shibuya-ku, Tokyo")}`;
 const APA_NOTE = `BOOKED. Stay at APA Hotel & Resort Nishishinjuku Gochome Ekimae Tower. The address is 3-14-1 Honmachi, Shibuya-ku, Tokyo 151-0071. The hotel is next to Nishi-shinjuku-gochome Station on the Toei Oedo line. The booking is for 2 adults. The party is Brian and Mai. The room is a Double Room. The room is non-smoking. Pay at the property. City tax may be charged at the property. Both KOKO HOTEL Premier Nihonbashi Hamacho stays were cancelled on Aug 18. Do not go to KOKO. Nov 5–8 is 3 nights. Confirmation in Gmail. The room is a City View on a high floor. The amount due at the property is JPY 82,880. Check in on Thu Nov 5 from 15:00. Check out on Sun Nov 8 by 10:00. You can cancel at no charge until 23:59 hotel time on Wed Nov 4. Nov 11–12 is 1 night. Confirmation in Gmail. The amount due at the property is JPY 22,269. Check in on Wed Nov 11 from 15:00. Check out on Thu Nov 12 by 10:00. You can cancel at no charge until 23:59 hotel time on Tue Nov 10. There is no hotel on the night of Nov 12. {{link:${APA_MAP_URL}|Open the map}}`;
-const AIRPORT_TONIGHT_NOTE = `Airport tonight. Flight BA4609 leaves Haneda at 01:00 on Fri Nov 13. JAL operates the flight. Be at Haneda by about 22:00. There is no hotel on the night of Nov 12. Check out of APA Nishishinjuku by 10:00. Take the bags to the coin lockers at Shimbashi Station. Use the large-suitcase lockers. Lockers can fill by late morning. If the lockers are full, reserve storage near Shimbashi with the ecbo cloak app. From the hotel, take the Toei Oedo line to Daimon or Shiodome. Or go to Shinjuku, then take JR to Shimbashi. Allow about 40 minutes with bags. Then go to teamLab. teamLab is in Azabudai Hills. Take the Hibiya line to Kamiyacho. The ride from Shimbashi is about 10 minutes. After dinner at Kaiten Toyama Sushi Ginza, leave between 20:30 and 21:00. The shop is about 5 minutes from Shimbashi. Get the bags at Shimbashi. From Daimon or Shimbashi, the Toei Asakusa line runs direct to Keikyu Haneda Airport. The ride is about 30 minutes. Do not transfer. The backup route is the Yamanote line. Ride 1 stop from Shimbashi to Hamamatsucho. Then take the Tokyo Monorail. That ride is about 20 minutes.`;
+const AIRPORT_TONIGHT_NOTE = `Airport tonight. Flight BA4609 leaves Haneda at 01:00 on Fri Nov 13. JAL operates the flight. Be at Haneda by about 22:00. There is no hotel on the night of Nov 12. Check out of APA Nishishinjuku by 10:00. Take the bags to the coin lockers at Shimbashi Station. Use the large-suitcase lockers. Lockers can fill by late morning. If the lockers are full, reserve storage near Shimbashi with the ecbo cloak app. From the hotel, take the Toei Oedo line to Daimon or Shiodome. Or go to Shinjuku, then take JR to Shimbashi. Allow about 40 minutes with bags. Then go to teamLab. teamLab is in Azabudai Hills. From Shimbashi, take the Ginza line to Toranomon and walk about 10 minutes, or take a taxi and allow about 20 minutes. After dinner at Kaiten Toyama Sushi Ginza, leave between 20:30 and 21:00. The shop is about 5 minutes from Shimbashi. Get the bags at Shimbashi. From Daimon or Shimbashi, the Toei Asakusa line runs direct to Keikyu Haneda Airport. The ride is about 30 minutes. Do not transfer. The backup route is the Yamanote line. Ride 1 stop from Shimbashi to Hamamatsucho. Then take the Tokyo Monorail. That ride is about 20 minutes.`;
 const KINMATA_SKIP_NOTE = "Skipped. Kinmata is too expensive. The price is about JPY 25,300 per person. Do not book it. The Oct 31 dinner is Kyoya.";
 const SETSUGETSUKA_NOTE = `BOOKED by Mai on Booking.com. Confirmation in Gmail. Check in on Sun Nov 8. Check-in is from 15:00 to 19:30. Check out on Wed Nov 11. Check out by 11:00. The stay is 3 nights. The room is the Superior Room with Tatami Area and Open-Air Bath. The party is 2 adults. Breakfast is included on all 3 nights. Dinner is included on all 3 nights. Do not plan another dinner in Hakone on Nov 8. Do not plan another dinner in Hakone on Nov 9. Do not plan another dinner in Hakone on Nov 10. Do not budget another dinner on those nights. The hotel has two dinner venues. One venue serves seasonal hotpot and a Japanese course. The other venue serves wagyu shabu-shabu and sushi. Mai avoids sliced meat. Request the hotpot and Japanese course venue. Message the hotel through the Booking.com app. The stay is paid in full through Booking.com. The price is JPY 325,507. Pay the hot spring tax at the property. The tax is JPY 150 per person per night. The tax total is JPY 900. You can cancel at no charge until 23:59 JST on Mon Nov 2. From Nov 3 the cancellation fee is the full price. The address is Gora 1300-34, Hakone, Kanagawa. {{link:${SETSUGETSUKA_MAP_URL}|Open the map}} The hotel phone is +81-460-86-1222. Manage the booking in the Booking.com app. Or manage the booking on the Booking.com website. MIYA HOUSE was cancelled at no cost on Aug 6.`;
 const ROMANCECAR_OUT_NOTE = "BOOKED. Confirmation in Gmail. Take SuperHakone 9 (GSE). Leave Shinjuku at 10:00. Arrive at Hakone-Yumoto at 11:21. Sit in car 5, seats 8A and 8B. The seat type is Standard seat. The booking is for 2 adults. The price is JPY 2,300. This price is the limited-express charge only. You need a separate ticket or a Freepass to board. Pay the base fare with Suica or the Hakone Freepass. Show this booking on your phone. Or show a printout of the completion page. Also show the credit card you used to pay. Do not exchange the booking at a ticket counter. The completion page is saved as romancecar.pdf. The file is in the Downloads folder on Brian's phone. A backup copy is in the WhatsApp chat with Mai. Open the Docs tab in that chat. A bookmark does not reopen the booking. If you lose both copies, open e-Romancecar. Log in. Select Confirm booking.";
@@ -103,7 +104,7 @@ const JOURNAL_PREFS_KEY = "japanQuestJournal";
 const JOURNAL_NAMES = ["Brian", "Mai", "Mom", "Dad"];
 const ENDO_PARTY = "Party of 5. Sayaka is confirmed.";
 const SAYAKA_CONFIRMED = "Party of 5. Sayaka is confirmed.";
-const BOCHI_NOTE = "Bochi bochi is at 19:00, an izakaya near Sakai-shi Station, with Sayaka and her family. She booked it for everyone. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk.";
+const BOCHI_NOTE = "Bochi bochi is at 19:00, an izakaya near Sakai-shi Station, with Sayaka and her family, and ask for the non-smoking 2nd floor. She booked it for everyone. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk.";
 const TRIP_GUIDE_AUTHOR = "Trip Guide";
 
 const HOTEL_PLACES = new Set([
@@ -172,8 +173,19 @@ const WALK_IN_REMINDERS = [
     name: "Fresh yomogi mochi in Nara",
     recommendedOn: "2026-10-28",
     target: "Oct 28 · Deer to Kyoto",
-    note: "Walk-in only. No reservation number. Buy fresh yomogi mochi in Nara before the train to Kyoto. [yomogi mochi shop — needs confirmation].",
-    checkLabel: "Got the fresh yomogi mochi"
+    note: "Optional, not for Mai. She can have a non-mochi sweet such as castella. Others can buy fresh yomogi mochi, walk-in only.",
+    checkLabel: "Optional yomogi mochi, or a non-mochi sweet for Mai",
+    who: "brianMai"
+  },
+  {
+    dayId: "day06",
+    questId: "nara-yomogi-parents",
+    name: "Optional sweet in Nara",
+    recommendedOn: "2026-10-28",
+    target: "Oct 28 · Deer to Kyoto",
+    note: "Fresh yomogi mochi is an optional walk-in before the train to Kyoto.",
+    checkLabel: "Optional Nara sweet",
+    who: "parents"
   }
 ];
 
@@ -299,8 +311,8 @@ const coreExperienceQuests = [
     type: "side",
     items: [
       "Osaka: takoyaki, okonomiyaki, kushikatsu, and negiyaki",
-      "Nara: kakinoha-zushi and yomogi mochi",
-      "Kyoto: tofu/yudofu, obanzai, matcha/wagashi, and soba or udon",
+      "Nara: kakinoha-zushi. Yomogi mochi is optional and not for Mai; she gets a non-mochi sweet.",
+      "Kyoto: tofu/yudofu, obanzai, matcha/wagashi, and soba or udon. Mai's alternative is hojicha or coffee and a non-mochi sweet.",
       "Hiroshima: Hiroshima-style okonomiyaki, oysters, momiji manju, and spicy tsukemen",
       "Miyajima: anago-meshi, warm momiji manju, and grilled oysters only if someone else wants them (not for Mom)",
       "Tokyo: sushi, ramen, curry rice, yakitori, teishoku, and conveyor-belt sushi",
@@ -322,7 +334,7 @@ const coreExperienceQuests = [
 
 const roadmapGoals = [
   { id: "osaka-food", goal: "Maximum-pop Osaka and regional food", days: ["day02", "day03", "day04"], status: "Ready", why: "Castle, Den Den, and Shinsekai are the loud Osaka arc. Day 2 does not include Dotonbori. Kuromon supplies the scored food quest. Dinner on Oct 26 is Bochi bochi.", blocker: "Day 3 and Day 4 both involve substantial standing.", fallback: "Keep the category limits, the hotel reset, and the 19:00 Bochi bochi booking." },
-  { id: "kaiyukan", goal: "Kaiyukan whale shark afternoon", days: ["day05"], status: "Ready", why: "Edobori lunch for 5, then the Pacific Ocean tank. Dinner is On-yasai at 20:00 for 4.", blocker: "", fallback: "Buy tickets at the door. Skip the ferris wheel if energy is low." },
+  { id: "kaiyukan", goal: "Kaiyukan whale shark afternoon", days: ["day05"], status: "Ready", why: "Edobori lunch for 5, then the Pacific Ocean tank. Dinner is On-yasai at 20:00 for 4.", blocker: "", fallback: "Buy 5 timed e-tickets in advance for about 12:45. Skip the ferris wheel if energy is low." },
   { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Bochi bochi on Oct 26 is the izakaya night, booked by Sayaka.", blocker: "", fallback: "Keep the 19:00 booking even if the daytime tasting runs long." },
   { id: "konbini", goal: "7-Eleven and konbini food experience", days: ["day02"], status: "Ready", why: "The first small everyday-Japan ritual begins immediately.", blocker: "", fallback: "Build breakfast from the nearest station or hotel konbini." },
   { id: "nara", goal: "Nara Park", days: ["day06"], status: "Ready", why: "Nara bridges Osaka and Kyoto with one iconic first-trip experience.", blocker: "", fallback: "Use taxis and keep the visit to the park and Todai-ji approach." },
@@ -330,7 +342,7 @@ const roadmapGoals = [
   { id: "mt-inari", goal: "Early Fushimi Inari climb", days: ["day07"], status: "Ready", why: "Mai's hillside torii priority now begins a coherent southeast-to-Higashiyama sweep.", blocker: "", fallback: "Turn around at Yotsutsuji or sooner; parents skip Inari and Tofuku-ji entirely." },
   { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day07"], status: "Ready", why: `Parents meet the couple at Kiyomizu after the Inari and Tofuku-ji morning, then walk down to Endo lunch. ${ENDO_PARTY}`, blocker: "", fallback: "Taxi toward Kiyomizu, descend the slopes, and protect the 14:00 Endo sitting." },
   { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day08"], status: "Ready", why: "Bamboo and Togetsukyo lead naturally into Ryoan-ji and Kinkaku-ji via the Randen corridor.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by taxi." },
-  { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
+  { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances. Mai's alternative is hojicha or coffee and a non-mochi sweet.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop. Mai can have hojicha or coffee and a non-mochi sweet." },
   { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a full Kyoto mountain day with Enryaku-ji and forest paths.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
   { id: "mountain-chapter", goal: "Three-night Hakone retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "The confirmed Gora hotel beside the station makes the mountain chapter usable by scheduled transport, with Mai's sunrise shrine visit, the reverse classic loop and a real hiking day.", blocker: "Prebook the Nov 9 05:30 taxi. Recheck the November bus, cruise, and ropeway timetable. Recheck the Mount Kintoki trail. Breakfast and dinner are included. Message the hotel through the Booking.com app. Request the hotpot and Japanese course venue.", fallback: "Use the earliest public-transport route to Moto-Hakone if the taxi cannot be arranged; use the H bus and Tozan train to return to Gora if the loop is cancelled." },
   { id: "hakone-return", goal: "Protected Hakone–Tokyo return", days: ["day20"], status: "Ready", why: "Hakone 30 is booked for 10:10 from Hakone-Yumoto. A reserved morning rail return avoids highway uncertainty and leaves time for luggage and a soft Tokyo landing.", blocker: "", fallback: "Use regular Odakyu services if the preferred Romancecar sells out." },
@@ -360,8 +372,10 @@ const regionalQuestPools = {
   kyoto: [
     ["kyoto-obanzai", "food", "Try obanzai or a Kyoto home-style plate.", null, ["city"]],
     ["kyoto-yudofu", "food", "Try yudofu, tofu, or a gentle Kyoto set meal.", null, ["city"]],
-    ["kyoto-matcha", "food", "Pair matcha with wagashi.", null, ["city"]],
-    ["kyoto-tea", "food", "Find a matcha, hojicha, or tea-flavored treat.", null, ["city"]],
+    ["kyoto-matcha", "food", "Pair matcha with wagashi.", null, ["city"], "parents"],
+    ["kyoto-matcha-mai", "food", "Pair matcha with wagashi. Mai's alternative is hojicha or coffee and a non-mochi sweet.", null, ["city"], "brianMai"],
+    ["kyoto-tea", "food", "Find a matcha, hojicha, or tea-flavored treat.", null, ["city"], "parents"],
+    ["kyoto-tea-mai", "food", "Find hojicha, coffee, or a non-mochi sweet for Mai.", null, ["city"], "brianMai"],
     ["kyoto-noodles", "food", "Choose soba or udon for an easy meal.", null, ["city"]],
     ["kyoto-flip-up", "food", "Try a bread from Flip Up! near the hotel and Manga Museum.", null, ["central"]],
     ["kyoto-handicraft", "culture", "Browse the Kyoto Handicraft Center for traditional crafts and a meaningful keepsake.", ["day09"], ["central"]],
@@ -374,7 +388,8 @@ const regionalQuestPools = {
   ],
   nara: [
     ["nara-kakinoha", "food", "Try kakinoha-zushi in Nara.", null, ["nara"]],
-    ["nara-yomogi", "food", "Try fresh yomogi mochi.", null, ["nara"]],
+    ["nara-yomogi", "food", "Yomogi mochi is optional and not for Mai. She can have a non-mochi sweet.", null, ["nara"], "brianMai"],
+    ["nara-yomogi-parents", "food", "Fresh yomogi mochi is an optional walk-in.", null, ["nara"], "parents"],
     ["nara-cafe", "food", "Take a calm cafe break near Naramachi.", null, ["nara"]],
     ["nara-deer", "find", "Catch a deer bow or memorable side-eye.", null, ["nara"]],
     ["nara-scale", "photo", "Photograph a detail that shows Todai-ji's scale.", null, ["nara"]]
@@ -700,7 +715,7 @@ const tripData = {
       {
         title: "Kyoto Soft-Beauty Collection",
         type: "side",
-        items: ["Try matcha and wagashi", "Try obanzai or tofu", "Find a quiet river or garden pause", "Hunt a tea-flavored melon bread", "Choose a cafe before anyone needs rescuing"]
+        items: [{ text: "Try matcha and wagashi. Mai's alternative is hojicha or coffee and a non-mochi sweet.", who: "brianMai" }, { text: "Try matcha and wagashi.", who: "parents" }, "Try obanzai or tofu", "Find a quiet river or garden pause", "Hunt a tea-flavored melon bread", "Choose a cafe before anyone needs rescuing"]
       },
       {
         title: "Kyoto Keepsake Window",
@@ -709,10 +724,10 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", [{ text: "Turn around at Yotsutsuji or sooner", who: "brianMai" }, { text: "Choose either Tofuku-ji's garden or the Tsutenkyo area", who: "brianMai" }, "Finish Gion by late afternoon. Do not plan a night return"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch. Sayaka joins too."),
-      questDay("day08", "2026-10-30", "Bamboo to Gold", "An early Arashiyama payoff followed by the rock garden and Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple", "Kamishichiken Kyoto"], "Lock the Bamboo Grove and Togetsukyo, eat early, then use the Randen corridor for compact Ryoan-ji and Kinkaku-ji visits.", ["Walk the grove before it becomes busiest", "Use the river cafe as the parent payoff", "Do not add another Arashiyama temple", "Give the rock garden one focused hour", "Use Kamishichiken only for optional tea or wagashi"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The first Golden Pavilion reflection"], "Mai gets three distinct Kyoto landscapes without a Saturday Arashiyama crowd.", "Parents skip Ryoan-ji if useful and meet at Kinkaku-ji by taxi."),
-      questDay("day09", "2026-10-31", "Palaces to Pontocho", "A compact central-Kyoto history, manga, market and neighborhood day.", ["Nijo Castle", "Kyoto Imperial Palace", "Kyoto International Manga Museum", "Nishiki Market", "Kamo River Kyoto", "Pontocho Alley"], "Enter Nijo at opening, make the Imperial Palace compact, use the Manga Museum as an optional split, lock Nishiki, then reset before dinner at Kyoya.", ["Notice Nijo's nightingale floors", "Keep the palace visit to about an hour", "Use the Manga Museum or a parent rest window", "Bound Nishiki rather than starting a second food mission", "Take a real hotel reset before dinner"], ["A castle gate or painted-room detail", "An Imperial Palace roofline", "A manga-art surprise", "A riverbank dinner approach"], "Mai gets shogun history, imperial history, manga and food without crossing Kyoto again.", "Nijo is shared; parents may skip the palace or Manga Museum and rejoin later. Dinner at Kyoya is 18:30 for 4. Sayaka is not coming."),
-      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "A full mountain day of forest paths, sacred precincts and views over Kyoto and Lake Biwa.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent and choose one meaningful Mt Hiei forest walk.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Use Demachiyanagi for dinner only if returning down the Kyoto side"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose.", "Dad uses the most assisted route and may return earlier while Mai and Brian walk farther.")
+      questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", [{ text: "Turn around at Yotsutsuji or sooner", who: "brianMai" }, { text: "Choose either Tofuku-ji's garden or the Tsutenkyo area", who: "brianMai" }, "Finish Gion by late afternoon. Do not plan a night return", { text: "For matcha or wagashi, Mai's alternative is hojicha or coffee and a non-mochi sweet.", who: "brianMai" }], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch. Sayaka joins too."),
+      questDay("day08", "2026-10-30", "Bamboo to Gold", "An early Arashiyama payoff followed by the rock garden and Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple", "Kamishichiken Kyoto"], "Lock the Bamboo Grove and Togetsukyo, eat early, then use the Randen corridor for compact Ryoan-ji and Kinkaku-ji visits.", ["Walk the grove before it becomes busiest", "Use the river cafe as the parent payoff", "Do not add another Arashiyama temple", "Give the rock garden one focused hour", { text: "Kamishichiken tea is optional. Mai's alternative is hojicha or coffee and a non-mochi sweet.", who: "brianMai" }, { text: "Use Kamishichiken only for optional tea or wagashi.", who: "parents" }], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The first Golden Pavilion reflection"], "Mai gets three distinct Kyoto landscapes without a Saturday Arashiyama crowd.", "Parents skip Ryoan-ji if useful and meet at Kinkaku-ji by taxi."),
+      questDay("day09", "2026-10-31", "Palaces to Pontocho", "A compact central-Kyoto history, manga, market and neighborhood day.", ["Nijo Castle", "Kyoto Imperial Palace", "Kyoto International Manga Museum", "Nishiki Market", "Kamo River Kyoto", "Pontocho Alley"], "Enter Nijo at opening, make the Imperial Palace compact, use the Manga Museum as an optional split, lock Nishiki, then reset before dinner at Kyoya.", ["Notice Nijo's nightingale floors", "Keep the palace visit to about an hour", "Use the Manga Museum or a parent rest window", "Bound Nishiki rather than starting a second food mission", "Take a real hotel reset before dinner", { text: "For matcha or wagashi, Mai's alternative is hojicha or coffee and a non-mochi sweet.", who: "brianMai" }], ["A castle gate or painted-room detail", "An Imperial Palace roofline", "A manga-art surprise", "A riverbank dinner approach"], "Mai gets shogun history, imperial history, manga and food without crossing Kyoto again.", "Nijo is shared; parents may skip the palace or Manga Museum and rejoin later. Dinner at Kyoya is 18:30 for 4. Sayaka is not coming."),
+      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "A full mountain day of forest paths, sacred precincts and views over Kyoto and Lake Biwa.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent and choose one meaningful Mt Hiei forest walk.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Use Demachiyanagi for dinner only if returning down the Kyoto side", { text: "For matcha or wagashi, Mai's alternative is hojicha or coffee and a non-mochi sweet.", who: "brianMai" }], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose.", "Dad uses the most assisted route and may return earlier while Mai and Brian walk farther.")
     ]
   },
   hiroshima: {
@@ -727,7 +742,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day11", "2026-11-02", "White Heron Westbound", "Hikari 733 to Himeji, the white-castle reveal, then Nozomi 69 to Hiroshima.", ["Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01. Do not go to To-ji. Enter the castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46.", ["Leave the hotel at about 7:30", "Do not go to To-ji", "Forward or carry the large bags", "Enter Himeji Castle between 09:30 and 10:00", "Do Koko-en before the castle or after the castle", "Eat lunch in Himeji", "Buy different regional ekiben", "Be at Himeji Station for the 14:46 train", "Eat the one Hiroshima okonomiyaki at Reichan"], ["A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "The castle entry is booked for 09:30–10:00. Granvia check-in is about 16:00."),
+      questDay("day11", "2026-11-02", "White Heron Westbound", "Hikari 733 to Himeji, the white-castle reveal, then Nozomi 69 to Hiroshima.", ["Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01. Do not go to To-ji. Enter the castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46.", ["Leave the hotel at about 7:30", "Do not go to To-ji", "Forward or carry the large bags", "Enter Himeji Castle between 09:30 and 10:00", "Do Koko-en before the castle or after the castle", "Eat lunch in Himeji", "Buy different regional ekiben", "Be at Himeji Station for the 14:46 train", { text: "Eat the one Hiroshima okonomiyaki at Reichan. Mai orders it without pork, or with squid or shrimp.", who: "brianMai" }, { text: "Eat the one Hiroshima okonomiyaki at Reichan.", who: "parents" }], ["A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "The castle entry is booked for 09:30–10:00. Granvia check-in is about 16:00."),
       questDay("day12", "2026-11-03", "Memory Along the River", "Museum, remembrance, river, and the Dome at dusk without emotional clutter.", ["Hiroshima Peace Memorial Museum", "Hiroshima Peace Memorial Park", "Atomic Bomb Dome", "Hiroshima National Peace Memorial Hall"], "Move from the museum through the Cenotaph and memorial axis, then see the Atomic Bomb Dome at dusk. Suishin main store is booked for 18:00. The booking is table only.", ["Leave time for a quiet break", "Use the National Peace Memorial Hall if a quieter space helps", "Write one private sentence about what should be remembered", "Try momiji manju or a calm cafe instead of adding sightseeing"], ["The alignment through the Cenotaph", "A paper crane or peace message", "The river changing the mood of the park"], "The day feels thoughtful and humane, not consumed as an attraction.", "Shukkeien is optional; emotional room is the priority."),
       questDay("day13", "2026-11-04", "Torii at the Tide", "Miyajima is the centerpiece of the Hiroshima stay. Keep the day unhurried.", ["Miyajimaguchi Station", "Itsukushima Shrine", "Miyajima Omotesando", "Daisho-in Temple", "Miyajima Ropeway"], "Leave the hotel at 07:50. Take the ropeway in the morning. Eat anago-meshi at Fujitaya. See Itsukushima Shrine from 16:00, when the water is high.", ["Ride the JR ferry", "Take the ropeway if the wind is safe", "Eat anago-meshi at Fujitaya", "Visit Daisho-in", "Buy momiji manju on Omotesando", "See Itsukushima Shrine from 16:00 to 17:20", "Do not feed the deer"], ["The torii with water around it after 16:00", "A deer that you do not feed", "Momiji manju on Omotesando"], "Miyajima earns its place as the romantic westward payoff.", "The shrine, the waterfront, and the food street complete the day.")
     ]
@@ -911,7 +926,7 @@ const dayContext = {
   },
   day03: {
     summary: "Castle, character culture and retro food give Osaka one intentionally big day—monumental history in the morning, Den Den browsing in the afternoon, Shinsekai kushikatsu at blue hour. Do not add a fourth district; the arc works because each stop has a different emotional register.",
-    timeline: [["08:30–11:30", "Reach Osaka Castle near opening. Photograph the moat view. Enter the keep only if you want the interior."], ["11:30–13:00", "Near Nippombashi, pick a ramen spot (not oyster ramen; Mom hates oysters)."], ["13:00–16:00", "Browse one defined part of Den Den Town."], ["17:00", "Be at Shinsekai Kushikatsu Okonomi Sankei Club at 17:00 for a party of 5, and Sayaka joins. Confirmation in Gmail. Do not add a fourth district."]],
+    timeline: [["08:30–11:30", "Reach Osaka Castle near opening. Photograph the moat view. Enter the keep only if you want the interior."], ["11:30–13:00", "Near Nippombashi, pick a ramen spot (not oyster ramen; Mom hates oysters)."], ["13:00–16:00", "Browse one defined part of Den Den Town."], ["17:00", "Ask for a non-smoking table away from the heated-tobacco (IQOS) section: 「禁煙席で、加熱式たばこのエリアから離れた席をお願いします。」 Be at Shinsekai Kushikatsu Okonomi Sankei Club at 17:00 for a party of 5, and Sayaka joins. Do not add a fourth district."]],
     history: [
       "Toyotomi Hideyoshi began Osaka Castle in 1583 as the center of his effort to unify Japan. The current keep is a reconstruction and museum, but its moat and walls still establish Osaka's monumental scale.",
       "Shinsekai was unveiled in 1912 as a vision of the new world, with Tsutenkaku tower as its symbol. Den Den Town tells a later popular-culture story, shifting from postwar electronics into games, anime and collector culture.",
@@ -919,8 +934,8 @@ const dayContext = {
     ]
   },
   day04: {
-    summary: "Dinner is Bochi bochi at 19:00, an izakaya near Sakai-shi Station, with Sayaka and her family. Kuromon scores by 11:30, one Shinsaibashi stop, one Amerikamura wildcard, then a hotel reset. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk.",
-    timeline: [["10:00–11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave at 11:30."], ["12:00–14:30", "At Daimaru Shinsaibashi, complete one food-hall stop. Then take one Amerikamura wildcard only."], ["15:00–17:00", "Return to Hotel Cordia Osaka Hommachi. Rest. Stop eating.", "brianMai"], ["15:00–17:00", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest. Stop eating.", "parents"], ["19:00", BOCHI_NOTE]],
+    summary: "Leave the hotel around 18:10 for Bochi bochi at 19:00 near Sakai-shi Station with Sayaka and her family, and ask for the non-smoking 2nd floor. Kuromon scores by 11:30, one Shinsaibashi stop, one Amerikamura wildcard, then a hotel reset. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk.",
+    timeline: [["10:00–11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave at 11:30."], ["12:00–14:30", "At Daimaru Shinsaibashi, complete one food-hall stop. Then take one Amerikamura wildcard only."], ["15:00–17:00", "Return to Hotel Cordia Osaka Hommachi. Rest. Stop eating.", "brianMai"], ["15:00–17:00", "Return to Royal Park Hotel ICONIC Osaka Midosuji. Rest. Stop eating.", "parents"], ["~18:10", "Leave the hotel for Bochi bochi. The trip to Sakai is about 40–45 minutes."], ["19:00", BOCHI_NOTE]],
     history: [
       "Kuromon Ichiba began as a wholesale fish market and became one of Osaka's most famous public market streets. Merchants built reputations on freshness, knife work, and the theatre of preparation behind glass counters.",
       "Dinner is not a Tenma walk-in. It is Bochi bochi, an izakaya near Sakai-shi Station, booked by Sayaka.",
@@ -929,16 +944,16 @@ const dayContext = {
   },
   day05: {
     summary: "Easy morning at Hotel Cordia Osaka Hommachi, Edobori lunch at 11:00 for 5 with Sayaka, Kaiyukan until about 16:30, then On-yasai at 20:00 for 4.",
-    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, about 15 minutes from Hotel Cordia Osaka Hommachi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", "brianMai"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, from Royal Park Hotel ICONIC Osaka Midosuji by subway Midosuji Line to Hommachi then a short walk, or a short taxi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", "parents"], ["~12:15", "Chuo Line from Hommachi to Osakako, about 15–20 minutes, then walk to Kaiyukan."], ["~12:45–16:30", "Osaka Aquarium Kaiyukan, with whale sharks in the 9 m Pacific Ocean tank, an optional Tempozan Ferris wheel, and tickets at the door or online."], ["~16:45–17:00", "Say bye to Sayaka at Osakako Station around 5 PM, before her daughter's activity."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["~19:40", "Head to Namba / Sennichimae."], ["20:00", "Be at Shabushabu On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
-    slowTimeline: [["Morning", "Easy morning at Hotel Cordia Osaka Hommachi.", "brianMai"], ["Morning", "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji.", "parents"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka."], ["Afternoon", "Kaiyukan to spot the whale shark, with an optional ferris wheel, then say bye to Sayaka at Osakako around 5 PM."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["20:00", "On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail."]],
+    timeline: [["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, about 15 minutes from Hotel Cordia Osaka Hommachi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", "brianMai"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka, from Royal Park Hotel ICONIC Osaka Midosuji by subway Midosuji Line to Hommachi then a short walk, or a short taxi. Mai orders kitsune udon or chikuwa udon. Do not order chicken tempura, meat udon, tonkatsu, or katsudon.", "parents"], ["~12:15", "Chuo Line from Hommachi to Osakako, about 15–20 minutes, then walk to Kaiyukan."], ["~12:45–16:30", "Buy 5 timed e-tickets in advance for about 12:45. Kaiyukan is timed entry with no re-entry. Whale sharks are in the 9 m Pacific Ocean tank, and the Tempozan Ferris wheel is optional."], ["~16:45–17:00", "Say bye to Sayaka at Osakako Station around 5 PM, before her daughter's activity."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["~19:40", "Head to Namba / Sennichimae."], ["20:00", "Mai orders vegetables, tofu, and tsukune instead of sliced meat. Be at Shabushabu On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail.", "brianMai"], ["20:00", "Be at Shabushabu On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail.", "parents"]],
+    slowTimeline: [["Morning", "Easy morning at Hotel Cordia Osaka Hommachi.", "brianMai"], ["Morning", "Easy morning at Royal Park Hotel ICONIC Osaka Midosuji.", "parents"], ["11:00", "Walk in at Udon Izakaya Edobori for 5 with Sayaka."], ["Afternoon", "Buy 5 timed e-tickets in advance for about 12:45. Kaiyukan is timed entry with no re-entry, then say bye to Sayaka at Osakako around 5 PM."], ["~17:30", "Back at Hotel Cordia Osaka Hommachi to rest.", "brianMai"], ["~17:30", "Back at Royal Park Hotel ICONIC Osaka Midosuji to rest.", "parents"], ["20:00", "On-yasai Sennichimae for 4, no Sayaka. Mai orders vegetables, tofu, and tsukune instead of sliced meat.", "brianMai"], ["20:00", "On-yasai Sennichimae for 4, no Sayaka, confirmation in Gmail.", "parents"]],
     history: [
       "Osaka Aquarium Kaiyukan opened in 1990 on the Tempozan waterfront. The building is a spiral walk through Pacific habitats, ending at one large tank.",
       "That Pacific Ocean tank is about 9 meters deep. Whale sharks circle in it with smaller fish. The Tempozan Ferris wheel next door is optional. Dinner is the booked On-yasai table in Sennichimae."
     ]
   },
   day06: {
-    summary: "Use Nara as the bridge from Osaka to Kyoto. Carry all luggage to Kintetsu-Nara and store it in the coin lockers. Keep the deer stop short. Enter Todai-ji's Great Buddha Hall. Buy fresh yomogi mochi before the train. Collect the bags, then go to Hotel Monterey Kyoto. To-ji is not on this day.",
-    timeline: [["08:00–09:00", "Check out of the Osaka hotel. Take all luggage on the Kintetsu train to Kintetsu-Nara. Arrive before 10:00. The large lockers fill in the morning."], ["At Kintetsu-Nara", "Go out through the West ticket gate. Turn left to the coin-locker room. It has 23 extra-large lockers. An extra-large locker costs about ¥800 to ¥1,500 for one day. Pay with coins or an IC card. Suica and ICOCA work. Some lockers take IC cards only. Take a photo of the locker number. Then use the East gate side, Exit 2, for Nara Park and Todai-ji."], ["If the lockers are full", "Use the Tourist Information Centre in the Kintetsu building. It is at Exit 3, 1F. It holds bags from 09:00 to 16:00. It takes the last bag at 14:00. Space is limited."], ["10:00–12:30", "Walk or take a taxi through Nara Park to Todai-ji. Keep the deer stop short."], ["12:30–15:00", "Buy fresh yomogi mochi. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]. Add kakinoha-zushi or a short Naramachi café only if you want it."], ["15:00–18:00", "Return to the West gate lockers. Collect the bags. Take the Kintetsu Kyoto Line to Kyoto Station. Do not go to To-ji today."], ["Evening", "Check in at Hotel Monterey Kyoto.", "brianMai"], ["Evening", "Check in to your Kyoto room.", "parents"]],
+    summary: "Use Nara as the bridge from Osaka to Kyoto. Carry all luggage to Kintetsu-Nara and store it in the coin lockers. Keep the deer stop short. Enter Todai-ji's Great Buddha Hall. Yomogi mochi is optional and not for Mai, so get her a non-mochi sweet. Collect the bags, then go to Hotel Monterey Kyoto. To-ji is not on this day.",
+    timeline: [["08:00–09:00", "Check out of the Osaka hotel. Take all luggage on the Kintetsu train to Kintetsu-Nara. Arrive before 10:00. The large lockers fill in the morning."], ["At Kintetsu-Nara", "Go out through the West ticket gate. Turn left to the coin-locker room. It has 23 extra-large lockers. An extra-large locker costs about ¥800 to ¥1,500 for one day. Pay with coins or an IC card. Suica and ICOCA work. Some lockers take IC cards only. Take a photo of the locker number. Then use the East gate side, Exit 2, for Nara Park and Todai-ji."], ["If the lockers are full", "Use the Tourist Information Centre in the Kintetsu building. It is at Exit 3, 1F. It holds bags from 09:00 to 16:00. It takes the last bag at 14:00. Space is limited."], ["10:00–12:30", "Walk or take a taxi through Nara Park to Todai-ji. Keep the deer stop short."], ["12:30–15:00", "Yomogi mochi is optional and not for Mai, so get her a non-mochi sweet such as castella. Others can still buy fresh yomogi mochi, walk-in only.", "brianMai"], ["12:30–15:00", "Fresh yomogi mochi is an optional walk-in before the train. Add kakinoha-zushi or a short Naramachi café only if you want it.", "parents"], ["15:00–18:00", "Return to the West gate lockers. Collect the bags. Take the Kintetsu Kyoto Line to Kyoto Station. Do not go to To-ji today."], ["Evening", "Check in at Hotel Monterey Kyoto.", "brianMai"], ["Evening", "Check in to your Kyoto room.", "parents"]],
     history: [
       "Nara became Japan's first lasting imperial capital in 710, when the court laid out Heijo-kyo using continental models. Buddhism was not merely private faith: temples, ritual, scholarship, and state power were woven together in the project of governing the country.",
       "Todai-ji's Great Buddha was cast in the 8th century during epidemics, crop failures, and political anxiety. Emperor Shomu imagined the colossal bronze image as a unifying act of protection. The present hall is smaller than its medieval predecessor, which makes the surviving scale even more startling.",
@@ -955,8 +970,8 @@ const dayContext = {
     ]
   },
   day08: {
-    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Kamishichiken tea is optional atmosphere, not a third major stop. Dinner is Kani Doraku Kyoto Honten at 18:00 for 4. No Sayaka. Course and seats unchanged.",
-    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward the hotel. Be at Kani Doraku Kyoto Honten at 18:00. Party of 4. No Sayaka. Course and seats unchanged."]],
+    summary: "For Kamishichiken or any matcha stop, Mai's alternative is hojicha or coffee and a non-mochi sweet. Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Kamishichiken tea is optional atmosphere, not a third major stop. Dinner is Kani Doraku Kyoto Honten at 18:00 for 4. No Sayaka. Course and seats unchanged.",
+    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["Optional", "Kamishichiken tea is optional. Mai's alternative is hojicha or coffee and a non-mochi sweet.", "brianMai"], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward the hotel. Be at Kani Doraku Kyoto Honten at 18:00. Party of 4. No Sayaka. Course and seats unchanged."]],
     history: [
       "Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Aristocrats travelled from the capital to compose verses, admire blossoms and autumn leaves, and borrow mountain scenery into designed gardens and villas.",
       "Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes.",
@@ -983,7 +998,7 @@ const dayContext = {
   },
   day11: {
     summary: "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49. Do not go to To-ji. Enter Himeji Castle between 09:30 and 10:00. The tickets are booked. Visit Koko-en before the castle or after the castle. Eat lunch in Himeji. Buy ekiben. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42. Check in at Hotel Granvia Hiroshima at about 16:00. Eat dinner at Reichan. Walk in. Do not reserve.",
-    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", "Check in at Hotel Granvia Hiroshima.", "brianMai"], ["About 16:00", "Check in to your Hiroshima room.", "parents"], ["Dinner", REICHAN_DINNER_NOTE]],
+    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", "Check in at Hotel Granvia Hiroshima.", "brianMai"], ["About 16:00", "Check in to your Hiroshima room.", "parents"], ["Dinner", `${REICHAN_MAI_NOTE} ${REICHAN_DINNER_NOTE}`, "brianMai"], ["Dinner", REICHAN_DINNER_NOTE, "parents"]],
     history: [
       "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
       "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
@@ -1091,7 +1106,7 @@ const dayContext = {
   day21: {
     timelineWho: "brianMai",
     summary: "Check out of APA Nishishinjuku by 10:00. Put the bags in Shimbashi coin lockers. Enter teamLab Borderless between 12:30 and 13:00. Then go to Mai's melon-bread shop. Walk in at Kaiten Toyama Sushi Ginza at 17:00. Do not book that dinner. There is no hotel on the night of Nov 12. Flight BA4609 leaves Haneda at 01:00 on Nov 13.",
-    timeline: [["By 10:00", "Check out of APA Nishishinjuku by 10:00. Take the bags to the coin lockers at Shimbashi Station. Use the large-suitcase lockers. Lockers can fill by late morning. If the lockers are full, reserve storage near Shimbashi with the ecbo cloak app. From the hotel, take the Toei Oedo line to Daimon or Shiodome. Or go to Shinjuku, then take JR to Shimbashi. Allow about 40 minutes with bags."], ["12:30–13:00", `${TEAMLAB_NOTE} teamLab is in Azabudai Hills. Take the Hibiya line to Kamiyacho. The ride from Shimbashi is about 10 minutes.`], ["After teamLab", "Go to the melon-bread shop. [melon-bread shop and branch — needs confirmation]. Check the same-day stock before you leave the previous stop. Score it in the passport."], ["17:00–20:30", TOYAMA_NOTE], ["20:30–22:00", AIRPORT_TONIGHT_NOTE], ["Nov 13 · before bag drop", TAX_REFUND_STEP]],
+    timeline: [["By 10:00", "Check out of APA Nishishinjuku by 10:00. Take the bags to the coin lockers at Shimbashi Station. Use the large-suitcase lockers. Lockers can fill by late morning. If the lockers are full, reserve storage near Shimbashi with the ecbo cloak app. From the hotel, take the Toei Oedo line to Daimon or Shiodome. Or go to Shinjuku, then take JR to Shimbashi. Allow about 40 minutes with bags."], ["12:30–13:00", `From Shimbashi, take the Ginza line to Toranomon and walk about 10 minutes to teamLab, or take a taxi and allow about 20 minutes. ${TEAMLAB_NOTE}`], ["After teamLab", "Go to the melon-bread shop. [melon-bread shop and branch — needs confirmation]. Check the same-day stock before you leave the previous stop. Score it in the passport."], ["17:00–20:30", TOYAMA_NOTE], ["20:30–22:00", AIRPORT_TONIGHT_NOTE], ["Nov 13 · before bag drop", TAX_REFUND_STEP]],
     history: [
       "teamLab belongs to Tokyo's long habit of using new technology to reorganize how bodies experience space. Its moving images replace the framed artwork with an environment visitors help shape through presence, reflection, and movement.",
       "Melon bread is a modern Japanese bakery form rather than a single fixed recipe—crisp cookie crust, soft interior, and endless regional variations. Ending with Mai's chosen specialist turns an everyday snack into a personal trip ritual, the kind of memory repetition and anticipation make larger than the object itself.",
@@ -1560,7 +1575,7 @@ const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
   day03: "capstones/day03.webp",
   day04: "capstones/day04.jpg",
-  day05: "capstones/day05-kaiyukan.jpg?v211",
+  day05: "capstones/day05-kaiyukan.jpg?v212",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07.webp",
   day08: "capstones/day08.jpg",
@@ -1971,7 +1986,7 @@ function deckPoolForDay(day) {
       dayDate: day.date
     }] : []);
   });
-  return [...regional, ...daily].filter((quest, index, all) => all.findIndex((candidate) => candidate.id === quest.id) === index && quest.id !== "nara-yomogi" && quest.id !== "hiroshima-oyster" && quest.id !== "miyajima-oyster");
+  return [...regional, ...daily].filter((quest, index, all) => all.findIndex((candidate) => candidate.id === quest.id) === index && quest.id !== "nara-yomogi" && quest.id !== "nara-yomogi-parents" && quest.id !== "hiroshima-oyster" && quest.id !== "miyajima-oyster");
 }
 
 function shuffled(items) {
@@ -2574,16 +2589,16 @@ function cityDiscoverySections(cityId) {
   const firstDay = city.days[0]?.short;
   const lastDay = city.days.at(-1)?.short;
   city.ongoing.forEach((group, groupIndex) => {
-    const quests = group.items.map((text, itemIndex) => ({
+    const quests = group.items.flatMap((item, itemIndex) => sees(planWho(item)) ? [{
       id: `${cityId}.ongoing.${groupIndex}.${itemIndex}`,
       type: group.type === "egg" ? "find" : "day",
-      text,
+      text: planText(item),
       source: group.title,
       groupTitle: group.type === "egg" ? "Lookout" : group.title,
       dayId: cityId,
       dayShort: firstDay && lastDay ? `${firstDay}–${lastDay}` : city.name,
       dayDate: ""
-    }));
+    }] : []);
     if (!quests.length) return;
     sections.push({
       id: `${cityId}-ongoing-${groupIndex}`,
@@ -2880,13 +2895,13 @@ function cancelDeadlineSentence(text) {
 function mealAskText(booking) {
   if (!showsMealAsk(booking)) return "";
   const notes = {
-    "sankei-club": SAYAKA_CONFIRMED,
+    "sankei-club": "Party of 5. Sayaka joins. Ask for a non-smoking table away from the heated-tobacco (IQOS) section: 「禁煙席で、加熱式たばこのエリアから離れた席をお願いします。」",
     endo: ENDO_PARTY,
     kyoya: "Party of 4. Sayaka is not coming. She has a meeting.",
     edobori: "Party of 5. Sayaka joins and leaves around 5 PM.",
     "onyasai-sennichimae": "Party of 4. No Sayaka. Confirmation in Gmail.",
     "kani-doraku": "Party of 4. No Sayaka. Course and seats unchanged.",
-    "bochi-bochi": "19:00 near Sakai-shi Station. Sayaka and her family are joining."
+    "bochi-bochi": "19:00 near Sakai-shi Station. Ask for the non-smoking 2nd floor. Sayaka and her family are joining."
   };
   return notes[booking.id] || "";
 }
@@ -2972,7 +2987,8 @@ const DAY_MUST_DOS = {
   ],
   day06: [
     { marker: "info", label: "Luggage", detail: "Carry the big bags to Kintetsu-Nara Station. Store them in the coin lockers by the West ticket gate. The room has 23 extra-large lockers. Pay about ¥800 to ¥1,500 with coins or an IC card. Take a photo of the locker number. If the lockers are full, use the Tourist Information Centre at Exit 3, 1F. It holds bags from 09:00 to 16:00 and takes the last bag at 14:00. Collect the bags before the Kintetsu train to Kyoto." },
-    { marker: "needs-confirmation", label: "Fresh yomogi mochi", detail: "Buy it in Nara before the train to Kyoto. Walk-in only. No reservation number. [yomogi mochi shop — needs confirmation]." },
+    { marker: "info", label: "Yomogi mochi", detail: "Optional, not for Mai. She can have a non-mochi sweet such as castella.", who: "brianMai" },
+    { marker: "info", label: "Yomogi mochi", detail: "Optional walk-in before the train to Kyoto.", who: "parents" },
     { marker: "info", label: "Not To-ji", detail: "Do not go to To-ji today. To-ji is an optional dawn stop on Day 11 only. Check in at Hotel Monterey Kyoto." }
   ],
   day07: [
@@ -4126,7 +4142,7 @@ function bindWalkInChecks(root) {
 function renderWalkInReminders(list) {
   const target = list || document.querySelector("#walkInReminderList");
   if (!target) return;
-  target.innerHTML = walkInReminderItemsHtml(WALK_IN_REMINDERS);
+  target.innerHTML = walkInReminderItemsHtml(WALK_IN_REMINDERS.filter((item) => sees(item.who)));
   bindWalkInChecks(target);
 }
 
@@ -4657,7 +4673,7 @@ function renderCalendar() {
           const marker = unbooked ? "not-booked" : "needs-confirmation";
           return `<span class="calendar-open-flag confirm-flag confirm-flag-${marker}">${label} · ${openItems.length}</span>`;
         })()}
-        ${WALK_IN_REMINDERS.filter((item) => item.dayId === day.id).map((item) => `<span class="calendar-walk-in">${escapeHtml(item.name)} · walk-in</span>`).join("")}
+        ${WALK_IN_REMINDERS.filter((item) => item.dayId === day.id && sees(item.who)).map((item) => `<span class="calendar-walk-in">${escapeHtml(item.name)} · walk-in</span>`).join("")}
       `;
       button.addEventListener("click", () => {
         state.activeCity = cityId;
@@ -4962,7 +4978,7 @@ const placeBackground = {
   "Bochi bochi": BOCHI_NOTE,
   "Udon Izakaya Edobori": "Walk-in udon at 11:00 for 5 with Sayaka. About 15 minutes from Hotel Cordia. Do not reserve this lunch.",
   "Osakako Station": "Chuo Line from Hommachi, about 15–20 minutes. Say bye to Sayaka here around 5 PM. She leaves for her daughter's activity.",
-  "Osaka Aquarium Kaiyukan": "Whale sharks circle in the Pacific Ocean tank, about 9 meters deep. Buy tickets at the door or online. The Tempozan Ferris wheel next door is optional.",
+  "Osaka Aquarium Kaiyukan": "Whale sharks circle in the Pacific Ocean tank, about 9 meters deep. Buy 5 timed e-tickets in advance for about 12:45. Entry is timed and there is no re-entry. The Tempozan Ferris wheel next door is optional.",
   "Shabushabu On-yasai Sennichimae": "Booked Tue Oct 27 at 20:00 for 4. No Sayaka. Seats only. Confirmation in Gmail.",
   "Kintetsu Nara Station": "Kintetsu-Nara is closer to Todai-ji than JR Nara. Store the big bags in the coin-locker room by the West ticket gate. Then use East gate Exit 2 for Nara Park and Todai-ji. Collect the bags at the West gate before the train to Kyoto.",
   "Nara Park": "Nara Park preserves a landscape where deer, temples and open grass have coexisted for centuries. Keep deer encounters playful and brief—they open the day, but Todai-ji's scale is the capstone.",
@@ -5810,7 +5826,7 @@ function makeDayDetails(day) {
   const hotel = hotelForDay(day);
   const reference = calendarReferenceLinks[day.id];
   const items = openItems().filter((item) => item.dayIds.includes(day.id));
-  const walks = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id);
+  const walks = WALK_IN_REMINDERS.filter((item) => item.dayId === day.id && sees(item.who));
   const luggageNote = ["day16", "day17", "day20"].includes(day.id) && sees("brianMai")
     ? `<p class="day-soft-note">${escapeHtml(AKKO_LUGGAGE_PLAN)}</p>`
     : "";
@@ -7311,7 +7327,7 @@ function stillToBookHtml() {
     <h3>Awaiting confirmation</h3>
     ${awaiting.length ? awaiting.map(openItemRowHtml).join("") : `<p>Nothing is awaiting confirmation.</p>`}
     <h3>Walk-in</h3>
-    <ul class="reservation-countdown-list">${walkInReminderItemsHtml(WALK_IN_REMINDERS)}</ul>
+    <ul class="reservation-countdown-list">${walkInReminderItemsHtml(WALK_IN_REMINDERS.filter((item) => sees(item.who)))}</ul>
   </section>`;
 }
 
