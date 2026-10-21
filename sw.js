@@ -1,12 +1,12 @@
-const CACHE_NAME = "japan-quest-v213";
+const CACHE_NAME = "japan-quest-v214";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./styles.css?v213",
-  "./ticket-email.js?v213",
-  "./wander.js?v213",
-  "./roll-call.js?v213",
-  "./app.js?v213",
+  "./styles.css?v214",
+  "./ticket-email.js?v214",
+  "./wander.js?v214",
+  "./roll-call.js?v214",
+  "./app.js?v214",
   "./leaflet.css",
   "./leaflet.js",
   "./place-coordinates.js",
@@ -22,7 +22,7 @@ const APP_FILES = [
   "./capstones/day02.jpg",
   "./capstones/day03.webp",
   "./capstones/day04.jpg",
-  "./capstones/day05-kaiyukan.jpg?v213",
+  "./capstones/day05-kaiyukan.jpg?v214",
   "./capstones/day06.jpeg",
   "./capstones/day07.webp",
   "./capstones/day08.jpg",
