@@ -32,6 +32,9 @@
     ["Kindle", 2],
     ["Main compartment", 1],
     ["AYN Portal", 2],
+    ["Toothbrush (charged, no charger)", 2],
+    ["Razor (charged, no charger)", 2],
+    ["Meds pouch (original boxes)", 2],
     ["Lower front", 1],
     ["Mai's coin pouch", 2],
     ["Trash bag", 2],
@@ -82,6 +85,9 @@
     ["US 2-pin adapter", 2],
     ["Backup earphone case", 2],
     ["AYN Portal ?", 2],
+    ["Toothbrush", 2],
+    ["Razor", 2],
+    ["Meds pouch", 2],
     ["Brian's suitcase", 1],
     ...CLOTHES.map((name) => [name, 2]),
     ["Mai's suitcase", 1]
@@ -190,7 +196,10 @@
       ...TRANSIT_ROWS.slice(beltAt),
       ["Main compartment", 0],
       ["Hakone cube", 1],
-      ["? contents to decide", 2]
+      ["? contents to decide", 2],
+      ["Toothbrush", 2],
+      ["Razor", 2],
+      ["Meds pouch", 2]
     ];
   }
 

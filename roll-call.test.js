@@ -89,7 +89,7 @@ assert.strictEqual(findRoll(hakone, "Mai's suitcase"), null);
 assert.strictEqual(findRoll(hakone, "Mai's pink backpack"), null);
 const cube = byName(hakone, "Hakone cube");
 assert.strictEqual(cube.leaf, false);
-assert.deepStrictEqual(names(cube.children), ["? contents to decide"]);
+assert.deepStrictEqual(names(cube.children), ["? contents to decide", "Toothbrush", "Razor", "Meds pouch"]);
 assert.strictEqual(cube.children[0].undecided, true);
 assert.deepStrictEqual(names(byName(hakone, "Kroser").children), names(kroser.children));
 

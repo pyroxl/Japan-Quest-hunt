@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v214";
+const APP_VERSION = "japan-quest-v215";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1560,7 +1560,7 @@ const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
   day03: "capstones/day03.webp",
   day04: "capstones/day04.jpg",
-  day05: "capstones/day05-kaiyukan.jpg?v214",
+  day05: "capstones/day05-kaiyukan.jpg?v215",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07.webp",
   day08: "capstones/day08.jpg",
