@@ -4,13 +4,13 @@
   Object.assign(root, api);
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const CLOTHES = [
-    "4 synthetic t-shirts",
-    "1 polyester shirt",
-    "1 long-sleeve button-down",
-    "1 sweater/shirt hybrid",
-    "Lululemon jacket",
+    "5 short-sleeve shirts",
+    "3 long-sleeve shirts",
+    "Grey quilted jacket",
     "1 pair of pants",
+    "1 pair of jeans",
     "4 gym shorts",
+    "Beanie",
     "Socks + underwear (max that fit)"
   ];
 
