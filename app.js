@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v215";
+const APP_VERSION = "japan-quest-v217";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -331,7 +331,7 @@ const roadmapGoals = [
   { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day07"], status: "Ready", why: `Parents meet the couple at Kiyomizu after the Inari and Tofuku-ji morning, then walk down to Endo lunch. ${ENDO_PARTY}`, blocker: "", fallback: "Taxi toward Kiyomizu, descend the slopes, and protect the 14:00 Endo sitting." },
   { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day08"], status: "Ready", why: "Bamboo and Togetsukyo lead naturally into Ryoan-ji and Kinkaku-ji via the Randen corridor.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by taxi." },
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
-  { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a full Kyoto mountain day with Enryaku-ji and forest paths.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
+  { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a Kyoto mountain morning with Enryaku-ji and forest paths. The evening is Uzumasa.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing so the 15:00 hotel rest still holds.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
   { id: "mountain-chapter", goal: "Three-night Hakone retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "The confirmed Gora hotel beside the station makes the mountain chapter usable by scheduled transport, with Mai's sunrise shrine visit, the reverse classic loop and a real hiking day.", blocker: "Prebook the Nov 9 05:30 taxi. Recheck the November bus, cruise, and ropeway timetable. Recheck the Mount Kintoki trail. Breakfast and dinner are included. Message the hotel through the Booking.com app. Request the hotpot and Japanese course venue.", fallback: "Use the earliest public-transport route to Moto-Hakone if the taxi cannot be arranged; use the H bus and Tozan train to return to Gora if the loop is cancelled." },
   { id: "hakone-return", goal: "Protected Hakone–Tokyo return", days: ["day20"], status: "Ready", why: "Hakone 30 is booked for 10:10 from Hakone-Yumoto. A reserved morning rail return avoids highway uncertainty and leaves time for luggage and a soft Tokyo landing.", blocker: "", fallback: "Use regular Odakyu services if the preferred Romancecar sells out." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
@@ -370,7 +370,7 @@ const regionalQuestPools = {
     ["kyoto-noren", "find", "Find a beautiful noren, lantern, or tiny garden.", null, ["gion", "higashiyama"]],
     ["kyoto-river", "photo", "Catch a quiet river routine.", null, ["gion", "arashiyama", "pontocho"]],
     ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto.", null, ["city"]],
-    ["kyoto-hiei", "culture", "Confirm the seasonal Mt Hiei route, then make Enryaku-ji and one forest walk the full-day focus.", ["day10"], ["hiei"]]
+    ["kyoto-hiei", "culture", "Confirm the seasonal Mt Hiei route, then make Enryaku-ji and one forest walk the morning focus.", ["day10"], ["hiei"]]
   ],
   nara: [
     ["nara-kakinoha", "food", "Try kakinoha-zushi in Nara.", null, ["nara"]],
@@ -554,6 +554,10 @@ const calendarThumbnailIdeas = {
 };
 
 const calendarReferenceLinks = {
+  day10: {
+    label: "YOKAI Festival page ↗",
+    url: "https://en.eigamura.com/show/yokai_2026/"
+  },
   day13: {
     label: "Nov 4 tide plan ↗",
     url: "https://www.miyajima.or.jp/sio/sio11.php"
@@ -712,7 +716,7 @@ const tripData = {
       questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", [{ text: "Turn around at Yotsutsuji or sooner", who: "brianMai" }, { text: "Choose either Tofuku-ji's garden or the Tsutenkyo area", who: "brianMai" }, "Finish Gion by late afternoon. Do not plan a night return"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch. Sayaka joins too."),
       questDay("day08", "2026-10-30", "Bamboo to Gold", "An early Arashiyama payoff followed by the rock garden and Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple", "Kamishichiken Kyoto"], "Lock the Bamboo Grove and Togetsukyo, eat early, then use the Randen corridor for compact Ryoan-ji and Kinkaku-ji visits.", ["Walk the grove before it becomes busiest", "Use the river cafe as the parent payoff", "Do not add another Arashiyama temple", "Give the rock garden one focused hour", "Use Kamishichiken only for optional tea or wagashi"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The first Golden Pavilion reflection"], "Mai gets three distinct Kyoto landscapes without a Saturday Arashiyama crowd.", "Parents skip Ryoan-ji if useful and meet at Kinkaku-ji by taxi."),
       questDay("day09", "2026-10-31", "Palaces to Pontocho", "A compact central-Kyoto history, manga, market and neighborhood day.", ["Nijo Castle", "Kyoto Imperial Palace", "Kyoto International Manga Museum", "Nishiki Market", "Kamo River Kyoto", "Pontocho Alley"], "Enter Nijo at opening, make the Imperial Palace compact, use the Manga Museum as an optional split, lock Nishiki, then reset before dinner at Kyoya.", ["Notice Nijo's nightingale floors", "Keep the palace visit to about an hour", "Use the Manga Museum or a parent rest window", "Bound Nishiki rather than starting a second food mission", "Take a real hotel reset before dinner"], ["A castle gate or painted-room detail", "An Imperial Palace roofline", "A manga-art surprise", "A riverbank dinner approach"], "Mai gets shogun history, imperial history, manga and food without crossing Kyoto again.", "Nijo is shared; parents may skip the palace or Manga Museum and rejoin later. Dinner at Kyoya is 18:30 for 4. Sayaka is not coming."),
-      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "A full mountain day of forest paths, sacred precincts and views over Kyoto and Lake Biwa.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent and choose one meaningful Mt Hiei forest walk.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Use Demachiyanagi for dinner only if returning down the Kyoto side"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose.", "Dad uses the most assisted route and may return earlier while Mai and Brian walk farther.")
+      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "Mt Hiei in the morning, then the Kaikai YOKAI Festival at Uzumasa Kyoto Village.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station", "Uzumasa Kyoto Village"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent, and choose one meaningful Mt Hiei forest walk before the hotel rest.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Rest at the hotel from 15:00 and pack for the 07:30 departure", "Use the night entry at Uzumasa Kyoto Village"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose, then the yokai festival.", "Dad uses the most assisted route and can skip the mountain or the parade if tired.")
     ]
   },
   hiroshima: {
@@ -808,7 +812,7 @@ const dayGoals = {
     photoHint: "Nijo gate/rooms, Imperial roofline, manga art, Nishiki display, or Kamo River."
   },
   day10: {
-    clearPath: "Demachiyanagi breakfast, assisted ascent, Enryaku-ji core, one forest walk, comforting dinner after.",
+    clearPath: "Demachiyanagi ascent, Enryaku-ji, hotel rest 15:00–17:00, then Uzumasa yokai night.",
     mainGoal: "Photograph the first wide Kyoto or Lake Biwa view from Mt Hiei.",
     photoHint: "Summit viewpoint, forest path, or Enryaku-ji bell/incense moment."
   },
@@ -973,12 +977,27 @@ const dayContext = {
     ]
   },
   day10: {
-    summary: "Mt Hiei receives a full day: assisted ascent, Enryaku-ji's forested precincts, one meaningful walk, and views toward Kyoto or Lake Biwa. Confirm live cable, ropeway and descent times at Demachiyanagi before boarding; the 15:15–16:00 regroup is the hard turnaround even if the forest walk feels unfinished. Pack for Himeji/Hiroshima tonight—do not borrow sleep from tomorrow's westbound transfer.",
-    timeline: [["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."], ["07:50–09:30", "Take the assisted ascent. [Eizan/Yase approach — needs confirmation]. If that ascent fails, use [Sakamoto-side or direct-bus fallback — needs confirmation]."], ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."], ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."], ["13:00–15:15", "Walk one forest route. [forest route — needs confirmation]. Do not add a second precinct.", "brianMai"], ["13:00–15:15", "Use the assisted core. Do not add a second precinct.", "parents"], ["15:15–16:00", "Meet at the descent point. [descent transport point — needs confirmation]. This is the hard turnaround even if the walk feels unfinished."], ["16:00–18:30", "Descend with at least one-service margin and take the simplest route to the hotel. If returning via Demachiyanagi, dinner there is optional."], ["By 20:30", "Finish dinner, pack for Himeji/Hiroshima and set out the morning bags. Do not borrow sleep from the westbound transfer."]],
+    summary: "Mt Hiei is the morning and early afternoon, with a 15:00–17:00 rest at Hotel Monterey Kyoto before the Kaikai YOKAI Festival at Uzumasa Kyoto Village. Confirm live cable, ropeway, and descent times at Demachiyanagi before boarding. Dad can skip the mountain or the parade if tired.",
+    timeline: [
+      ["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."],
+      ["07:50–09:30", "Take the assisted ascent. [Eizan/Yase approach — needs confirmation]. If that ascent fails, use [Sakamoto-side or direct-bus fallback — needs confirmation]."],
+      ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."],
+      ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."],
+      ["13:00–14:30", "Walk one forest route, then start down with a service margin for the 15:00 hotel rest. [forest route — needs confirmation]. Do not add a second precinct.", "brianMai"],
+      ["13:00–14:30", "Use the assisted core, then start down for the 15:00 hotel rest, and do not add a second precinct.", "parents"],
+      ["15:00–17:00", "Rest at Hotel Monterey Kyoto, pack for the Nov 2 07:30 departure, and Dad can skip the mountain or the parade if tired."],
+      ["~17:00", "Leave for Uzumasa Kyoto Village (Toei Kyoto Studio Park, 太秦映画村) for the Kaikai YOKAI Festival (怪々YOKAI祭, Sep 12–Nov 29)."],
+      ["Route", "Walk 2 min to Karasuma-Oike, take the Tozai subway to Uzumasa Tenjingawa (8–9 min, ¥260, no transfer), then walk about 12 min, about 25 min door to door."],
+      ["From 17:00", "Night entry is ¥2,000 adult (day ticket ¥2,800) and the park is open 10:00–21:00 {{link:https://en.eigamura.com/show/yokai_2026/|Festival page}}."],
+      ["18:00", "Optional stage show, Yokai vs Kamen Rider, on weekends and holidays from Oct 31, also at 19:50."],
+      ["~18:30", "Dinner around the park is [dinner venue — not picked yet], non-smoking only, and Mai avoids sliced or whole-cut meat, mochi, and matcha."],
+      ["19:30", "Watch Uzumasa Hyakki Yagyo (the finale dance is open to everyone), and skip the 17:30 costume parade because it needs an advance application."],
+      ["~21:00", "Back at the hotel when the park closes at 21:00."]
+    ],
     history: [
       "Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning—not one building but a religious landscape.",
       "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic vantage. Emperors and warriors treated control of Hiei as control of the capital's spiritual flank.",
-      "Modern visitors experience that geography through assisted ascents, cedar corridors, bell sounds, and views that open suddenly toward either the basin of Kyoto or the wider water of Biwa. The day works when treated as mountain time: breakfast carried, one forest walk chosen, and descent planned around last cable or bus service rather than sunset ambition."
+      "Modern visitors experience that geography through assisted ascents, cedar corridors, bell sounds, and views that open suddenly toward either the basin of Kyoto or the wider water of Biwa. The morning works as mountain time: breakfast carried, one forest walk chosen, and descent planned around last cable or bus service so the 15:00 hotel rest still holds."
     ]
   },
   day11: {
@@ -1153,7 +1172,7 @@ const DAY_VIEWS = {
   },
   day10: {
     parents: {
-      summary: "Use the assisted route on Mt Hiei. You can return earlier. The 15:15–16:00 regroup still stands."
+      summary: "Use the assisted Mt Hiei route in the morning, rest at the hotel from 15:00 to 17:00, then go to the Kaikai YOKAI Festival at Uzumasa Kyoto Village, and Dad can skip the mountain or the parade if tired."
     }
   },
   day11: {
@@ -2987,8 +3006,9 @@ const DAY_MUST_DOS = {
   ],
   day10: [
     { marker: "needs-confirmation", label: "Ascent", detail: "Confirm the live cable, ropeway, and bus times at Demachiyanagi before you board. [Eizan/Yase approach — needs confirmation]. [Sakamoto-side or direct-bus fallback — needs confirmation]." },
-    { marker: "needs-confirmation", label: "Forest walk", detail: "[forest route — needs confirmation]. Do not add a second trail on the day." },
-    { marker: "needs-confirmation", label: "Descent point", detail: "Meet between 15:15 and 16:00. [descent transport point — needs confirmation]." }
+    { marker: "needs-confirmation", label: "Forest walk", detail: "[forest route — needs confirmation]. Start down in time for the 15:00 hotel rest. Do not add a second trail on the day." },
+    { marker: "info", label: "Hotel rest", detail: "Be at Hotel Monterey Kyoto from 15:00 to 17:00. Pack for the Nov 2 07:30 departure." },
+    { marker: "decision", label: "Dinner", detail: "Around Uzumasa Kyoto Village at about 18:30. [dinner venue — not picked yet]. Non-smoking only. Mai avoids sliced or whole-cut meat, mochi, and matcha." }
   ],
   day11: [
     { marker: "booked", label: "Hikari 733 Kyoto to Himeji", detail: SHINKANSEN_NOV2 },
@@ -5036,7 +5056,8 @@ const placeBackground = {
   "Demachiyanagi Station Kyoto": "Demachiyanagi is the junction between central Kyoto, the Kamo/Takano river confluence and the Eizan line into the northeastern hills. Using it for breakfast makes the mountain day begin in a lived-in student and neighborhood district.",
   "Eizan Cable Hiei Station": "Cable Hiei is the upper station of the steep Eizan funicular from Yase; the line gains 561 meters in roughly 1.3 kilometers. It is a transfer point rather than the summit itself, with the ropeway continuing higher when operating.",
   "Enryaku-ji Temple": "Saicho founded Enryaku-ji in the late eighth century, and Mt Hiei became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning.",
-  "Hieizan Sakamoto Station": "This JR station connects the Lake Biwa side of Mt Hiei with Kyoto and Otsu. The nearby town of Sakamoto grew around Enryaku-ji's service community and forms the practical eastern exit after descending by the Sakamoto cable route."
+  "Hieizan Sakamoto Station": "This JR station connects the Lake Biwa side of Mt Hiei with Kyoto and Otsu. The nearby town of Sakamoto grew around Enryaku-ji's service community and forms the practical eastern exit after descending by the Sakamoto cable route.",
+  "Uzumasa Kyoto Village": "Toei Kyoto Studio Park (太秦映画村). The Nov 1 evening is the Kaikai YOKAI Festival (怪々YOKAI祭, Sep 12–Nov 29). Night entry from 17:00 is ¥2,000 adult. The park is open 10:00–21:00. Dinner nearby is not picked yet."
 };
 
 function dayMapCenter(day) {
