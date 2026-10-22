@@ -73,7 +73,29 @@ assert.deepStrictEqual(names(day), [
 ]);
 const hotel = byName(day, "Stays at hotel");
 assert.deepStrictEqual(names(hotel.children), ["Kroser", "Brian's suitcase", "Mai's suitcase"]);
-assert.deepStrictEqual(names(byName(day, "Brian's suitcase").children), ROLL_CLOTHES);
+assert.deepStrictEqual(names(byName(transit, "Front organizer").children), [
+  "Clip-on power bank",
+  "2 cables",
+  "US 2-pin adapter",
+  "Backup earphone case",
+  "Wired headphones"
+]);
+assert.deepStrictEqual(names(byName(day, "Front organizer").children), [
+  "2 cables",
+  "US 2-pin adapter",
+  "Backup earphone case",
+  "Wired headphones"
+]);
+assert.ok(byName(day, "Front organizer").id.startsWith("stays-at-hotel/kroser/"));
+assert.deepStrictEqual(names(byName(day, "Brian's suitcase").children), [
+  ...ROLL_CLOTHES,
+  "2 USB-to-micro-USB cables",
+  "Adapter"
+]);
+assert.deepStrictEqual(names(byName(transit, "Brian's suitcase").children).slice(-2), [
+  "2 USB-to-micro-USB cables",
+  "Adapter"
+]);
 assert.strictEqual(byName(day, "Mai's suitcase").leaf, true);
 assert.strictEqual(byName(day, "Mai's pink backpack").leaf, true);
 assert.strictEqual(byName(day, "Main glasses ? (wearing or here)").undecided, true);
@@ -232,6 +254,30 @@ assert.ok(checked.has(byName(transit, "Main glasses").id));
 const illegal = rollNormalize(transit, new Set([kroser.id, pouch.id]));
 assert.strictEqual(illegal.has(kroser.id), false);
 assert.strictEqual(illegal.has(pouch.id), false);
+
+const front = byName(transit, "Front organizer");
+const headphones = byName(transit, "Wired headphones");
+const savedFront = new Set([kroser.id, front.id, "missing-old-item"]);
+front.children.forEach((child) => {
+  if (child.id !== headphones.id) savedFront.add(child.id);
+});
+const reloaded = rollNormalize(transit, savedFront);
+assert.strictEqual(reloaded.has(headphones.id), false);
+assert.strictEqual(reloaded.has(front.id), false);
+assert.strictEqual(reloaded.has(kroser.id), false);
+assert.ok(reloaded.has(byName(transit, "2 cables").id));
+assert.ok(reloaded.has("missing-old-item"));
+assert.strictEqual(rollToggle(transit, front.id, reloaded).has(front.id), false);
+
+const daySuitcase = byName(day, "Brian's suitcase");
+const savedSuitcase = new Set([daySuitcase.id]);
+daySuitcase.children.forEach((child) => {
+  if (child.name !== "Adapter" && child.name !== "2 USB-to-micro-USB cables") savedSuitcase.add(child.id);
+});
+const reloadedSuitcase = rollNormalize(day, savedSuitcase);
+assert.strictEqual(reloadedSuitcase.has(daySuitcase.id), false);
+assert.ok(reloadedSuitcase.has(daySuitcase.children[0].id));
+assert.strictEqual(reloadedSuitcase.has(byName(day, "Adapter").id), false);
 
 const leaves = rollFlatten(transit).filter((node) => node.leaf);
 assert.ok(leaves.length > 1);
