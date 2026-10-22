@@ -21,7 +21,7 @@ const WANDER_DAY = {
   day07: { city: "kyoto", areas: ["gion"], energy: "low", window: "evening", count: 2 },
   day08: { city: "kyoto", areas: ["arashiyama"], energy: "medium", window: "afternoon", count: 0 },
   day09: { city: "kyoto", areas: ["central"], energy: "low", window: "evening", count: 0 },
-  day10: { city: "kyoto", areas: ["kiyamachi", "karasuma"], energy: "low", window: "evening", count: 1 },
+  day10: { city: "kyoto", areas: ["uzumasa"], energy: "low", window: "evening", count: 0 },
   day11: { city: "hiroshima", areas: ["station"], energy: "low", window: "evening", count: 1 },
   day12: { city: "hiroshima", areas: ["peace"], energy: "low", window: "afternoon", count: 0 },
   day13: { city: "hiroshima", areas: ["station"], energy: "low", window: "evening", count: 0 },
@@ -74,7 +74,6 @@ const EVENING_OPTIONS = {
   day02: { mode: "later", note: "after check-in, then stop" },
   day06: { mode: "later", note: "after Monterey check-in" },
   day07: { mode: "after", anchor: "Tempura Endo", note: "stay around Gion" },
-  day10: { mode: "later", note: "after you are back" },
   day14: { mode: "after", anchor: "check-in", note: "short walk, then dinner" },
   day16: { mode: "after", anchor: "Shibuya", note: "if Akko's evening falls through" },
   day20: { mode: "later", note: "if the Romancecar is early" }
@@ -116,11 +115,14 @@ const WALK_IN_DINNERS = {
   }
 };
 
+const DINNER_PENDING = {
+  day10: "Around Uzumasa Kyoto Village at about 18:30. Venue not picked yet. Non-smoking only. Mai avoids sliced or whole-cut meat, mochi, and matcha."
+};
+
 const DINNER_DAYS = {
   day02: "osaka",
   day06: "kyoto",
   day07: "kyoto",
-  day10: "kyoto",
   day11: "hiroshima",
   day13: "hiroshima",
   day14: "tokyo",
@@ -196,6 +198,12 @@ function dinnerNest(dayId, dinner) {
   return wanderNest(`${count} dinner pick${count === 1 ? "" : "s"} · table not guaranteed`, `${lead}${lines}`);
 }
 
+function pendingDinnerHtml(dayId) {
+  const note = DINNER_PENDING[dayId];
+  if (!note) return "";
+  return wanderNest("Dinner · not picked yet", `<p class="wander-line">${escapeHtml(note)}</p>`);
+}
+
 function loopNest(loop) {
   return wanderNest(`${loop.short} · ${loop.minutes}`, wanderLine(loop.short, loop.exit, loop.url, "Directions"));
 }
@@ -222,8 +230,9 @@ function wanderSummary(day) {
   if (PARENT_DAYS.has(day.id) && !coupleWanderView()) bits.push("Parents' Tokyo ideas");
   const loop = wanderLoop(day.id);
   if (loop) bits.push(loop.short);
+  if (DINNER_PENDING[day.id] && bits.length < 2) bits.push("Dinner not picked yet");
   const dinnerKey = DINNER_DAYS[day.id];
-  let count = dinnerKey && WALK_IN_DINNERS[dinnerKey] ? WALK_IN_DINNERS[dinnerKey].places.length : 0;
+  let count = DINNER_PENDING[day.id] ? 0 : dinnerKey && WALK_IN_DINNERS[dinnerKey] ? WALK_IN_DINNERS[dinnerKey].places.length : 0;
   if (!count && PARENT_DAYS.has(day.id)) count = WALK_IN_DINNERS.tokyo.places.length;
   if (count && bits.length < 2) bits.push(`${count} dinner pick${count === 1 ? "" : "s"}`);
   if (!bits.length) {
@@ -249,9 +258,13 @@ function wanderInnerHtml(day) {
   });
   const loop = wanderLoop(day.id);
   if (loop) parts.push(loopNest(loop));
-  const dinnerKey = DINNER_DAYS[day.id];
-  const dinner = dinnerKey ? WALK_IN_DINNERS[dinnerKey] : null;
-  if (dinner) parts.push(dinnerNest(day.id, dinner));
+  const pendingDinner = pendingDinnerHtml(day.id);
+  if (pendingDinner) parts.push(pendingDinner);
+  else {
+    const dinnerKey = DINNER_DAYS[day.id];
+    const dinner = dinnerKey ? WALK_IN_DINNERS[dinnerKey] : null;
+    if (dinner) parts.push(dinnerNest(day.id, dinner));
+  }
   if (PARENT_DAYS.has(day.id) && !coupleWanderView()) parts.push(parentNest());
   return parts.join("");
 }

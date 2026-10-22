@@ -244,6 +244,10 @@ window.PLACE_COORDINATES = {
     35.070665,
     135.8783509
   ],
+  "Uzumasa Kyoto Village": [
+    35.0164642,
+    135.7082061
+  ],
   "Himeji Station": [
     34.8269005,
     134.6902424
