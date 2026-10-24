@@ -44,5 +44,6 @@ Every body includes `passcode`. A wrong passcode returns `{"ok":false,"error":"W
 - `saveNote` keeps one row for each `dayId` and `author`.
 - `list` returns notes and photos. A list for one day includes a base64 thumbnail. The viewer does not sign in to Google.
 - `doGet?action=thumb&id=FILE_ID&passcode=...` returns the same thumbnail as text.
+- `delete` removes the caller's own note, or trashes the caller's own photo with Drive `setTrashed` so it can be restored. Send `kind` as `note` or `photo`, plus `dayId` and `author`. A photo also sends `fileId`. Trip Guide recap rows are refused.
 
 Sheet columns are `timestamp`, `dayId`, `date`, `author`, `note`, and `photo file ids`.

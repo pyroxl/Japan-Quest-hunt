@@ -1,6 +1,7 @@
 var ROOT_FOLDER_NAME = "Japan Trip Journal 2026";
 var SHEET_NAME = "Japan Trip Journal notes";
 var HEADERS = ["timestamp", "dayId", "date", "author", "note", "photo file ids"];
+var TRIP_GUIDE_AUTHOR = "Trip Guide";
 var DAYS = {
   day02: { date: "2026-10-24", folder: "2026-10-24 Day 2 Osaka" },
   day03: { date: "2026-10-25", folder: "2026-10-25 Day 3 Osaka" },
@@ -37,6 +38,7 @@ function doPost(e) {
     if (body.action === "saveNote") return respond(saveNote(body));
     if (body.action === "list") return respond(listJournal(body));
     if (body.action === "thumb") return respond({ ok: true, thumb: thumbBase64(body.fileId) });
+    if (body.action === "delete") return respond(deleteJournalEntry(body));
     return respond({ ok: false, error: "Unknown action." });
   } catch (err) {
     return respond({ ok: false, error: String(err && err.message || err) });
@@ -207,9 +209,72 @@ function saveNote(body) {
 
 function thumbBase64(fileId) {
   if (!fileId) return "";
-  var blob = DriveApp.getFileById(fileId).getBlob();
-  if (blob.getBytes().length > 250000) return "";
-  return Utilities.base64Encode(blob.getBytes());
+  try {
+    var blob = DriveApp.getFileById(fileId).getBlob();
+    if (blob.getBytes().length > 250000) return "";
+    return Utilities.base64Encode(blob.getBytes());
+  } catch (err) {
+    return "";
+  }
+}
+
+function trashDriveFile(fileId) {
+  if (!fileId) return;
+  try { DriveApp.getFileById(fileId).setTrashed(true); } catch (err) {}
+}
+
+function deleteJournalEntry(body) {
+  var author = String(body.author || "");
+  var dayId = String(body.dayId || "");
+  var kind = String(body.kind || "");
+  if (!dayId || !author || (kind !== "note" && kind !== "photo")) {
+    return { ok: false, error: "Delete data is incomplete." };
+  }
+  if (author === TRIP_GUIDE_AUTHOR) return { ok: false, error: "This entry cannot be deleted." };
+  var journal = ensureJournal();
+  var row = findAuthorRow(journal.sheet, dayId, author);
+  if (!row) return { ok: true, deleted: false };
+  if (String(journal.sheet.getRange(row, 4).getValue()) !== author) {
+    return { ok: false, error: "This entry cannot be deleted." };
+  }
+  if (kind === "note") return deleteAuthorNote(journal.sheet, row);
+  return deleteAuthorPhoto(journal.sheet, row, body);
+}
+
+function deleteAuthorNote(sheet, row) {
+  var photos = parsePhotos(sheet.getRange(row, 6).getValue());
+  if (!photos.length) {
+    sheet.deleteRow(row);
+    return { ok: true, deleted: true };
+  }
+  sheet.getRange(row, 1).setValue(nowStamp());
+  sheet.getRange(row, 5).setValue("");
+  return { ok: true, deleted: true };
+}
+
+function deleteAuthorPhoto(sheet, row, body) {
+  var fileId = String(body.fileId || "");
+  var clientId = String(body.clientId || "");
+  if (!fileId && !clientId) return { ok: false, error: "Photo data is incomplete." };
+  var photos = parsePhotos(sheet.getRange(row, 6).getValue());
+  var kept = [];
+  var removed = null;
+  for (var i = 0; i < photos.length; i++) {
+    var photo = photos[i] || {};
+    var match = (fileId && String(photo.fileId || "") === fileId) || (clientId && String(photo.clientId || "") === clientId);
+    if (match && !removed) removed = photo;
+    else kept.push(photo);
+  }
+  if (!removed) return { ok: false, error: "Photo not found." };
+  var note = String(sheet.getRange(row, 5).getValue() || "").trim();
+  if (!note && !kept.length) sheet.deleteRow(row);
+  else {
+    sheet.getRange(row, 1).setValue(nowStamp());
+    sheet.getRange(row, 6).setValue(JSON.stringify(kept));
+  }
+  trashDriveFile(removed.fileId);
+  if (removed.thumbFileId && removed.thumbFileId !== removed.fileId) trashDriveFile(removed.thumbFileId);
+  return { ok: true, deleted: true, fileId: removed.fileId || "" };
 }
 
 function listJournal(body) {
@@ -233,6 +298,7 @@ function listJournal(body) {
         author: String(values[i][3] || ""),
         fileId: photo.fileId || "",
         thumbFileId: photo.thumbFileId || "",
+        clientId: photo.clientId || "",
         caption: photo.caption || "",
         createdAt: photo.createdAt || "",
         thumb: body.dayId ? thumbBase64(thumbId) : ""
