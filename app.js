@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v215";
+const APP_VERSION = "japan-quest-v218";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1560,7 +1560,7 @@ const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
   day03: "capstones/day03.webp",
   day04: "capstones/day04.jpg",
-  day05: "capstones/day05-kaiyukan.jpg?v215",
+  day05: "capstones/day05-kaiyukan.jpg?v218",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07.webp",
   day08: "capstones/day08.jpg",
@@ -8905,13 +8905,138 @@ function renderDailyRecap(list, notes) {
   list.appendChild(card);
 }
 
+function confirmJournalDelete(message) {
+  let dialog = document.querySelector(".journal-confirm");
+  if (!dialog) {
+    dialog = document.createElement("dialog");
+    dialog.className = "journal-confirm";
+    dialog.innerHTML = `<form method="dialog"><p class="journal-confirm-text"></p><div class="journal-confirm-actions"><button type="submit" value="cancel">Cancel</button><button type="submit" value="delete">Delete</button></div></form>`;
+    document.body.appendChild(dialog);
+  }
+  if (dialog.open) return Promise.resolve(false);
+  dialog.querySelector("p").textContent = message;
+  dialog.setAttribute("aria-label", message);
+  dialog.returnValue = "";
+  dialog.showModal();
+  return new Promise((resolve) => {
+    dialog.addEventListener("close", () => resolve(dialog.returnValue === "delete"), { once: true });
+  });
+}
+
+function journalDeleteButton(label, onClick) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "journal-delete";
+  button.textContent = "Delete";
+  button.setAttribute("aria-label", label);
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+function syncOwnNoteDelete(host) {
+  const row = host.querySelector(".journal-note-actions");
+  const entry = host.__journalNote;
+  const note = host.querySelector(".journal-note");
+  if (!row) return;
+  const name = readJournalPrefs().author;
+  const hasAuthor = Boolean(name) && name !== TRIP_GUIDE_AUTHOR;
+  const hasNote = Boolean(note?.value.trim() || entry?.serverHadNote);
+  row.hidden = !(hasAuthor && hasNote);
+}
+
+function bumpJournalRefresh(host) {
+  host.__journalToken = (host.__journalToken || 0) + 1;
+}
+
+async function deleteOwnJournalNote(day, host, entry) {
+  const confirmed = await confirmJournalDelete("Delete your note?");
+  if (!confirmed || !host.isConnected) {
+    entry.deleting = false;
+    return;
+  }
+  const prefs = readJournalPrefs();
+  const canPost = Boolean(journalConfigured() && prefs.author && prefs.passcode && prefs.author !== TRIP_GUIDE_AUTHOR && navigator.onLine);
+  if (!canPost && (entry.serverHadNote || entry.lastSynced)) {
+    entry.deleting = false;
+    setJournalSyncStatus(host, "Could not delete.");
+    return;
+  }
+  bumpJournalRefresh(host);
+  if (canPost) {
+    setJournalSyncStatus(host, "Deleting…");
+    try {
+      await journalPost({ action: "delete", kind: "note", dayId: day.id, author: prefs.author });
+    } catch {
+      entry.deleting = false;
+      if (host.isConnected) setJournalSyncStatus(host, "Could not delete.");
+      return;
+    }
+  }
+  const note = host.querySelector(".journal-note");
+  if (note) note.value = "";
+  rememberJournalNote(day.id, "");
+  entry.userEdited = false;
+  entry.serverHadNote = false;
+  entry.lastSynced = "";
+  entry.blockEmptySync = true;
+  entry.deleting = false;
+  const cached = await readJournalCache(day.id).catch(() => null);
+  if (cached) {
+    cached.notes = (cached.notes || []).map((item) => item.author === prefs.author ? { ...item, note: "" } : item);
+    await writeJournalCache(cached);
+  }
+  if (host.isConnected) {
+    syncOwnNoteDelete(host);
+    setJournalSyncStatus(host, "Deleted");
+  }
+  await refreshDayJournal(day, host);
+}
+
+async function deleteOwnJournalPhoto(host, day, photo) {
+  const confirmed = await confirmJournalDelete("Delete this photo?");
+  if (!confirmed || !host.isConnected) return;
+  const prefs = readJournalPrefs();
+  if (!journalConfigured() || !prefs.author || !prefs.passcode || photo.author !== prefs.author || prefs.author === TRIP_GUIDE_AUTHOR) {
+    setJournalSyncStatus(host, "Could not delete.");
+    return;
+  }
+  bumpJournalRefresh(host);
+  setJournalSyncStatus(host, "Deleting…");
+  try {
+    await journalPost({
+      action: "delete",
+      kind: "photo",
+      dayId: photo.dayId || day.id,
+      author: prefs.author,
+      fileId: photo.fileId || "",
+      clientId: photo.clientId || ""
+    });
+  } catch {
+    if (host.isConnected) setJournalSyncStatus(host, "Could not delete.");
+    return;
+  }
+  const cached = await readJournalCache(day.id).catch(() => null);
+  if (cached) {
+    cached.photos = (cached.photos || []).filter((item) => {
+      if (item.author !== prefs.author) return true;
+      if (photo.fileId && item.fileId === photo.fileId) return false;
+      if (photo.clientId && item.clientId === photo.clientId) return false;
+      return true;
+    });
+    await writeJournalCache(cached);
+    if (host.isConnected) renderFamilyJournal(host, day, cached);
+  }
+  if (host.isConnected) setJournalSyncStatus(host, "Deleted");
+  await refreshDayJournal(day, host);
+}
+
 function renderFamilyJournal(host, day, record) {
   const list = host.querySelector(".family-journal-list");
   if (!list) return;
   const author = readJournalPrefs().author;
   const recapNotes = (record?.notes || []).filter((note) => note.author === TRIP_GUIDE_AUTHOR && note.note);
   const notes = (record?.notes || []).filter((note) => note.author !== author && note.author !== TRIP_GUIDE_AUTHOR && note.note);
-  const photos = (record?.photos || []).filter((photo) => photo.author !== author);
+  const photos = record?.photos || [];
   list.replaceChildren();
   renderDailyRecap(list, recapNotes);
   if (!notes.length && !photos.length) {
@@ -8938,7 +9063,15 @@ function renderFamilyJournal(host, day, record) {
     block.className = "family-photo";
     const name = document.createElement("strong");
     name.textContent = photo.author;
-    block.appendChild(name);
+    const ownPhoto = Boolean(author) && photo.author === author && author !== TRIP_GUIDE_AUTHOR && Boolean(photo.fileId || photo.clientId);
+    if (ownPhoto) {
+      const head = document.createElement("div");
+      head.className = "family-entry-head";
+      head.append(name, journalDeleteButton("Delete your photo", () => { void deleteOwnJournalPhoto(host, day, photo); }));
+      block.appendChild(head);
+    } else {
+      block.appendChild(name);
+    }
     const src = journalThumbSrc(photo);
     if (src) {
       const image = document.createElement("img");
@@ -8987,26 +9120,37 @@ function flushVisibleJournalNotes(options = {}) {
 }
 
 async function refreshDayJournal(day, host) {
+  const token = (host.__journalToken || 0) + 1;
+  host.__journalToken = token;
+  const current = () => host.isConnected && host.__journalToken === token;
   const entry = host.__journalNote;
   const cached = await readJournalCache(day.id).catch(() => null);
-  if (host.isConnected && cached) {
+  if (!current()) return;
+  if (cached) {
     renderFamilyJournal(host, day, cached);
     entry?.applyRemote(authorServerNote(cached), { authoritative: false });
+    syncOwnNoteDelete(host);
   }
   if (!journalConfigured() || !readJournalPrefs().passcode) {
     entry?.applyRemote("", { failed: true });
+    syncOwnNoteDelete(host);
     return;
   }
   try {
     const data = await journalPost({ action: "list", dayId: day.id });
+    if (!current()) return;
     const record = { dayId: day.id, notes: data.notes || [], photos: data.photos || [], fetchedAt: new Date().toISOString() };
     await writeJournalCache(record);
-    if (host.isConnected) renderFamilyJournal(host, day, record);
+    if (!current()) return;
+    renderFamilyJournal(host, day, record);
     entry?.applyRemote(authorServerNote(record), { authoritative: true });
+    syncOwnNoteDelete(host);
     markJournalSynced();
   } catch {
-    if (host.isConnected && cached) renderFamilyJournal(host, day, cached);
+    if (!current()) return;
+    if (cached) renderFamilyJournal(host, day, cached);
     entry?.applyRemote("", { failed: true });
+    syncOwnNoteDelete(host);
   }
 }
 
@@ -9017,6 +9161,9 @@ function mountDayJournal(host, day) {
     <label class="journal-field">What happened today?
       <textarea class="journal-note" maxlength="4000"></textarea>
     </label>
+    <div class="journal-note-actions" hidden>
+      <button type="button" class="journal-delete journal-delete-note" aria-label="Delete your note">Delete</button>
+    </div>
     <p class="journal-sync-line" aria-live="polite"></p>
     <div class="family-journal-list"></div>
   `;
@@ -9079,6 +9226,7 @@ function mountDayJournal(host, day) {
     },
     async flush(options = {}) {
       window.clearTimeout(entry.timer);
+      if (entry.deleting) return;
       if (!host.isConnected || !entry.hydrated) return;
       const text = note.value;
       rememberJournalNote(day.id, text);
@@ -9113,6 +9261,7 @@ function mountDayJournal(host, day) {
     entry.userEdited = true;
     if (entry.hydrated) entry.blockEmptySync = false;
     rememberJournalNote(day.id, note.value);
+    syncOwnNoteDelete(host);
     window.clearTimeout(entry.timer);
     if (!navigator.onLine) {
       setJournalSyncStatus(host, "Will sync when online");
@@ -9122,6 +9271,21 @@ function mountDayJournal(host, day) {
     entry.timer = window.setTimeout(() => { void entry.flush(); }, 1500);
   });
   note.addEventListener("blur", () => { void entry.flush(); });
+  const deleteNoteButton = host.querySelector(".journal-delete-note");
+  deleteNoteButton.addEventListener("pointerdown", () => {
+    entry.deleting = true;
+    const release = () => {
+      window.setTimeout(() => {
+        if (!document.querySelector(".journal-confirm")?.open) entry.deleting = false;
+      }, 0);
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
+    };
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+  });
+  deleteNoteButton.addEventListener("click", () => { void deleteOwnJournalNote(day, host, entry); });
+  syncOwnNoteDelete(host);
   refreshDayJournal(day, host);
 }
 

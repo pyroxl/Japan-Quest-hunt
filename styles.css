@@ -5158,6 +5158,78 @@ button.trip-date {
   border-radius: 8px;
 }
 
+.family-entry-head,
+.journal-note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.journal-note-actions {
+  justify-content: flex-end;
+}
+
+.journal-note-actions[hidden] {
+  display: none;
+}
+
+.journal-delete {
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.journal-confirm {
+  color-scheme: only light;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.journal-confirm::backdrop {
+  background: rgba(52, 34, 42, 0.28);
+}
+
+.journal-confirm p {
+  margin: 0 0 14px;
+  font-weight: 700;
+}
+
+.journal-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.journal-confirm-actions button {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.journal-confirm-actions button[value="delete"] {
+  border-color: var(--rose);
+  background: var(--rose);
+  color: #fff;
+}
+
 .family-empty {
   margin: 0;
   color: var(--muted);
