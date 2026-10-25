@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v220";
+const APP_VERSION = "japan-quest-v221";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -321,9 +321,8 @@ const coreExperienceQuests = [
 ];
 
 const roadmapGoals = [
-  { id: "osaka-food", goal: "Maximum-pop Osaka and regional food", days: ["day02", "day03", "day04"], status: "Ready", why: "Oct 25 is indoor Namba and Shinsekai. Day 2 does not include Dotonbori. Kuromon is the scored food quest on Oct 26, then Kaiyukan. Dinner on Oct 26 is Bochi bochi.", blocker: "Kuromon and Kaiyukan both involve standing.", fallback: "Keep the Kuromon category limits and the 19:00 Bochi bochi booking. Skip the hotel reset if time is short." },
-  { id: "kaiyukan", goal: "Kaiyukan whale shark afternoon", days: ["day04"], status: "Needs Confirmation", why: "Mon Oct 26, after the Kuromon scores. Leave by about 17:00 for Bochi bochi at 19:00.", blocker: "E-tickets are not bought yet. Count to confirm.", fallback: "Buy timed e-tickets in advance (15-minute slots); count to confirm." },
-  { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Bochi bochi on Oct 26 is the izakaya night, booked by Sayaka.", blocker: "", fallback: "Keep the 19:00 booking even if Kuromon or Kaiyukan runs long. Skip the hotel reset if time is short." },
+  { id: "osaka-food", goal: "Maximum-pop Osaka and regional food", days: ["day02", "day03", "day04"], status: "Ready", why: "Oct 25 is indoor Namba and Shinsekai. Day 2 does not include Dotonbori. Kuromon is the scored food quest on Oct 26. Dinner on Oct 26 is Bochi bochi.", blocker: "Kuromon involves standing.", fallback: "Keep the Kuromon category limits and the 19:00 Bochi bochi booking." },
+  { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Bochi bochi on Oct 26 is the izakaya night, booked by Sayaka. She joins dinner only.", blocker: "", fallback: "Keep the 19:00 booking." },
   { id: "konbini", goal: "7-Eleven and konbini food experience", days: ["day02"], status: "Ready", why: "The first small everyday-Japan ritual begins immediately.", blocker: "", fallback: "Build breakfast from the nearest station or hotel konbini." },
   { id: "nara", goal: "Nara Park", days: ["day06"], status: "Ready", why: "Nara bridges Osaka and Kyoto with one iconic first-trip experience.", blocker: "", fallback: "Use taxis and keep the visit to the park and Todai-ji approach." },
   { id: "nijo", goal: "Nijo Castle", days: ["day09"], status: "Ready", why: "It is Kyoto's strongest non-temple historic anchor and opens the compact central-Kyoto day.", blocker: "", fallback: "Keep Nijo, then skip either the palace or Manga Museum and rejoin at Nishiki or dinner." },
@@ -465,10 +464,10 @@ const snackLeagueScoreLabels = {
 };
 
 const snackLeagueSlots = [
-  ["raw", "Raw / seafood", "Kuromon · hard exit 11:30"],
-  ["hot", "Hot / grilled", "Kuromon · hard exit 11:30"],
-  ["savory", "Savory non-seafood", "Kuromon · hard exit 11:30"],
-  ["sweet", "Fruit / sweet", "Kuromon · hard exit 11:30"],
+  ["raw", "Raw / seafood", "Kuromon morning"],
+  ["hot", "Hot / grilled", "Kuromon morning"],
+  ["savory", "Savory non-seafood", "Kuromon morning"],
+  ["sweet", "Fruit / sweet", "Kuromon morning"],
   ["tenma", "Bochi bochi", "The shared plate worth reordering"]
 ];
 
@@ -499,7 +498,7 @@ const outsideCityStyles = {
 const dayWalkingTime = {
   day02: "~1 hr",
   day03: "~1–2 hr",
-  day04: "~4–5 hr",
+  day04: "~1–2 hr",
   day05: "~2–3 hr",
   day06: "~3–4 hr",
   day07: "~4–5 hr",
@@ -663,7 +662,7 @@ const tripData = {
   osaka: {
     name: "Osaka",
     baseLabel: "Hotel Cordia Osaka Hommachi",
-    description: "Arrival neon, a rainy indoor Namba day, Kuromon and Kaiyukan, Osaka Castle, and the Nara bridge.",
+    description: "Arrival neon, a rainy indoor Namba day, Kuromon and Sakai, Osaka Castle, and the Nara bridge.",
     ongoing: [
       {
         title: "Osaka Opening Credits",
@@ -685,7 +684,7 @@ const tripData = {
     days: [
       questDay("day02", "2026-10-24", "Narita to Osaka", "Land in Tokyo, take the Narita Express to Tokyo Station, then ride Nozomi 261 to Osaka.", ["Narita International Airport", "Tokyo Station", "Shin-Osaka Station", "Hotel Cordia Osaka Hommachi"], "Land around 09:30, clear Narita, then take the Narita Express to Tokyo Station. The ride is about 55 minutes. Buy the ticket at the JR counter. Any train leaving by about 12:30 works. Be at the Shinkansen gates by about 13:30. Nozomi 261 leaves Tokyo Station at 14:00.", [{ text: "Keep a full buffer for immigration and bags", who: "brianMai" }, { text: "Buy the Narita Express at the JR counter. Any train leaving by about 12:30 works", who: "brianMai" }, { text: "Be at the Shinkansen gates by about 13:30", who: "brianMai" }, "Eat during the transfer or on the train", "Meet Sayaka at Shin-Osaka at 16:30", { text: "Call Hotel Cordia if check-in will be late", who: "brianMai" }, { text: "Stop after check-in. Do not add Dotonbori. Kura Sushi Dotonbori has no date", who: "brianMai" }], ["The first Japan train window", "The Shinkansen platform", "The first Osaka hotel-room view"], "Mai gets a calm first day instead of a cross-Tokyo deadline.", "The reserved train is Nozomi 261 at 14:00 from Tokyo Station. Parents can board it at Shinagawa at about 14:07, or meet at Tokyo Station. Sayaka meets you at Shin-Osaka at 16:30 and takes you to the hotel."),
       questDay("day03", "2026-10-25", "Rainy Namba to Shinsekai", "Indoor Namba, a taxi for the microSD, then Sankei Club.", ["Takashimaya Osaka", "Namba Parks", "Pasokon Koubou Nipponbashi", "Shinsekai Osaka"], "Easy morning, leave around 11:15, stay underground at Namba, taxi for the microSD, and be at Sankei Club at 17:00.", ["Lunch indoors at Takashimaya or Namba Parks", "Buy the microSD at Pasokon Koubou", "Taxi back. Do not walk Den Den Town", "Share one Osaka snack at Sankei Club"], ["A food-hall detail", "Tsutenkaku framed by signs", "The kushikatsu plate"], "Mai gets indoor Namba and Shinsekai without a rain walk.", "Parents can do the same Namba plan, or rest at Royal Park Hotel ICONIC Osaka Midosuji and taxi to Sankei Club for 17:00."),
-      questDay("day04", "2026-10-26", "Kuromon, Kaiyukan, Sakai", "Kuromon scores in the morning, Kaiyukan in the afternoon, Bochi bochi at 19:00.", ["Kuromon Ichiba Market", "Osaka Aquarium Kaiyukan", "Tennoji Station", "Sakai-shi Station", "Bochi bochi"], "Score four Kuromon categories by 11:30, spend the afternoon at Kaiyukan, leave by about 17:00, and be at Bochi bochi at 19:00.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Photograph each item and price", "Leave Kaiyukan by about 17:00", "Be at Bochi bochi at 19:00"], ["A market preparation detail", "The whale shark at the glass", "A shared plate at Bochi bochi"], "Mai gets the scored food hunt and the whale sharks, then a seated izakaya with Sayaka's family.", "Parents do Kuromon and Kaiyukan, then Bochi bochi at 19:00. Skip the hotel reset if time is short."),
+      questDay("day04", "2026-10-26", "Kuromon, Tea, Sakai", "Kuromon in the morning, tea with parents at 14:30, Bochi bochi at 19:00.", ["Kuromon Ichiba Market", "Royal Park Hotel ICONIC Osaka Midosuji", "Tennoji Station", "Sakai-shi Station", "Bochi bochi"], "Kuromon from about 10:00, lunch there around 12:00, tea at 14:30, then trains to Bochi bochi at 19:00.", ["Score raw/seafood", "Score one hot or grilled bite", "Score one savory non-seafood bite", "Score one fruit or sweet", "Photograph each item and price", "Tea with parents at 14:30", "Be at Bochi bochi at 19:00"], ["A market preparation detail", "A shared plate at Bochi bochi"], "Mai gets the Kuromon food hunt, tea with the parents, then a seated izakaya. Sayaka joins dinner only.", "Parents host tea at 14:30. Dinner is Bochi bochi at 19:00. Sayaka joins dinner only."),
       questDay("day05", "2026-10-27", "Osaka Castle with Sayaka", "Edobori lunch, then Osaka Castle with Sayaka. On-yasai at 20:00 for 4.", ["Udon Izakaya Edobori", "Osaka Castle", "Shabushabu On-yasai Sennichimae"], "Easy morning, walk in at Edobori at 11:00 for 5, then Sayaka's castle tour. She leaves around 5 PM. On-yasai at 20:00 for 4.", ["Walk in at Edobori at 11:00", "Photograph the castle across the moat", "Follow Sayaka's castle tour", "Rest at the hotel around 17:30", "Be at On-yasai at 20:00"], ["Castle across the moat", "A moat or wall detail", "Sayaka on the tour"], "Mai gets a personal castle tour with Sayaka.", "Parents join Edobori and the castle tour. Sayaka leaves around 5 PM. Dinner is On-yasai at 20:00 for 4."),
       questDay("day06", "2026-10-28", "Deer to Kyoto", "Deer, giant Buddha, old streets, then Kyoto.", ["Kintetsu Nara Station", "Nara Park", "Todai-ji Temple", "Naramachi", "Kyoto Station", "Hotel Monterey Kyoto"], "Use Nara as the Osaka-to-Kyoto bridge and make entering Todai-ji's Great Buddha Hall the capstone.", ["Keep the deer stop short", "Try kakinoha-zushi if you want it", "Find a cafe near Naramachi"], ["A deer bow or side-eye", "A detail that makes Todai-ji's scale click", "An old-town shopfront"], "Mai gets an iconic Japan moment before Kyoto begins.", "Shorten Nara and reach Kyoto earlier if legs become the story. The bags stay in the Kintetsu-Nara lockers until you leave.")
     ]
@@ -776,9 +775,9 @@ const dayGoals = {
     photoHint: "Tsutenkaku, an indoor food-hall detail, or the kushikatsu plate."
   },
   day04: {
-    clearPath: "Kuromon scores by 11:30, Kaiyukan, leave by about 17:00, Bochi bochi at 19:00.",
-    mainGoal: "Finish the Kuromon scores, see the whale shark, and reach Bochi bochi at 19:00.",
-    photoHint: "Kuromon bite, whale shark at the glass, or a shared plate at Bochi bochi."
+    clearPath: "Kuromon ~10:00 → lunch ~12:00 → tea at 14:30 → trains to Sakai → Bochi bochi at 19:00.",
+    mainGoal: "Tea with parents at 14:30, then Bochi bochi at 19:00.",
+    photoHint: "A Kuromon bite, tea at the hotel, or a shared plate at Bochi bochi."
   },
   day05: {
     clearPath: "Edobori at 11:00 → Osaka Castle with Sayaka → rest ~17:30 → On-yasai at 20:00.",
@@ -916,12 +915,11 @@ const dayContext = {
     ]
   },
   day04: {
-    summary: "Kuromon tasting in the morning, then Osaka Aquarium Kaiyukan. Leave by about 17:00. JR Hanwa Line from Tennoji to Sakai-shi, about 10 min, then about a 10-minute walk. Bochi bochi at 19:00 with Sayaka and her family. Skip the hotel reset if time is short.",
-    timeline: [["Morning", "From Hotel Cordia Osaka Hommachi to Kuromon Ichiba.", "brianMai"], ["Morning", "From Royal Park Hotel ICONIC Osaka Midosuji to Kuromon Ichiba.", "parents"], ["Until 11:30", "At Kuromon, share four categories: raw or seafood, hot or grilled, savory non-seafood, and fruit or sweet. Leave by 11:30."], ["Afternoon", "Osaka Aquarium Kaiyukan. Buy timed e-tickets in advance (15-minute slots); count to confirm. Whale sharks are in the Pacific Ocean tank. No ferris wheel."], ["By 17:00", "Leave Kaiyukan. Go to Tennoji, then JR Hanwa Line to Sakai-shi, about 10 min, then about a 10-minute walk. Skip the hotel reset if time is short."], ["19:00", BOCHI_NOTE]],
+    summary: "Kuromon around 10:00, tea with parents at 14:30, then trains to Bochi bochi at 19:00, and Sayaka joins dinner only.",
+    timeline: [["~10:00", "Kuromon Market, a covered arcade of about 580 m, by Sakaisuji Line from Sakaisuji-Hommachi to Nippombashi; most shops open 8:00–10:00.", "brianMai"], ["~10:00", "Morning at Royal Park Hotel ICONIC Osaka Midosuji.", "parents"], ["~12:00", "Lunch at Kuromon, then back toward Hommachi.", "brianMai"], ["14:30", "Tea with parents at Royal Park Hotel ICONIC Osaka Midosuji, about 4 min from Hommachi exit 2; parents booked it.", "brianMai"], ["14:30", "Tea at Royal Park Hotel ICONIC Osaka Midosuji; you booked it.", "parents"], ["After tea", "Free time, resting at Hotel Cordia Osaka Hommachi.", "brianMai"], ["After tea", "Free time, resting at the hotel.", "parents"], ["~18:00", "Leave for Sakai on the Midosuji Line from Hommachi to Tennoji, then the JR Hanwa Line to Sakai-shi, about 10 min, then about a 10-minute walk.", "brianMai"], ["~18:00", "Walk about 4 min from exit 2 to Hommachi, then the Midosuji Line to Tennoji and the JR Hanwa Line to Sakai-shi, about 10 min, then about a 10-minute walk.", "parents"], ["19:00", BOCHI_NOTE]],
     history: [
-      "Kuromon Ichiba began as a wholesale fish market. Four shared categories and an 11:30 exit keep the morning a game, then the afternoon moves indoors.",
-      "Osaka Aquarium Kaiyukan opened in 1990 on the Tempozan waterfront. The Pacific Ocean tank is about 9 meters deep, and whale sharks circle in it. Leave by about 17:00.",
-      "Dinner is Bochi bochi, an izakaya near Sakai-shi Station, booked by Sayaka."
+      "Kuromon Ichiba began as a wholesale fish market under a covered arcade. Oct 26 uses the morning for the shared categories and lunch, then heads back toward Hommachi.",
+      "Dinner is Bochi bochi, an izakaya near Sakai-shi Station, booked by Sayaka. She joins dinner only."
     ]
   },
   day05: {
@@ -1119,9 +1117,9 @@ const DAY_VIEWS = {
   },
   day04: {
     parents: {
-      summary: "Kuromon in the morning, then Kaiyukan. Leave by about 17:00 for Bochi bochi at 19:00. Skip the hotel reset if time is short.",
-      clearPath: "Kuromon scores, Kaiyukan, Bochi bochi at 19:00.",
-      mainGoal: "See the whale shark, then be at Bochi bochi at 19:00.",
+      summary: "Tea at Royal Park Hotel ICONIC Osaka Midosuji at 14:30, then trains to Bochi bochi at 19:00, and Sayaka joins dinner only.",
+      clearPath: "Tea at 14:30 → rest → trains to Sakai → Bochi bochi at 19:00.",
+      mainGoal: "Host tea at 14:30, then be at Bochi bochi at 19:00.",
       hotel: { name: "Royal Park Hotel ICONIC Osaka Midosuji", url: ROYAL_PARK_MAP }
     }
   },
@@ -1561,15 +1559,14 @@ const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"
 
 const planPhotoCredits = {
   day03: "Dotonbori canal, Glico running man, and Ebisu Bridge, resized. Photo by そらみみ, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Glico_Man_Neon_Sign_and_Ebisubashi_Bridge_at_night.jpg",
-  day04: "Kaiyukan whale shark tank. Photo by SR EXR, CC0.",
   day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0."
 };
 
 const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
-  day03: "capstones/day03-namba.webp?v220",
-  day04: "capstones/day05-kaiyukan.jpg?v220",
-  day05: "capstones/day05-osaka-castle.webp?v220",
+  day03: "capstones/day03-namba.webp?v221",
+  day04: "capstones/day04.jpg?v221",
+  day05: "capstones/day05-osaka-castle.webp?v221",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07.webp",
   day08: "capstones/day08.jpg",
@@ -2943,7 +2940,7 @@ const OPEN_MARKERS = new Set(["needs-confirmation", "not-booked", "decision"]);
 const DAY_PARTY = {
   day02: "5. This is the Osaka default, including parents.",
   day03: "5. Sankei Club is booked for 5. Sayaka is confirmed.",
-  day04: "The 4 of us plus Sayaka's family. Exact count unknown.",
+  day04: "Sayaka joins dinner only, with her family. Exact count unknown.",
   day05: "5 at Edobori lunch. Sayaka joins and leaves around 5 PM. On-yasai dinner is 4. No Sayaka.",
   day06: "5.",
   day07: ENDO_PARTY,
@@ -2976,8 +2973,8 @@ const DAY_MUST_DOS = {
     { marker: "info", label: "Rain route", detail: "Stay indoors. Hommachi to Namba underground, then Takashimaya and Namba Parks. Taxi to Pasokon Koubou for the microSD and taxi back. Do not walk Den Den Town. No Osaka Castle today." }
   ],
   day04: [
-    { marker: "not-booked", label: "Kaiyukan e-tickets", detail: "Buy timed e-tickets in advance (15-minute slots); count to confirm." },
-    { marker: "info", label: "Hotel reset", detail: "Skip the hotel reset if time is short. Leave Kaiyukan by about 17:00, then JR Hanwa Line from Tennoji to Sakai-shi." },
+    { marker: "booked", label: "Tea at Royal Park", detail: "14:30 at Royal Park Hotel ICONIC Osaka Midosuji, about 4 min from Hommachi exit 2. Parents booked it." },
+    { marker: "info", label: "Sakai trains", detail: "About 18:00. Midosuji Line Hommachi to Tennoji, then JR Hanwa Line to Sakai-shi, about 10 min, then about a 10-minute walk." },
     { marker: "booked", label: "Bochi bochi", detail: BOCHI_NOTE }
   ],
   day06: [
@@ -3442,7 +3439,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Ourlog Coffee Hommachi", type: "cafe", category: "cafe", typeLabel: "Near-hotel coffee", area: "Hotel base · Awajimachi", price: "¥¥", note: "Independent specialty coffee roughly a few minutes north of the hotel; a better coffee-first option than making a sightseeing detour.", coordinates: [34.6867532, 135.4982412] },
     { name: "JTRRD cafe & Season0", type: "cafe", category: "cafe", typeLabel: "Near-hotel café", area: "Hotel base · Utsubohommachi", price: "¥¥", note: "Colorful smoothies and a sit-down pause northwest of the hotel. Choose this for cute presentation; choose Ourlog for coffee.", coordinates: [34.6861556, 135.4972583] },
     { name: "R Baker Osaka Castle Park", type: "cafe", category: "cafe", typeLabel: "Castle breakfast", area: "Day 5 · Osaka Castle", price: "¥", note: "A bakery-café inside the park near Osakajokoen Station. Useful on the Oct 27 castle tour, or as a seated rest.", coordinates: [34.68842, 135.53305], officialUrl: "https://r-baker.com/shops/" },
-    { name: "LiLo Coffee Kissa", type: "cafe", category: "cafe", typeLabel: "Shinsaibashi coffee", area: "Shinsaibashi · not on Oct 26", price: "¥¥", note: "Retro kissaten near Shinsaibashi. Oct 26 is Kuromon, then Kaiyukan, not this café.", coordinates: [34.6710513, 135.5010541], officialUrl: "https://coffee.liloinveve.com/pages/lilo-coffee-kissa-1" },
+    { name: "LiLo Coffee Kissa", type: "cafe", category: "cafe", typeLabel: "Shinsaibashi coffee", area: "Shinsaibashi · not on Oct 26", price: "¥¥", note: "Retro kissaten near Shinsaibashi. Oct 26 is Kuromon in the morning, then tea, not this café.", coordinates: [34.6710513, 135.5010541], officialUrl: "https://coffee.liloinveve.com/pages/lilo-coffee-kissa-1" },
     { name: "Sennariya Coffee", type: "cafe", category: "cafe", typeLabel: "Historic kissaten", area: "Day 3 · Shinsekai", price: "¥", note: "Founded in 1948 and identifies itself as the birthplace of mixed juice. A strong non-alcoholic pause before the Shinsekai evening.", coordinates: [34.65077, 135.50476], officialUrl: "https://www.sennariya-coffee.jp/" },
     { name: "Sanwa Coffee Works Tenma", type: "cafe", category: "cafe", typeLabel: "Tenma coffee", area: "Day 4 · Tenma", price: "¥¥", note: "Long-running roastery café near Tenjinbashisuji. Not the Oct 26 dinner. Dinner is Bochi bochi.", coordinates: [34.7082518, 135.5124233], officialUrl: "https://store.sanwacoffeeworks.com/pages/about-scw" },
     { name: "CAFE ANNON Namba Main Store", type: "sweet", category: "dessert", typeLabel: "Soufflé dessert", area: "Namba · not a rain-day walk", price: "¥¥", note: "Near the Namba end of Den Den Town. Oct 25 stays indoors at Takashimaya and Namba Parks. Do not walk Den Den in the rain.", coordinates: [34.66383, 135.50345] },
@@ -3472,7 +3469,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Menya Joroku Namba", type: "restaurant", typeLabel: "Ramen · dark chuka soba", area: "Namba · not the Oct 25 lunch", price: "¥", note: "Dark Osaka-style chuka soba off the main Namba streets. Oct 25 lunch is indoors at Takashimaya or Namba Parks.", coordinates: [34.66395, 135.50505], officialUrl: "https://metronine.osaka/en/spot-details/?spot_id=69027084754" },
     { name: "Kitashinchi Kushikatsu Bon", type: "restaurant", typeLabel: "Kushikatsu · luxury tasting", area: "Kitashinchi · splurge detour", price: "¥¥¥¥", note: "A luxury tasting-menu interpretation with ingredients such as chateaubriand, foie gras and truffles. Reserve it only for a deliberate fine-dining night.", coordinates: [34.6962, 135.49835], officialUrl: "https://guide.michelin.com/us/en/osaka-region/osaka/restaurant/kitashinchi-kushikatsu-bon" },
     { name: "Tengu", type: "restaurant", typeLabel: "Kushikatsu · atmosphere", area: "Day 3 · Shinsekai", price: "¥", note: "Traditional Janjan Yokocho counter energy and the strongest atmosphere pick. Choose Tengu over Daruma when old-school Shinsekai character matters most.", coordinates: [34.65072, 135.5045], officialUrl: "https://insideosaka.com/tengu/" },
-    { name: "Kushikatsu Tanaka Amerikamura", type: "restaurant", typeLabel: "Kushikatsu · chain backup", area: "Amerikamura · not on Oct 26", price: "¥¥", note: "Not on the Oct 26 route. That afternoon is Kaiyukan. Oct 25's table is Sankei Club.", coordinates: [34.6739, 135.4981], officialUrl: "https://restaurant.kushi-tanaka.com/" },
+    { name: "Kushikatsu Tanaka Amerikamura", type: "restaurant", typeLabel: "Kushikatsu · chain backup", area: "Amerikamura · not on Oct 26", price: "¥¥", note: "Not on the Oct 26 route. Oct 25's table is Sankei Club.", coordinates: [34.6739, 135.4981], officialUrl: "https://restaurant.kushi-tanaka.com/" },
     { name: "DEARBROS Sennichimae", type: "restaurant", typeLabel: "Omurice · flexible lunch", area: "Day 2/3/4 · Namba", price: "¥¥", note: "Rich, meat-heavy omurice near Namba. A flexible lunch fallback when the group wants a filling break from flour dishes, skewers and ramen.", coordinates: [34.66705, 135.50425], officialUrl: "https://www.instagram.com/dearbros_official/" },
     { name: "Bochi bochi", type: "restaurant", category: "izakaya", typeLabel: "Izakaya · booked", area: "Day 4 · Sakai-shi · 19:00", price: "¥¥", note: BOCHI_NOTE, coordinates: [34.57873, 135.50421], slotDays: ["day04"], reserve: "yes" },
     { name: "Shabushabu On-yasai Sennichimae", type: "restaurant", category: "sukiyaki", typeLabel: "Shabu-shabu · booked", area: "Day 5 · Namba / Sennichimae · 味わいばしビル2F", price: "¥¥", note: "Booked Tue Oct 27 at 20:00 for 4, seats only. No Sayaka. Confirmation in Gmail. Vegetable-forward chain shabu after Osaka Castle. Address 難波3-4-13. Shop 06-4396-8311.", coordinates: [34.6669, 135.5017], officialUrl: "https://map.reins.co.jp/onyasai/detail/643968311", tabelogUrl: "https://tabelog.com/osaka/A2701/A270202/27040112/", slotDays: ["day05"], reserve: "yes" },
@@ -4963,9 +4960,9 @@ const placeBackground = {
   "Nippombashi Osaka": "Nippombashi is the electronics district south of Namba. On Oct 25 the only stop is a taxi to Pasokon Koubou for the microSD, then a taxi back. Do not walk Den Den Town in the rain.",
   "Nipponbashi Denden Town": "Den Den Town is games, anime, and hobby shops. It is not on Oct 25. Do not walk it in the rain. The microSD stop is a taxi to Pasokon Koubou only.",
   "Shinsekai Osaka": "Shinsekai opened in 1912 as a new-world entertainment district. Oct 25 ends here at Sankei Club at 17:00, by taxi or one Midosuji stop to Dobutsuen-mae.",
-  "Kuromon Ichiba Market": "Kuromon began as a wholesale fish market. On Oct 26 the Snack League is four shared categories and an 11:30 exit, then Kaiyukan.",
-  "Daimaru Shinsaibashi": "Daimaru Shinsaibashi is a depachika. It is not the Oct 26 stop. That afternoon is Kaiyukan. Oct 25 lunch is Takashimaya or Namba Parks.",
-  "Amerikamura": "Amerikamura is a youth-fashion pocket near Shinsaibashi. It is not on Oct 26. That afternoon is Kaiyukan.",
+  "Kuromon Ichiba Market": "Kuromon began as a wholesale fish market. On Oct 26 the morning is the covered arcade and lunch, then tea at 14:30.",
+  "Daimaru Shinsaibashi": "Daimaru Shinsaibashi is a depachika. It is not the Oct 26 stop. Oct 25 lunch is Takashimaya or Namba Parks.",
+  "Amerikamura": "Amerikamura is a youth-fashion pocket near Shinsaibashi. It is not on Oct 26.",
   "Takashimaya Osaka": "Takashimaya Osaka connects to Namba Station. Restaurant floors and a basement food hall keep Oct 25 lunch indoors.",
   "Namba Parks": "Namba Parks connects to Namba Station. Oct 25 browsing stays inside, out of the rain.",
   "Pasokon Koubou Nipponbashi": "Pasokon Koubou Nipponbashi is the Oct 25 microSD stop. Taxi from Namba, then taxi back. Do not walk Den Den Town.",
@@ -4974,8 +4971,7 @@ const placeBackground = {
   "Sakai-shi Station": "JR Hanwa Line from Tennoji, about 10 minutes. Bochi bochi is about a 10-minute walk from the station.",
   "Bochi bochi": BOCHI_NOTE,
   "Udon Izakaya Edobori": "Walk-in udon at 11:00 for 5 with Sayaka on Oct 27. About 15 minutes from Hotel Cordia. Do not reserve this lunch. The afternoon is Osaka Castle.",
-  "Osakako Station": "Not on Oct 27. Sayaka's afternoon is Osaka Castle. She leaves around 5 PM. Kaiyukan is Oct 26.",
-  "Osaka Aquarium Kaiyukan": "Oct 26 afternoon, after Kuromon. Buy timed e-tickets in advance (15-minute slots); count to confirm. Whale sharks circle in the Pacific Ocean tank. Leave by about 17:00 for Bochi bochi. No ferris wheel.",
+  "Osakako Station": "Not on this trip. Oct 27 is Osaka Castle with Sayaka. She leaves around 5 PM.",
   "Shabushabu On-yasai Sennichimae": "Booked Tue Oct 27 at 20:00 for 4. No Sayaka. Seats only. Confirmation in Gmail. After the Osaka Castle tour.",
   "Kintetsu Nara Station": "Kintetsu-Nara is closer to Todai-ji than JR Nara. Store the big bags in the coin-locker room by the West ticket gate. Then use East gate Exit 2 for Nara Park and Todai-ji. Collect the bags at the West gate before the train to Kyoto.",
   "Nara Park": "Nara Park preserves a landscape where deer, temples and open grass have coexisted for centuries. Keep deer encounters playful and brief—they open the day, but Todai-ji's scale is the capstone.",
@@ -5551,14 +5547,6 @@ const RAIN_IDEAS = {
     }
   ],
   osaka: [
-    {
-      name: "Osaka Aquarium Kaiyukan",
-      why: "The aquarium is indoors. The visit stays out of the rain.",
-      travel: "About 25 minutes from Hotel Cordia. Take the subway to Osakako.",
-      skipDays: ["day03", "day04", "day05"],
-      url: "https://www.kaiyukan.com/",
-      link: "Open the aquarium site"
-    },
     {
       name: "Osaka Museum of Housing and Living",
       why: "The old Osaka street is indoors. The museum is non-smoking.",
