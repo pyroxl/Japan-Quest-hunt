@@ -20,7 +20,7 @@ const APP_FILES = [
   "./food-icons/cafe-matcha.png",
   "./food-icons/sweet-dango.png",
   "./capstones/day02.jpg",
-  "./capstones/day03-shinsekai.jpg?v220",
+  "./capstones/day03-namba.webp?v220",
   "./capstones/day04.jpg",
   "./capstones/day05-osaka-castle.webp?v220",
   "./capstones/day05-kaiyukan.jpg?v220",
