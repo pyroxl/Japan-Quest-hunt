@@ -48,10 +48,6 @@ window.PLACE_COORDINATES = {
     34.6544,
     135.4316
   ],
-  "Osaka Aquarium Kaiyukan": [
-    34.6545,
-    135.429
-  ],
   "Shabushabu On-yasai Sennichimae": [
     34.6669,
     135.5017
