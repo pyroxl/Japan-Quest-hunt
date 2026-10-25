@@ -1566,9 +1566,9 @@ const planPhotoCredits = {
 
 const defaultPlanPhotos = {
   day02: "capstones/day02.jpg",
-  day03: "capstones/day03.webp",
+  day03: "capstones/day03-shinsekai.jpg?v220",
   day04: "capstones/day05-kaiyukan.jpg?v220",
-  day05: "capstones/day05-castle.jpg?v220",
+  day05: "capstones/day05-osaka-castle.webp?v220",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07.webp",
   day08: "capstones/day08.jpg",
