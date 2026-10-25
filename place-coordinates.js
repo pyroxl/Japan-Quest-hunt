@@ -24,6 +24,22 @@ window.PLACE_COORDINATES = {
     34.684601,
     135.498514
   ],
+  "Royal Park Hotel ICONIC Osaka Midosuji": [
+    34.687249,
+    135.499859
+  ],
+  "Takashimaya Osaka": [
+    34.6643374,
+    135.5013613
+  ],
+  "Namba Parks": [
+    34.66147,
+    135.5018
+  ],
+  "Pasokon Koubou Nipponbashi": [
+    34.660829,
+    135.504994
+  ],
   "Udon Izakaya Edobori": [
     34.689194,
     135.493264
