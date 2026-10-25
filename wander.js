@@ -14,9 +14,9 @@ function mapsWalk(origin, destination, waypoints) {
 
 const WANDER_DAY = {
   day02: { city: "osaka", areas: ["hommachi"], energy: "low", window: "evening", count: 1 },
-  day03: { city: "osaka", areas: ["shinsekai"], energy: "medium", window: "afternoon", count: 0 },
-  day04: { city: "osaka", areas: ["shinsaibashi"], energy: "medium", window: "afternoon", count: 1 },
-  day05: { city: "osaka", areas: ["hommachi"], energy: "low", window: "evening", count: 1 },
+  day03: { city: "osaka", areas: ["namba"], energy: "low", window: "afternoon", count: 0 },
+  day04: { city: "osaka", areas: ["kuromon"], energy: "medium", window: "afternoon", count: 0 },
+  day05: { city: "osaka", areas: ["castle"], energy: "low", window: "evening", count: 0 },
   day06: { city: "kyoto", areas: ["kiyamachi", "karasuma"], energy: "low", window: "evening", count: 1 },
   day07: { city: "kyoto", areas: ["gion"], energy: "low", window: "evening", count: 2 },
   day08: { city: "kyoto", areas: ["arashiyama"], energy: "medium", window: "afternoon", count: 0 },
