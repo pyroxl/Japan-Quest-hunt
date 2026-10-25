@@ -1308,6 +1308,7 @@ h3 {
   font-size: 0.75rem;
   font-weight: 700;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .plan-photo.is-empty {
