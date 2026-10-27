@@ -6782,3 +6782,188 @@ body[data-traveler="mai"] .tax-qr-tip {
   outline: 2px solid #285b96;
   outline-offset: 2px;
 }
+
+.photo-caption-input {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  margin: 0;
+  padding: 6px 8px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: #1c0f14;
+  font-size: 16px;
+}
+
+.album-caption {
+  display: grid;
+  gap: 4px;
+}
+
+.album-caption span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.bulk-add {
+  position: relative;
+  margin: 0 0 16px;
+  padding: 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 12px;
+  color-scheme: only light;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  color: #1c0f14;
+}
+
+.bulk-add h3 {
+  margin: 0 0 8px;
+  color: #1c0f14;
+}
+
+.bulk-add .photo-button {
+  min-height: 44px;
+}
+
+.bulk-add input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bulk-add p,
+.bulk-add-lead {
+  margin: 8px 0;
+  color: #1c0f14;
+  font-size: 0.9rem;
+}
+
+.bulk-add p:empty {
+  display: none;
+}
+
+body.bulk-review-open {
+  overflow: hidden;
+}
+
+.bulk-review {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: calc(12px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom));
+  color-scheme: only light;
+  background-color: #fff0f6;
+  background-image: linear-gradient(#fff0f6, #fff0f6);
+  color: #1c0f14;
+}
+
+.bulk-review-bar h2 {
+  margin: 0;
+  color: #1c0f14;
+  font-size: 1.2rem;
+}
+
+.bulk-review-bar p {
+  margin: 2px 0 0;
+  color: #1c0f14;
+  font-weight: 750;
+}
+
+.bulk-review-list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bulk-review-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin: 0 0 8px;
+  padding: 8px;
+  border: 1px solid #1c0f14;
+  border-radius: 12px;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  color: #1c0f14;
+}
+
+.bulk-review-row img,
+.bulk-review-missing {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: #f3ecef;
+  color: #1c0f14;
+}
+
+.bulk-review-row img {
+  display: block;
+  object-fit: cover;
+}
+
+.bulk-review-missing {
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.bulk-review-row select {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #1c0f14;
+  font-size: 16px;
+}
+
+.bulk-review-hint {
+  margin: 4px 0 0;
+  color: #715862;
+  font-size: 0.82rem;
+}
+
+.bulk-review-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 8px;
+}
+
+.bulk-review-actions button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.bulk-review-actions button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+#bulkReviewConfirm {
+  background: #1c0f14;
+  color: #fff;
+}

@@ -34,6 +34,7 @@ function doPost(e) {
   if (!passcodeOk(body.passcode)) return respond({ ok: false, error: "Wrong passcode." });
   try {
     if (body.action === "uploadPhoto") return respond(uploadPhoto(body));
+    if (body.action === "updateCaption") return respond(updateCaption(body));
     if (body.action === "saveNote") return respond(saveNote(body));
     if (body.action === "list") return respond(listJournal(body));
     if (body.action === "thumb") return respond({ ok: true, thumb: thumbBase64(body.fileId) });
@@ -188,6 +189,27 @@ function uploadPhoto(body) {
     journal.sheet.getRange(row, 6).setValue(JSON.stringify(photos));
   }
   return { ok: true, fileId: file.getId(), thumbFileId: thumbFileId };
+}
+
+function updateCaption(body) {
+  if (!body.clientId) return { ok: false, error: "Photo data is incomplete." };
+  var caption = String(body.caption || "").slice(0, 240);
+  var journal = ensureJournal();
+  var values = journal.sheet.getDataRange().getValues();
+  for (var i = 1; i < values.length; i++) {
+    var photos = parsePhotos(values[i][5]);
+    var changed = false;
+    for (var p = 0; p < photos.length; p++) {
+      if (photos[p].clientId !== body.clientId) continue;
+      photos[p].caption = caption;
+      changed = true;
+    }
+    if (!changed) continue;
+    journal.sheet.getRange(i + 1, 1).setValue(nowStamp());
+    journal.sheet.getRange(i + 1, 6).setValue(JSON.stringify(photos));
+    return { ok: true };
+  }
+  return { ok: false, error: "Photo not found." };
 }
 
 function saveNote(body) {

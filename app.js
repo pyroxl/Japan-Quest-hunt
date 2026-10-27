@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v222";
+const APP_VERSION = "japan-quest-v223";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1741,6 +1741,50 @@ function fileToDataUrl(file) {
   });
 }
 
+let captionWrite = Promise.resolve();
+
+function appendPhotoCaption(parent, photo) {
+  const input = document.createElement("input");
+  input.className = "photo-caption-input";
+  input.type = "text";
+  input.maxLength = 240;
+  input.placeholder = "Caption";
+  input.autocomplete = "off";
+  input.enterKeyHint = "done";
+  input.setAttribute("aria-label", "Photo caption");
+  input.value = photo.caption || "";
+  const save = () => {
+    if (input.value === (photo.caption || "")) return;
+    captionWrite = captionWrite.then(() => commitPhotoCaption(photo, input.value)).catch(() => {});
+  };
+  let pending;
+  input.addEventListener("change", save);
+  input.addEventListener("input", () => {
+    clearTimeout(pending);
+    pending = setTimeout(save, 500);
+  });
+  parent.appendChild(input);
+}
+
+async function commitPhotoCaption(photo, caption) {
+  const next = String(caption || "").slice(0, 240);
+  photo.caption = next;
+  await putPhoto(photo);
+  const items = await journalQueueAll().catch(() => []);
+  const item = items.find((entry) => entry.clientId === photo.clientId || entry.photoId === photo.id);
+  if (item && item.status !== "synced") {
+    item.caption = next;
+    await putJournalQueueItem(item);
+    return;
+  }
+  if (!photo.clientId || !journalConfigured() || !readJournalPrefs().passcode) return;
+  try {
+    await journalPost({ action: "updateCaption", clientId: photo.clientId, caption: next });
+  } catch {
+    // The caption stays on this phone. Drive picks it up once updateCaption is deployed.
+  }
+}
+
 async function renderPhotosForTask(taskId, container, onPhotosChange) {
   if (!container) return;
   const photos = await getPhotosForTask(taskId).catch(() => []);
@@ -1748,7 +1792,11 @@ async function renderPhotosForTask(taskId, container, onPhotosChange) {
   photos.forEach((photo) => {
     const wrapper = document.createElement("div");
     wrapper.className = "quest-photo";
-    wrapper.innerHTML = `<img alt="${photo.caption}" src="${photo.dataUrl}">`;
+    const img = document.createElement("img");
+    img.alt = photo.caption || "Journal photo";
+    img.src = photo.dataUrl;
+    wrapper.appendChild(img);
+    appendPhotoCaption(wrapper, photo);
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.className = "photo-delete";
@@ -1802,32 +1850,55 @@ function makePhotoPickers({ id, multiple = false, onChange }) {
   return pickers;
 }
 
+async function savePhotoRecord(task, dataUrl, options = {}) {
+  const createdAt = options.createdAt || new Date().toISOString();
+  const caption = options.caption !== undefined ? options.caption : task.text;
+  const clientId = journalClientId();
+  const photoId = await addPhoto({
+    taskId: task.id,
+    cityId: task.cityId || state.activeCity,
+    dayId: task.dayId || "",
+    dayTitle: task.dayTitle || "",
+    caption,
+    slot: task.slot || "quest",
+    dataUrl,
+    createdAt,
+    clientId,
+    driveFileId: ""
+  });
+  await enqueueJournalPhoto({
+    clientId,
+    photoId,
+    dayId: task.dayId || "",
+    caption,
+    createdAt,
+    author: readJournalPrefs().author || ""
+  });
+}
+
+async function fileToStoredDataUrl(file) {
+  if (!isHeicFile(file)) return fileToDataUrl(file);
+  if (typeof createImageBitmap !== "function") return "";
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 2048 / Math.max(bitmap.width, bitmap.height, 1));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    return canvas.toDataURL("image/jpeg", 0.85);
+  } catch {
+    return "";
+  }
+}
+
 async function handlePhotoFiles(files, task, container) {
   for (const file of Array.from(files || [])) {
-    if (!file.type.startsWith("image/")) continue;
-    const dataUrl = await fileToDataUrl(file);
-    const createdAt = new Date().toISOString();
-    const clientId = journalClientId();
-    const photoId = await addPhoto({
-      taskId: task.id,
-      cityId: task.cityId || state.activeCity,
-      dayId: task.dayId || "",
-      dayTitle: task.dayTitle || "",
-      caption: task.text,
-      slot: task.slot || "quest",
-      dataUrl,
-      createdAt,
-      clientId,
-      driveFileId: ""
-    });
-    await enqueueJournalPhoto({
-      clientId,
-      photoId,
-      dayId: task.dayId || "",
-      caption: task.text,
-      createdAt,
-      author: readJournalPrefs().author || ""
-    });
+    if (!isPhotoFile(file)) continue;
+    const dataUrl = await fileToStoredDataUrl(file);
+    if (!dataUrl) continue;
+    await savePhotoRecord(task, dataUrl);
   }
   void flushJournalQueue();
   await renderPhotosForTask(task.id, container);
@@ -4730,16 +4801,21 @@ async function renderCalendarPhoto(day, target) {
   attachCalendarShinkansen(day, target.closest(".calendar-day"));
 }
 
+let albumToken = 0;
+
 async function renderAlbum() {
+  const token = ++albumToken;
   const album = document.querySelector("#albumGrid");
   if (!album) return;
   const photos = (await getAllPhotos().catch(() => [])).filter(isAlbumPhoto);
-  album.innerHTML = "";
+  const grid = document.querySelector("#albumGrid");
+  if (!grid || token !== albumToken || !grid.isConnected) return;
+  grid.innerHTML = "";
   if (!photos.length) {
     const empty = document.createElement("p");
     empty.className = "album-empty";
     empty.textContent = "Add photos from daily prompts and they will collect here for the whole trip.";
-    album.appendChild(empty);
+    grid.appendChild(empty);
     return;
   }
   const cityOrder = Object.keys(tripData);
@@ -4764,16 +4840,23 @@ async function renderAlbum() {
         heading.className = "album-day-heading";
         const cityName = tripData[photo.cityId]?.name;
         heading.textContent = [cityName, photo.dayTitle || "Extra Album Photos"].filter(Boolean).join(" - ");
-        album.appendChild(heading);
+        grid.appendChild(heading);
       }
       const item = document.createElement("article");
       item.className = "album-photo";
-      const slotLabel = photo.slot && photo.slot !== "quest" ? `${photo.slot[0].toUpperCase()}${photo.slot.slice(1)}: ` : "";
-      item.innerHTML = `
-        <img alt="${photo.caption}" src="${photo.dataUrl}">
-        <div class="album-caption">${slotLabel}${photo.caption}</div>
-      `;
-      album.appendChild(item);
+      const img = document.createElement("img");
+      img.alt = photo.caption || "Trip photo";
+      img.src = photo.dataUrl;
+      const caption = document.createElement("div");
+      caption.className = "album-caption";
+      if (photo.slot && photo.slot !== "quest") {
+        const slot = document.createElement("span");
+        slot.textContent = `${photo.slot[0].toUpperCase()}${photo.slot.slice(1)}`;
+        caption.appendChild(slot);
+      }
+      appendPhotoCaption(caption, photo);
+      item.append(img, caption);
+      grid.appendChild(item);
     });
 }
 
@@ -7909,8 +7992,321 @@ function mountStoryPhoneAlbum(host) {
   void renderAlbum();
 }
 
+function yieldToUi() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => setTimeout(resolve, 0));
+  });
+}
+
+function bulkDayLabel(dayId) {
+  const found = findDay(dayId);
+  if (!found) return dayId;
+  const number = /^day(\d+)$/.exec(found.day.id);
+  const name = number ? `Day ${Number(number[1])}` : found.day.title;
+  return `${found.day.short} · ${name}`;
+}
+
+function shortMonthDay(iso) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || "");
+  if (!match) return "";
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${months[Number(match[2]) - 1]} ${Number(match[3])}`;
+}
+
+async function readFileTaken(file) {
+  const chunk = 512 * 1024;
+  const headLen = Math.min(file.size || 0, chunk);
+  let parsed = null;
+  if (headLen) {
+    const head = new Uint8Array(await file.slice(0, headLen).arrayBuffer());
+    parsed = readTakenFromBytes(head);
+    if (parsed?.needMore && parsed.needMore > headLen && parsed.needMore <= Math.min(file.size, 2 * 1024 * 1024)) {
+      const more = new Uint8Array(await file.slice(0, parsed.needMore).arrayBuffer());
+      const again = readTakenFromBytes(more);
+      if (again?.stamp || !again?.needMore) parsed = again;
+    }
+  }
+  if (!parsed?.stamp && file.size > chunk) {
+    const tail = new Uint8Array(await file.slice(Math.max(0, file.size - chunk), file.size).arrayBuffer());
+    const again = readTakenFromBytes(tail);
+    if (again?.stamp) parsed = again;
+  }
+  return assignPhotoDay({
+    stamp: parsed?.stamp || "",
+    offset: parsed?.offset || "",
+    lastModified: Number(file.lastModified)
+  });
+}
+
+async function reviewThumb(file) {
+  if (typeof createImageBitmap !== "function") {
+    if (isHeicFile(file)) return "";
+    try { return URL.createObjectURL(file); } catch { return ""; }
+  }
+  try {
+    let bitmap;
+    try {
+      bitmap = await createImageBitmap(file, { resizeWidth: 192, resizeQuality: "low" });
+    } catch {
+      bitmap = await createImageBitmap(file);
+    }
+    const scale = Math.min(1, 192 / Math.max(bitmap.width, bitmap.height, 1));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.72));
+    return blob ? URL.createObjectURL(blob) : "";
+  } catch {
+    return "";
+  }
+}
+
+let bulkReviewToken = 0;
+let bulkReviewKey = null;
+let bulkAddMessage = "";
+
+function closeBulkReview() {
+  bulkReviewToken += 1;
+  if (bulkReviewKey) {
+    document.removeEventListener("keydown", bulkReviewKey);
+    bulkReviewKey = null;
+  }
+  document.querySelector("#bulkReview")?.remove();
+  document.body.classList.remove("bulk-review-open");
+}
+
+function mountBulkAdd(host) {
+  if (!host || host.querySelector("#bulkAddPhotos")) return;
+  const section = document.createElement("section");
+  section.className = "bulk-add";
+  section.id = "bulkAddPhotos";
+  section.innerHTML = `
+    <h3>Bulk add photos</h3>
+    <p class="bulk-add-lead">Filed by the day each photo was taken.</p>
+    <label class="photo-button" for="bulkAddInput">Choose photos</label>
+    <input id="bulkAddInput" type="file" accept="image/*,image/heic,image/heif,.heic,.heif" multiple>
+    <p id="bulkAddStatus"></p>
+  `;
+  const input = section.querySelector("#bulkAddInput");
+  const statusLine = section.querySelector("#bulkAddStatus");
+  if (statusLine && bulkAddMessage) statusLine.textContent = bulkAddMessage;
+  input.addEventListener("change", () => {
+    const files = Array.from(input.files || []);
+    input.value = "";
+    if (!files.length) return;
+    const images = files.filter(isPhotoFile);
+    const status = section.querySelector("#bulkAddStatus");
+    if (!images.length) {
+      bulkAddMessage = "Choose image files.";
+      if (status) status.textContent = bulkAddMessage;
+      return;
+    }
+    bulkAddMessage = "";
+    if (status) status.textContent = "";
+    void openBulkReview(images);
+  });
+  host.prepend(section);
+}
+
+function appendBulkRow(list, item, index, onChange) {
+  const li = document.createElement("li");
+  li.className = "bulk-review-row";
+  if (item.thumb) {
+    const img = document.createElement("img");
+    img.alt = "";
+    img.src = item.thumb;
+    li.appendChild(img);
+  } else {
+    const missing = document.createElement("span");
+    missing.className = "bulk-review-missing";
+    missing.textContent = "—";
+    li.appendChild(missing);
+  }
+  const fields = document.createElement("div");
+  const select = document.createElement("select");
+  select.setAttribute("aria-label", `Day for photo ${index + 1}`);
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = "Pick a day";
+  select.appendChild(blank);
+  BULK_DAY_DATES.forEach(([id]) => {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = bulkDayLabel(id);
+    select.appendChild(option);
+  });
+  select.value = item.dayId || "";
+  select.disabled = Boolean(item.unreadable);
+  const hint = document.createElement("p");
+  hint.className = "bulk-review-hint";
+  const showHint = () => {
+    if (item.unreadable) {
+      hint.hidden = false;
+      hint.textContent = "Couldn't open";
+      return;
+    }
+    if (item.dayId) {
+      hint.hidden = true;
+      return;
+    }
+    hint.hidden = false;
+    hint.textContent = item.date ? shortMonthDay(item.date) : "No date";
+  };
+  showHint();
+  select.addEventListener("change", () => {
+    item.dayId = select.value;
+    showHint();
+    onChange();
+  });
+  fields.append(select, hint);
+  li.appendChild(fields);
+  list.appendChild(li);
+}
+
+async function openBulkReview(files) {
+  closeBulkReview();
+  const token = bulkReviewToken;
+  const items = [];
+  const overlay = document.createElement("div");
+  overlay.className = "bulk-review";
+  overlay.id = "bulkReview";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "bulkReviewTitle");
+  overlay.innerHTML = `
+    <div class="bulk-review-bar">
+      <h2 id="bulkReviewTitle">Review photos</h2>
+      <p id="bulkReviewProgress" aria-live="polite"></p>
+    </div>
+    <ul class="bulk-review-list"></ul>
+    <div class="bulk-review-actions">
+      <button type="button" id="bulkReviewCancel">Cancel</button>
+      <button type="button" id="bulkReviewConfirm" disabled>Reading…</button>
+    </div>
+  `;
+  const progress = overlay.querySelector("#bulkReviewProgress");
+  const list = overlay.querySelector(".bulk-review-list");
+  const confirmBtn = overlay.querySelector("#bulkReviewConfirm");
+  const cancelBtn = overlay.querySelector("#bulkReviewCancel");
+  const revoke = () => {
+    items.forEach((item) => {
+      if (item.thumb) URL.revokeObjectURL(item.thumb);
+      item.thumb = "";
+    });
+  };
+  let reading = true;
+  let saving = false;
+  const updateConfirm = () => {
+    if (reading || saving) {
+      confirmBtn.disabled = true;
+      if (reading) confirmBtn.textContent = "Reading…";
+      return;
+    }
+    const readable = items.filter((item) => !item.unreadable);
+    const missing = readable.filter((item) => !item.dayId);
+    confirmBtn.disabled = !readable.length || missing.length > 0;
+    if (!readable.length) confirmBtn.textContent = "Couldn't open";
+    else if (missing.length) confirmBtn.textContent = missing.length === 1 ? "Pick a day" : `Pick a day for ${missing.length}`;
+    else confirmBtn.textContent = `Add ${readable.length} photo${readable.length === 1 ? "" : "s"}`;
+  };
+  const onKey = (event) => {
+    if (event.key !== "Escape" || bulkReviewToken !== token || saving) return;
+    event.preventDefault();
+    revoke();
+    closeBulkReview();
+  };
+  cancelBtn.addEventListener("click", () => {
+    if (saving) return;
+    revoke();
+    closeBulkReview();
+  });
+  confirmBtn.addEventListener("click", () => { void confirmBulk(); });
+  bulkReviewKey = onKey;
+  document.addEventListener("keydown", onKey);
+  document.body.classList.add("bulk-review-open");
+  document.body.appendChild(overlay);
+
+  async function confirmBulk() {
+    if (confirmBtn.disabled || saving || reading || bulkReviewToken !== token) return;
+    saving = true;
+    confirmBtn.disabled = true;
+    cancelBtn.disabled = true;
+    list.querySelectorAll("select").forEach((select) => { select.disabled = true; });
+    const ready = items.filter((item) => item.dayId && !item.unreadable);
+    let added = 0;
+    let failed = 0;
+    for (let index = 0; index < ready.length; index += 1) {
+      progress.textContent = `Adding ${index + 1} of ${ready.length}`;
+      await yieldToUi();
+      const item = ready[index];
+      try {
+        const dataUrl = await fileToStoredDataUrl(item.file);
+        if (!dataUrl) {
+          failed += 1;
+          continue;
+        }
+        const found = findDay(item.dayId);
+        await savePhotoRecord({
+          id: `${item.dayId}.photo.extra`,
+          text: "",
+          slot: "extra",
+          dayId: item.dayId,
+          dayTitle: found?.day?.title || "",
+          cityId: found?.cityId || ""
+        }, dataUrl, { caption: "", createdAt: item.createdAt || new Date().toISOString() });
+        added += 1;
+      } catch {
+        failed += 1;
+      }
+    }
+    void flushJournalQueue();
+    await renderAlbum();
+    const status = document.querySelector("#bulkAddStatus");
+    bulkAddMessage = failed
+      ? `Added ${added}. ${failed} failed.`
+      : `Added ${added} photo${added === 1 ? "" : "s"}.`;
+    if (status) status.textContent = bulkAddMessage;
+    revoke();
+    closeBulkReview();
+  }
+
+  for (let index = 0; index < files.length; index += 1) {
+    if (bulkReviewToken !== token) {
+      revoke();
+      return;
+    }
+    progress.textContent = `Reading ${index + 1} of ${files.length}`;
+    await yieldToUi();
+    const file = files[index];
+    const taken = await readFileTaken(file);
+    const thumb = await reviewThumb(file);
+    if (bulkReviewToken !== token) {
+      if (thumb) URL.revokeObjectURL(thumb);
+      revoke();
+      return;
+    }
+    const item = {
+      file,
+      thumb,
+      dayId: thumb ? taken.dayId : "",
+      date: taken.date,
+      createdAt: taken.createdAt,
+      unreadable: !thumb
+    };
+    items.push(item);
+    appendBulkRow(list, item, items.length - 1, updateConfirm);
+  }
+  if (bulkReviewToken !== token) return;
+  reading = false;
+  progress.textContent = `${items.length} photo${items.length === 1 ? "" : "s"}`;
+  updateConfirm();
+}
+
 function finishStoryPhotos(host, html) {
   host.innerHTML = html;
+  mountBulkAdd(host);
   mountStoryPhoneAlbum(host);
 }
 
@@ -7924,6 +8320,7 @@ async function renderStoryPhotos() {
     return;
   }
   host.innerHTML = `<p class="story-empty">Loading photos.</p>`;
+  mountBulkAdd(host);
   const deadline = Date.now() + 8000;
   const withinDeadline = (promise) => {
     const ms = deadline - Date.now();
@@ -8862,7 +9259,7 @@ async function flushJournalQueue() {
           dayId: item.dayId || photo.dayId,
           date: day?.day.date || "",
           author,
-          caption: item.caption || photo.caption || "",
+          caption: photo ? (photo.caption || "") : (item.caption || ""),
           clientId: item.clientId,
           createdAt: item.createdAt || photo.createdAt,
           image,
