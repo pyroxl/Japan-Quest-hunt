@@ -42,6 +42,9 @@ Every body includes `passcode`. A wrong passcode returns `{"ok":false,"error":"W
 
 - `uploadPhoto` saves a JPEG in that day's folder. The same `clientId` does not create a second file.
 - `updateCaption` changes the caption stored for an existing `clientId`. Redeploy the script after pulling this file so later caption edits reach Drive.
+- `movePhoto` moves an existing `clientId` into another day's folder and sheet row.
+- `deletePhoto` trashes that photo's Drive files and removes it from the sheet.
+- Redeploy the script (new version, same `/exec` URL) after pulling this file so move and delete reach Drive. Until then, the phone still updates its own copy.
 - `saveNote` keeps one row for each `dayId` and `author`.
 - `list` returns notes and photos. A list for one day includes a base64 thumbnail. The viewer does not sign in to Google.
 - `doGet?action=thumb&id=FILE_ID&passcode=...` returns the same thumbnail as text.

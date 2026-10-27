@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v223";
+const APP_VERSION = "japan-quest-v225";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1785,6 +1785,347 @@ async function commitPhotoCaption(photo, caption) {
   }
 }
 
+const selectedPhotoIds = new Set();
+const photoSurfaceHooks = new Map();
+let photoConfirmOpen = false;
+
+function notePhotoAction(text) {
+  const status = document.querySelector("#saveStatus");
+  if (status) status.textContent = text;
+}
+
+function dayConfirmLabel(dayId) {
+  const found = findDay(dayId);
+  return shortMonthDay(found?.day?.date || "") || found?.day?.short || "this day";
+}
+
+function photoOnExtraDay(photo, dayId) {
+  return photo.dayId === dayId && photo.slot === "extra" && photo.taskId === `${dayId}.photo.extra`;
+}
+
+function photoIsThumbnail(photo) {
+  const taskId = String(photo?.taskId || "");
+  return taskId.endsWith(".photo.thumbnail") || taskId.endsWith(".photo.capstone");
+}
+
+function askPhotoConfirm(message, confirmLabel) {
+  if (photoConfirmOpen) return Promise.resolve(false);
+  photoConfirmOpen = true;
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "photo-confirm";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    const card = document.createElement("div");
+    card.className = "photo-confirm-card";
+    const text = document.createElement("p");
+    text.textContent = message;
+    const actions = document.createElement("div");
+    actions.className = "photo-confirm-actions";
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.textContent = "Cancel";
+    const ok = document.createElement("button");
+    ok.type = "button";
+    ok.className = "photo-confirm-danger";
+    ok.textContent = confirmLabel;
+    const close = (value) => {
+      photoConfirmOpen = false;
+      document.removeEventListener("keydown", onKey);
+      overlay.remove();
+      resolve(value);
+    };
+    const onKey = (event) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      close(false);
+    };
+    cancel.addEventListener("click", () => close(false));
+    ok.addEventListener("click", () => close(true));
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) close(false);
+    });
+    document.addEventListener("keydown", onKey);
+    actions.append(cancel, ok);
+    card.append(text, actions);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+    ok.focus();
+  });
+}
+
+function fillPhotoDayOptions(select, blankLabel) {
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = blankLabel;
+  select.appendChild(blank);
+  BULK_DAY_DATES.forEach(([id]) => {
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = bulkDayLabel(id);
+    select.appendChild(option);
+  });
+}
+
+function appendPhotoDaySelect(parent, photo) {
+  const select = document.createElement("select");
+  select.className = "photo-day-select";
+  select.setAttribute("aria-label", "Move photo to day");
+  fillPhotoDayOptions(select, photo.dayId ? bulkDayLabel(photo.dayId) : "Pick a day");
+  select.addEventListener("change", () => {
+    const dayId = select.value;
+    if (!dayId) return;
+    select.disabled = true;
+    void movePhotoToDay(photo, dayId).finally(() => {
+      if (select.isConnected) {
+        select.disabled = false;
+        select.value = "";
+      }
+    });
+  });
+  parent.appendChild(select);
+}
+
+function appendPhotoTools(parent, photo) {
+  const row = document.createElement("div");
+  row.className = "photo-tools";
+  const label = document.createElement("label");
+  label.className = "photo-select";
+  const box = document.createElement("input");
+  box.type = "checkbox";
+  box.checked = selectedPhotoIds.has(photo.id);
+  box.setAttribute("aria-label", "Select");
+  box.addEventListener("change", () => {
+    if (box.checked) selectedPhotoIds.add(photo.id);
+    else selectedPhotoIds.delete(photo.id);
+    syncPhotoMoveBar();
+  });
+  const text = document.createElement("span");
+  text.textContent = "Select";
+  label.append(box, text);
+  const del = document.createElement("button");
+  del.type = "button";
+  del.className = "photo-delete";
+  del.textContent = "Delete";
+  del.addEventListener("click", () => { void askDeletePhoto(photo); });
+  row.append(label, del);
+  parent.appendChild(row);
+}
+
+function syncPhotoMoveBar() {
+  let bar = document.querySelector("#photoMoveBar");
+  if (!selectedPhotoIds.size) {
+    bar?.remove();
+    document.body.classList.remove("photo-move-open");
+    return;
+  }
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "photoMoveBar";
+    bar.className = "photo-move-bar";
+    const count = document.createElement("p");
+    count.className = "photo-move-count";
+    const select = document.createElement("select");
+    select.setAttribute("aria-label", "Move selected photos to day");
+    fillPhotoDayOptions(select, "Pick a day");
+    const move = document.createElement("button");
+    move.type = "button";
+    move.textContent = "Move";
+    move.addEventListener("click", () => { void moveSelectedPhotos(select, move); });
+    bar.append(count, select, move);
+    document.body.appendChild(bar);
+  }
+  document.body.classList.add("photo-move-open");
+  bar.querySelector(".photo-move-count").textContent = `${selectedPhotoIds.size} selected`;
+}
+
+async function refreshPhotoSurfaces({ calendar = false } = {}) {
+  const nodes = [...document.querySelectorAll("[data-photo-task]")];
+  for (const node of nodes) {
+    if (!node.isConnected) continue;
+    await renderPhotosForTask(node.dataset.photoTask, node, photoSurfaceHooks.get(node.dataset.photoTask));
+  }
+  if (document.querySelector("#albumGrid")) await renderAlbum();
+  syncPhotoMoveBar();
+  if (calendar) renderCalendar();
+}
+
+async function syncPhotoDay(photo) {
+  const items = await journalQueueAll().catch(() => []);
+  const item = items.find((entry) => entry.clientId === photo.clientId || entry.photoId === photo.id);
+  if (item && item.status !== "synced" && !item.pendingDelete) {
+    item.dayId = photo.dayId;
+    item.pendingMove = false;
+    await putJournalQueueItem(item);
+    return "";
+  }
+  const onDrive = Boolean(photo.driveFileId) || item?.status === "synced";
+  if (!onDrive || !photo.clientId) return "";
+  const queued = item || {
+    clientId: photo.clientId,
+    photoId: photo.id,
+    dayId: photo.dayId,
+    caption: photo.caption || "",
+    createdAt: photo.createdAt || "",
+    author: readJournalPrefs().author || "",
+    status: "synced",
+    attempts: 0,
+    lastError: ""
+  };
+  queued.dayId = photo.dayId;
+  queued.pendingMove = true;
+  queued.pendingDelete = false;
+  await putJournalQueueItem(queued);
+  if (!journalConfigured() || !readJournalPrefs().passcode) {
+    return "Moved on this phone. Drive stays on the old day until the journal script is updated.";
+  }
+  try {
+    const day = findDay(photo.dayId);
+    await journalPost({
+      action: "movePhoto",
+      clientId: photo.clientId,
+      dayId: photo.dayId,
+      date: day?.day?.date || ""
+    });
+    queued.pendingMove = false;
+    queued.lastError = "";
+    await putJournalQueueItem(queued);
+    return "";
+  } catch {
+    return "Moved on this phone. Drive stays on the old day until the journal script is updated.";
+  }
+}
+
+async function movePhotoToDay(photo, dayId, { refresh = true } = {}) {
+  if (!dayId || photoOnExtraDay(photo, dayId)) return { note: "", calendar: false };
+  const found = findDay(dayId);
+  const calendar = photoIsThumbnail(photo);
+  photo.dayId = dayId;
+  photo.cityId = found?.cityId || photo.cityId || "";
+  photo.dayTitle = found?.day?.title || photo.dayTitle || "";
+  photo.taskId = `${dayId}.photo.extra`;
+  photo.slot = "extra";
+  await putPhoto(photo);
+  const note = await syncPhotoDay(photo);
+  selectedPhotoIds.delete(photo.id);
+  if (refresh) {
+    await refreshPhotoSurfaces({ calendar });
+    notePhotoAction(note || "Saved on this phone");
+  }
+  return { note, calendar };
+}
+
+async function deleteSavedPhoto(photo, { refresh = true } = {}) {
+  const items = await journalQueueAll().catch(() => []);
+  const item = items.find((entry) => entry.clientId === photo.clientId || entry.photoId === photo.id);
+  const onDrive = Boolean(photo.driveFileId) || item?.status === "synced" || Boolean(item?.pendingMove);
+  let driveKept = false;
+  if (onDrive && photo.clientId) {
+    let removedRemote = false;
+    if (journalConfigured() && readJournalPrefs().passcode) {
+      try {
+        await journalPost({ action: "deletePhoto", clientId: photo.clientId });
+        removedRemote = true;
+      } catch {
+        removedRemote = false;
+      }
+    }
+    if (removedRemote) {
+      await removeJournalQueueItem(photo.clientId);
+    } else {
+      driveKept = true;
+      await putJournalQueueItem({
+        clientId: photo.clientId,
+        photoId: photo.id,
+        dayId: photo.dayId || "",
+        caption: "",
+        createdAt: photo.createdAt || "",
+        author: item?.author || readJournalPrefs().author || "",
+        status: "synced",
+        pendingDelete: true,
+        pendingMove: false,
+        attempts: item?.attempts || 0,
+        lastError: ""
+      });
+    }
+  } else if (photo.clientId) {
+    await removeJournalQueueItem(photo.clientId);
+  }
+  await removePhoto(photo.id);
+  selectedPhotoIds.delete(photo.id);
+  const calendar = photoIsThumbnail(photo);
+  if (refresh) {
+    await refreshPhotoSurfaces({ calendar });
+    notePhotoAction(driveKept
+      ? "Removed on this phone. Drive copy stays until the journal script is updated."
+      : "Saved on this phone");
+  }
+  return { driveKept, calendar };
+}
+
+async function askDeletePhoto(photo) {
+  const ok = await askPhotoConfirm("Delete this photo? This cannot be undone.", "Delete");
+  if (!ok) return;
+  await deleteSavedPhoto(photo);
+}
+
+async function askClearDay(dayId) {
+  const photos = (await getAllPhotos().catch(() => [])).filter((photo) => photo.dayId === dayId);
+  if (!photos.length) {
+    notePhotoAction("No photos for this day.");
+    return;
+  }
+  const ok = await askPhotoConfirm(
+    `Delete all ${photos.length} photo${photos.length === 1 ? "" : "s"} for ${dayConfirmLabel(dayId)}? This cannot be undone.`,
+    "Delete all"
+  );
+  if (!ok) return;
+  let driveKept = false;
+  let calendar = false;
+  for (const photo of photos) {
+    const result = await deleteSavedPhoto(photo, { refresh: false });
+    driveKept = driveKept || result.driveKept;
+    calendar = calendar || result.calendar;
+  }
+  await refreshPhotoSurfaces({ calendar });
+  notePhotoAction(driveKept
+    ? "Removed on this phone. Drive copy stays until the journal script is updated."
+    : "Saved on this phone");
+}
+
+function makeClearDayButton(dayId) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "photo-clear-day";
+  button.textContent = "Clear all photos for this day";
+  button.addEventListener("click", () => { void askClearDay(dayId); });
+  return button;
+}
+
+async function moveSelectedPhotos(select, button) {
+  const dayId = select.value;
+  if (!dayId || !selectedPhotoIds.size) return;
+  button.disabled = true;
+  select.disabled = true;
+  const ids = [...selectedPhotoIds];
+  const photos = await getAllPhotos().catch(() => []);
+  let note = "";
+  let calendar = false;
+  for (const id of ids) {
+    const photo = photos.find((entry) => entry.id === id);
+    if (!photo) {
+      selectedPhotoIds.delete(id);
+      continue;
+    }
+    const result = await movePhotoToDay(photo, dayId, { refresh: false });
+    if (result.note) note = result.note;
+    calendar = calendar || result.calendar;
+  }
+  select.value = "";
+  await refreshPhotoSurfaces({ calendar });
+  notePhotoAction(note || "Saved on this phone");
+}
+
 async function renderPhotosForTask(taskId, container, onPhotosChange) {
   if (!container) return;
   const photos = await getPhotosForTask(taskId).catch(() => []);
@@ -1797,19 +2138,8 @@ async function renderPhotosForTask(taskId, container, onPhotosChange) {
     img.src = photo.dataUrl;
     wrapper.appendChild(img);
     appendPhotoCaption(wrapper, photo);
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "photo-delete";
-    deleteButton.textContent = "Remove";
-    deleteButton.addEventListener("click", async () => {
-      await removePhoto(photo.id);
-      if (photo.clientId) await removeJournalQueueItem(photo.clientId);
-      await renderPhotosForTask(taskId, container, onPhotosChange);
-      await renderAlbum();
-      if (taskId.endsWith(".photo.thumbnail") || taskId.endsWith(".photo.capstone")) renderCalendar();
-      if (onPhotosChange) await onPhotosChange();
-    });
-    wrapper.appendChild(deleteButton);
+    appendPhotoDaySelect(wrapper, photo);
+    appendPhotoTools(wrapper, photo);
     container.appendChild(wrapper);
   });
   if (onPhotosChange) await onPhotosChange();
@@ -1911,6 +2241,8 @@ function makePhotoControls(task, _buttonText = "Add Photo", onPhotosChange) {
   const photos = document.createElement("div");
   controls.className = "photo-controls";
   photos.className = "quest-photos";
+  photos.dataset.photoTask = task.id;
+  if (onPhotosChange) photoSurfaceHooks.set(task.id, onPhotosChange);
   controls.appendChild(makePhotoPickers({
     id: task.id,
     multiple: galleryAllowsMultiple(task),
@@ -4836,11 +5168,15 @@ async function renderAlbum() {
       const albumKey = `${photo.cityId}.${photo.dayId}`;
       if (albumKey !== currentDay) {
         currentDay = albumKey;
+        const bar = document.createElement("div");
+        bar.className = "album-day-bar";
         const heading = document.createElement("h3");
         heading.className = "album-day-heading";
         const cityName = tripData[photo.cityId]?.name;
         heading.textContent = [cityName, photo.dayTitle || "Extra Album Photos"].filter(Boolean).join(" - ");
-        grid.appendChild(heading);
+        bar.appendChild(heading);
+        if (photo.dayId) bar.appendChild(makeClearDayButton(photo.dayId));
+        grid.appendChild(bar);
       }
       const item = document.createElement("article");
       item.className = "album-photo";
@@ -4855,6 +5191,8 @@ async function renderAlbum() {
         caption.appendChild(slot);
       }
       appendPhotoCaption(caption, photo);
+      appendPhotoDaySelect(caption, photo);
+      appendPhotoTools(caption, photo);
       item.append(img, caption);
       grid.appendChild(item);
     });
@@ -5362,7 +5700,7 @@ function makeDailyPhotoCard(day) {
   });
   const journal = document.createElement("section");
   journal.className = "day-journal";
-  content.append(journal, grid);
+  content.append(makeClearDayButton(day.id), journal, grid);
   mountDayJournal(journal, day);
   return card;
 }
@@ -9245,6 +9583,36 @@ async function flushJournalQueue() {
     const items = await journalQueueAll();
     let synced = false;
     for (const item of items) {
+      if (item.pendingDelete) {
+        try {
+          await journalPost({ action: "deletePhoto", clientId: item.clientId });
+          await removeJournalQueueItem(item.clientId);
+          synced = true;
+        } catch (error) {
+          item.lastError = error.message || "Delete failed.";
+          await putJournalQueueItem(item);
+        }
+        continue;
+      }
+      if (item.status === "synced" && item.pendingMove) {
+        try {
+          const movedDay = findDay(item.dayId);
+          await journalPost({
+            action: "movePhoto",
+            clientId: item.clientId,
+            dayId: item.dayId,
+            date: movedDay?.day?.date || ""
+          });
+          item.pendingMove = false;
+          item.lastError = "";
+          await putJournalQueueItem(item);
+          synced = true;
+        } catch (error) {
+          item.lastError = error.message || "Move failed.";
+          await putJournalQueueItem(item);
+        }
+        continue;
+      }
       if (item.status === "synced") continue;
       try {
         const photos = await getAllPhotos();

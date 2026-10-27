@@ -3870,13 +3870,19 @@ h3 {
 .quest-photos,
 .album-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
   gap: 8px;
 }
 
-.album-day-heading {
+.album-day-bar {
   grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
   margin: 10px 0 0;
+}
+
+.album-day-heading {
+  margin: 0;
   font-size: 0.96rem;
   letter-spacing: 0;
 }
@@ -6802,10 +6808,175 @@ body[data-traveler="mai"] .tax-qr-tip {
   gap: 4px;
 }
 
-.album-caption span {
+.album-caption > span {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 750;
+}
+
+.photo-day-select,
+.photo-move-bar select {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  color-scheme: only light;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  color: #1c0f14;
+  font-size: 16px;
+}
+
+.quest-photo .photo-day-select {
+  border-width: 1px 0 0;
+  border-radius: 0;
+}
+
+.photo-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px 8px;
+}
+
+.album-caption .photo-tools {
+  padding: 0;
+}
+
+.photo-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  color: #1c0f14;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.photo-select input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--rose);
+}
+
+.photo-clear-day {
+  justify-self: start;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid #1c0f14;
+  border-radius: 8px;
+  color-scheme: only light;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  color: #1c0f14;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.daily-photo-card > .photo-clear-day {
+  margin: 0 0 10px;
+}
+
+.photo-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  color-scheme: only light;
+  background: rgba(28, 15, 20, 0.35);
+}
+
+.photo-confirm-card {
+  width: min(100%, 340px);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #1c0f14;
+  border-radius: 12px;
+  color-scheme: only light;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  color: #1c0f14;
+}
+
+.photo-confirm-card p {
+  margin: 0;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.photo-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.photo-confirm-actions button {
+  min-height: 44px;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  color-scheme: only light;
+  background: #fff;
+  color: #1c0f14;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.photo-confirm-danger {
+  background: #1c0f14;
+  color: #fff;
+}
+
+.photo-move-bar {
+  position: fixed;
+  right: 0;
+  bottom: calc(108px + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  box-sizing: border-box;
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 8px 12px;
+  border-top: 1px solid #1c0f14;
+  color-scheme: only light;
+  background-color: #fff;
+  background-image: linear-gradient(#fff, #fff);
+  color: #1c0f14;
+}
+
+.photo-move-bar p {
+  margin: 0;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.photo-move-bar button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #1c0f14;
+  border-radius: 999px;
+  background: #1c0f14;
+  color: #fff;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+body.photo-move-open .app-shell {
+  padding-bottom: calc(200px + env(safe-area-inset-bottom));
 }
 
 .bulk-add {

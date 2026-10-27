@@ -93,15 +93,14 @@
   }
 
   function assignPhotoDay({ stamp, offset, lastModified } = {}) {
+    // Gallery apps often copy the file and set lastModified to now. That is not
+    // a taken date, so only EXIF may assign a day. lastModified stays unused.
+    void lastModified;
     if (parseStamp(stamp)) {
       const date = tokyoDateFromExif(stamp, offset);
       if (date) {
         return { date, dayId: bulkDayIdForDate(date), createdAt: exifInstantIso(stamp, offset) };
       }
-    }
-    if (Number.isFinite(lastModified) && lastModified > 0) {
-      const date = tokyoDateFromMs(lastModified);
-      return { date, dayId: bulkDayIdForDate(date), createdAt: new Date(lastModified).toISOString() };
     }
     return { date: "", dayId: "", createdAt: "" };
   }
