@@ -2,6 +2,7 @@ var ROOT_FOLDER_NAME = "Japan Trip Journal 2026";
 var SHEET_NAME = "Japan Trip Journal notes";
 var HEADERS = ["timestamp", "dayId", "date", "author", "note", "photo file ids"];
 var DAYS = {
+  oct23: { date: "2026-10-23", folder: "2026-10-23 Arrival" },
   day02: { date: "2026-10-24", folder: "2026-10-24 Day 2 Osaka" },
   day03: { date: "2026-10-25", folder: "2026-10-25 Day 3 Osaka" },
   day04: { date: "2026-10-26", folder: "2026-10-26 Day 4 Osaka" },
@@ -35,6 +36,8 @@ function doPost(e) {
   try {
     if (body.action === "uploadPhoto") return respond(uploadPhoto(body));
     if (body.action === "updateCaption") return respond(updateCaption(body));
+    if (body.action === "movePhoto") return respond(movePhoto(body));
+    if (body.action === "deletePhoto") return respond(deletePhoto(body));
     if (body.action === "saveNote") return respond(saveNote(body));
     if (body.action === "list") return respond(listJournal(body));
     if (body.action === "thumb") return respond({ ok: true, thumb: thumbBase64(body.fileId) });
@@ -207,6 +210,88 @@ function updateCaption(body) {
     if (!changed) continue;
     journal.sheet.getRange(i + 1, 1).setValue(nowStamp());
     journal.sheet.getRange(i + 1, 6).setValue(JSON.stringify(photos));
+    return { ok: true };
+  }
+  return { ok: false, error: "Photo not found." };
+}
+
+function moveDriveFile(fileId, folder) {
+  if (!fileId) return;
+  var file = DriveApp.getFileById(fileId);
+  try {
+    file.moveTo(folder);
+    return;
+  } catch (err) {}
+  folder.addFile(file);
+  var parents = file.getParents();
+  while (parents.hasNext()) {
+    var parent = parents.next();
+    if (parent.getId() !== folder.getId()) parent.removeFile(file);
+  }
+}
+
+function trashDriveFile(fileId) {
+  if (!fileId) return;
+  try { DriveApp.getFileById(fileId).setTrashed(true); } catch (err) {}
+}
+
+function movePhoto(body) {
+  if (!body.clientId || !body.dayId) return { ok: false, error: "Photo data is incomplete." };
+  var journal = ensureJournal();
+  var info = dayInfo(body);
+  var values = journal.sheet.getDataRange().getValues();
+  var found = null;
+  var fromRow = 0;
+  var author = "";
+  var fromPhotos = null;
+  for (var i = 1; i < values.length && !found; i++) {
+    var photos = parsePhotos(values[i][5]);
+    for (var p = 0; p < photos.length; p++) {
+      if (photos[p].clientId !== body.clientId) continue;
+      found = photos.splice(p, 1)[0];
+      fromRow = i + 1;
+      fromPhotos = photos;
+      author = String(values[i][3] || "");
+      break;
+    }
+  }
+  if (!found) return { ok: false, error: "Photo not found." };
+  if (String(values[fromRow - 1][1]) === String(body.dayId)) return { ok: true, sameDay: true };
+  var folder = folderByName(journal.root, info.folder);
+  moveDriveFile(found.fileId, folder);
+  moveDriveFile(found.thumbFileId, folder);
+  journal.sheet.getRange(fromRow, 1).setValue(nowStamp());
+  journal.sheet.getRange(fromRow, 6).setValue(JSON.stringify(fromPhotos));
+  var dest = findAuthorRow(journal.sheet, body.dayId, author);
+  if (!dest) {
+    journal.sheet.appendRow([nowStamp(), body.dayId, info.date, author, "", JSON.stringify([found])]);
+  } else {
+    var destPhotos = parsePhotos(journal.sheet.getRange(dest, 6).getValue());
+    destPhotos.push(found);
+    journal.sheet.getRange(dest, 1).setValue(nowStamp());
+    journal.sheet.getRange(dest, 3).setValue(info.date);
+    journal.sheet.getRange(dest, 6).setValue(JSON.stringify(destPhotos));
+  }
+  return { ok: true };
+}
+
+function deletePhoto(body) {
+  if (!body.clientId) return { ok: false, error: "Photo data is incomplete." };
+  var journal = ensureJournal();
+  var values = journal.sheet.getDataRange().getValues();
+  for (var i = 1; i < values.length; i++) {
+    var photos = parsePhotos(values[i][5]);
+    var removed = null;
+    var next = [];
+    for (var p = 0; p < photos.length; p++) {
+      if (photos[p].clientId === body.clientId) removed = photos[p];
+      else next.push(photos[p]);
+    }
+    if (!removed) continue;
+    trashDriveFile(removed.fileId);
+    trashDriveFile(removed.thumbFileId);
+    journal.sheet.getRange(i + 1, 1).setValue(nowStamp());
+    journal.sheet.getRange(i + 1, 6).setValue(JSON.stringify(next));
     return { ok: true };
   }
   return { ok: false, error: "Photo not found." };

@@ -101,9 +101,17 @@ assert.strictEqual(taken(heic).dayId, "day13");
 const loose = Buffer.from("meta 2026:11:08 09:30:00 end", "latin1");
 assert.strictEqual(taken(loose).dayId, "day17");
 
-assert.strictEqual(assignPhotoDay({ lastModified: Date.parse("2026-11-04T18:00:00Z") }).dayId, "day14");
-assert.strictEqual(assignPhotoDay({ lastModified: Date.parse("2026-11-13T02:00:00Z") }).dayId, "");
-assert.strictEqual(assignPhotoDay({ lastModified: Date.parse("2026-11-13T02:00:00Z") }).date, "2026-11-13");
+const bare = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
+const copiedToday = Date.parse("2026-10-28T01:00:00Z");
+assert.strictEqual(taken(bare, copiedToday).dayId, "");
+assert.strictEqual(taken(bare, copiedToday).date, "");
+assert.strictEqual(assignPhotoDay({ lastModified: copiedToday }).dayId, "");
+assert.strictEqual(assignPhotoDay({ lastModified: Date.parse("2026-11-04T18:00:00Z") }).dayId, "");
+assert.strictEqual(assignPhotoDay({ lastModified: Date.parse("2026-11-04T18:00:00Z") }).date, "");
+assert.strictEqual(assignPhotoDay({
+  stamp: "2026:10:26 19:05:00",
+  lastModified: copiedToday
+}).dayId, "day04");
 assert.strictEqual(assignPhotoDay({ lastModified: 0 }).dayId, "");
 assert.strictEqual(bulkDayIdForDate("2026-10-22"), "");
 assert.strictEqual(bulkDayIdForDate("2026-11-13"), "");
