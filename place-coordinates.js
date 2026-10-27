@@ -44,6 +44,10 @@ window.PLACE_COORDINATES = {
     34.689194,
     135.493264
   ],
+  "Yatagarasu UDON": [
+    34.682781,
+    135.516876
+  ],
   "Osakako Station": [
     34.6544,
     135.4316
