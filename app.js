@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v221";
+const APP_VERSION = "japan-quest-v222";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
