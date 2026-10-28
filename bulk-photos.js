@@ -117,6 +117,33 @@
     return /\.(jpe?g|png|gif|webp|heic|heif|avif)$/i.test(String(file?.name || ""));
   }
 
+  function mightBePhoto(file) {
+    if (isPhotoFile(file)) return true;
+    const type = String(file?.type || "").toLowerCase();
+    return type === "" || type === "application/octet-stream";
+  }
+
+  function sniffPhotoKind(bytes) {
+    if (!bytes || bytes.length < 12) return "";
+    if (bytes[0] === 0xff && bytes[1] === 0xd8) return "jpeg";
+    if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
+    if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return "gif";
+    if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return "webp";
+    if (bytes[4] !== 0x66 || bytes[5] !== 0x74 || bytes[6] !== 0x79 || bytes[7] !== 0x70) return "";
+    const brand = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]).toLowerCase();
+    if (brand === "avif") return "avif";
+    if (brand === "heic" || brand === "heif" || brand === "mif1" || brand === "msf1") return "heic";
+    return "";
+  }
+
+  function photoFileProblem({ size = 0, type = "", name = "", kind = "" } = {}) {
+    if (!Number(size)) return "Empty file";
+    if (kind === "heic" || isHeicFile({ type, name })) return "";
+    if (kind) return "";
+    if (isPhotoFile({ type, name })) return "";
+    return "Not an image";
+  }
+
   function readAscii(bytes, start, count) {
     if (start < 0 || start >= bytes.length || count <= 0) return "";
     const end = Math.min(bytes.length, start + count);
@@ -272,7 +299,10 @@
     exifInstantIso,
     isHeicFile,
     isPhotoFile,
+    mightBePhoto,
+    photoFileProblem,
     readTakenFromBytes,
+    sniffPhotoKind,
     tokyoDateFromExif,
     tokyoDateFromMs
   };

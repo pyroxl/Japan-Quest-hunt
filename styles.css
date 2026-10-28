@@ -5042,6 +5042,28 @@ button.trip-date {
   gap: 10px;
 }
 
+.journal-panel.hidden {
+  display: none;
+}
+
+.day-add-row {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.day-add-row .photo-button {
+  justify-self: start;
+  min-height: 44px;
+}
+
+.journal-signin {
+  margin: 0;
+  color: #1c0f14;
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
 .day-journal {
   margin: 0 0 14px;
   padding: 12px;

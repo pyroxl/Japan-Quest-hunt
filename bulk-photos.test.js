@@ -5,7 +5,10 @@ const {
   bulkDayIdForDate,
   isHeicFile,
   isPhotoFile,
-  readTakenFromBytes
+  mightBePhoto,
+  photoFileProblem,
+  readTakenFromBytes,
+  sniffPhotoKind
 } = require("./bulk-photos.js");
 
 function buildExifJpeg({ little = true, original, offsetText, prefixApp0 = false }) {
@@ -134,5 +137,16 @@ assert.strictEqual(isPhotoFile({ type: "", name: "IMG_2044.HEIC" }), true);
 assert.strictEqual(isHeicFile({ type: "", name: "IMG_2044.HEIC" }), true);
 assert.strictEqual(isHeicFile({ type: "image/jpeg", name: "IMG_2044.JPG" }), false);
 assert.strictEqual(isPhotoFile({ type: "text/plain", name: "notes.txt" }), false);
+assert.strictEqual(mightBePhoto({ type: "", name: "item" }), true);
+assert.strictEqual(mightBePhoto({ type: "application/octet-stream", name: "item" }), true);
+assert.strictEqual(mightBePhoto({ type: "text/plain", name: "notes.txt" }), false);
+assert.strictEqual(sniffPhotoKind(Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0])), "jpeg");
+assert.strictEqual(sniffPhotoKind(Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0, 0, 0, 0, 0, 0, 0, 0])), "png");
+assert.strictEqual(sniffPhotoKind(Uint8Array.from([0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x68, 0x65, 0x69, 0x63])), "heic");
+assert.strictEqual(sniffPhotoKind(Uint8Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])), "");
+assert.strictEqual(photoFileProblem({ size: 0, type: "image/jpeg", name: "a.jpg" }), "Empty file");
+assert.strictEqual(photoFileProblem({ size: 20, type: "", name: "item", kind: "jpeg" }), "");
+assert.strictEqual(photoFileProblem({ size: 20, type: "image/heic", name: "a.heic" }), "");
+assert.strictEqual(photoFileProblem({ size: 20, type: "", name: "notes.txt" }), "Not an image");
 
 console.log("bulk-photos.test.js ok");
