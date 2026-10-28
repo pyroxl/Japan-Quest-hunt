@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v225";
+const APP_VERSION = "japan-quest-v226";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -2149,34 +2149,44 @@ function galleryAllowsMultiple(task) {
   return !task?.slot || task.slot === "extra" || task.slot === "quest";
 }
 
+function androidPhone() {
+  return /Android/i.test(navigator.userAgent || "");
+}
+
 function makePhotoPickers({ id, multiple = false, onChange }) {
   const pickers = document.createElement("div");
   pickers.className = "photo-pickers";
-  const gallery = document.createElement("input");
-  const camera = document.createElement("input");
-  const galleryLabel = document.createElement("label");
-  const cameraLabel = document.createElement("label");
-  gallery.id = `${id}.gallery`;
-  gallery.type = "file";
-  gallery.accept = "image/*";
-  gallery.multiple = Boolean(multiple);
-  camera.id = `${id}.camera`;
-  camera.type = "file";
-  camera.accept = "image/*";
-  camera.setAttribute("capture", "environment");
-  galleryLabel.className = "photo-button";
-  galleryLabel.htmlFor = gallery.id;
-  galleryLabel.textContent = "Choose from gallery";
-  cameraLabel.className = "photo-button";
-  cameraLabel.htmlFor = camera.id;
-  cameraLabel.textContent = "Take photo";
-  [gallery, camera].forEach((input) => {
+  const photos = document.createElement("input");
+  const photosLabel = document.createElement("label");
+  photos.id = `${id}.photos`;
+  photos.type = "file";
+  photos.accept = "image/*";
+  photos.multiple = Boolean(multiple);
+  photosLabel.className = "photo-button";
+  photosLabel.htmlFor = photos.id;
+  photosLabel.textContent = "Choose photos";
+  const inputs = [photos];
+  pickers.append(photosLabel, photos);
+  if (androidPhone()) {
+    const files = document.createElement("input");
+    const filesLabel = document.createElement("label");
+    files.id = `${id}.files`;
+    files.type = "file";
+    // Android Chrome sends image/* to the photo picker, which opens Google Photos.
+    // Leaving accept unset uses the Files screen, where DCIM/Camera is local.
+    files.multiple = Boolean(multiple);
+    filesLabel.className = "photo-button";
+    filesLabel.htmlFor = files.id;
+    filesLabel.textContent = "From phone files";
+    pickers.append(filesLabel, files);
+    inputs.push(files);
+  }
+  inputs.forEach((input) => {
     input.addEventListener("change", async (event) => {
       await onChange(event.target.files);
       event.target.value = "";
     });
   });
-  pickers.append(galleryLabel, cameraLabel, gallery, camera);
   return pickers;
 }
 
@@ -2206,34 +2216,77 @@ async function savePhotoRecord(task, dataUrl, options = {}) {
   });
 }
 
-async function fileToStoredDataUrl(file) {
-  if (!isHeicFile(file)) return fileToDataUrl(file);
-  if (typeof createImageBitmap !== "function") return "";
+function photoReadErrorMessage(error) {
+  const name = String(error?.name || "");
+  const message = String(error?.message || error || "");
+  if (name === "QuotaExceededError" || /quota/i.test(message)) return "Phone storage is full";
+  if (/empty file/i.test(message)) return "Empty file";
+  if (/not an image/i.test(message)) return "Not an image";
+  if (/heic/i.test(message)) return "This phone can't open HEIC. Pick a JPEG.";
+  return "Couldn't read this file";
+}
+
+async function drawPhotoFile(file, maxEdge, quality) {
+  const url = URL.createObjectURL(file);
   try {
-    const bitmap = await createImageBitmap(file);
-    const scale = Math.min(1, 2048 / Math.max(bitmap.width, bitmap.height, 1));
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("decode"));
+      img.src = url;
+    });
+    const scale = Math.min(1, maxEdge / Math.max(image.width, image.height, 1));
     const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    bitmap.close?.();
-    return canvas.toDataURL("image/jpeg", 0.85);
+    canvas.width = Math.max(1, Math.round(image.width * scale));
+    canvas.height = Math.max(1, Math.round(image.height * scale));
+    canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/jpeg", quality);
   } catch {
     return "";
+  } finally {
+    URL.revokeObjectURL(url);
   }
 }
 
+async function fileToStoredDataUrl(file) {
+  if (!file || !Number(file.size)) throw new Error("Empty file");
+  if (isHeicFile(file)) {
+    const drawn = await drawPhotoFile(file, 2048, 0.82);
+    if (!drawn) throw new Error("HEIC");
+    return drawn;
+  }
+  let dataUrl = "";
+  try { dataUrl = await fileToDataUrl(file); } catch { dataUrl = ""; }
+  if (!dataUrl || dataUrl.length > 1800000) {
+    const drawn = await drawPhotoFile(file, 2048, 0.82);
+    if (drawn) return drawn;
+  }
+  if (!dataUrl) throw new Error("Couldn't read this file");
+  return dataUrl;
+}
+
 async function handlePhotoFiles(files, task, container) {
+  const problems = [];
+  let added = 0;
   for (const file of Array.from(files || [])) {
-    if (!isPhotoFile(file)) continue;
-    const dataUrl = await fileToStoredDataUrl(file);
-    if (!dataUrl) continue;
-    await savePhotoRecord(task, dataUrl);
+    if (!mightBePhoto(file)) {
+      problems.push("Not an image");
+      continue;
+    }
+    try {
+      const dataUrl = await fileToStoredDataUrl(file);
+      await savePhotoRecord(task, dataUrl);
+      added += 1;
+    } catch (error) {
+      problems.push(photoReadErrorMessage(error));
+    }
   }
   void flushJournalQueue();
   await renderPhotosForTask(task.id, container);
   await renderAlbum();
   if (task.id.endsWith(".photo.thumbnail") || task.id.endsWith(".photo.capstone")) renderCalendar();
+  if (problems.length) notePhotoAction(problems[0]);
+  else if (added) notePhotoAction("Saved on this phone");
 }
 
 function makePhotoControls(task, _buttonText = "Add Photo", onPhotosChange) {
@@ -5676,6 +5729,38 @@ function makeMapCard(day) {
   return card;
 }
 
+function journalSyncText() {
+  const prefs = readJournalPrefs();
+  if (!prefs.author || !prefs.passcode) return "Journal not signed in";
+  if (prefs.lastSync) return `Signed in as ${prefs.author} ✓ · Sync is on`;
+  return `Signed in as ${prefs.author} ✓ · Not synced yet`;
+}
+
+function paintJournalSignIn() {
+  const text = journalSyncText();
+  document.querySelectorAll(".journal-signin").forEach((node) => {
+    node.textContent = text;
+  });
+}
+
+function makeDayAddRow(journalFold) {
+  const row = document.createElement("div");
+  row.className = "day-add-row";
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "photo-button";
+  button.textContent = "Add photos";
+  button.addEventListener("click", () => {
+    journalFold.open = true;
+    journalFold.querySelector(".daily-photo-grid")?.scrollIntoView({ block: "start" });
+  });
+  const signIn = document.createElement("p");
+  signIn.className = "journal-signin";
+  signIn.textContent = journalSyncText();
+  row.append(button, signIn);
+  return row;
+}
+
 function makeDailyPhotoCard(day) {
   const card = document.createElement("section");
   card.className = "daily-photo-card";
@@ -5700,7 +5785,10 @@ function makeDailyPhotoCard(day) {
   });
   const journal = document.createElement("section");
   journal.className = "day-journal";
-  content.append(makeClearDayButton(day.id), journal, grid);
+  const signIn = document.createElement("p");
+  signIn.className = "journal-signin";
+  signIn.textContent = journalSyncText();
+  content.append(signIn, grid, makeClearDayButton(day.id), journal);
   mountDayJournal(journal, day);
   return card;
 }
@@ -5892,9 +5980,10 @@ function openItemRowHtml(item) {
   </article>`;
 }
 
-function foldSection(title, node) {
+function foldSection(title, node, open = false) {
   const details = document.createElement("details");
   details.className = "day-fold";
+  if (open) details.open = true;
   const summary = document.createElement("summary");
   summary.textContent = title;
   details.append(summary, node);
@@ -6300,10 +6389,13 @@ function mountDayView(host, day) {
     host.querySelector(".day-date-row").append(weather);
     parts.push(makeDayFrontPage(day));
     if (day.id !== "oct23") {
+      const journalFold = foldSection("Journal", makeDailyPhotoCard(day), true);
+      journalFold.classList.add("day-photo-fold");
+      parts.unshift(makeDayAddRow(journalFold));
       parts.push(
         foldSection("Quest", makeQuestPage(day)),
         makeMapCard(day),
-        foldSection("Journal", makeDailyPhotoCard(day)),
+        journalFold,
         makeDayDetails(day)
       );
     } else parts.push(makeMapCard(day));
@@ -8376,28 +8468,19 @@ async function readFileTaken(file) {
   });
 }
 
-async function reviewThumb(file) {
-  if (typeof createImageBitmap !== "function") {
-    if (isHeicFile(file)) return "";
-    try { return URL.createObjectURL(file); } catch { return ""; }
-  }
+function reviewThumb(file) {
+  if (isHeicFile(file)) return "";
+  try { return URL.createObjectURL(file); } catch { return ""; }
+}
+
+async function photoReadProblem(file) {
+  if (!file || !Number(file.size)) return "Empty file";
   try {
-    let bitmap;
-    try {
-      bitmap = await createImageBitmap(file, { resizeWidth: 192, resizeQuality: "low" });
-    } catch {
-      bitmap = await createImageBitmap(file);
-    }
-    const scale = Math.min(1, 192 / Math.max(bitmap.width, bitmap.height, 1));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    bitmap.close?.();
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.72));
-    return blob ? URL.createObjectURL(blob) : "";
+    const head = new Uint8Array(await file.slice(0, 32).arrayBuffer());
+    const kind = sniffPhotoKind(head);
+    return photoFileProblem({ size: file.size, type: file.type, name: file.name, kind });
   } catch {
-    return "";
+    return "Couldn't read this file";
   }
 }
 
@@ -8423,29 +8506,30 @@ function mountBulkAdd(host) {
   section.innerHTML = `
     <h3>Bulk add photos</h3>
     <p class="bulk-add-lead">Filed by the day each photo was taken.</p>
-    <label class="photo-button" for="bulkAddInput">Choose photos</label>
-    <input id="bulkAddInput" type="file" accept="image/*,image/heic,image/heif,.heic,.heif" multiple>
+    <p class="journal-signin"></p>
     <p id="bulkAddStatus"></p>
   `;
-  const input = section.querySelector("#bulkAddInput");
   const statusLine = section.querySelector("#bulkAddStatus");
   if (statusLine && bulkAddMessage) statusLine.textContent = bulkAddMessage;
-  input.addEventListener("change", () => {
-    const files = Array.from(input.files || []);
-    input.value = "";
-    if (!files.length) return;
-    const images = files.filter(isPhotoFile);
-    const status = section.querySelector("#bulkAddStatus");
-    if (!images.length) {
-      bulkAddMessage = "Choose image files.";
-      if (status) status.textContent = bulkAddMessage;
-      return;
+  const pickers = makePhotoPickers({
+    id: "bulkAdd",
+    multiple: true,
+    onChange: (files) => {
+      const images = Array.from(files || []).filter(mightBePhoto);
+      const status = section.querySelector("#bulkAddStatus");
+      if (!images.length) {
+        bulkAddMessage = "Not an image";
+        if (status) status.textContent = bulkAddMessage;
+        return;
+      }
+      bulkAddMessage = "";
+      if (status) status.textContent = "";
+      void openBulkReview(images);
     }
-    bulkAddMessage = "";
-    if (status) status.textContent = "";
-    void openBulkReview(images);
   });
+  section.querySelector(".bulk-add-lead").insertAdjacentElement("afterend", pickers);
   host.prepend(section);
+  paintJournalSignIn();
 }
 
 function appendBulkRow(list, item, index, onChange) {
@@ -8482,7 +8566,7 @@ function appendBulkRow(list, item, index, onChange) {
   const showHint = () => {
     if (item.unreadable) {
       hint.hidden = false;
-      hint.textContent = "Couldn't open";
+      hint.textContent = item.reason || "Couldn't read this file";
       return;
     }
     if (item.dayId) {
@@ -8545,7 +8629,7 @@ async function openBulkReview(files) {
     const readable = items.filter((item) => !item.unreadable);
     const missing = readable.filter((item) => !item.dayId);
     confirmBtn.disabled = !readable.length || missing.length > 0;
-    if (!readable.length) confirmBtn.textContent = "Couldn't open";
+    if (!readable.length) confirmBtn.textContent = items[0]?.reason || "Couldn't read this file";
     else if (missing.length) confirmBtn.textContent = missing.length === 1 ? "Pick a day" : `Pick a day for ${missing.length}`;
     else confirmBtn.textContent = `Add ${readable.length} photo${readable.length === 1 ? "" : "s"}`;
   };
@@ -8575,16 +8659,13 @@ async function openBulkReview(files) {
     const ready = items.filter((item) => item.dayId && !item.unreadable);
     let added = 0;
     let failed = 0;
+    let reason = "";
     for (let index = 0; index < ready.length; index += 1) {
       progress.textContent = `Adding ${index + 1} of ${ready.length}`;
       await yieldToUi();
       const item = ready[index];
       try {
         const dataUrl = await fileToStoredDataUrl(item.file);
-        if (!dataUrl) {
-          failed += 1;
-          continue;
-        }
         const found = findDay(item.dayId);
         await savePhotoRecord({
           id: `${item.dayId}.photo.extra`,
@@ -8595,15 +8676,16 @@ async function openBulkReview(files) {
           cityId: found?.cityId || ""
         }, dataUrl, { caption: "", createdAt: item.createdAt || new Date().toISOString() });
         added += 1;
-      } catch {
+      } catch (error) {
         failed += 1;
+        reason = photoReadErrorMessage(error);
       }
     }
     void flushJournalQueue();
     await renderAlbum();
     const status = document.querySelector("#bulkAddStatus");
     bulkAddMessage = failed
-      ? `Added ${added}. ${failed} failed.`
+      ? (added ? `Added ${added}. ${reason}` : reason)
       : `Added ${added} photo${added === 1 ? "" : "s"}.`;
     if (status) status.textContent = bulkAddMessage;
     revoke();
@@ -8618,8 +8700,9 @@ async function openBulkReview(files) {
     progress.textContent = `Reading ${index + 1} of ${files.length}`;
     await yieldToUi();
     const file = files[index];
-    const taken = await readFileTaken(file);
-    const thumb = await reviewThumb(file);
+    const problem = await photoReadProblem(file);
+    const taken = problem ? { date: "", dayId: "", createdAt: "" } : await readFileTaken(file).catch(() => ({ date: "", dayId: "", createdAt: "" }));
+    const thumb = problem ? "" : reviewThumb(file);
     if (bulkReviewToken !== token) {
       if (thumb) URL.revokeObjectURL(thumb);
       revoke();
@@ -8628,10 +8711,11 @@ async function openBulkReview(files) {
     const item = {
       file,
       thumb,
-      dayId: thumb ? taken.dayId : "",
-      date: taken.date,
-      createdAt: taken.createdAt,
-      unreadable: !thumb
+      dayId: taken.dayId || "",
+      date: taken.date || "",
+      createdAt: taken.createdAt || "",
+      unreadable: Boolean(problem),
+      reason: problem
     };
     items.push(item);
     appendBulkRow(list, item, items.length - 1, updateConfirm);
@@ -9920,15 +10004,14 @@ async function waitingPhotoCount() {
 
 function renderJournalStatus() {
   const status = document.querySelector("#journalStatus");
+  paintJournalSignIn();
+  if (status) status.textContent = journalSyncText();
   if (!status) return;
-  const prefs = readJournalPrefs();
   waitingPhotoCount().then((count) => {
-    const lines = [];
-    if (!journalConfigured()) lines.push("Journal sync is not set up yet.");
-    lines.push(count === 1 ? "1 photo waiting to upload." : `${count} photos waiting to upload.`);
-    lines.push(prefs.lastSync ? `Last sync: ${new Date(prefs.lastSync).toLocaleString()}.` : "No sync yet.");
-    lines.push(prefs.passcode ? "Passcode saved on this phone." : "No passcode saved.");
-    status.textContent = lines.join(" ");
+    if (!status.isConnected) return;
+    const waiting = count ? ` ${count} photo${count === 1 ? "" : "s"} waiting to upload.` : "";
+    status.textContent = `${journalSyncText()}${waiting}`;
+    paintJournalSignIn();
   });
 }
 
@@ -9950,7 +10033,7 @@ function renderJournalSettings() {
       <input id="journalCustomName" type="text" maxlength="40" value="${escapeHtml(known ? "" : prefs.author)}">
     </label>
     <label class="journal-field">Family passcode
-      <input id="journalPasscode" type="password" autocomplete="current-password" maxlength="80">
+      <input id="journalPasscode" type="password" autocomplete="current-password" maxlength="80" placeholder="${prefs.passcode ? "Saved on this phone" : ""}">
     </label>
     <div class="journal-actions">
       <button type="button" id="journalSave">Save on this phone</button>
