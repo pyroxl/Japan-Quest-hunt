@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v228";
+const APP_VERSION = "japan-quest-v229";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -325,12 +325,12 @@ const roadmapGoals = [
   { id: "izakaya", goal: "At least one izakaya night", days: ["day04"], status: "Ready", why: "Bochi bochi on Oct 26 is the izakaya night, booked by Sayaka. She joins dinner only.", blocker: "", fallback: "Keep the 19:00 booking." },
   { id: "konbini", goal: "7-Eleven and konbini food experience", days: ["day02"], status: "Ready", why: "The first small everyday-Japan ritual begins immediately.", blocker: "", fallback: "Build breakfast from the nearest station or hotel konbini." },
   { id: "nara", goal: "Nara Park", days: ["day06"], status: "Ready", why: "Nara bridges Osaka and Kyoto with one iconic first-trip experience.", blocker: "", fallback: "Use taxis and keep the visit to the park and Todai-ji approach." },
-  { id: "nijo", goal: "Nijo Castle", days: ["day09"], status: "Ready", why: "It is Kyoto's strongest non-temple historic anchor and opens the compact central-Kyoto day.", blocker: "", fallback: "Keep Nijo, then skip either the palace or Manga Museum and rejoin at Nishiki or dinner." },
+  { id: "nijo", goal: "Nijo Castle", days: ["day08"], status: "Ready", why: "On the rainy Friday it is the covered historic stop, after the museum and the market.", blocker: "", fallback: "Keep Nijo, skip the market or the museum, and rejoin at the hotel. Dinner stays at 18:00." },
   { id: "mt-inari", goal: "Early Fushimi Inari climb", days: ["day07"], status: "Ready", why: "Mai's hillside torii priority now begins a coherent southeast-to-Higashiyama sweep.", blocker: "", fallback: "Turn around at Yotsutsuji or sooner; parents skip Inari and Tofuku-ji entirely." },
   { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day07"], status: "Ready", why: `Parents meet the couple at Kiyomizu after the Inari and Tofuku-ji morning, then walk down to Endo lunch. ${ENDO_PARTY}`, blocker: "", fallback: "Taxi toward Kiyomizu, descend the slopes, and protect the 14:00 Endo sitting." },
-  { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day08"], status: "Ready", why: "Bamboo and Togetsukyo lead naturally into Ryoan-ji and Kinkaku-ji via the Randen corridor.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by taxi." },
+  { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day09"], status: "Ready", why: "Saturday is the sunny outdoor day. Going early beats the Saturday crowds, then the Randen and a city bus reach Kinkaku-ji.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by city bus." },
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
-  { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a Kyoto mountain morning with Enryaku-ji and forest paths. The evening is Uzumasa.", blocker: "Confirm seasonal cable car, ropeway, bus operations and last descent timing so the 15:00 hotel rest still holds.", fallback: "Use the most assisted route and return earlier if weather or legs push back." },
+  { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a Kyoto mountain morning with Enryaku-ji. The way up is the 08:51 Keihan bus, because the Eizan cable starts at 09:00. The evening is Uzumasa.", blocker: "Dinner around Uzumasa is still not picked. On the morning, confirm the 12:21 Keihan 56/56A bus is running. Some circle-marked trips on that route are suspended.", fallback: "If the 12:21 bus is not running, skip the forest walk and take the 14:11 drive bus. Sanjo Keihan at 15:00." },
   { id: "mountain-chapter", goal: "Three-night Hakone retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "The confirmed Gora hotel beside the station makes the mountain chapter usable by scheduled transport, with Mai's sunrise shrine visit, the reverse classic loop and a real hiking day.", blocker: "Prebook the Nov 9 05:30 taxi. Recheck the November bus, cruise, and ropeway timetable. Recheck the Mount Kintoki trail. Breakfast and dinner are included. Message the hotel through the Booking.com app. Request the hotpot and Japanese course venue.", fallback: "Use the earliest public-transport route to Moto-Hakone if the taxi cannot be arranged; use the H bus and Tozan train to return to Gora if the loop is cancelled." },
   { id: "hakone-return", goal: "Protected Hakone–Tokyo return", days: ["day20"], status: "Ready", why: "Hakone 30 is booked for 10:10 from Hakone-Yumoto. A reserved morning rail return avoids highway uncertainty and leaves time for luggage and a soft Tokyo landing.", blocker: "", fallback: "Use regular Odakyu services if the preferred Romancecar sells out." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
@@ -338,7 +338,7 @@ const roadmapGoals = [
   { id: "shibuya-crossing", goal: "Dad's Shibuya Crossing", days: ["day16"], status: "Ready", why: "It gives Dad's Tokyo request a clear morning anchor without jeopardizing the evening meetup.", blocker: "", fallback: "Cross once, take the Hachiko photo, and skip the mall stop." },
   { id: "friends-day", goal: "Evening with Akko", days: ["day16"], status: "Needs Confirmation", why: "The social evening is the protected capstone, so the Shibuya day ends early enough to travel wherever Akko chooses.", blocker: "Confirm meeting point, time, and whether Yoshi is joining.", fallback: "Leave Shibuya by 15:30 and keep dinner seated and unhurried." },
   { id: "asakusa-hall", goal: "Asakusa Engei Hall for Mai", days: ["day20"], status: "Needs Schedule Check", why: "A short yose visit adds rakugo and variety entertainment without taking over the Hakone return day.", blocker: "Check the Nov 11 bill when it is published about one month ahead; special programs can change the normal hours.", fallback: "If the return reaches Shinjuku after 14:00, skip the hall and protect luggage, rest, and dinner." },
-  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day09", "day15", "day16"], status: "Ready", why: "The optional Kyoto International Manga Museum and Kichijoji provide imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum for a parent rest window and preserve Kichijoji." },
+  { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day08", "day15", "day16"], status: "Ready", why: "The Friday Manga Museum and Kichijoji provide imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum and rest at the hotel. Keep Kichijoji." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Ready", why: "Mai already responded strongly to the visual experience. The Entrance Pass is booked for 12:30–13:00.", blocker: "", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
 ];
@@ -363,13 +363,13 @@ const regionalQuestPools = {
     ["kyoto-tea", "food", "Find a matcha, hojicha, or tea-flavored treat.", null, ["city"]],
     ["kyoto-noodles", "food", "Choose soba or udon for an easy meal.", null, ["city"]],
     ["kyoto-flip-up", "food", "Try a bread from Flip Up! near the hotel and Manga Museum.", null, ["central"]],
-    ["kyoto-handicraft", "culture", "Browse the Kyoto Handicraft Center for traditional crafts and a meaningful keepsake.", ["day09"], ["central"]],
-    ["kyoto-teramachi", "culture", "Walk a bounded stretch of Teramachi Street when it naturally connects the palace, Nishiki, or dinner route.", ["day09"], ["central"]],
-    ["kyoto-department-store", "culture", "Use a department-store restaurant floor for choice and its basement depachika for compact souvenirs.", ["day09"], ["central"]],
+    ["kyoto-handicraft", "culture", "Browse the Kyoto Handicraft Center for traditional crafts and a meaningful keepsake.", ["day08"], ["central"]],
+    ["kyoto-teramachi", "culture", "Walk a bounded stretch of the covered Teramachi or Shinkyogoku arcades between Nishiki and the subway.", ["day08"], ["central"]],
+    ["kyoto-department-store", "culture", "Use a department-store restaurant floor for choice and its basement depachika for compact souvenirs.", ["day08"], ["central"]],
     ["kyoto-noren", "find", "Find a beautiful noren, lantern, or tiny garden.", null, ["gion", "higashiyama"]],
     ["kyoto-river", "photo", "Catch a quiet river routine.", null, ["gion", "arashiyama", "pontocho"]],
     ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto.", null, ["city"]],
-    ["kyoto-hiei", "culture", "Confirm the seasonal Mt Hiei route, then make Enryaku-ji and one forest walk the morning focus.", ["day10"], ["hiei"]]
+    ["kyoto-hiei", "culture", "Take the 08:51 Keihan bus to Enryaku-ji, then one short forest walk only if the 14:11 bus still works.", ["day10"], ["hiei"]]
   ],
   nara: [
     ["nara-kakinoha", "food", "Try kakinoha-zushi in Nara.", null, ["nara"]],
@@ -383,7 +383,7 @@ const regionalQuestPools = {
     ["himeji-snack", "food", "Pick one compact Himeji station snack.", null, ["himeji"]],
     ["himeji-reveal", "photo", "Photograph the first full white-castle reveal.", null, ["himeji"]],
     ["himeji-defense", "find", "Spot one castle-defense detail.", null, ["himeji"]],
-    ["himeji-garden", "photo", "Frame the keep from Koko-en if the garden route wins.", null, ["himeji"]]
+    ["himeji-garden", "photo", "Frame the keep from Koko-en. Do the garden first, before the castle.", null, ["himeji"]]
   ],
   hiroshima: [
     ["hiroshima-okonomiyaki", "food", "Try layered Hiroshima-style okonomiyaki.", null, ["city"]],
@@ -429,8 +429,8 @@ const DAY_QUEST_AREAS = {
   day05: ["castle"],
   day06: ["nara"],
   day07: ["gion", "fushimi", "higashiyama"],
-  day08: ["arashiyama"],
-  day09: ["central", "pontocho"],
+  day08: ["central", "pontocho"],
+  day09: ["arashiyama"],
   day10: ["hiei"],
   day11: ["himeji"],
   day12: ["peace"],
@@ -502,8 +502,8 @@ const dayWalkingTime = {
   day05: "~2–3 hr",
   day06: "~3–4 hr",
   day07: "~4–5 hr",
-  day08: "~3–4 hr",
-  day09: "~3 hr",
+  day08: "~2 hr",
+  day09: "~3–4 hr",
   day10: "~4–5 hr",
   day11: "~3 hr",
   day12: "~2–3 hr",
@@ -525,9 +525,9 @@ const dayWakeUpTime = {
   day05: "08:30",
   day06: "06:30",
   day07: "05:45",
-  day08: "05:45",
-  day09: "07:00",
-  day10: "05:45",
+  day08: "08:00",
+  day09: "06:00",
+  day10: "07:15",
   day11: "06:15",
   day12: "07:00",
   day13: "06:30",
@@ -541,7 +541,7 @@ const dayWakeUpTime = {
   day21: "07:00"
 };
 
-const vitalEarlyWakeDays = new Set(["day07", "day10", "day11", "day18", "day19"]);
+const vitalEarlyWakeDays = new Set(["day07", "day09", "day11", "day18", "day19"]);
 
 const calendarThumbnailIdeas = {
   day17: "Idea: backpack or daypack + Gora mountain railway",
@@ -696,7 +696,7 @@ const tripData = {
   kyoto: {
     name: "Kyoto",
     baseLabel: "Hotel Monterey Kyoto",
-    description: "Geographic Kyoto clusters: Inari-to-Gion, Arashiyama-to-Kinkaku, central history, and Mt Hiei.",
+    description: "Geographic Kyoto clusters: Inari-to-Gion, a rainy central day, Arashiyama-to-Kinkaku, and Mt Hiei.",
     ongoing: [
       {
         title: "Kyoto Soft-Beauty Collection",
@@ -711,9 +711,9 @@ const tripData = {
     ],
     days: [
       questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", [{ text: "Turn around at Yotsutsuji or sooner", who: "brianMai" }, { text: "Choose either Tofuku-ji's garden or the Tsutenkyo area", who: "brianMai" }, "Finish Gion by late afternoon. Do not plan a night return"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch. Sayaka joins too."),
-      questDay("day08", "2026-10-30", "Bamboo to Gold", "An early Arashiyama payoff followed by the rock garden and Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple", "Kamishichiken Kyoto"], "Lock the Bamboo Grove and Togetsukyo, eat early, then use the Randen corridor for compact Ryoan-ji and Kinkaku-ji visits.", ["Walk the grove before it becomes busiest", "Use the river cafe as the parent payoff", "Do not add another Arashiyama temple", "Give the rock garden one focused hour", "Use Kamishichiken only for optional tea or wagashi"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The first Golden Pavilion reflection"], "Mai gets three distinct Kyoto landscapes without a Saturday Arashiyama crowd.", "Parents skip Ryoan-ji if useful and meet at Kinkaku-ji by taxi."),
-      questDay("day09", "2026-10-31", "Palaces to Pontocho", "A compact central-Kyoto history, manga, market and neighborhood day.", ["Nijo Castle", "Kyoto Imperial Palace", "Kyoto International Manga Museum", "Nishiki Market", "Kamo River Kyoto", "Pontocho Alley"], "Enter Nijo at opening, make the Imperial Palace compact, use the Manga Museum as an optional split, lock Nishiki, then reset before dinner at Kyoya.", ["Notice Nijo's nightingale floors", "Keep the palace visit to about an hour", "Use the Manga Museum or a parent rest window", "Bound Nishiki rather than starting a second food mission", "Take a real hotel reset before dinner"], ["A castle gate or painted-room detail", "An Imperial Palace roofline", "A manga-art surprise", "A riverbank dinner approach"], "Mai gets shogun history, imperial history, manga and food without crossing Kyoto again.", "Nijo is shared; parents may skip the palace or Manga Museum and rejoin later. Dinner at Kyoya is 18:30 for 4. Sayaka is not coming."),
-      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "Mt Hiei in the morning, then the Kaikai YOKAI Festival at Uzumasa Kyoto Village.", ["Demachiyanagi Station Kyoto", "Eizan Cable Hiei Station", "Enryaku-ji Temple", "Hieizan Sakamoto Station", "Uzumasa Kyoto Village"], "Begin with a simple Demachiyanagi breakfast, use the assisted ascent, and choose one meaningful Mt Hiei forest walk before the hotel rest.", ["Confirm the seasonal cable car, ropeway and bus route", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Rest at the hotel from 15:00 and pack for the 07:30 departure", "Use the night entry at Uzumasa Kyoto Village"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose, then the yokai festival.", "Dad uses the most assisted route and can skip the mountain or the parade if tired.")
+      questDay("day08", "2026-10-30", "Rainy Central Kyoto", "A seated rainy day in central Kyoto, then the booked crab dinner.", ["Kyoto International Manga Museum", "Nishiki Market", "Nijo Castle", "Pontocho Alley"], "Slow hotel breakfast, the Manga Museum, a covered-market lunch, then Nijo under a roof. Walk to Kani Doraku at 18:00.", ["Eat a slow breakfast at Hotel Monterey while the rain is heaviest", "Use the Manga Museum from 10:00 to 11:30", "Eat a seated non-smoking lunch. Mai wants yuba, tofu, tamagoyaki, or pickles", "See Ninomaru Palace. Skip the garden if it is wet", "Rest at the hotel, then walk to dinner", "Stroll Pontocho after dinner only if it is dry"], ["A manga-wall detail", "A covered-arcade lunch", "A painted-room or nightingale-floor detail"], "Mai gets a dry, seated Kyoto day with manga, market food, and Nijo.", "Parents can skip any piece and rest at the hotel. There is seating at each stop."),
+      questDay("day09", "2026-10-31", "Bamboo to Gold", "An early Arashiyama morning, then the Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple"], "Be at the Bamboo Grove by 07:45, see Togetsukyo, eat early, and leave Arashiyama by 11:20. Ryoan-ji only if energy holds. Kinkaku-ji before 15:00.", ["Leave early. Saturday crowds build later", "Walk the grove, then Togetsukyo and a riverside cafe", "Eat a short early lunch and leave Arashiyama by 11:20", "Add Ryoan-ji only if energy holds", "Reach Kinkaku-ji before 15:00, then rest at the hotel"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The Golden Pavilion reflection"], "Going early beats the Saturday Arashiyama crowds.", "Parents can skip Ryoan-ji and meet at Kinkaku-ji by city bus."),
+      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "Mt Hiei in the morning, then the Kaikai YOKAI Festival at Uzumasa Kyoto Village.", ["Sanjo Keihan Station", "Enryaku-ji Bus Center", "Enryaku-ji Temple", "Uzumasa Kyoto Village"], "Take the 08:51 Keihan bus from Sanjo Keihan. It reaches Enryaku-ji Bus Center at 09:45. See Todo, then ride back on the 12:21 or 14:11 bus.", ["Take the 08:51 bus. The Eizan cable does not start until 09:00", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section only if the 14:11 bus still works", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Rest at the hotel until 17:00 and pack for the 07:30 departure", "Use the night entry at Uzumasa Kyoto Village"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose, then the yokai festival.", "Dad can skip the mountain or the parade and rest at the hotel.")
     ]
   },
   hiroshima: {
@@ -728,7 +728,7 @@ const tripData = {
       }
     ],
     days: [
-      questDay("day11", "2026-11-02", "White Heron Westbound", "Hikari 733 to Himeji, the white-castle reveal, then Nozomi 69 to Hiroshima.", ["Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01. Do not go to To-ji. Enter the castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46.", ["Leave the hotel at about 7:30", "Do not go to To-ji", "Forward or carry the large bags", "Enter Himeji Castle between 09:30 and 10:00", "Do Koko-en before the castle or after the castle", "Eat lunch in Himeji", "Buy different regional ekiben", "Be at Himeji Station for the 14:46 train", "Eat the one Hiroshima okonomiyaki at Reichan"], ["A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "The castle entry is booked for 09:30–10:00. Granvia check-in is about 16:00."),
+      questDay("day11", "2026-11-02", "White Heron Westbound", "Hikari 733 to Himeji, the white-castle reveal, then Nozomi 69 to Hiroshima.", ["Kyoto Station", "Himeji Station", "Himeji Castle", "Koko-en Garden", "Hiroshima Station", "Hotel Granvia Hiroshima"], "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01. Do not go to To-ji. Do Koko-en first, from 09:00. Enter the castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46.", ["Leave the hotel at about 7:30", "Do not go to To-ji", "Forward or carry the large bags", "Enter Himeji Castle between 09:30 and 10:00", "Do Koko-en first, from 09:00, before the castle", "Eat lunch in Himeji", "Buy different regional ekiben", "Be at Himeji Station for the 14:46 train", "Eat the one Hiroshima okonomiyaki at Reichan"], ["A castle-defense detail", "A garden frame of the keep", "An ekiben package too beautiful to ignore"], "The westward chapter announces itself through a castle and train-food ritual.", "The castle entry is booked for 09:30–10:00. Granvia check-in is about 16:00."),
       questDay("day12", "2026-11-03", "Memory Along the River", "Museum, remembrance, river, and the Dome at dusk without emotional clutter.", ["Hiroshima Peace Memorial Museum", "Hiroshima Peace Memorial Park", "Atomic Bomb Dome", "Hiroshima National Peace Memorial Hall"], "Move from the museum through the Cenotaph and memorial axis, then see the Atomic Bomb Dome at dusk. Suishin main store is booked for 18:00. The booking is table only.", ["Leave time for a quiet break", "Use the National Peace Memorial Hall if a quieter space helps", "Write one private sentence about what should be remembered", "Try momiji manju or a calm cafe instead of adding sightseeing"], ["The alignment through the Cenotaph", "A paper crane or peace message", "The river changing the mood of the park"], "The day feels thoughtful and humane, not consumed as an attraction.", "Shukkeien is optional; emotional room is the priority."),
       questDay("day13", "2026-11-04", "Torii at the Tide", "Miyajima is the centerpiece of the Hiroshima stay. Keep the day unhurried.", ["Miyajimaguchi Station", "Itsukushima Shrine", "Miyajima Omotesando", "Daisho-in Temple", "Miyajima Ropeway"], "Leave the hotel at 07:50. Take the ropeway in the morning. Eat anago-meshi at Fujitaya. See Itsukushima Shrine from 16:00, when the water is high.", ["Ride the JR ferry", "Take the ropeway if the wind is safe", "Eat anago-meshi at Fujitaya", "Visit Daisho-in", "Buy momiji manju on Omotesando", "See Itsukushima Shrine from 16:00 to 17:20", "Do not feed the deer"], ["The torii with water around it after 16:00", "A deer that you do not feed", "Momiji manju on Omotesando"], "Miyajima earns its place as the romantic westward payoff.", "The shrine, the waterfront, and the food street complete the day.")
     ]
@@ -799,22 +799,22 @@ const dayGoals = {
     photoHint: "Torii tunnel, Kyoto view from Inari, Kiyomizu panorama, or sloping street."
   },
   day08: {
-    clearPath: "Bamboo early → Togetsukyo cafe → early lunch → Ryoan-ji → Kinkaku-ji.",
-    mainGoal: "End the west/northwest sweep with the Golden Pavilion reveal.",
-    photoHint: "Bamboo path, Togetsukyo with mountains, rock garden, or Golden Pavilion reflection."
+    clearPath: "Hotel breakfast → Manga Museum 10:00 → Shijo lunch → Nijo → rest → Kani Doraku 18:00.",
+    mainGoal: "Keep the rainy day seated and still make Kani Doraku at 18:00.",
+    photoHint: "Nijo gate, a painted room, or the covered market."
   },
   day09: {
-    clearPath: "Nijo opening → Imperial Palace → optional Manga Museum → Nishiki → reset → Kamo River → Pontocho → Kyoya.",
-    mainGoal: "Finish the shared Nijo day with dinner at Kyoya for 4.",
-    photoHint: "Nijo gate/rooms, Imperial roofline, manga art, Nishiki display, or Kamo River."
+    clearPath: "Grove by 07:45 → Togetsukyo → short lunch → leave by 11:20 → Kinkaku-ji before 15:00 → Kyoya 18:30.",
+    mainGoal: "See the Golden Pavilion after an early Arashiyama start.",
+    photoHint: "Bamboo path, Togetsukyo with mountains, or the Golden Pavilion."
   },
   day10: {
-    clearPath: "Demachiyanagi ascent, Enryaku-ji, hotel rest 15:00–17:00, then Uzumasa yokai night.",
+    clearPath: "Sanjo Keihan 08:51 → Enryaku-ji 09:45 → bus down 12:21 or 14:11 → hotel rest → Uzumasa.",
     mainGoal: "Photograph the first wide Kyoto or Lake Biwa view from Mt Hiei.",
     photoHint: "Summit viewpoint, forest path, or Enryaku-ji bell/incense moment."
   },
   day11: {
-    clearPath: "Leave about 7:30. Hikari 733 at 08:01. Castle 09:30. Nozomi 69 at 14:46. Granvia about 16:00.",
+    clearPath: "Leave about 7:30. Hikari 733 at 08:01. Koko-en first. Castle 09:30. Nozomi 69 at 14:46.",
     mainGoal: "Photograph Himeji's white keep in full and crown Round One of the Ekiben League.",
     photoHint: "Castle reveal, Koko-en frame, or open ekiben on the train."
   },
@@ -954,37 +954,58 @@ const dayContext = {
     ]
   },
   day08: {
-    summary: "Friday moves from Arashiyama's bamboo and river through Ryoan-ji's rock garden to Kinkaku-ji's Golden Pavilion without adding another Arashiyama temple. Reach the grove by 07:45, treat Togetsukyo and the riverside café as the morning payoff, then use Randen or taxis for compact western temples. Kamishichiken tea is optional atmosphere, not a third major stop. Dinner is Kani Doraku Kyoto Honten at 18:00 for 4. No Sayaka. Course and seats unchanged.",
-    timeline: [["07:00–07:45", "Leave the hotel with breakfast handled and reach the Bamboo Grove entrance by 07:45. Do not add a temple before the grove."], ["07:45–08:40", "Walk one clear Bamboo Grove route and continue toward the river. Pace check: if still in the grove at 08:40, take the shortest exit toward Togetsukyo."], ["08:40–10:15", "See Togetsukyo. Meet the parents. [Togetsukyo meeting point — needs confirmation]. Take the riverside café pause. Do not add another Arashiyama sight."], ["10:15–11:20", "Eat an early lunch close to the Randen route. Hard departure from Arashiyama by 11:20."], ["11:20–12:30", "Use Randen toward Ryoan-ji, allowing transfer and walking margin. A taxi for the final western legs is the recovery tool if trains or lunch run late."], ["12:30–13:20", "Give Ryoan-ji 40–50 focused minutes. The temple's own guidance estimates about 30–40 minutes; leave by 13:20."], ["13:20–14:10", "Transfer to Kinkaku-ji, preferably by taxi if the bus wait is poor. Pace check: target the gate by 14:10 and treat 15:30 as the latest comfortable arrival."], ["14:10–17:30", "Complete Kinkaku-ji's one-way garden route. Return toward the hotel. Be at Kani Doraku Kyoto Honten at 18:00. Party of 4. No Sayaka. Course and seats unchanged."]],
+    summary: "Rain day in central Kyoto. Slow breakfast at Hotel Monterey while the rain is heaviest. Manga Museum 10:00–11:30. Covered-arcade lunch. Nijo about 13:30–15:15, inside if the garden is wet. Hotel rest, then walk to Kani Doraku at 18:00. Party of 4. No Sayaka. Course and seats unchanged. Pontocho only if it is dry after dinner. The Imperial Palace is skipped.",
+    timeline: [
+      ["Morning", "Slow breakfast at Hotel Monterey Kyoto while the rain is heaviest. The museum opens at 10:00."],
+      ["Morning", "Same stops, or skip any piece and rest at the hotel. There is seating at the museum, at lunch, and at Nijo.", "parents"],
+      ["10:00–11:30", "Kyoto International Manga Museum. Open 10:00–17:00. Last entry 16:30. About a 5-minute walk from Karasuma-Oike."],
+      ["~11:45", "Karasuma line, one stop south, from Karasuma-Oike to Shijo."],
+      ["Lunch", "Nishiki Market and the covered Teramachi and Shinkyogoku arcades. Sit down. Non-smoking. Mai avoids meat, mochi, and matcha. Yuba, tofu, tamagoyaki, and pickles are good."],
+      ["~13:30–15:15", "Karasuma line one stop back to Karasuma-Oike, then the Tozai line one stop west to Nijojo-mae. Nijo opens at 08:45. Last entry is 16:00. See Ninomaru Palace. It is under cover. Skip the garden loop if it is wet. [Nijo ticket type and where to buy it — needs confirmation]."],
+      ["Skipped", "The Imperial Palace is not on today."],
+      ["Until ~17:35", "Rest at Hotel Monterey Kyoto."],
+      ["18:00", "Walk about 10 minutes to Kani Doraku Kyoto Honten at Sanjo. Party of 4. No Sayaka. Course and seats unchanged."],
+      ["After dinner", "Pontocho only if it is dry."]
+    ],
     history: [
-      "Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Aristocrats travelled from the capital to compose verses, admire blossoms and autumn leaves, and borrow mountain scenery into designed gardens and villas.",
-      "Togetsukyo—the Moon Crossing Bridge—names an emperor's poetic impression of the moon moving across the span. The bamboo grove is only one scene in a much larger landscape of river, working woodland, gardens, and ritual routes.",
-      "Ryoan-ji's dry garden reduces landscape to stone, gravel and interpretation; the temple offers no official solution, so sustained looking becomes the ritual. Kinkaku-ji's reflective pavilion began as shogun Ashikaga Yoshimitsu's retirement villa before becoming a Zen temple—gold, pond and borrowed mountain scenery expressing power and an imagined Pure Land rather than austerity."
+      "Nijo Castle turned Tokugawa architecture into political theatre. The decorated Ninomaru rooms staged hierarchy through painted screens and famously squeaking nightingale floors that warned residents of movement; in 1867 the castle also hosted the announcement returning governing authority to the emperor.",
+      "Nishiki Market grew up around cold groundwater that helped merchants keep fish and produce. The covered Teramachi and Shinkyogoku arcades let a rainy lunch stay indoors.",
+      "The Manga Museum occupies a former schoolhouse near Karasuma-Oike. Pontocho is the optional after-dinner walk, and only if the rain has stopped."
     ]
   },
   day09: {
-    summary: "Dinner at Kyoya is 18:30 for 4, and Sayaka is not coming because she has a meeting. Enter Nijo at opening. Keep the palace to about one hour. Treat the 16:00–17:45 hotel reset as part of the plan. The Manga Museum is an optional split. After the reset, walk the Kamo River to Pontocho. The shop is about 10 minutes from the Shijo end of Pontocho.",
-    timeline: [["08:25–08:45", "Arrive at Nijo before opening. Enter at 08:45. [Nijo ticket type and where to buy it — needs confirmation]. Do not start with breakfast or shopping nearby."], ["08:45–10:35", "See Ninomaru Palace, the nightingale corridors and a bounded garden loop. Hard exit by 10:35–10:45."], ["10:45–11:15", "Go to the Kyoto Imperial Palace. Enter through the current public gate after security. [Dad's rest/rejoin point — needs confirmation]."], ["11:15–12:15", "Make the palace a one-hour visit. Its October last admission is 15:20, but using that theoretical margin would break Nishiki and the reset."], ["12:15–13:10", "Take a seated lunch near Karasuma Oike. At 12:45 make the decision: Manga Museum only if everyone is on pace and interested."], ["13:10–14:25", "Optional Manga Museum visit or parent/couple rest split. If arrival would be after 13:30, shorten it to one exhibition plus the Manga Wall or skip it."], ["14:35–15:50", "Walk Nishiki in one direction with a short tasting list. Leave by 15:50 before more stalls begin winding down."], ["16:00–17:45", "Return to the hotel for a real reset. This protected break is part of the plan, not unused sightseeing time."], ["17:45–18:20", "Walk the central Kamo River to Pontocho. From the Shijo end of Pontocho, walk about 10 minutes to dinner."], ["18:30–20:30", KYOYA_NOTE]],
+    summary: "Sunny outdoor day. Be at the Bamboo Grove by 07:45. Going early beats the Saturday crowds. Togetsukyo, a riverside cafe, a short lunch, and leave Arashiyama by 11:20. Ryoan-ji only if energy holds. Kinkaku-ji before 15:00. It is open 09:00–17:00. Hotel rest, then Kyoya at 18:30. Trains, subway, and buses only.",
+    timeline: [
+      ["06:00", "Wake at 06:00. Leave the hotel about 06:25. Randen from Shijo-Omiya, or the JR Sagano line from Kyoto Station to Saga-Arashiyama, then walk. Allow about 50 minutes."],
+      ["By 07:45", "Bamboo Grove. The path is a public walk with no gate. Do not add a temple before the grove."],
+      ["After the grove", "Togetsukyo, then a riverside cafe once a place is open. Meet the parents at the bridge. [Togetsukyo meeting point — needs confirmation]. Do not add another Arashiyama sight."],
+      ["Morning", "Same start, or meet later at Kinkaku-ji by city bus.", "parents"],
+      ["By 11:20", "A short seated lunch near the tram, then leave Arashiyama. Many kitchens open at 11:00, so this is a short meal."],
+      ["If energy holds", "Ryoan-ji is optional. In November it is open 08:00–17:00. From Randen Arashiyama, change at Katabiranotsuji for the Kitano line to Ryoanji, then a short walk. Skip it if anyone is tired."],
+      ["Before 15:00", "Kinkaku-ji. Open 09:00–17:00. From Ryoan-ji, walk Kinukake-no-michi or take a city bus. If you skipped Ryoan-ji, take a city bus from Arashiyama."],
+      ["After Kinkaku-ji", "City bus from Kinkakuji-michi to Kitaoji Station, then the Karasuma subway to the hotel. Rest before dinner."],
+      ["18:30–20:30", KYOYA_NOTE]
+    ],
     history: [
-      "Nijo Castle turned Tokugawa architecture into political theatre. The decorated Ninomaru rooms staged hierarchy through painted screens and famously squeaking nightingale floors that warned residents of movement; in 1867 the castle also hosted the announcement returning governing authority to the emperor.",
-      "The Kyoto Imperial Palace compound preserves the logic of the court city that preceded modern Tokyo—gates, ceremonial halls, and controlled spaces rebuilt across centuries. Nearby Nishiki Market developed around reliable cold groundwater that helped merchants preserve fish and produce, earning the nickname Kyoto's Kitchen.",
-      "Pontocho and the Kamo River connect that historic centre to contemporary Kyoto life: narrow entertainment lanes, riverbank walks, and evening lanterns that belong after dark. Optional manga culture at the International Manga Museum adds a 20th-century layer—comics preserved and read in a converted schoolhouse rather than collected as merchandise."
+      "Arashiyama became a Heian-period retreat for poetry and seasonal beauty. Aristocrats travelled from the capital to compose verses, admire blossoms and autumn leaves, and borrow mountain scenery into designed gardens and villas.",
+      "Togetsukyo, the Moon Crossing Bridge, names an emperor's poetic impression of the moon moving across the span. The bamboo grove is one scene in a larger landscape of river, woodland, and gardens.",
+      "Ryoan-ji's dry garden reduces landscape to stone, gravel, and interpretation. Kinkaku-ji began as shogun Ashikaga Yoshimitsu's retirement villa before it became a Zen temple. Gold, pond, and borrowed mountain scenery express power and an imagined Pure Land."
     ]
   },
   day10: {
-    summary: "Mt Hiei is the morning and early afternoon, with a 15:00–17:00 rest at Hotel Monterey Kyoto before the Kaikai YOKAI Festival at Uzumasa Kyoto Village. Confirm live cable, ropeway, and descent times at Demachiyanagi before boarding. Dad can skip the mountain or the parade if tired.",
+    summary: "Mt Hiei by the direct Keihan bus. Sanjo Keihan at 08:51, Enryaku-ji Bus Center at 09:45. Come down on the 12:21 bus (Sanjo Keihan 13:22) or the 14:11 bus (Sanjo Keihan 15:00). Rest at the hotel, then the Kaikai YOKAI Festival at Uzumasa. Dad can skip the mountain or the parade if tired.",
     timeline: [
-      ["07:15–07:50", "Reach Demachiyanagi, buy breakfast and confirm the day's live cable, ropeway, shuttle and descent times before boarding. Carry food rather than waiting for a long cafe meal."],
-      ["07:50–09:30", "Take the assisted ascent. [Eizan/Yase approach — needs confirmation]. If that ascent fails, use [Sakamoto-side or direct-bus fallback — needs confirmation]."],
-      ["09:30–12:15", "Reach the Enryaku-ji core and focus on Todo: Konpon Chudo, one or two nearby halls, forest atmosphere and a seated pause."],
-      ["12:15–13:00", "Eat the carried lunch or the simplest available mountain meal. At 12:45 choose the afternoon walk using weather, legs and last-service times."],
-      ["13:00–14:30", "Walk one forest route, then start down with a service margin for the 15:00 hotel rest. [forest route — needs confirmation]. Do not add a second precinct.", "brianMai"],
-      ["13:00–14:30", "Use the assisted core, then start down for the 15:00 hotel rest, and do not add a second precinct.", "parents"],
-      ["15:00–17:00", "Rest at Hotel Monterey Kyoto, pack for the Nov 2 07:30 departure, and Dad can skip the mountain or the parade if tired."],
+      ["07:15", "Wake, eat at the hotel, and leave about 08:25. Walk to Sanjo Keihan and be at stop B3 before 08:51. The Eizan cable does not start until 09:00, so do not go to Demachiyanagi for an early ascent."],
+      ["08:51–09:45", "Direct Keihan bus from Sanjo Keihan to Enryaku-ji Bus Center. Sunday uses the Saturday and holiday timetable."],
+      ["09:45–12:00", "Enryaku-ji Todo is open 09:00–16:00. Reception is until 15:45. Focus on Konpon Chudo, one or two nearby halls, and a seated pause. Eat the carried lunch here."],
+      ["12:21", "Keihan bus 56/56A from the Bus Center if you are done. Sanjo Keihan at 13:22. Some circle-marked trips on this route are suspended. If the bus is not there, wait for 14:11."],
+      ["Until 14:00", "One short forest walk only if you are taking the later bus. Be back at the Bus Center before 14:11. Do not plan a walk that runs until 14:30. Do not add a second precinct.", "brianMai"],
+      ["14:11", "Keihan drive bus from the Bus Center. Sanjo Keihan at 15:00. Then walk to the hotel."],
+      ["Until 17:00", "Rest at Hotel Monterey Kyoto and pack for the Nov 2 07:30 departure. The 12:21 bus is back at Sanjo at 13:22. The 14:11 bus is back at 15:00. Dad can skip the mountain or the parade if tired."],
       ["~17:00", "Leave for Uzumasa Kyoto Village (Toei Kyoto Studio Park, 太秦映画村) for the Kaikai YOKAI Festival (怪々YOKAI祭, Sep 12–Nov 29)."],
       ["Route", "Walk 2 min to Karasuma-Oike, take the Tozai subway to Uzumasa Tenjingawa (8–9 min, ¥260, no transfer), then walk about 12 min, about 25 min door to door."],
       ["From 17:00", "Night entry is ¥2,000 adult (day ticket ¥2,800) and the park is open 10:00–21:00 {{link:https://en.eigamura.com/show/yokai_2026/|Festival page}}."],
-      ["18:00", "Optional stage show, Yokai vs Kamen Rider, on weekends and holidays from Oct 31, also at 19:50."],
+      ["18:00", "Optional stage show, Yokai vs Kamen Rider, on weekends and holidays from Oct 31, also at 19:50. It needs its own ticket. Skip it if you did not buy one."],
       ["~18:30", "Dinner around the park is [dinner venue — not picked yet], non-smoking only, and Mai avoids sliced or whole-cut meat, mochi, and matcha."],
       ["19:30", "Watch Uzumasa Hyakki Yagyo (the finale dance is open to everyone), and skip the 17:30 costume parade because it needs an advance application."],
       ["~21:00", "Back at the hotel when the park closes at 21:00."]
@@ -992,16 +1013,16 @@ const dayContext = {
     history: [
       "Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning—not one building but a religious landscape.",
       "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic vantage. Emperors and warriors treated control of Hiei as control of the capital's spiritual flank.",
-      "Modern visitors experience that geography through assisted ascents, cedar corridors, bell sounds, and views that open suddenly toward either the basin of Kyoto or the wider water of Biwa. The morning works as mountain time: breakfast carried, one forest walk chosen, and descent planned around last cable or bus service so the 15:00 hotel rest still holds."
+      "Modern visitors reach that geography by bus, then walk cedar corridors and wait for a view toward Kyoto or Lake Biwa. The morning is the 08:51 bus, Todo, and a return bus at 12:21 or 14:11 so the hotel rest still holds."
     ]
   },
   day11: {
-    summary: "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49. Do not go to To-ji. Enter Himeji Castle between 09:30 and 10:00. The tickets are booked. Visit Koko-en before the castle or after the castle. Eat lunch in Himeji. Buy ekiben. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42. Check in at Hotel Granvia Hiroshima at about 16:00. Eat dinner at Reichan. Walk in. Do not reserve.",
-    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "You can enter Koko-en Garden from 09:00. Do Koko-en before the castle or after the castle."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", "Check in at Hotel Granvia Hiroshima.", "brianMai"], ["About 16:00", "Check in to your Hiroshima room.", "parents"], ["Dinner", REICHAN_DINNER_NOTE]],
+    summary: "Leave the hotel at about 7:30. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49. Do not go to To-ji. Do Koko-en first. It opens at 09:00. Rain is likely from midday, so the garden comes before the castle. Enter Himeji Castle between 09:30 and 10:00. The tickets are booked. Eat lunch in Himeji. Buy ekiben. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42. Check in at Hotel Granvia Hiroshima at about 16:00. Eat dinner at Reichan. Walk in. Do not reserve.",
+    timeline: [["06:15", "Wake at 06:15. Himeji is the priority. Do not wake the group at 05:00 for To-ji."], ["07:30", "Leave the hotel at about 7:30 and go to Kyoto Station. Do not go to To-ji. [luggage forwarding service and deadline — needs confirmation]."], ["08:01–08:49", SHINKANSEN_NOV2], ["09:00", "Do Koko-en first. It opens at 09:00. Last entry is 30 minutes before the 17:00 close. The train arrives at 08:49, and the walk from the station is about 15–20 minutes, so the garden visit is short before the 09:30 castle window. Rain is likely from midday."], ["09:30–10:00", HIMEJI_TICKET_NOTE], ["After the castle", "Eat lunch in Himeji. Buy the ekiben. Score each box for packaging, regional character, variety, flavor, and train happiness. Be back at Himeji Station for the 14:46 train."], ["14:46–15:42", SHINKANSEN_HIMEJI], ["About 16:00", "Check in at Hotel Granvia Hiroshima.", "brianMai"], ["About 16:00", "Check in to your Hiroshima room.", "parents"], ["Dinner", REICHAN_DINNER_NOTE]],
     history: [
       "Himeji is called the White Heron Castle because its pale plastered walls seem to lift above the city. The surviving complex took shape under Ikeda Terumasa in the early 1600s, when the new Tokugawa order used castles both as fortresses and declarations of political control.",
       "Its beauty disguises defensive intelligence: confusing approaches, narrow gates, firing positions, and steep interiors were meant to slow attackers. The castle survived war, demolition pressures, and natural disasters, making today's reveal unusually close to encountering an original feudal complex.",
-      "Koko-en beside the moat reframes the keep from below—Edo-style garden rooms built on samurai residence sites. Hikari 733 leaves Kyoto at 08:01, so this day does not include To-ji. The day's larger story is departure: Kyoto's temple city giving way to the white keep, then ekiben culture and the ride west to Hiroshima."
+      "Koko-en beside the moat reframes the keep from below. Edo-style garden rooms sit on old samurai residence sites. Do the garden first, from 09:00, before the booked castle window. Hikari 733 leaves Kyoto at 08:01, so this day does not include To-ji. The day's larger story is departure: Kyoto's temple city giving way to the white keep, then ekiben culture and the ride west to Hiroshima."
     ]
   },
   day12: {
@@ -1168,22 +1189,22 @@ const DAY_VIEWS = {
   },
   day08: {
     parents: {
-      summary: "Bamboo and Togetsukyo in the morning. You can skip Ryoan-ji and meet at Kinkaku-ji. Dinner is Kani Doraku at 18:00 for 4. No Sayaka."
+      summary: "Same rainy central day, or skip any piece and rest at the hotel. There is seating at the museum, at lunch, and at Nijo. Dinner is Kani Doraku at 18:00 for 4. No Sayaka. Use the subway."
     }
   },
   day09: {
     parents: {
-      summary: "Dinner at Kyoya is 18:30 for 4, and Sayaka is not coming because she has a meeting. Nijo is shared. You can skip the palace or the Manga Museum and rejoin for Nishiki or the Kamo River."
+      summary: "Going early beats the Saturday crowds. You can skip Ryoan-ji and meet at Kinkaku-ji by city bus. Dinner at Kyoya is 18:30 for 4. Sayaka is not coming because she has a meeting."
     }
   },
   day10: {
     parents: {
-      summary: "Use the assisted Mt Hiei route in the morning, rest at the hotel from 15:00 to 17:00, then go to the Kaikai YOKAI Festival at Uzumasa Kyoto Village, and Dad can skip the mountain or the parade if tired."
+      summary: "Take the 08:51 Keihan bus from Sanjo Keihan. Come down on the 12:21 or 14:11 bus, rest at the hotel, then go to the Kaikai YOKAI Festival. Dad can skip the mountain or the parade if tired."
     }
   },
   day11: {
     parents: {
-      summary: "Leave around 7:30. Hikari 733 leaves Kyoto at 08:01. Enter Himeji Castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46. Check in to your Hiroshima room, then walk in at Reichan."
+      summary: "Leave around 7:30. Hikari 733 leaves Kyoto at 08:01. Do Koko-en first, from 09:00, then enter Himeji Castle between 09:30 and 10:00. Nozomi 69 leaves Himeji at 14:46. Check in to your Hiroshima room, then walk in at Reichan."
     }
   },
   day14: {
@@ -1580,7 +1601,7 @@ const planPhotoCredits = {
   day02: "N700 Shinkansen, resized. Photo by TC411-507, CC BY 3.0. https://commons.wikimedia.org/wiki/File:Shinkansen_N700_z15.jpg",
   day03: "Tsutenkaku and Shinsekai at night, resized. Photo by Sakai Yayoi, CC0. https://commons.wikimedia.org/wiki/File:Shinsekai_and_Tsutenkaku_Tower.jpg",
   day07: "Kiyomizu-dera main hall and stage, resized. Photo by Martin Falbisoner, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-01.jpg",
-  day08: "Kinkaku-ji, the Golden Pavilion, resized. Photo by Nacaru, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Golden_Pavilion_Kinkaku-ji_2024.jpg",
+  day09: "Kinkaku-ji, the Golden Pavilion, resized. Photo by Nacaru, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Golden_Pavilion_Kinkaku-ji_2024.jpg",
   day10: "Enryaku-ji Konpon Chudo, resized. Photo by 663highland, CC BY 2.5. https://commons.wikimedia.org/wiki/File:Enryakuji_Konponchudo04n4272.jpg",
   day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0.",
   day16: "Shibuya scramble crossing, resized. Photo by Benh LIEU SONG, CC BY-SA 2.0. https://commons.wikimedia.org/wiki/File:Tokyo_Shibuya_Scramble_Crossing_2018-10-09.jpg",
@@ -1589,25 +1610,25 @@ const planPhotoCredits = {
 };
 
 const defaultPlanPhotos = {
-  day02: "capstones/day02-nozomi.webp?v228",
-  day03: "capstones/day03-tsutenkaku.webp?v228",
+  day02: "capstones/day02-nozomi.webp?v229",
+  day03: "capstones/day03-tsutenkaku.webp?v229",
   day04: "capstones/day04.jpg?v221",
   day05: "capstones/day05-osaka-castle.webp?v221",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07-kiyomizu.webp?v227",
-  day08: "capstones/day08-kinkakuji.webp?v228",
-  day09: "capstones/day09-nijo.webp?v227",
-  day10: "capstones/day10-enryakuji.webp?v228",
+  day08: "capstones/day09-nijo.webp?v229",
+  day09: "capstones/day08-kinkakuji.webp?v229",
+  day10: "capstones/day10-enryakuji.webp?v229",
   day11: "capstones/day11.jpg",
   day12: "capstones/day12.webp",
   day13: "capstones/day13.jpg",
   day14: "capstones/day14.jpg",
   day15: "capstones/day15.jpeg",
-  day16: "capstones/day16-shibuya.webp?v228",
+  day16: "capstones/day16-shibuya.webp?v229",
   day17: "capstones/day17.jpg",
   day18: "capstones/day18.jpg",
-  day19: "capstones/day19-kintoki.webp?v228",
-  day20: "capstones/day20-engei.webp?v228",
+  day19: "capstones/day19-kintoki.webp?v229",
+  day20: "capstones/day20-engei.webp?v229",
   day21: "capstones/day21.jpg"
 };
 
@@ -3468,16 +3489,15 @@ const DAY_MUST_DOS = {
     { marker: "needs-confirmation", label: "Parents at Kiyomizu", detail: "Meet around 10:30. [parents meeting point — needs confirmation]." }
   ],
   day08: [
-    { marker: "needs-confirmation", label: "Togetsukyo meetup", detail: "Meet at the bridge in the morning. [Togetsukyo meeting point — needs confirmation]." }
+    { marker: "needs-confirmation", label: "Nijo tickets", detail: "Afternoon visit, about 13:30. Last entry is 16:00. [Nijo ticket type and where to buy it — needs confirmation]." }
   ],
   day09: [
-    { marker: "needs-confirmation", label: "Nijo tickets", detail: "Enter at 08:45. [Nijo ticket type and where to buy it — needs confirmation]." },
-    { marker: "needs-confirmation", label: "Dad's rejoin point", detail: "[Dad's rest/rejoin point — needs confirmation].", who: "parents" }
+    { marker: "needs-confirmation", label: "Togetsukyo meetup", detail: "Meet at the bridge after the grove. [Togetsukyo meeting point — needs confirmation]." }
   ],
   day10: [
-    { marker: "needs-confirmation", label: "Ascent", detail: "Confirm the live cable, ropeway, and bus times at Demachiyanagi before you board. [Eizan/Yase approach — needs confirmation]. [Sakamoto-side or direct-bus fallback — needs confirmation]." },
-    { marker: "needs-confirmation", label: "Forest walk", detail: "[forest route — needs confirmation]. Start down in time for the 15:00 hotel rest. Do not add a second trail on the day." },
-    { marker: "info", label: "Hotel rest", detail: "Be at Hotel Monterey Kyoto from 15:00 to 17:00. Pack for the Nov 2 07:30 departure." },
+    { marker: "info", label: "Bus up", detail: "Keihan bus from Sanjo Keihan stop B3 at 08:51. Enryaku-ji Bus Center at 09:45. Sunday uses the Saturday and holiday timetable. The Eizan cable starts at 09:00, so a 07:50 ascent does not work." },
+    { marker: "info", label: "Bus down", detail: "12:21 from the Bus Center on Keihan 56/56A, Sanjo Keihan at 13:22. Some circle-marked trips on that route are suspended. Or the 14:11 drive bus, Sanjo Keihan at 15:00. Be at the stop before 14:11 if you walk in the forest." },
+    { marker: "info", label: "Hotel rest", detail: "Rest at Hotel Monterey Kyoto until 17:00. The 12:21 bus is back at Sanjo at 13:22. The 14:11 bus is back at 15:00. Pack for the Nov 2 07:30 departure." },
     { marker: "decision", label: "Dinner", detail: "Around Uzumasa Kyoto Village at about 18:30. [dinner venue — not picked yet]. Non-smoking only. Mai avoids sliced or whole-cut meat, mochi, and matcha." }
   ],
   day11: [
@@ -3977,25 +3997,25 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Sohonke Nishin Soba Matsuba Honten", type: "restaurant", category: "nishin-soba", typeLabel: "Nishin soba · light evening option", area: "Day 7 · Gion-Shijo / Minamiza", price: "¥¥", note: "Kyoto's signature herring soba beside Minamiza. Useful after Endo lunch only if people still want a small evening meal; skip it if the Gion course was enough.", coordinates: [35.00365, 135.77262], officialUrl: "https://sobamatsuba.co.jp/menu/access.html" },
     { name: "Izuju", type: "restaurant", category: "kyoto-sushi", typeLabel: "Saba-zushi · high priority", area: "Day 7 · Yasaka Shrine", price: "¥¥¥", note: "Traditional Kyoto pressed sushi beside Yasaka. Share saba-zushi or hako-zushi as a tasting; current last order is early enough that this is lunch or early dinner, not a post-show fallback.", coordinates: [35.00362, 135.77853], officialUrl: "https://gion-izuju.com/english-page/" },
     { name: "Kiyomizu Junsei Okabeya", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu & yuba · skip if Endo lunch holds", area: "Day 7 · Kiyomizu-dera approach", price: "¥¥¥", note: "Yudofu and yuba on the Kiyomizu approach. Do not use this as Day 7 lunch if Tempura Endo is booked; a kaiseki lunch already fills that slot.", coordinates: [34.99616, 135.78082], officialUrl: "https://www.okabeya.com/lang/en.html" },
-    { name: "Yudofu Sagano", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu · timing-risk option", area: "Day 8 · Arashiyama / Tenryu-ji", price: "¥¥¥", note: "Classic garden yudofu beside the Arashiyama sights, but it opens at 11:00 and your hard exit is 11:20. Keep the pin for context; do not queue or sacrifice Ryoan-ji and Kinkaku-ji for it.", coordinates: [35.01558, 135.67446], officialUrl: "https://kyoto-sagano.jp/access" },
-    { name: "Kani Doraku Kyoto Honten", type: "restaurant", category: "kani", typeLabel: "Crab · booked", area: "Day 8 · Sanjo / Kawaramachi", price: "¥¥¥", note: "Booked Fri Oct 30 at 18:00 for 4. No Sayaka. 光華 course ¥7,590, 9 dishes, horigotatsu. Course and seats unchanged. Confirmation in Gmail. Shop 075-211-0671. Walk from Hotel Monterey after Arashiyama.", coordinates: [35.008705, 135.766995], officialUrl: "", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", slotDays: ["day08"], reserve: "yes" },
+    { name: "Yudofu Sagano", type: "restaurant", category: "tofu-yuba", typeLabel: "Yudofu · timing-risk option", area: "Day 9 · Arashiyama / Tenryu-ji", price: "¥¥¥", note: "Classic garden yudofu beside the Arashiyama sights, but it opens at 11:00 and the hard exit is 11:20. Keep the pin for context. Do not queue, and do not sacrifice Kinkaku-ji for it.", coordinates: [35.01558, 135.67446], officialUrl: "https://kyoto-sagano.jp/access" },
+    { name: "Kani Doraku Kyoto Honten", type: "restaurant", category: "kani", typeLabel: "Crab · booked", area: "Day 8 · Sanjo / Kawaramachi", price: "¥¥¥", note: "Booked Fri Oct 30 at 18:00 for 4. No Sayaka. 光華 course ¥7,590, 9 dishes, horigotatsu. Course and seats unchanged. Confirmation in Gmail. Shop 075-211-0671. Walk about 10 minutes from Hotel Monterey.", coordinates: [35.008705, 135.766995], officialUrl: "", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26011709/", slotDays: ["day08"], reserve: "yes" },
     { name: "Kyoya Kiyomizu Yanaginobamba Honke", type: "restaurant", category: "obanzai", typeLabel: "Obanzai · booked", area: "Day 9 · Yanaginobamba · south of Shijo", price: "¥¥", note: "BOOKED. Sat Oct 31 at 18:30. The party is 4 people. Sayaka is not coming. She has a meeting. The booking is for seats only. Order a la carte. Order obanzai and yuba. Do not order the set courses. The set courses are built around a pork hot pot. Mai avoids sliced meat. Confirmation in Gmail. The shop is just south of Shijo, near Nishiki. Walk about 10 minutes from the Shijo end of Pontocho.", coordinates: [35.002341, 135.763886], tabelogUrl: KYOYA_TABELOG_URL, slotDays: ["day09"], reserve: "yes" },
     { name: "Menami", type: "restaurant", category: "obanzai", typeLabel: "Obanzai · skip", area: "Day 9 · Sanjo / Kiyamachi", price: "¥¥¥", note: "Skipped. Menami takes bookings by phone only. Do not call Menami. The Oct 31 dinner is Kyoya.", coordinates: [35.00904, 135.77055], officialUrl: "https://www.menami.jp/menu1", tabelogUrl: "https://tabelog.com/kyoto/A2601/A260201/26001266/", slotDays: ["day09"], reserve: "no" },
-    { name: "Nishiki Hirano", type: "restaurant", category: "obanzai", typeLabel: "Obanzai & dashimaki", area: "Day 9 · Nishiki Market", price: "¥¥", note: "Useful seated counterpoint to market snacking: a Kyoto-style set or dashimaki omelet without leaving the planned Nishiki window.", coordinates: [35.00498, 135.76242], officialUrl: "https://nishikihirano.com/en/" },
-    { name: "Konnamonja", type: "sweet", category: "soy-sweets", typeLabel: "Soy-milk sweets · share", area: "Day 9 · Nishiki Market", price: "¥", note: "Tofu-shop snack stop for soy-milk doughnuts and soft serve. Share one item and eat at the shop; Nishiki asks visitors not to eat while walking.", coordinates: [35.00496, 135.76418], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/konnamonja/" },
-    { name: "Uchida Tsukemono", type: "restaurant", category: "kyo-pickles", typeLabel: "Kyo-tsukemono · taste/buy", area: "Day 9 · Nishiki Market", price: "¥", note: "Kyoto pickles are a core local food rather than a full meal. Taste one seasonal style or buy a small pack; keep the market visit bounded.", coordinates: [35.00499, 135.76168], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/uchida/" },
+    { name: "Nishiki Hirano", type: "restaurant", category: "obanzai", typeLabel: "Obanzai & dashimaki", area: "Day 8 · Nishiki Market", price: "¥¥", note: "Seated lunch in the Friday Nishiki window. Dashimaki fits Mai. She avoids meat, mochi, and matcha.", coordinates: [35.00498, 135.76242], officialUrl: "https://nishikihirano.com/en/" },
+    { name: "Konnamonja", type: "sweet", category: "soy-sweets", typeLabel: "Soy-milk sweets · share", area: "Day 8 · Nishiki Market", price: "¥", note: "Tofu-shop snack on the Friday market walk. Share one item and eat at the shop. Nishiki asks visitors not to eat while walking. Mai avoids mochi and matcha.", coordinates: [35.00496, 135.76418], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/konnamonja/" },
+    { name: "Uchida Tsukemono", type: "restaurant", category: "kyo-pickles", typeLabel: "Kyo-tsukemono · taste/buy", area: "Day 8 · Nishiki Market", price: "¥", note: "Kyoto pickles fit the Friday lunch. Taste one seasonal style or buy a small pack. Keep the market visit bounded.", coordinates: [35.00499, 135.76168], officialUrl: "https://www.kyoto-nishiki.or.jp/en/stores/uchida/" },
     { name: "Kinmata", type: "restaurant", category: "kaiseki", typeLabel: "Kyo-kaiseki · skip", area: "Day 9 · east of Nishiki", price: "¥¥¥¥", note: "Skipped. Kinmata is too expensive, about JPY 25,300 per person. Do not book it. The Oct 31 dinner is Kyoya.", coordinates: [35.00389, 135.7657], officialUrl: "https://www.kinmata.com/en/", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260201/26000452/", slotDays: ["day09"], reserve: "no" },
     { name: "Zuientei at Hotel Monterey Kyoto", type: "restaurant", category: "kaiseki", typeLabel: "Kaiseki · zero-travel backup", area: "Inside Hotel Monterey · 2F", price: "¥¥¥", note: "A seated backup inside the hotel. Kinmata is skipped. Menami is skipped. Do not use this in place of Kyoya unless you cannot reach Kyoya.", coordinates: [35.00775, 135.75948], officialUrl: "https://www.hotelmonterey.co.jp/en/kyoto/restaurant/shop/78594a0dcf5c178.html" },
-    { name: "Ippodo Tea Kyoto Main Store", type: "cafe", category: "tea", typeLabel: "Japanese tea · top pick", area: "Day 9 · Imperial Palace / Teramachi", price: "¥¥", note: "A proper tea experience with staff-guided brewing and wagashi, not simply another matcha dessert. It fits naturally after the Imperial Palace if the afternoon stays on time.", coordinates: [35.01446, 135.76756], officialUrl: "https://global.ippodo-tea.co.jp/pages/store-kyoto" },
+    { name: "Ippodo Tea Kyoto Main Store", type: "cafe", category: "tea", typeLabel: "Japanese tea · optional", area: "Teramachi · optional", price: "¥¥", note: "Optional tea near Teramachi. The Imperial Palace is skipped. Mai avoids matcha on Friday, so this is not the lunch plan.", coordinates: [35.01446, 135.76756], officialUrl: "https://global.ippodo-tea.co.jp/pages/store-kyoto" },
     { name: "Gion Tsujiri Gion Main Store", type: "cafe", category: "tea", typeLabel: "Matcha & hojicha", area: "Day 7 · Gion", price: "¥¥", note: "Very easy route fit for tea or a matcha dessert in Gion. Treat it as the convenient tea choice; choose Ippodo when the tea itself is the experience.", coordinates: [35.00165, 135.77514], officialUrl: "https://www.giontsujiri.co.jp/en/store/giontsujiri-honten/" },
     { name: "Maeda Coffee Muromachi Honten", type: "cafe", category: "coffee", typeLabel: "Kyoto kissaten breakfast", area: "Hotel base · Muromachi", price: "¥¥", note: "A Kyoto coffee institution close to Hotel Monterey, open early enough for an actual breakfast. Best low-friction café option; save tea-house time for Ippodo or Gion.", coordinates: [35.00572, 135.75669], officialUrl: "https://www.maedacoffee.com/en/shopinfo/honten/" },
     { name: "Inoda Coffee Main Shop", type: "cafe", category: "coffee", typeLabel: "Historic Kyoto coffee", area: "Day 9 / hotel area · Sanjo-Sakaimachi", price: "¥¥", note: "A roomy, old-school Kyoto coffee alternative open from 07:00. Use it for breakfast or a seated central-city reset; choose Maeda when minimum walking matters.", coordinates: [35.00694, 135.76415], officialUrl: "https://www.inoda-coffee.co.jp/english/shop/" },
     { name: "Kagizen Yoshifusa Shijo Main Store", type: "sweet", category: "kuzukiri", typeLabel: "Kuzukiri · must try", area: "Day 7 · Gion", price: "¥¥", note: "The priority Kyoto dessert stop: chilled translucent kudzu noodles with syrup in a seated tea room, plus seasonal wagashi. It is directly on the Gion route.", coordinates: [35.00347, 135.77643], officialUrl: "https://www.kagizen.co.jp/en/pages/shops-honten" },
-    { name: "Honke Nishio Yatsuhashi Shinkyogoku", type: "sweet", category: "yatsuhashi", typeLabel: "Yatsuhashi · share a sample", area: "Day 9 · Nishiki / Shinkyogoku", price: "¥", note: "Try both the cinnamon-baked cracker and soft nama-yatsuhashi if available; one shared pack is enough. This branch is an easy Nishiki add-on, not a separate excursion.", coordinates: [35.00624, 135.76726], officialUrl: "https://www.8284.co.jp/shop/shinkyogoku.html" },
-    { name: "Oimatsu Kitano", type: "sweet", category: "wagashi", typeLabel: "Seasonal wagashi", area: "Day 8 · optional Kamishichiken", price: "¥¥", note: "A refined seasonal wagashi stop that fits only if the optional Kamishichiken/Nishijin ending survives the Kinkaku-ji day. Skip without regret if the parents need the hotel.", coordinates: [35.02978, 135.73998], officialUrl: "https://oimatu.co.jp/" },
-    { name: "Toraya Karyo Kyoto Ichijo", type: "sweet", category: "wagashi", typeLabel: "Wagashi & yokan · palace route", area: "Day 9 · Kyoto Imperial Palace", price: "¥¥", note: "The route-friendly second wagashi choice: seasonal sweets and yokan in a garden-facing tearoom near the palace. Choose it instead of Oimatsu when Day 8 is already full.", coordinates: [35.02625, 135.75738], officialUrl: "https://global.toraya-group.co.jp/pages/shop-kyoto" },
-    { name: "Demachi Futaba", type: "sweet", category: "mochi-dango", typeLabel: "Mame-mochi · later only", area: "Day 10 · Demachiyanagi", price: "¥", note: "Famous salty-sweet bean mochi near the Mt Hiei departure corridor, but it opens after your planned departure. Buy it after the mountain or on another day; never delay the ascent for a queue.", coordinates: [35.03003, 135.76836], officialUrl: "https://www.hieizan.gr.jp/yase/demachifutaba" },
-    { name: "Kamo Mitarashi Chaya", type: "sweet", category: "mochi-dango", typeLabel: "Mitarashi dango · optional", area: "Day 10 · Shimogamo / Demachiyanagi", price: "¥", note: "A birthplace-linked Kyoto mitarashi-dango stop. Like Futaba, it opens too late for the outbound Mt Hiei plan; use it only after descent or on a flexible afternoon.", coordinates: [35.03804, 135.77208], officialUrl: "https://www.hieizan.gr.jp/yase/kamo-mitarashi-chaya" }
+    { name: "Honke Nishio Yatsuhashi Shinkyogoku", type: "sweet", category: "yatsuhashi", typeLabel: "Yatsuhashi · share a sample", area: "Day 8 · Nishiki / Shinkyogoku", price: "¥", note: "One shared pack on the Friday arcade walk. Not a separate excursion. Mai avoids mochi and matcha, so check the filling before she takes a piece.", coordinates: [35.00624, 135.76726], officialUrl: "https://www.8284.co.jp/shop/shinkyogoku.html" },
+    { name: "Oimatsu Kitano", type: "sweet", category: "wagashi", typeLabel: "Seasonal wagashi", area: "Optional · Kitano", price: "¥¥", note: "Not on the Saturday route. Arashiyama and Kinkaku-ji come first, then the hotel and Kyoya.", coordinates: [35.02978, 135.73998], officialUrl: "https://oimatu.co.jp/" },
+    { name: "Toraya Karyo Kyoto Ichijo", type: "sweet", category: "wagashi", typeLabel: "Wagashi & yokan · optional", area: "Near the palace · skipped", price: "¥¥", note: "The Imperial Palace is skipped. Do not add this stop to Friday or Saturday.", coordinates: [35.02625, 135.75738], officialUrl: "https://global.toraya-group.co.jp/pages/shop-kyoto" },
+    { name: "Demachi Futaba", type: "sweet", category: "mochi-dango", typeLabel: "Mame-mochi · not on the way up", area: "Demachiyanagi · not the Hiei bus", price: "¥", note: "Not on the way up. The 08:51 bus leaves Sanjo Keihan. Mai avoids mochi. Skip it.", coordinates: [35.03003, 135.76836], officialUrl: "https://www.hieizan.gr.jp/yase/demachifutaba" },
+    { name: "Kamo Mitarashi Chaya", type: "sweet", category: "mochi-dango", typeLabel: "Mitarashi dango · not on the way up", area: "Shimogamo · not the Hiei bus", price: "¥", note: "Not on the way up. The morning bus leaves Sanjo Keihan at 08:51. Mai avoids mochi. Skip it.", coordinates: [35.03804, 135.77208], officialUrl: "https://www.hieizan.gr.jp/yase/kamo-mitarashi-chaya" }
   ],
   hiroshima: [
     { name: "7-Eleven Heart-in ekie Hiroshima Shinkansen Exit", type: "conbini", category: "conbini", typeLabel: "Closest station 7-Eleven", area: "Hotel Granvia · inside ekie", price: "¥", note: "The lowest-effort supply stop beside the station-connected hotel. Use it for breakfast, drinks or the Shinkansen morning; this branch is outside the ticket gates.", coordinates: [34.39805, 132.47535], officialUrl: "https://www.sn-hiroshima.co.jp/pages/127/" },
