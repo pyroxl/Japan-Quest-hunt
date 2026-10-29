@@ -228,6 +228,14 @@ window.PLACE_COORDINATES = {
     35.0166334,
     135.6695863
   ],
+  "Sanjo Keihan Station": [
+    35.009028,
+    135.773528
+  ],
+  "Enryaku-ji Bus Center": [
+    35.06872,
+    135.84105
+  ],
   "Demachiyanagi Station Kyoto": [
     35.0302716,
     135.7726791
