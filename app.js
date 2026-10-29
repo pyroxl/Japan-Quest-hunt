@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v226";
+const APP_VERSION = "japan-quest-v227";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1578,6 +1578,7 @@ const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"
 
 const planPhotoCredits = {
   day03: "Dotonbori canal, Glico running man, and Ebisu Bridge, resized. Photo by そらみみ, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Glico_Man_Neon_Sign_and_Ebisubashi_Bridge_at_night.jpg",
+  day07: "Kiyomizu-dera main hall and stage, resized. Photo by Martin Falbisoner, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-01.jpg",
   day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0."
 };
 
@@ -1587,9 +1588,9 @@ const defaultPlanPhotos = {
   day04: "capstones/day04.jpg?v221",
   day05: "capstones/day05-osaka-castle.webp?v221",
   day06: "capstones/day06.jpeg",
-  day07: "capstones/day07.webp",
+  day07: "capstones/day07-kiyomizu.webp?v227",
   day08: "capstones/day08.jpg",
-  day09: "capstones/day09.jpg",
+  day09: "capstones/day09-nijo.webp?v227",
   day10: "capstones/day10.jpeg",
   day11: "capstones/day11.jpg",
   day12: "capstones/day12.webp",
