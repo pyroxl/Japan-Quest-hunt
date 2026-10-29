@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v227";
+const APP_VERSION = "japan-quest-v228";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1577,31 +1577,37 @@ const dailyPhotoSlots = [
 const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"]);
 
 const planPhotoCredits = {
-  day03: "Dotonbori canal, Glico running man, and Ebisu Bridge, resized. Photo by そらみみ, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Glico_Man_Neon_Sign_and_Ebisubashi_Bridge_at_night.jpg",
+  day02: "N700 Shinkansen, resized. Photo by TC411-507, CC BY 3.0. https://commons.wikimedia.org/wiki/File:Shinkansen_N700_z15.jpg",
+  day03: "Tsutenkaku and Shinsekai at night, resized. Photo by Sakai Yayoi, CC0. https://commons.wikimedia.org/wiki/File:Shinsekai_and_Tsutenkaku_Tower.jpg",
   day07: "Kiyomizu-dera main hall and stage, resized. Photo by Martin Falbisoner, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-01.jpg",
-  day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0."
+  day08: "Kinkaku-ji, the Golden Pavilion, resized. Photo by Nacaru, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Golden_Pavilion_Kinkaku-ji_2024.jpg",
+  day10: "Enryaku-ji Konpon Chudo, resized. Photo by 663highland, CC BY 2.5. https://commons.wikimedia.org/wiki/File:Enryakuji_Konponchudo04n4272.jpg",
+  day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0.",
+  day16: "Shibuya scramble crossing, resized. Photo by Benh LIEU SONG, CC BY-SA 2.0. https://commons.wikimedia.org/wiki/File:Tokyo_Shibuya_Scramble_Crossing_2018-10-09.jpg",
+  day19: "Mount Fuji from the Mount Kintoki summit, resized. Photo by Alpsdake, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Mount_Fuji_from_Mount_Kintoki.jpg",
+  day20: "Asakusa Engei Hall, resized. Photo by Kakidai, CC BY-SA 3.0. https://commons.wikimedia.org/wiki/File:Asakusa_Engei_Hall_2012.JPG"
 };
 
 const defaultPlanPhotos = {
-  day02: "capstones/day02.jpg",
-  day03: "capstones/day03-namba.webp?v221",
+  day02: "capstones/day02-nozomi.webp?v228",
+  day03: "capstones/day03-tsutenkaku.webp?v228",
   day04: "capstones/day04.jpg?v221",
   day05: "capstones/day05-osaka-castle.webp?v221",
   day06: "capstones/day06.jpeg",
   day07: "capstones/day07-kiyomizu.webp?v227",
-  day08: "capstones/day08.jpg",
+  day08: "capstones/day08-kinkakuji.webp?v228",
   day09: "capstones/day09-nijo.webp?v227",
-  day10: "capstones/day10.jpeg",
+  day10: "capstones/day10-enryakuji.webp?v228",
   day11: "capstones/day11.jpg",
   day12: "capstones/day12.webp",
   day13: "capstones/day13.jpg",
   day14: "capstones/day14.jpg",
   day15: "capstones/day15.jpeg",
-  day16: "capstones/day16.jpeg",
+  day16: "capstones/day16-shibuya.webp?v228",
   day17: "capstones/day17.jpg",
   day18: "capstones/day18.jpg",
-  day19: "capstones/day19.webp",
-  day20: "capstones/day20.webp",
+  day19: "capstones/day19-kintoki.webp?v228",
+  day20: "capstones/day20-engei.webp?v228",
   day21: "capstones/day21.jpg"
 };
 
