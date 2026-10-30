@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v230";
+const APP_VERSION = "japan-quest-v231";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -9678,6 +9678,7 @@ function anyAbortSignal(signals) {
 }
 
 async function journalPost(payload, options = {}) {
+  if (payload?.image && String(payload.image).length > 2000000) throw new Error("Photo too large");
   const prefs = readJournalPrefs();
   const timeoutMs = Number(options.timeoutMs) || 0;
   const timeout = timeoutMs && !options.keepalive ? new AbortController() : null;
@@ -9718,27 +9719,117 @@ function markJournalSynced() {
   renderJournalStatus();
 }
 
-function downscaleJpeg(dataUrl, maxEdge, quality) {
+const JOURNAL_ITEM_MS = 40000;
+const JOURNAL_RUN_MS = 180000;
+
+function withDeadline(work, ms, signal) {
   return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      const scale = Math.min(1, maxEdge / Math.max(image.width, image.height, 1));
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(image.width * scale));
-      canvas.height = Math.max(1, Math.round(image.height * scale));
-      canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL("image/jpeg", quality).split(",")[1]);
+    let settled = false;
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", onAbort);
+      fn(value);
     };
-    image.onerror = () => reject(new Error("The photo could not be prepared."));
-    image.src = dataUrl;
+    const onAbort = () => finish(reject, new DOMException("Aborted", "AbortError"));
+    const timer = setTimeout(() => finish(reject, new Error("Timed out")), ms);
+    if (signal?.aborted) {
+      onAbort();
+      return;
+    }
+    signal?.addEventListener("abort", onAbort, { once: true });
+    Promise.resolve(work).then(
+      (value) => finish(resolve, value),
+      (error) => finish(reject, error)
+    );
   });
+}
+
+function nextPaint() {
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      resolve();
+    };
+    requestAnimationFrame(() => setTimeout(finish, 0));
+    setTimeout(finish, 50);
+  });
+}
+
+function jpegSize(bytes) {
+  if (!bytes || bytes.length < 4 || bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 8 < bytes.length) {
+    if (bytes[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    const marker = bytes[offset + 1];
+    if (marker === 0xd8 || marker === 0xd9 || marker === 0x01) {
+      offset += 2;
+      continue;
+    }
+    const length = (bytes[offset + 2] << 8) + bytes[offset + 3];
+    if (marker >= 0xc0 && marker <= 0xc2) {
+      const height = (bytes[offset + 5] << 8) + bytes[offset + 6];
+      const width = (bytes[offset + 7] << 8) + bytes[offset + 8];
+      if (width > 0 && height > 0) return { width, height };
+    }
+    if (length < 2) break;
+    offset += 2 + length;
+  }
+  return null;
+}
+
+async function downscaleJpeg(dataUrl, maxEdge, quality, signal) {
+  if (typeof dataUrl !== "string" || dataUrl.length < 32) throw new Error("The photo could not be prepared.");
+  if (dataUrl.length > 30000000) throw new Error("Photo too large");
+  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+  const blob = await fetch(dataUrl).then((response) => response.blob());
+  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+  const head = new Uint8Array(await blob.slice(0, 512 * 1024).arrayBuffer());
+  const size = jpegSize(head);
+  const scale = size ? Math.min(1, maxEdge / Math.max(size.width, size.height, 1)) : 1;
+  const options = { imageOrientation: "from-image" };
+  if (signal) options.signal = signal;
+  if (size && scale < 1) {
+    options.resizeWidth = Math.max(1, Math.round(size.width * scale));
+    options.resizeHeight = Math.max(1, Math.round(size.height * scale));
+    options.resizeQuality = "medium";
+  }
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(blob, options);
+  } catch (error) {
+    if (signal?.aborted || error?.name === "AbortError") throw new DOMException("Aborted", "AbortError");
+    try { bitmap = await createImageBitmap(blob); } catch { throw new Error("The photo could not be prepared."); }
+  }
+  try {
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    const fitted = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height, 1));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * fitted));
+    canvas.height = Math.max(1, Math.round(bitmap.height * fitted));
+    canvas.getContext("2d", { alpha: false }).drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const encoded = canvas.toDataURL("image/jpeg", quality).split(",")[1] || "";
+    if (!encoded) throw new Error("The photo could not be prepared.");
+    return encoded;
+  } finally {
+    bitmap?.close?.();
+  }
 }
 
 let journalSyncing = false;
 let journalSyncToken = 0;
+let journalWriteEpoch = 0;
 let journalQueueAbort = null;
+let journalItemAbort = null;
 let journalSyncMessage = "";
 let journalSyncOutcome = "";
+let journalRunTimedOut = false;
 
 function noteJournalSync(message, outcome) {
   journalSyncMessage = message;
@@ -9750,8 +9841,8 @@ function noteJournalSync(message, outcome) {
 }
 
 function queueProblem(items) {
-  const problems = items.filter((item) => item.lastError && (item.status !== "synced" || item.pendingDelete || item.pendingMove));
-  return problems.length ? publicJournalError(problems[problems.length - 1].lastError) : "";
+  const problem = items.find((item) => item.lastError && (item.status !== "synced" || item.pendingDelete || item.pendingMove));
+  return problem ? publicJournalError(problem.lastError) : "";
 }
 
 async function photoForQueueItem(item) {
@@ -9759,20 +9850,41 @@ async function photoForQueueItem(item) {
     const byId = await withPhotoStore("readonly", (store) => storeRequest(store.get(item.photoId))).catch(() => null);
     if (byId?.dataUrl) return byId;
   }
-  const photos = await getAllPhotos().catch(() => []);
-  return photos.find((entry) => entry.clientId === item.clientId || entry.id === item.photoId) || null;
+  if (!item.clientId) return null;
+  return withPhotoStore("readonly", (store) => new Promise((resolve, reject) => {
+    const request = store.openCursor();
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (!cursor) {
+        resolve(null);
+        return;
+      }
+      if (cursor.value?.clientId === item.clientId && cursor.value.dataUrl) {
+        resolve(cursor.value);
+        return;
+      }
+      cursor.continue();
+    };
+  })).catch(() => null);
 }
 
-async function journalImagePayload(dataUrl) {
-  let image = await downscaleJpeg(dataUrl, 2048, 0.85);
-  if (image.length > 3500000) image = await downscaleJpeg(dataUrl, 1600, 0.72);
-  if (image.length > 5000000) throw new Error("Photo too large");
-  const thumb = await downscaleJpeg(dataUrl, 400, 0.7);
+async function journalImagePayload(dataUrl, signal) {
+  let image = await downscaleJpeg(dataUrl, 1600, 0.72, signal);
+  if (image.length > 900000) image = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 1280, 0.6, signal);
+  if (image.length > 1500000) throw new Error("Photo too large");
+  const thumb = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 320, 0.6, signal);
   return { image, thumb };
 }
 
-function journalPostOptions() {
-  return { signal: journalQueueAbort?.signal, timeoutMs: 45000 };
+function journalItemSignal() {
+  journalItemAbort?.abort();
+  journalItemAbort = new AbortController();
+  return anyAbortSignal([journalQueueAbort?.signal, journalItemAbort.signal]);
+}
+
+function assertJournalWork(signal, epoch) {
+  if (signal?.aborted || epoch !== journalWriteEpoch) throw new DOMException("Aborted", "AbortError");
 }
 
 async function clearJournalInflight() {
@@ -9786,175 +9898,198 @@ async function clearJournalInflight() {
   }
 }
 
+function releaseJournalRun() {
+  journalWriteEpoch += 1;
+  journalItemAbort?.abort();
+  journalQueueAbort?.abort();
+}
+
+async function runQueueItem(item, prefs, signal, epoch) {
+  assertJournalWork(signal, epoch);
+  if (item.pendingDelete) {
+    item.inflight = true;
+    await putJournalQueueItem(item);
+    assertJournalWork(signal, epoch);
+    await journalPost({ action: "deletePhoto", clientId: item.clientId }, { signal });
+    assertJournalWork(signal, epoch);
+    await removeJournalQueueItem(item.clientId);
+    return "deleted";
+  }
+  if (item.status === "synced" && item.pendingMove) {
+    item.inflight = true;
+    await putJournalQueueItem(item);
+    assertJournalWork(signal, epoch);
+    const movedDay = findDay(item.dayId);
+    await journalPost({
+      action: "movePhoto",
+      clientId: item.clientId,
+      dayId: item.dayId,
+      date: movedDay?.day?.date || ""
+    }, { signal });
+    assertJournalWork(signal, epoch);
+    item.inflight = false;
+    item.pendingMove = false;
+    item.lastError = "";
+    await putJournalQueueItem(item);
+    return "moved";
+  }
+  const photo = await photoForQueueItem(item);
+  assertJournalWork(signal, epoch);
+  if (!photo?.dataUrl) throw new Error("Photo missing on this phone");
+  const prepared = await journalImagePayload(photo.dataUrl, signal);
+  assertJournalWork(signal, epoch);
+  const author = item.author || prefs.author;
+  const day = findDay(item.dayId || photo.dayId);
+  item.inflight = true;
+  item.status = "pending";
+  item.lastError = "";
+  await putJournalQueueItem(item);
+  assertJournalWork(signal, epoch);
+  const result = await journalPost({
+    action: "uploadPhoto",
+    dayId: item.dayId || photo.dayId,
+    date: day?.day.date || "",
+    author,
+    caption: photo.caption || item.caption || "",
+    clientId: item.clientId,
+    createdAt: item.createdAt || photo.createdAt,
+    image: prepared.image,
+    thumb: prepared.thumb
+  }, { signal });
+  assertJournalWork(signal, epoch);
+  item.inflight = false;
+  item.status = "synced";
+  item.fileId = result.fileId;
+  item.lastError = "";
+  await putJournalQueueItem(item);
+  photo.driveFileId = result.fileId;
+  try { await putPhoto(photo); } catch { /* the upload is already recorded */ }
+  return "uploaded";
+}
+
+function journalFailureText(error) {
+  if (journalRunTimedOut || error?.name === "AbortError" || error?.message === "Timed out") return "Timed out";
+  return publicJournalError(error?.message || "Upload failed.");
+}
+
 async function flushJournalQueue(options = {}) {
   const force = Boolean(options.force);
   const manual = force || Boolean(options.manual);
   if (force) {
     journalSyncToken += 1;
-    journalQueueAbort?.abort();
+    journalRunTimedOut = false;
+    releaseJournalRun();
     journalQueueAbort = null;
+    journalItemAbort = null;
     journalSyncing = false;
   }
   if (!journalConfigured()) {
     if (manual) noteJournalSync("Journal is not connected", "error");
     renderJournalStatus();
-    if (force) await clearJournalInflight();
+    if (force) await withDeadline(clearJournalInflight(), 8000).catch(() => {});
     return;
   }
   const prefs = readJournalPrefs();
   if (!prefs.author || !prefs.passcode) {
     if (manual) noteJournalSync("Not signed in", "error");
     renderJournalStatus();
-    if (force) await clearJournalInflight();
+    if (force) await withDeadline(clearJournalInflight(), 8000).catch(() => {});
     return;
   }
   if (journalSyncing && !force) {
-    if (manual) noteJournalSync("Syncing…", "syncing");
+    if (manual && !journalSyncMessage) noteJournalSync("Syncing…", "syncing");
     renderJournalStatus();
     return;
   }
   if (!navigator.onLine) {
     if (manual) noteJournalSync("Network error", "error");
     renderJournalStatus();
-    if (force) await clearJournalInflight();
+    if (force) await withDeadline(clearJournalInflight(), 8000).catch(() => {});
     return;
   }
   const token = ++journalSyncToken;
   journalQueueAbort?.abort();
+  journalItemAbort?.abort();
   journalQueueAbort = new AbortController();
+  journalRunTimedOut = false;
   journalSyncing = true;
+  const runSignal = journalQueueAbort.signal;
+  const runDeadlineAt = Date.now() + JOURNAL_RUN_MS;
+  const runTimer = setTimeout(() => {
+    if (token !== journalSyncToken) return;
+    journalRunTimedOut = true;
+    releaseJournalRun();
+  }, JOURNAL_RUN_MS);
   noteJournalSync("Syncing…", "syncing");
   renderJournalStatus();
   let uploaded = 0;
-  let failed = 0;
-  let reason = "";
+  let failure = "";
   try {
-    const loaded = await journalQueueAll();
+    await withDeadline(clearJournalInflight(), 8000, runSignal).catch(() => {});
+    if (token !== journalSyncToken) return;
+    const loaded = await withDeadline(journalQueueAll(), 8000, runSignal);
     if (token !== journalSyncToken) return;
     const items = Array.isArray(loaded) ? loaded : [];
-    for (const item of items) {
-      if (!item.inflight) continue;
-      item.inflight = false;
-      item.status = item.status === "inflight" ? "pending" : item.status;
-      await putJournalQueueItem(item);
-    }
-    if (token !== journalSyncToken) return;
+    const total = items.filter((item) => item.status !== "synced").length;
+    let index = 0;
     for (const item of items) {
       if (token !== journalSyncToken) return;
-      if (item.pendingDelete) {
-        try {
-          item.inflight = true;
-          await putJournalQueueItem(item);
-          if (token !== journalSyncToken) return;
-          await journalPost({ action: "deletePhoto", clientId: item.clientId }, journalPostOptions());
-          if (token !== journalSyncToken) return;
-          await removeJournalQueueItem(item.clientId);
-        } catch (error) {
-          if (token !== journalSyncToken || error?.name === "AbortError") return;
-          item.inflight = false;
-          item.lastError = publicJournalError(error.message || "Delete failed.");
-          await putJournalQueueItem(item);
-          failed += 1;
-          reason = item.lastError;
-        }
-        continue;
+      const needsUpload = item.status !== "synced" && !item.pendingDelete;
+      const needsWork = needsUpload || item.pendingDelete || (item.status === "synced" && item.pendingMove);
+      if (!needsWork) continue;
+      const left = runDeadlineAt - Date.now();
+      if (journalRunTimedOut || left <= 0) {
+        failure = "Timed out";
+        break;
       }
-      if (item.status === "synced" && item.pendingMove) {
-        try {
-          item.inflight = true;
-          await putJournalQueueItem(item);
-          if (token !== journalSyncToken) return;
-          const movedDay = findDay(item.dayId);
-          await journalPost({
-            action: "movePhoto",
-            clientId: item.clientId,
-            dayId: item.dayId,
-            date: movedDay?.day?.date || ""
-          }, journalPostOptions());
-          if (token !== journalSyncToken) return;
-          item.inflight = false;
-          item.pendingMove = false;
-          item.lastError = "";
-          await putJournalQueueItem(item);
-        } catch (error) {
-          if (token !== journalSyncToken || error?.name === "AbortError") return;
-          item.inflight = false;
-          item.lastError = publicJournalError(error.message || "Move failed.");
-          await putJournalQueueItem(item);
-          failed += 1;
-          reason = item.lastError;
-        }
-        continue;
+      if (needsUpload) {
+        index += 1;
+        noteJournalSync(`Uploading ${index} of ${total}…`, "syncing");
+        await nextPaint();
       }
-      if (item.status === "synced") continue;
+      if (token !== journalSyncToken) return;
+      const epoch = journalWriteEpoch;
+      const signal = journalItemSignal();
       try {
-        const photo = await photoForQueueItem(item);
+        const outcome = await withDeadline(runQueueItem(item, prefs, signal, epoch), Math.min(JOURNAL_ITEM_MS, left), signal);
         if (token !== journalSyncToken) return;
-        if (!photo?.dataUrl) {
-          item.inflight = false;
-          item.status = "pending";
-          item.lastError = "Photo missing on this phone";
-          await putJournalQueueItem(item);
-          failed += 1;
-          reason = item.lastError;
-          continue;
-        }
-        const author = item.author || prefs.author;
-        const day = findDay(item.dayId || photo.dayId);
-        const { image, thumb } = await journalImagePayload(photo.dataUrl);
-        if (token !== journalSyncToken) return;
-        item.inflight = true;
-        item.status = "pending";
-        item.lastError = "";
-        await putJournalQueueItem(item);
-        if (token !== journalSyncToken) return;
-        const result = await journalPost({
-          action: "uploadPhoto",
-          dayId: item.dayId || photo.dayId,
-          date: day?.day.date || "",
-          author,
-          caption: photo.caption || item.caption || "",
-          clientId: item.clientId,
-          createdAt: item.createdAt || photo.createdAt,
-          image,
-          thumb
-        }, journalPostOptions());
-        if (token !== journalSyncToken) return;
-        photo.driveFileId = result.fileId;
-        await putPhoto(photo);
-        item.inflight = false;
-        item.status = "synced";
-        item.fileId = result.fileId;
-        item.lastError = "";
-        await putJournalQueueItem(item);
-        uploaded += 1;
+        if (outcome === "uploaded") uploaded += 1;
       } catch (error) {
-        if (token !== journalSyncToken || error?.name === "AbortError") return;
+        if (token !== journalSyncToken) return;
+        journalWriteEpoch += 1;
+        journalItemAbort?.abort();
+        failure = journalFailureText(error);
         item.inflight = false;
-        item.status = "pending";
-        item.attempts = (item.attempts || 0) + 1;
-        item.lastError = publicJournalError(error.message || "Upload failed.");
-        await putJournalQueueItem(item);
-        failed += 1;
-        reason = item.lastError;
+        if (item.status !== "synced" || item.pendingDelete || item.pendingMove) {
+          if (!item.pendingDelete && !item.pendingMove) item.status = "pending";
+          item.attempts = (item.attempts || 0) + 1;
+          item.lastError = failure;
+          await withDeadline(putJournalQueueItem(item), 5000).catch(() => {});
+        }
+        break;
       }
     }
     if (token !== journalSyncToken) return;
-    if (uploaded) {
-      noteJournalSync(failed ? `Uploaded ${uploaded}. ${reason}` : `Uploaded ${uploaded}`, failed ? "error" : "ok");
+    if (uploaded && failure) {
+      noteJournalSync(`Uploaded ${uploaded}. ${failure}`, "error");
       markJournalSynced();
-    } else if (failed) {
-      noteJournalSync(reason || "Sync failed", "error");
+    } else if (uploaded) {
+      noteJournalSync(`Uploaded ${uploaded}`, "ok");
+      markJournalSynced();
+    } else if (failure) {
+      noteJournalSync(failure, "error");
     } else if (manual) {
       noteJournalSync("Nothing to upload", "ok");
     }
   } catch (error) {
     if (token !== journalSyncToken) return;
-    noteJournalSync(publicJournalError(error?.message || "Sync failed"), "error");
+    noteJournalSync(journalFailureText(error), "error");
   } finally {
+    clearTimeout(runTimer);
     if (token === journalSyncToken) {
       journalSyncing = false;
       journalQueueAbort = null;
+      journalItemAbort = null;
       renderJournalStatus();
     }
   }
