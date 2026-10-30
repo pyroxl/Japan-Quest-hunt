@@ -5100,6 +5100,10 @@ button.trip-date {
   font-weight: 750;
 }
 
+.journal-field[hidden] {
+  display: none;
+}
+
 .journal-field input,
 .journal-field select,
 .journal-note {
@@ -5128,6 +5132,22 @@ button.trip-date {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.journal-sync-result,
+.journal-waiting-line {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.journal-sync-result {
+  min-height: 1.2em;
+}
+
+.journal-sync-result.is-error {
+  color: #7a1e32;
 }
 
 .journal-actions button,
