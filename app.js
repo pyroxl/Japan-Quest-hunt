@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v232";
+const APP_VERSION = "japan-quest-v233";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -2164,6 +2164,7 @@ async function renderPhotosForTask(taskId, container, onPhotosChange) {
     const img = document.createElement("img");
     img.alt = photo.caption || "Journal photo";
     img.src = photo.dataUrl;
+    bindLocalPhoto(img, photo);
     wrapper.appendChild(img);
     appendPhotoCaption(wrapper, photo);
     appendPhotoDaySelect(wrapper, photo);
@@ -2367,10 +2368,10 @@ function bytesFromDataUrl(dataUrl) {
 async function fileToStoredDataUrl(file) {
   if (!file || !Number(file.size)) throw new Error("Empty file");
   if (isHeicFile(file)) {
-    const drawn = await drawPhotoFile(file, 2048, 0.82);
+    const drawn = await drawPhotoFile(file, 2560, 0.88);
     if (drawn) return drawn;
     try {
-      return await heicFileToJpeg(file, 2048, 0.82);
+      return await heicFileToJpeg(file, 2560, 0.88);
     } catch (error) {
       if (/heic/i.test(String(error?.message || ""))) throw error;
       throw new Error("Couldn't open this HEIC.");
@@ -2379,7 +2380,7 @@ async function fileToStoredDataUrl(file) {
   let dataUrl = "";
   try { dataUrl = await fileToDataUrl(file); } catch { dataUrl = ""; }
   if (!dataUrl || dataUrl.length > 1800000) {
-    const drawn = await drawPhotoFile(file, 2048, 0.82);
+    const drawn = await drawPhotoFile(file, 2560, 0.88);
     if (drawn) return drawn;
   }
   if (!dataUrl) throw new Error("Couldn't read this file");
@@ -5356,6 +5357,7 @@ async function renderAlbum() {
       const img = document.createElement("img");
       img.alt = photo.caption || "Trip photo";
       img.src = photo.dataUrl;
+      bindLocalPhoto(img, photo);
       const caption = document.createElement("div");
       caption.className = "album-caption";
       if (photo.slot && photo.slot !== "quest") {
@@ -8932,6 +8934,7 @@ async function renderStoryPhotos() {
     }).join("");
     return `<section class="story-photo-day"><h3>${escapeHtml(label)}</h3><div class="story-photo-grid">${cells}</div></section>`;
   }).join(""));
+  host.__storyPhotos = photos;
   const missing = photos.filter((photo) => !photo.thumb && thumbKey(photo));
   await mapPool(missing, JOURNAL_THUMB_CONCURRENCY, async (photo) => {
     if (token !== storyPhotosToken || !host.isConnected) return;
@@ -9796,7 +9799,7 @@ function anyAbortSignal(signals) {
 }
 
 async function journalPost(payload, options = {}) {
-  if (payload?.image && String(payload.image).length > 2000000) throw new Error("Photo too large");
+  if (payload?.image && String(payload.image).length > 6000000) throw new Error("Photo too large");
   const prefs = readJournalPrefs();
   const timeoutMs = Number(options.timeoutMs) || 0;
   const timeout = timeoutMs && !options.keepalive ? new AbortController() : null;
@@ -9990,10 +9993,10 @@ async function photoForQueueItem(item) {
 
 async function journalImagePayload(dataUrl, signal) {
   let source = dataUrl;
-  if (dataUrlIsHeic(dataUrl)) source = await heicBytesToJpeg(bytesFromDataUrl(dataUrl), 2048, 0.82);
-  let image = await downscaleJpeg(source, 1600, 0.72, signal);
-  if (image.length > 900000) image = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 1280, 0.6, signal);
-  if (image.length > 1500000) throw new Error("Photo too large");
+  if (dataUrlIsHeic(dataUrl)) source = await heicBytesToJpeg(bytesFromDataUrl(dataUrl), 2560, 0.88);
+  let image = await downscaleJpeg(source, 2560, 0.88, signal);
+  if (image.length > 4500000) image = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 2560, 0.8, signal);
+  if (image.length > 6000000) throw new Error("Photo too large");
   const thumb = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 320, 0.6, signal);
   return { image, thumb };
 }
@@ -10363,6 +10366,251 @@ async function fetchJournalThumb(photo) {
   return thumb;
 }
 
+const fullImageCache = new Map();
+const FULL_IMAGE_CACHE_LIMIT = 4;
+
+function rememberFullImage(fileId, src) {
+  if (!fileId || !src) return src;
+  fullImageCache.delete(fileId);
+  fullImageCache.set(fileId, src);
+  while (fullImageCache.size > FULL_IMAGE_CACHE_LIMIT) {
+    const oldest = fullImageCache.keys().next().value;
+    fullImageCache.delete(oldest);
+  }
+  return src;
+}
+
+function journalImageSrc(value) {
+  const text = String(value || "");
+  if (!text) return "";
+  if (text.startsWith("data:")) return text;
+  return `data:image/jpeg;base64,${text}`;
+}
+
+async function fetchJournalFull(fileId) {
+  if (!fileId) return "";
+  if (fullImageCache.has(fileId)) return rememberFullImage(fileId, fullImageCache.get(fileId));
+  try {
+    const data = await journalPost({ action: "full", fileId });
+    return rememberFullImage(fileId, journalImageSrc(data.image));
+  } catch (error) {
+    if (/unknown action/i.test(String(error?.message || ""))) return "";
+    throw error;
+  }
+}
+
+function localViewerItem(photo) {
+  return {
+    key: `local-${photo.id}`,
+    alt: photo.caption || "Journal photo",
+    thumb: photo.dataUrl,
+    full: photo.dataUrl
+  };
+}
+
+async function openLocalPhoto(photo) {
+  const all = await getAllPhotos().catch(() => []);
+  const day = all.filter((item) => item.dayId === photo.dayId && item.dataUrl)
+    .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  const index = Math.max(0, day.findIndex((item) => item.id === photo.id));
+  openPhotoViewer(day.map(localViewerItem), index);
+}
+
+function bindLocalPhoto(img, photo) {
+  img.classList.add("photo-open");
+  img.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    void openLocalPhoto(photo);
+  });
+}
+
+function remoteViewerItem(photo) {
+  const thumb = journalThumbSrc(photo);
+  return {
+    key: photo.fileId || thumbKey(photo),
+    alt: photo.caption || `${photo.author || "Family"} photo`,
+    thumb,
+    full: photo.fileId ? "" : thumb,
+    loadFull: photo.fileId ? () => fetchJournalFull(photo.fileId) : null
+  };
+}
+
+function openRemotePhotos(photos, fileId) {
+  const index = Math.max(0, photos.findIndex((photo) => photo.fileId === fileId || thumbKey(photo) === fileId));
+  openPhotoViewer(photos.map(remoteViewerItem), index < 0 ? 0 : index);
+}
+
+let photoViewerToken = 0;
+
+function openPhotoViewer(items, startIndex) {
+  const photos = (items || []).filter((item) => item && (item.thumb || item.full || item.loadFull));
+  if (!photos.length) return;
+  document.querySelector(".photo-viewer")?.remove();
+  let index = Math.min(Math.max(0, startIndex || 0), photos.length - 1);
+  let scale = 1;
+  let tx = 0;
+  let ty = 0;
+  let pointers = new Map();
+  let gesture = null;
+  let lastTap = 0;
+  const token = ++photoViewerToken;
+  const overlay = document.createElement("div");
+  overlay.className = "photo-viewer";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "Photo");
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "photo-viewer-close";
+  close.setAttribute("aria-label", "Close");
+  close.textContent = "×";
+  const status = document.createElement("p");
+  status.className = "photo-viewer-status";
+  status.setAttribute("aria-live", "polite");
+  const stage = document.createElement("div");
+  stage.className = "photo-viewer-stage";
+  const image = document.createElement("img");
+  image.alt = "";
+  image.draggable = false;
+  stage.appendChild(image);
+  overlay.append(close, status, stage);
+  const apply = () => {
+    image.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  };
+  const resetZoom = () => {
+    scale = 1;
+    tx = 0;
+    ty = 0;
+    apply();
+  };
+  const clampPan = () => {
+    const stageRect = stage.getBoundingClientRect();
+    const maxX = Math.max(0, (image.clientWidth * scale - stageRect.width) / 2 + 24);
+    const maxY = Math.max(0, (image.clientHeight * scale - stageRect.height) / 2 + 24);
+    tx = Math.max(-maxX, Math.min(maxX, tx));
+    ty = Math.max(-maxY, Math.min(maxY, ty));
+  };
+  const point = (event) => ({ x: event.clientX, y: event.clientY });
+  const span = () => {
+    const pts = [...pointers.values()];
+    return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+  };
+  const setStatus = (text) => { status.textContent = text || ""; };
+  const show = (next) => {
+    if (next < 0 || next >= photos.length) return;
+    index = next;
+    const item = photos[index];
+    const mine = ++photoViewerToken;
+    resetZoom();
+    image.alt = item.alt || "Photo";
+    image.src = item.thumb || item.full || "";
+    const needsFull = Boolean(item.loadFull) && item.full !== item.thumb;
+    setStatus(needsFull ? "Loading…" : "");
+    if (!item.loadFull) {
+      if (item.full) image.src = item.full;
+      return;
+    }
+    item.loadFull().then((src) => {
+      if (mine !== photoViewerToken || !src || !overlay.isConnected) return;
+      image.src = src;
+      setStatus("");
+    }).catch(() => {
+      if (mine !== photoViewerToken || !overlay.isConnected) return;
+      setStatus("Couldn't load");
+    });
+  };
+  const shut = () => {
+    photoViewerToken += 1;
+    document.removeEventListener("keydown", onKey);
+    overlay.remove();
+    document.body.classList.remove("photo-viewer-open");
+  };
+  const onKey = (event) => {
+    if (event.key === "Escape") shut();
+    else if (event.key === "ArrowRight") show(index + 1);
+    else if (event.key === "ArrowLeft") show(index - 1);
+  };
+  close.addEventListener("click", (event) => {
+    event.stopPropagation();
+    shut();
+  });
+  stage.addEventListener("pointerdown", (event) => {
+    if (event.target === close) return;
+    pointers.set(event.pointerId, point(event));
+    if (pointers.size === 2) {
+      gesture = { type: "pinch", dist: span(), scale, tx, ty, moved: true };
+    } else if (pointers.size === 1) {
+      gesture = { type: "pan", x: event.clientX, y: event.clientY, tx, ty, moved: false, target: event.target };
+    }
+  });
+  stage.addEventListener("pointermove", (event) => {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.set(event.pointerId, point(event));
+    if (pointers.size >= 2 && gesture?.type === "pinch") {
+      const next = gesture.scale * (span() / gesture.dist);
+      scale = Math.max(1, Math.min(4, next));
+      if (scale === 1) { tx = 0; ty = 0; }
+      else clampPan();
+      apply();
+      gesture.moved = true;
+      return;
+    }
+    if (gesture?.type !== "pan" || pointers.size !== 1) return;
+    const dx = event.clientX - gesture.x;
+    const dy = event.clientY - gesture.y;
+    if (Math.hypot(dx, dy) > 8) gesture.moved = true;
+    if (scale > 1) {
+      tx = gesture.tx + dx;
+      ty = gesture.ty + dy;
+      clampPan();
+      apply();
+    }
+  });
+  const endPointer = (event) => {
+    pointers.delete(event.pointerId);
+    if (pointers.size >= 2) return;
+    if (pointers.size === 1) {
+      const only = [...pointers.values()][0];
+      gesture = { type: "pan", x: only.x, y: only.y, tx, ty, moved: true };
+      return;
+    }
+    const ended = gesture;
+    gesture = null;
+    if (!ended || ended.type !== "pan") return;
+    const dx = event.clientX - ended.x;
+    const dy = event.clientY - ended.y;
+    if (scale === 1 && ended.moved && Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      show(index + (dx < 0 ? 1 : -1));
+      return;
+    }
+    if (scale === 1 && dy > 72 && dy > Math.abs(dx)) {
+      shut();
+      return;
+    }
+    if (!ended.moved && scale === 1 && ended.target !== image) {
+      shut();
+      return;
+    }
+    if (!ended.moved && ended.target === image) {
+      const now = Date.now();
+      if (now - lastTap < 280) {
+        lastTap = 0;
+        if (scale > 1) resetZoom();
+        else { scale = 2.5; clampPan(); apply(); }
+      } else lastTap = now;
+    }
+  };
+  stage.addEventListener("pointerup", endPointer);
+  stage.addEventListener("pointercancel", endPointer);
+  document.addEventListener("keydown", onKey);
+  document.body.classList.add("photo-viewer-open");
+  document.body.appendChild(overlay);
+  close.focus();
+  show(index);
+  void token;
+}
+
 function renderFamilyJournal(host, day, record) {
   const list = host.querySelector(".family-journal-list");
   if (!list) return;
@@ -10371,6 +10619,7 @@ function renderFamilyJournal(host, day, record) {
   const recapNotes = (record?.notes || []).filter((note) => note.author === TRIP_GUIDE_AUTHOR && note.note);
   const notes = (record?.notes || []).filter((note) => note.author !== author && note.author !== TRIP_GUIDE_AUTHOR && note.note);
   const photos = familyPhotos(record, keys);
+  host.__familyPhotos = photos;
   list.replaceChildren();
   renderDailyRecap(list, recapNotes);
   if (!notes.length && !photos.length) {
@@ -10399,8 +10648,10 @@ function renderFamilyJournal(host, day, record) {
     if (id) block.dataset.fileId = id;
     const name = document.createElement("strong");
     name.textContent = photo.author || "Family";
-    const frame = document.createElement("div");
+    const frame = document.createElement("button");
+    frame.type = "button";
     frame.className = "family-photo-frame";
+    frame.addEventListener("click", () => openRemotePhotos(host.__familyPhotos || photos, id));
     const src = journalThumbSrc(photo);
     if (src) frame.appendChild(familyThumbImage(photo, src));
     block.append(name, frame);
@@ -11012,6 +11263,15 @@ document.addEventListener("keydown", (event) => {
 storyShell?.addEventListener("click", (event) => {
   if (event.target.closest("[data-retry-photos]")) {
     void renderStoryPhotos();
+    return;
+  }
+  const storyPhoto = event.target.closest(".story-photo");
+  if (storyPhoto?.dataset.fileId) {
+    event.preventDefault();
+    const all = document.querySelector("#storyPhotos")?.__storyPhotos || [];
+    const current = all.find((photo) => photo.fileId === storyPhoto.dataset.fileId || thumbKey(photo) === storyPhoto.dataset.fileId);
+    const dayPhotos = current ? all.filter((photo) => photo.dayId === current.dayId) : [];
+    openRemotePhotos(dayPhotos.length ? dayPhotos : (current ? [current] : []), storyPhoto.dataset.fileId);
     return;
   }
   const tab = event.target.closest("[data-story]");

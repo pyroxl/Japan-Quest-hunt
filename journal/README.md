@@ -47,6 +47,8 @@ Every body includes `passcode`. A wrong passcode returns `{"ok":false,"error":"W
 - Redeploy the script (new version, same `/exec` URL) after pulling this file so move and delete reach Drive. Until then, the phone still updates its own copy.
 - `saveNote` keeps one row for each `dayId` and `author`.
 - `list` returns notes and photos. A list for one day includes a base64 thumbnail. The viewer does not sign in to Google.
+- `thumb` returns a small JPEG. Files larger than 250KB come back empty, so it is not the full photo.
+- `full` returns the original Drive file as base64 for `fileId`. Redeploy the script (Deploy, Manage deployments, pencil, New version, Deploy; the `/exec` URL stays the same) after pulling this file or the phone cannot load a full-size photo.
 - `doGet?action=thumb&id=FILE_ID&passcode=...` returns the same thumbnail as text.
 
 Sheet columns are `timestamp`, `dayId`, `date`, `author`, `note`, and `photo file ids`.

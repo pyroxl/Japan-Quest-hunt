@@ -5201,9 +5201,79 @@ button.trip-date {
 }
 
 .family-photo-frame {
+  display: block;
+  width: 100%;
   min-height: 96px;
+  padding: 0;
+  border: 0;
   border-radius: 8px;
   background: #f3ecef;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.quest-photo img.photo-open,
+.album-photo img.photo-open,
+.story-photo {
+  cursor: pointer;
+}
+
+.photo-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #fff0f6;
+  color: #34222a;
+}
+
+.photo-viewer-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(135, 58, 86, 0.24);
+  border-radius: 999px;
+  background: #fff;
+  color: #34222a;
+  font: inherit;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.photo-viewer-status {
+  position: absolute;
+  top: 22px;
+  left: 16px;
+  z-index: 2;
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 750;
+}
+
+.photo-viewer-stage {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.photo-viewer-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+  touch-action: none;
+  user-select: none;
+}
+
+body.photo-viewer-open {
+  overflow: hidden;
 }
 
 .family-photo img,
