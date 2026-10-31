@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v234";
+const APP_VERSION = "japan-quest-v235";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -330,7 +330,7 @@ const roadmapGoals = [
   { id: "higashiyama", goal: "Kiyomizu-dera and Higashiyama", days: ["day07"], status: "Ready", why: `Parents meet the couple at Kiyomizu after the Inari and Tofuku-ji morning, then walk down to Endo lunch. ${ENDO_PARTY}`, blocker: "", fallback: "Taxi toward Kiyomizu, descend the slopes, and protect the 14:00 Endo sitting." },
   { id: "arashiyama", goal: "Arashiyama and northwest Kyoto", days: ["day09"], status: "Ready", why: "Saturday is the sunny outdoor day. Going early beats the Saturday crowds, then the Randen and a city bus reach Kinkaku-ji.", blocker: "", fallback: "Use Togetsukyo and a riverside cafe, skip Ryoan-ji, and meet at Kinkaku-ji by city bus." },
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
-  { id: "mt-hiei", goal: "Mt Hiei mountain day", days: ["day10"], status: "Needs Route Checks", why: "Mai chose a Kyoto mountain morning with Enryaku-ji. The way up is the 08:51 Keihan bus, because the Eizan cable starts at 09:00. The evening is Uzumasa.", blocker: "Dinner around Uzumasa is still not picked. On the morning, confirm the 12:21 Keihan 56/56A bus is running. Some circle-marked trips on that route are suspended.", fallback: "If the 12:21 bus is not running, skip the forest walk and take the 14:11 drive bus. Sanjo Keihan at 15:00." },
+  { id: "mt-hiei", goal: "Slow Sunday in Kyoto", days: ["day10"], status: "Ready", why: "Mt Hiei is cancelled. Sleep in, Mai's morning, lunch together, then Uzumasa and the YOKAI festival.", blocker: "", fallback: "Skip Kōryū-ji if anyone is tired. Keep the 17:00 festival." },
   { id: "mountain-chapter", goal: "Three-night Hakone retreat", days: ["day17", "day18", "day19"], status: "Needs Route Checks", why: "The confirmed Gora hotel beside the station makes the mountain chapter usable by scheduled transport, with Mai's sunrise shrine visit, the reverse classic loop and a real hiking day.", blocker: "Prebook the Nov 9 05:30 taxi. Recheck the November bus, cruise, and ropeway timetable. Recheck the Mount Kintoki trail. Breakfast and dinner are included. Message the hotel through the Booking.com app. Request the hotpot and Japanese course venue.", fallback: "Use the earliest public-transport route to Moto-Hakone if the taxi cannot be arranged; use the H bus and Tozan train to return to Gora if the loop is cancelled." },
   { id: "hakone-return", goal: "Protected Hakone–Tokyo return", days: ["day20"], status: "Ready", why: "Hakone 30 is booked for 10:10 from Hakone-Yumoto. A reserved morning rail return avoids highway uncertainty and leaves time for luggage and a soft Tokyo landing.", blocker: "", fallback: "Use regular Odakyu services if the preferred Romancecar sells out." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
@@ -369,7 +369,7 @@ const regionalQuestPools = {
     ["kyoto-noren", "find", "Find a beautiful noren, lantern, or tiny garden.", null, ["gion", "higashiyama"]],
     ["kyoto-river", "photo", "Catch a quiet river routine.", null, ["gion", "arashiyama", "pontocho"]],
     ["kyoto-postcard", "culture", "Write or mail a postcard from Kyoto.", null, ["city"]],
-    ["kyoto-hiei", "culture", "Take the 08:51 Keihan bus to Enryaku-ji, then one short forest walk only if the 14:11 bus still works.", ["day10"], ["hiei"]]
+    ["kyoto-slow-sunday", "culture", "Sleep in, then Mai's morning, lunch at Daimaru, and the YOKAI festival.", ["day10"], ["central"]]
   ],
   nara: [
     ["nara-kakinoha", "food", "Try kakinoha-zushi in Nara.", null, ["nara"]],
@@ -431,7 +431,7 @@ const DAY_QUEST_AREAS = {
   day07: ["gion", "fushimi", "higashiyama"],
   day08: ["central", "pontocho"],
   day09: ["arashiyama"],
-  day10: ["hiei"],
+  day10: ["central"],
   day11: ["himeji"],
   day12: ["peace"],
   day13: ["miyajima"],
@@ -485,7 +485,7 @@ const cityTintPalette = {
 const outsideCityStyles = {
   day02: { from: "tokyo", to: "osaka" },
   day06: { from: "nara", to: "kyoto" },
-  day10: { from: "kyoto", to: "kyoto" }, // Mt Hiei day trip
+  day10: { from: "kyoto", to: "kyoto" },
   day11: { from: "kyoto", to: "hiroshima" },
   day13: { from: "hiroshima", to: "hiroshima" }, // Miyajima day trip
   day14: { from: "hiroshima", to: "tokyo" },
@@ -504,7 +504,7 @@ const dayWalkingTime = {
   day07: "~4–5 hr",
   day08: "~2 hr",
   day09: "~3–4 hr",
-  day10: "~4–5 hr",
+  day10: "~2–3 hr",
   day11: "~3 hr",
   day12: "~2–3 hr",
   day13: "~3–4 hr",
@@ -527,7 +527,7 @@ const dayWakeUpTime = {
   day07: "05:45",
   day08: "08:00",
   day09: "06:00",
-  day10: "07:15",
+  day10: "Sleep in",
   day11: "06:15",
   day12: "07:00",
   day13: "06:30",
@@ -553,7 +553,7 @@ const calendarThumbnailIdeas = {
 const calendarReferenceLinks = {
   day10: {
     label: "YOKAI Festival page ↗",
-    url: "https://en.eigamura.com/show/yokai_2026/"
+    url: "https://eigamura.com/feature/yokai2026/"
   },
   day13: {
     label: "Nov 4 tide plan ↗",
@@ -696,7 +696,7 @@ const tripData = {
   kyoto: {
     name: "Kyoto",
     baseLabel: "Hotel Monterey Kyoto",
-    description: "Geographic Kyoto clusters: Inari-to-Gion, a rainy central day, Arashiyama-to-Kinkaku, and Mt Hiei.",
+    description: "Geographic Kyoto clusters: Inari-to-Gion, a rainy central day, Arashiyama-to-Kinkaku, and a slow Sunday.",
     ongoing: [
       {
         title: "Kyoto Soft-Beauty Collection",
@@ -713,7 +713,7 @@ const tripData = {
       questDay("day07", "2026-10-29", "Torii to Old Kyoto", "An energetic southeast-to-north sweep from Mt Inari to Kiyomizu and Gion.", ["Fushimi Inari Taisha", "Yotsutsuji Intersection Kyoto", "Tofuku-ji Temple", "Kiyomizu-dera", "Sannenzaka", "Ninenzaka", "Yasaka Shrine", "Gion Kyoto"], "Mai and Brian climb Fushimi Inari early, make one compact Tofuku-ji visit, then meet the parents near Kiyomizu, walk the old streets downhill, and sit down at 14:00 for Tempura Endo Yasaka.", [{ text: "Turn around at Yotsutsuji or sooner", who: "brianMai" }, { text: "Choose either Tofuku-ji's garden or the Tsutenkyo area", who: "brianMai" }, "Finish Gion by late afternoon. Do not plan a night return"], ["A fox detail", "Kyoto spreading out below Mt Inari", "The Kiyomizu panorama", "A sloping-street detail"], "Mai gets torii, old streets and the dream-trip Kyoto view in one coherent corridor.", "Parents skip Inari and Tofuku-ji, taxi toward Kiyomizu, and join the Endo lunch. Sayaka joins too."),
       questDay("day08", "2026-10-30", "Rainy Central Kyoto", "A seated rainy day in central Kyoto, then the booked crab dinner.", ["Kyoto International Manga Museum", "Nishiki Market", "Nijo Castle", "Pontocho Alley"], "Slow hotel breakfast, the Manga Museum, a covered-market lunch, then Nijo under a roof. Walk to Kani Doraku at 18:00.", ["Eat a slow breakfast at Hotel Monterey while the rain is heaviest", "Use the Manga Museum from 10:00 to 11:30", "Eat a seated non-smoking lunch. Mai wants yuba, tofu, tamagoyaki, or pickles", "See Ninomaru Palace. Skip the garden if it is wet", "Rest at the hotel, then walk to dinner", "Stroll Pontocho after dinner only if it is dry"], ["A manga-wall detail", "A covered-arcade lunch", "A painted-room or nightingale-floor detail"], "Mai gets a dry, seated Kyoto day with manga, market food, and Nijo.", "Parents can skip any piece and rest at the hotel. There is seating at each stop."),
       questDay("day09", "2026-10-31", "Bamboo to Gold", "An early Arashiyama morning, then the Golden Pavilion.", ["Arashiyama Bamboo Forest", "Togetsukyo Bridge", "Ryoan-ji Temple", "Kinkaku-ji Temple"], "Be at the Bamboo Grove by 07:45, see Togetsukyo, eat early, and leave Arashiyama by 11:20. Ryoan-ji only if energy holds. Kinkaku-ji before 15:00.", ["Leave early. Saturday crowds build later", "Walk the grove, then Togetsukyo and a riverside cafe", "Eat a short early lunch and leave Arashiyama by 11:20", "Add Ryoan-ji only if energy holds", "Reach Kinkaku-ji before 15:00, then rest at the hotel"], ["A bamboo sound or shadow", "Togetsukyo against the mountains", "The Golden Pavilion reflection"], "Going early beats the Saturday Arashiyama crowds.", "Parents can skip Ryoan-ji and meet at Kinkaku-ji by city bus."),
-      questDay("day10", "2026-11-01", "Sacred Mountain Hiei", "Mt Hiei in the morning, then the Kaikai YOKAI Festival at Uzumasa Kyoto Village.", ["Sanjo Keihan Station", "Enryaku-ji Bus Center", "Enryaku-ji Temple", "Uzumasa Kyoto Village"], "Take the 08:51 Keihan bus from Sanjo Keihan. It reaches Enryaku-ji Bus Center at 09:45. See Todo, then ride back on the 12:21 or 14:11 bus.", ["Take the 08:51 bus. The Eizan cable does not start until 09:00", "Visit the core Enryaku-ji precinct without collecting every building", "Find one quiet forest section only if the 14:11 bus still works", "Pause for a Kyoto or Lake Biwa view", "Carry a bakery breakfast or trail snack", "Rest at the hotel until 17:00 and pack for the 07:30 departure", "Use the night entry at Uzumasa Kyoto Village"], ["A bell or incense sound in the forest", "A moss, cedar, or stone-path detail", "The first wide Lake Biwa or Kyoto view"], "Mai gets the mountain-and-nature Kyoto day she actively chose, then the yokai festival.", "Dad can skip the mountain or the parade and rest at the hotel.")
+      questDay("day10", "2026-11-01", "Slow Sunday", "Sleep in, a slow morning, lunch together, then Uzumasa and the YOKAI festival.", ["Kitano Tenmangu", "Daimaru Kyoto", "Nishiki Market", "Koryu-ji", "Uzumasa Kyoto Village"], "Sleep in. Lunch together at 12:30. Uzumasa in the afternoon. YOKAI festival at 17:00.", [{ text: "Sleep in until about 10:00" }, { text: "Mai's solo morning: Kitano Tenmangū market, or Daimaru sweets and Nishiki", who: "brian" }, { text: "Your solo morning: Kitano Tenmangū market, or Daimaru sweets and Nishiki", who: "mai" }, "Lunch together at VEGGIE ISO TERRACE", "Ride to Uzumasa. Kōryū-ji is optional", "YOKAI festival from 17:00. Parade at 19:30"], ["A handmade stall", "A vegetable plate", "The night parade"], "Mai gets the morning to herself, then lunch and the yokai festival.", "Sleep in, meet for lunch, then the same afternoon and evening.")
     ]
   },
   hiroshima: {
@@ -809,9 +809,9 @@ const dayGoals = {
     photoHint: "Bamboo path, Togetsukyo with mountains, or the Golden Pavilion."
   },
   day10: {
-    clearPath: "Sanjo Keihan 08:51 → Enryaku-ji 09:45 → bus down 12:21 or 14:11 → hotel rest → Uzumasa.",
-    mainGoal: "Photograph the first wide Kyoto or Lake Biwa view from Mt Hiei.",
-    photoHint: "Summit viewpoint, forest path, or Enryaku-ji bell/incense moment."
+    clearPath: "Sleep in → Mai's morning → lunch ~12:30 → Uzumasa ~14:30 → YOKAI at 17:00.",
+    mainGoal: "Be at the YOKAI festival for the 19:30 parade.",
+    photoHint: "A market stall, a vegetable plate, or the night parade."
   },
   day11: {
     clearPath: "Leave about 7:30. Hikari 733 at 08:01. Koko-en first. Castle 09:30. Nozomi 69 at 14:46.",
@@ -993,27 +993,25 @@ const dayContext = {
     ]
   },
   day10: {
-    summary: "Mt Hiei by the direct Keihan bus. Sanjo Keihan at 08:51, Enryaku-ji Bus Center at 09:45. Come down on the 12:21 bus (Sanjo Keihan 13:22) or the 14:11 bus (Sanjo Keihan 15:00). Rest at the hotel, then the Kaikai YOKAI Festival at Uzumasa. Dad can skip the mountain or the parade if tired.",
+    summary: "Sleep in until about 10:00, then Mai's morning, lunch together at 12:30, Uzumasa, and the YOKAI festival.",
     timeline: [
-      ["07:15", "Wake, eat at the hotel, and leave about 08:25. Walk to Sanjo Keihan and be at stop B3 before 08:51. The Eizan cable does not start until 09:00, so do not go to Demachiyanagi for an early ascent."],
-      ["08:51–09:45", "Direct Keihan bus from Sanjo Keihan to Enryaku-ji Bus Center. Sunday uses the Saturday and holiday timetable."],
-      ["09:45–12:00", "Enryaku-ji Todo is open 09:00–16:00. Reception is until 15:45. Focus on Konpon Chudo, one or two nearby halls, and a seated pause. Eat the carried lunch here."],
-      ["12:21", "Keihan bus 56/56A from the Bus Center if you are done. Sanjo Keihan at 13:22. Some circle-marked trips on this route are suspended. If the bus is not there, wait for 14:11."],
-      ["Until 14:00", "One short forest walk only if you are taking the later bus. Be back at the Bus Center before 14:11. Do not plan a walk that runs until 14:30. Do not add a second precinct.", "brianMai"],
-      ["14:11", "Keihan drive bus from the Bus Center. Sanjo Keihan at 15:00. Then walk to the hotel."],
-      ["Until 17:00", "Rest at Hotel Monterey Kyoto and pack for the Nov 2 07:30 departure. The 12:21 bus is back at Sanjo at 13:22. The 14:11 bus is back at 15:00. Dad can skip the mountain or the parade if tired."],
-      ["~17:00", "Leave for Uzumasa Kyoto Village (Toei Kyoto Studio Park, 太秦映画村) for the Kaikai YOKAI Festival (怪々YOKAI祭, Sep 12–Nov 29)."],
-      ["Route", "Walk 2 min to Karasuma-Oike, take the Tozai subway to Uzumasa Tenjingawa (8–9 min, ¥260, no transfer), then walk about 12 min, about 25 min door to door."],
-      ["From 17:00", "Night entry is ¥2,000 adult (day ticket ¥2,800) and the park is open 10:00–21:00 {{link:https://en.eigamura.com/show/yokai_2026/|Festival page}}."],
-      ["18:00", "Optional stage show, Yokai vs Kamen Rider, on weekends and holidays from Oct 31, also at 19:50. It needs its own ticket. Skip it if you did not buy one."],
-      ["~18:30", "Dinner around the park is [dinner venue — not picked yet], non-smoking only, and Mai avoids sliced or whole-cut meat, mochi, and matcha."],
-      ["19:30", "Watch Uzumasa Hyakki Yagyo (the finale dance is open to everyone), and skip the 17:30 costume parade because it needs an advance application."],
-      ["~21:00", "Back at the hotel when the park closes at 21:00."]
+      ["Until ~10:00", "Sleep in."],
+      ["10:00–12:30", "Mai's solo morning: Kitano Tenmangū handmade market (北野天満宮), free, 10:00–16:00, about 110 stalls, live music from 12:00", "brian"],
+      ["Route", "Hankyu from Karasuma one stop to Ōmiya, then city bus 55 to Kitano Tenmangū-mae {{link:http://monocro.info/tenmangu/|Market info}}", "brian"],
+      ["Or", "Daimaru Kyoto basement sweets, 10:00–20:00, and Nishiki next door: Karasuma Line from Karasuma Oike one stop to Shijō", "brian"],
+      ["10:00–12:30", "Your solo morning: Kitano Tenmangū handmade market (北野天満宮), free, 10:00–16:00, about 110 stalls, live music from 12:00", "mai"],
+      ["Route", "Hankyu from Karasuma one stop to Ōmiya, then city bus 55 to Kitano Tenmangū-mae {{link:http://monocro.info/tenmangu/|Market info}}", "mai"],
+      ["Or", "Daimaru Kyoto basement sweets, 10:00–20:00, and Nishiki next door: Karasuma Line from Karasuma Oike one stop to Shijō", "mai"],
+      ["~12:30", "Lunch together at VEGGIE ISO TERRACE, Daimaru 8F, 11:00–23:00, non-smoking"],
+      ["Order", "Mai picks the vegetable dishes {{link:https://www.daimaru.co.jp/kyoto/restaurant/veggie_iso_terrace.html|Restaurant info}}"],
+      ["~14:30", "Tōzai Line from Karasuma Oike to Uzumasa Tenjingawa, about 20 min, then Randen 2 stops to Uzumasa-Kōryūji"],
+      ["~15:15–16:30", "Optional: Kōryū-ji Reihōden (広隆寺霊宝殿), 9:00–17:00, ¥1,000, by the station"],
+      ["17:00", "YOKAI festival at Toei Uzumasa Eigamura: night entry ¥2,000, parade (うずまさ百鬼夜行) at 19:30, open to 21:00"],
+      ["Food", "Some festival foods have matcha or mochi {{link:https://eigamura.com/feature/yokai2026/|Festival info}}"]
     ],
     history: [
-      "Saicho founded Enryaku-ji on Mt Hiei in the late 8th century, and the mountain became the center of Tendai Buddhism in Japan. Its scattered precincts trained monks who later shaped several other schools, so the forested mountain geography is part of the institution's meaning—not one building but a religious landscape.",
-      "The mountain's position between Kyoto and Lake Biwa made it both a sacred barrier and a strategic vantage. Emperors and warriors treated control of Hiei as control of the capital's spiritual flank.",
-      "Modern visitors reach that geography by bus, then walk cedar corridors and wait for a view toward Kyoto or Lake Biwa. The morning is the 08:51 bus, Todo, and a return bus at 12:21 or 14:11 so the hotel rest still holds."
+      "Kitano Tenmangū's handmade market fills the shrine grounds with craft and sweets stalls. Daimaru's basement and Nishiki next door are the indoor option.",
+      "Uzumasa was a film-studio district. The night parade, Uzumasa Hyakki Yagyo, borrows the old name for a procession of spirits."
     ]
   },
   day11: {
@@ -1198,8 +1196,16 @@ const DAY_VIEWS = {
     }
   },
   day10: {
+    mai: {
+      summary: "Sleep in until about 10:00, then your solo morning, lunch together at 12:30, Uzumasa, and the YOKAI festival.",
+      theme: "Sleep in, your solo morning, then lunch and the YOKAI festival.",
+      clearPath: "Sleep in → your morning → lunch ~12:30 → Uzumasa ~14:30 → YOKAI at 17:00."
+    },
     parents: {
-      summary: "Take the 08:51 Keihan bus from Sanjo Keihan. Come down on the 12:21 or 14:11 bus, rest at the hotel, then go to the Kaikai YOKAI Festival. Dad can skip the mountain or the parade if tired."
+      summary: "Sleep in, meet for lunch at about 12:30, then Uzumasa and the YOKAI festival.",
+      theme: "Sleep in, meet for lunch, then Uzumasa and the YOKAI festival.",
+      clearPath: "Sleep in → lunch ~12:30 → Uzumasa ~14:30 → YOKAI at 17:00.",
+      places: ["Daimaru Kyoto", "Nishiki Market", "Koryu-ji", "Uzumasa Kyoto Village"]
     }
   },
   day11: {
@@ -1259,8 +1265,11 @@ const DAY_VIEWS = {
 
 function dayView(day) {
   const view = travelerView();
+  const views = DAY_VIEWS[day?.id];
+  if (!views) return null;
+  if (view && views[view]) return views[view];
   const key = view === "brian" || view === "mai" ? "brianMai" : view;
-  return DAY_VIEWS[day?.id]?.[key] || null;
+  return views[key] || null;
 }
 
 function parentDepartureDay() {
@@ -1594,7 +1603,7 @@ const planPhotoCredits = {
   day03: "Tsutenkaku and Shinsekai at night, resized. Photo by Sakai Yayoi, CC0. https://commons.wikimedia.org/wiki/File:Shinsekai_and_Tsutenkaku_Tower.jpg",
   day07: "Kiyomizu-dera main hall and stage, resized. Photo by Martin Falbisoner, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Kiyomizu-dera,_Kyoto,_November_2016_-01.jpg",
   day09: "Kinkaku-ji, the Golden Pavilion, resized. Photo by Nacaru, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Golden_Pavilion_Kinkaku-ji_2024.jpg",
-  day10: "Enryaku-ji Konpon Chudo, resized. Photo by 663highland, CC BY 2.5. https://commons.wikimedia.org/wiki/File:Enryakuji_Konponchudo04n4272.jpg",
+  day10: "Kitano Tenmangū shrine, resized. Photo by 663highland, CC BY 2.5. https://commons.wikimedia.org/wiki/File:Kitano-tenmangu_Kyoto_Japan41s3s4592.jpg",
   day15: "Inokashira Park pond. Photo by ARandomName123, CC BY-SA 4.0.",
   day16: "Shibuya scramble crossing, resized. Photo by Benh LIEU SONG, CC BY-SA 2.0. https://commons.wikimedia.org/wiki/File:Tokyo_Shibuya_Scramble_Crossing_2018-10-09.jpg",
   day19: "Mount Fuji from the Mount Kintoki summit, resized. Photo by Alpsdake, CC BY-SA 4.0. https://commons.wikimedia.org/wiki/File:Mount_Fuji_from_Mount_Kintoki.jpg",
@@ -1610,7 +1619,7 @@ const defaultPlanPhotos = {
   day07: "capstones/day07-kiyomizu.webp?v227",
   day08: "capstones/day09-nijo.webp?v229",
   day09: "capstones/day08-kinkakuji.webp?v229",
-  day10: "capstones/day10-enryakuji.webp?v229",
+  day10: "capstones/day10-kitano.webp?v235",
   day11: "capstones/day11.jpg",
   day12: "capstones/day12.webp",
   day13: "capstones/day13.jpg",
@@ -1644,10 +1653,10 @@ function populatePlanPhoto(day, container) {
   const url = bundledPlanPhotoUrl(day.id);
   container.innerHTML = "";
   if (!url) {
-    container.className = "plan-photo is-empty";
-    container.innerHTML = "<p>Plan photo will appear here.</p>";
+    container.hidden = true;
     return;
   }
+  container.hidden = false;
   container.className = "plan-photo";
   const img = document.createElement("img");
   img.alt = planPhotoCredits[day.id] || `${day.title} plan photo`;
@@ -3539,7 +3548,7 @@ const DAY_PARTY = {
   day07: ENDO_PARTY,
   day08: "4. Kani Doraku is booked for 4. No Sayaka.",
   day09: "4. Kyoya is booked for 4. Sayaka is not coming. She has a meeting.",
-  day10: "5.",
+  day10: "4.",
   day11: "4 in Hiroshima.",
   day12: "4.",
   day13: "4.",
@@ -3585,10 +3594,8 @@ const DAY_MUST_DOS = {
     { marker: "needs-confirmation", label: "Togetsukyo meetup", detail: "Meet at the bridge after the grove. [Togetsukyo meeting point — needs confirmation]." }
   ],
   day10: [
-    { marker: "info", label: "Bus up", detail: "Keihan bus from Sanjo Keihan stop B3 at 08:51. Enryaku-ji Bus Center at 09:45. Sunday uses the Saturday and holiday timetable. The Eizan cable starts at 09:00, so a 07:50 ascent does not work." },
-    { marker: "info", label: "Bus down", detail: "12:21 from the Bus Center on Keihan 56/56A, Sanjo Keihan at 13:22. Some circle-marked trips on that route are suspended. Or the 14:11 drive bus, Sanjo Keihan at 15:00. Be at the stop before 14:11 if you walk in the forest." },
-    { marker: "info", label: "Hotel rest", detail: "Rest at Hotel Monterey Kyoto until 17:00. The 12:21 bus is back at Sanjo at 13:22. The 14:11 bus is back at 15:00. Pack for the Nov 2 07:30 departure." },
-    { marker: "decision", label: "Dinner", detail: "Around Uzumasa Kyoto Village at about 18:30. [dinner venue — not picked yet]. Non-smoking only. Mai avoids sliced or whole-cut meat, mochi, and matcha." }
+    { marker: "info", label: "Lunch", detail: "About 12:30 at VEGGIE ISO TERRACE, Daimaru 8F. Open 11:00–23:00. Non-smoking. Mai picks the vegetable dishes." },
+    { marker: "info", label: "YOKAI festival", detail: "Toei Uzumasa Eigamura from 17:00. Night entry ¥2,000. Parade at 19:30. Park open to 21:00. Some foods have matcha or mochi." }
   ],
   day11: [
     { marker: "booked", label: "Hikari 733 Kyoto to Himeji", detail: SHINKANSEN_NOV2 },
@@ -4082,7 +4089,7 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "FamilyMart Karasuma Rokkaku", type: "conbini", category: "conbini", typeLabel: "Closest FamilyMart", area: "Hotel base · ~140 m south", price: "¥", note: "The quickest mapped supply run from Hotel Monterey: useful for early breakfast, drinks and trail snacks before the sightseeing day starts.", coordinates: [35.00648, 135.75943], officialUrl: "https://store.family.co.jp/points/33097" },
     { name: "Lawson Karasuma Sanjo", type: "conbini", category: "conbini", typeLabel: "Closest Lawson", area: "Hotel base · ~170 m north", price: "¥", note: "A 24-hour option beside Karasuma Oike. Use it for a Lawson breakfast comparison, an ATM stop or an easy late-night fallback on the walk back to the hotel.", coordinates: [35.0092, 135.75954], officialUrl: "https://map.yahoo.co.jp/v3/place/HDPZIRykzBM" },
     { name: "7-Eleven Kyoto Oikedori Tatsuikecho", type: "conbini", category: "conbini", typeLabel: "Nearest useful 7-Eleven", area: "Hotel base · ~350 m northwest", price: "¥", note: "Slightly farther than FamilyMart and Lawson but still close enough for the three-chain breakfast comparison, Seven Bank ATM and packaged melonpan hunt.", coordinates: [35.01057, 135.75772], officialUrl: "https://location.sevenbank.co.jp/sevenbank/spot/detail?code=0000031318&lang=en" },
-    { name: "Flip Up!", type: "sweet", category: "bakery", typeLabel: "Neighborhood bakery · wife's pick", area: "Hotel / Manga Museum · Oshikoji", price: "¥", note: "A compact, route-friendly bakery close to the hotel and Manga Museum. Pick one or two breads for breakfast or the Mt Hiei trail rather than building a separate meal around it.", coordinates: [35.0122892, 135.7582458] },
+    { name: "Flip Up!", type: "sweet", category: "bakery", typeLabel: "Neighborhood bakery · wife's pick", area: "Hotel / Manga Museum · Oshikoji", price: "¥", note: "A compact, route-friendly bakery close to the hotel and Manga Museum. Pick one or two breads rather than building a meal around it.", coordinates: [35.0122892, 135.7582458] },
     { name: "Tempura Endo Yasaka", type: "restaurant", category: "tempura", typeLabel: "Tempura lunch · booked", area: "Day 7 · Gion / Yasaka", price: "¥¥¥¥", note: `Booked Thu Oct 29 at 14:00. ${ENDO_PARTY}`, coordinates: [35.0019, 135.7756], officialUrl: "https://www.gion-endo.com/", tabelogUrl: "https://tabelog.com/en/kyoto/A2601/A260301/26000592/", slotDays: ["day07"], reserve: "yes" },
     { name: "Sohonke Nishin Soba Matsuba Honten", type: "restaurant", category: "nishin-soba", typeLabel: "Nishin soba · light evening option", area: "Day 7 · Gion-Shijo / Minamiza", price: "¥¥", note: "Kyoto's signature herring soba beside Minamiza. Useful after Endo lunch only if people still want a small evening meal; skip it if the Gion course was enough.", coordinates: [35.00365, 135.77262], officialUrl: "https://sobamatsuba.co.jp/menu/access.html" },
     { name: "Izuju", type: "restaurant", category: "kyoto-sushi", typeLabel: "Saba-zushi · high priority", area: "Day 7 · Yasaka Shrine", price: "¥¥¥", note: "Traditional Kyoto pressed sushi beside Yasaka. Share saba-zushi or hako-zushi as a tasting; current last order is early enough that this is lunch or early dinner, not a post-show fallback.", coordinates: [35.00362, 135.77853], officialUrl: "https://gion-izuju.com/english-page/" },
@@ -4104,8 +4111,8 @@ const CITY_FOOD_MAP_PROTOTYPE = {
     { name: "Honke Nishio Yatsuhashi Shinkyogoku", type: "sweet", category: "yatsuhashi", typeLabel: "Yatsuhashi · share a sample", area: "Day 8 · Nishiki / Shinkyogoku", price: "¥", note: "One shared pack on the Friday arcade walk. Not a separate excursion. Mai avoids mochi and matcha, so check the filling before she takes a piece.", coordinates: [35.00624, 135.76726], officialUrl: "https://www.8284.co.jp/shop/shinkyogoku.html" },
     { name: "Oimatsu Kitano", type: "sweet", category: "wagashi", typeLabel: "Seasonal wagashi", area: "Optional · Kitano", price: "¥¥", note: "Not on the Saturday route. Arashiyama and Kinkaku-ji come first, then the hotel and Kyoya.", coordinates: [35.02978, 135.73998], officialUrl: "https://oimatu.co.jp/" },
     { name: "Toraya Karyo Kyoto Ichijo", type: "sweet", category: "wagashi", typeLabel: "Wagashi & yokan · optional", area: "Near the palace · skipped", price: "¥¥", note: "The Imperial Palace is skipped. Do not add this stop to Friday or Saturday.", coordinates: [35.02625, 135.75738], officialUrl: "https://global.toraya-group.co.jp/pages/shop-kyoto" },
-    { name: "Demachi Futaba", type: "sweet", category: "mochi-dango", typeLabel: "Mame-mochi · not on the way up", area: "Demachiyanagi · not the Hiei bus", price: "¥", note: "Not on the way up. The 08:51 bus leaves Sanjo Keihan. Mai avoids mochi. Skip it.", coordinates: [35.03003, 135.76836], officialUrl: "https://www.hieizan.gr.jp/yase/demachifutaba" },
-    { name: "Kamo Mitarashi Chaya", type: "sweet", category: "mochi-dango", typeLabel: "Mitarashi dango · not on the way up", area: "Shimogamo · not the Hiei bus", price: "¥", note: "Not on the way up. The morning bus leaves Sanjo Keihan at 08:51. Mai avoids mochi. Skip it.", coordinates: [35.03804, 135.77208], officialUrl: "https://www.hieizan.gr.jp/yase/kamo-mitarashi-chaya" }
+    { name: "Demachi Futaba", type: "sweet", category: "mochi-dango", typeLabel: "Mame-mochi · skip", area: "Demachiyanagi", price: "¥", note: "Mai avoids mochi. Skip it.", coordinates: [35.03003, 135.76836], officialUrl: "https://www.hieizan.gr.jp/yase/demachifutaba" },
+    { name: "Kamo Mitarashi Chaya", type: "sweet", category: "mochi-dango", typeLabel: "Mitarashi dango · skip", area: "Shimogamo", price: "¥", note: "Mai avoids mochi. Skip it.", coordinates: [35.03804, 135.77208], officialUrl: "https://www.hieizan.gr.jp/yase/kamo-mitarashi-chaya" }
   ],
   hiroshima: [
     { name: "7-Eleven Heart-in ekie Hiroshima Shinkansen Exit", type: "conbini", category: "conbini", typeLabel: "Closest station 7-Eleven", area: "Hotel Granvia · inside ekie", price: "¥", note: "The lowest-effort supply stop beside the station-connected hotel. Use it for breakfast, drinks or the Shinkansen morning; this branch is outside the ticket gates.", coordinates: [34.39805, 132.47535], officialUrl: "https://www.sn-hiroshima.co.jp/pages/127/" },
@@ -6114,7 +6121,7 @@ const DAY_FORECAST_KEYS = {
   day07: ["kyoto"],
   day08: ["kyoto"],
   day09: ["kyoto"],
-  day10: ["hiei"],
+  day10: ["kyoto"],
   day11: ["himeji", "hiroshima"],
   day12: ["hiroshima"],
   day13: ["miyajima"],

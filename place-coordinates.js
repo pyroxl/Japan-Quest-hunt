@@ -252,6 +252,18 @@ window.PLACE_COORDINATES = {
     35.070665,
     135.8783509
   ],
+  "Kitano Tenmangu": [
+    35.0314,
+    135.7354
+  ],
+  "Daimaru Kyoto": [
+    35.0046,
+    135.7594
+  ],
+  "Koryu-ji": [
+    35.0156,
+    135.7083
+  ],
   "Uzumasa Kyoto Village": [
     35.0164642,
     135.7082061
