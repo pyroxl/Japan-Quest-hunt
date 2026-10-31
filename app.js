@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v231";
+const APP_VERSION = "japan-quest-v232";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -2250,7 +2250,7 @@ function photoReadErrorMessage(error) {
   if (name === "QuotaExceededError" || /quota/i.test(message)) return "Phone storage is full";
   if (/empty file/i.test(message)) return "Empty file";
   if (/not an image/i.test(message)) return "Not an image";
-  if (/heic/i.test(message)) return "This phone can't open HEIC. Pick a JPEG.";
+  if (/heic/i.test(message)) return "Couldn't open this HEIC.";
   return "Couldn't read this file";
 }
 
@@ -2276,12 +2276,105 @@ async function drawPhotoFile(file, maxEdge, quality) {
   }
 }
 
+let heifModulePromise = null;
+
+function heifAsset(name) {
+  return new URL(`vendor/heif/${name}`, document.baseURI).href;
+}
+
+function loadHeifModule() {
+  if (!heifModulePromise) {
+    heifModulePromise = (async () => {
+      if (typeof globalThis.libheif !== "function") {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = heifAsset("libheif.js");
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error("Couldn't open this HEIC."));
+          document.head.appendChild(script);
+        });
+      }
+      if (typeof globalThis.libheif !== "function") throw new Error("Couldn't open this HEIC.");
+      const response = await fetch(heifAsset("libheif.wasm"));
+      if (!response.ok) throw new Error("Couldn't open this HEIC.");
+      const wasmBinary = await response.arrayBuffer();
+      let ready = false;
+      const instance = globalThis.libheif({
+        wasmBinary,
+        onRuntimeInitialized() { ready = true; },
+        onAbort() { throw new Error("Couldn't open this HEIC."); }
+      });
+      if (!ready && !instance.calledRun) {
+        await new Promise((resolve, reject) => {
+          instance.onRuntimeInitialized = resolve;
+          instance.onAbort = () => reject(new Error("Couldn't open this HEIC."));
+        });
+      }
+      return instance;
+    })().catch((error) => {
+      heifModulePromise = null;
+      throw error;
+    });
+  }
+  return heifModulePromise;
+}
+
+async function heicBytesToJpeg(bytes, maxEdge, quality) {
+  const mod = await loadHeifModule();
+  const decoded = new mod.HeifDecoder().decode(bytes);
+  const image = decoded && decoded[0];
+  const width = image?.get_width?.() || 0;
+  const height = image?.get_height?.() || 0;
+  if (!width || !height) throw new Error("Couldn't open this HEIC.");
+  const pixels = new Uint8ClampedArray(width * height * 4);
+  const painted = await new Promise((resolve, reject) => {
+    image.display({ data: pixels, width, height }, (result) => {
+      if (!result?.data) reject(new Error("Couldn't open this HEIC."));
+      else resolve(result.data instanceof Uint8ClampedArray ? result.data : new Uint8ClampedArray(result.data));
+    });
+  });
+  try { image.free(); } catch { /* the pixels are already copied */ }
+  const scale = Math.min(1, maxEdge / Math.max(width, height, 1));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(width * scale));
+  canvas.height = Math.max(1, Math.round(height * scale));
+  const full = document.createElement("canvas");
+  full.width = width;
+  full.height = height;
+  full.getContext("2d").putImageData(new ImageData(painted, width, height), 0, 0);
+  canvas.getContext("2d").drawImage(full, 0, 0, canvas.width, canvas.height);
+  const url = canvas.toDataURL("image/jpeg", quality);
+  if (!url || url.length < 32) throw new Error("Couldn't open this HEIC.");
+  return url;
+}
+
+async function heicFileToJpeg(file, maxEdge, quality) {
+  return heicBytesToJpeg(new Uint8Array(await file.arrayBuffer()), maxEdge, quality);
+}
+
+function dataUrlIsHeic(value) {
+  return /^data:image\/hei[cf]/i.test(String(value || ""));
+}
+
+function bytesFromDataUrl(dataUrl) {
+  const comma = String(dataUrl).indexOf(",");
+  const binary = atob(String(dataUrl).slice(comma + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
+}
+
 async function fileToStoredDataUrl(file) {
   if (!file || !Number(file.size)) throw new Error("Empty file");
   if (isHeicFile(file)) {
     const drawn = await drawPhotoFile(file, 2048, 0.82);
-    if (!drawn) throw new Error("HEIC");
-    return drawn;
+    if (drawn) return drawn;
+    try {
+      return await heicFileToJpeg(file, 2048, 0.82);
+    } catch (error) {
+      if (/heic/i.test(String(error?.message || ""))) throw error;
+      throw new Error("Couldn't open this HEIC.");
+    }
   }
   let dataUrl = "";
   try { dataUrl = await fileToDataUrl(file); } catch { dataUrl = ""; }
@@ -8499,8 +8592,12 @@ async function readFileTaken(file) {
   });
 }
 
-function reviewThumb(file) {
-  if (isHeicFile(file)) return "";
+async function reviewThumbUrl(file) {
+  if (isHeicFile(file)) {
+    const native = await drawPhotoFile(file, 480, 0.7);
+    if (native) return native;
+    try { return await heicFileToJpeg(file, 480, 0.7); } catch { return ""; }
+  }
   try { return URL.createObjectURL(file); } catch { return ""; }
 }
 
@@ -8733,7 +8830,7 @@ async function openBulkReview(files) {
     const file = files[index];
     const problem = await photoReadProblem(file);
     const taken = problem ? { date: "", dayId: "", createdAt: "" } : await readFileTaken(file).catch(() => ({ date: "", dayId: "", createdAt: "" }));
-    const thumb = problem ? "" : reviewThumb(file);
+    const thumb = problem ? "" : await reviewThumbUrl(file);
     if (bulkReviewToken !== token) {
       if (thumb) URL.revokeObjectURL(thumb);
       revoke();
@@ -8763,6 +8860,23 @@ function finishStoryPhotos(host, html) {
   mountStoryPhoneAlbum(host);
 }
 
+function paintStoryThumb(host, photo) {
+  const id = thumbKey(photo);
+  if (!id) return;
+  const cell = [...host.querySelectorAll(".story-photo")].find((node) => node.dataset.fileId === id);
+  const src = journalThumbSrc(photo);
+  if (!cell || !src) return;
+  let image = cell.querySelector("img");
+  if (!image) {
+    image = document.createElement("img");
+    image.loading = "lazy";
+    image.decoding = "async";
+    cell.replaceChildren(image);
+  }
+  image.alt = photo.caption || `${photo.author || "Family"} photo`;
+  if (image.getAttribute("src") !== src) image.src = src;
+}
+
 async function renderStoryPhotos() {
   const host = document.querySelector("#storyPhotos");
   if (!host) return;
@@ -8774,59 +8888,63 @@ async function renderStoryPhotos() {
   }
   host.innerHTML = `<p class="story-empty">Loading photos.</p>`;
   mountBulkAdd(host);
-  const deadline = Date.now() + 8000;
-  const withinDeadline = (promise) => {
-    const ms = deadline - Date.now();
-    if (ms <= 0) return Promise.reject(new Error("timeout"));
-    return withTimeout(promise, ms);
-  };
+  let data;
   try {
-    const data = await withinDeadline(journalPost({ action: "list" }));
-    if (token !== storyPhotosToken || !host.isConnected) return;
-    const photos = (data.photos || []).filter((photo) => photo.fileId || photo.thumbFileId);
-    if (!photos.length) {
-      finishStoryPhotos(host, `<p class="story-empty">No journal photos yet.</p>`);
-      return;
-    }
-    const withThumbs = await withinDeadline(Promise.all(photos.map(async (photo) => {
-      if (photo.thumb) return photo;
-      const fileId = photo.thumbFileId || photo.fileId;
-      try {
-        const thumb = await journalPost({ action: "thumb", fileId });
-        return { ...photo, thumb: thumb.thumb || "" };
-      } catch {
-        return photo;
-      }
-    })));
-    if (token !== storyPhotosToken || !host.isConnected) return;
-    const groups = new Map();
-    withThumbs.forEach((photo) => {
-      const key = photo.dayId || "other";
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(photo);
-    });
-    const order = tripRows().map((row) => row.day.id);
-    const keys = [...groups.keys()].sort((a, b) => {
-      const ai = order.indexOf(a);
-      const bi = order.indexOf(b);
-      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
-    });
-    finishStoryPhotos(host, keys.map((dayId) => {
-      const found = findDay(dayId);
-      const label = found ? `${found.day.short} · Day ${Number(dayId.replace("day", ""))}` : "Other days";
-      const cells = groups.get(dayId).map((photo) => {
-        const src = journalThumbSrc(photo);
-        if (!src) return "";
-        const open = found ? ` data-story-day="${escapeHtml(dayId)}"` : "";
-        const tag = found ? "button" : "span";
-        return `<${tag} type="button" class="story-photo"${open}><img src="${src}" alt="${escapeHtml(photo.caption || "Journal photo")}"></${tag}>`;
-      }).join("");
-      return `<section class="story-photo-day"><h3>${escapeHtml(label)}</h3><div class="story-photo-grid">${cells}</div></section>`;
-    }).join(""));
-    if (!host.querySelector(".story-photo img")) finishStoryPhotos(host, `<p class="story-empty">No journal photos yet.</p>`);
+    data = await withTimeout(journalPost({ action: "list" }), 20000);
   } catch {
     if (token === storyPhotosToken && host.isConnected) finishStoryPhotos(host, storyPhotoErrorHtml());
+    return;
   }
+  if (token !== storyPhotosToken || !host.isConnected) return;
+  const keys = await unsyncedLocalKeys();
+  const map = await cachedThumbMap();
+  const photos = (data.photos || [])
+    .filter((photo) => (photo.fileId || photo.thumbFileId) && !isShownLocallyUnsynced(photo, keys))
+    .map((photo) => withCachedThumb(photo, map));
+  if (!photos.length) {
+    finishStoryPhotos(host, `<p class="story-empty">No journal photos yet.</p>`);
+    return;
+  }
+  const groups = new Map();
+  photos.forEach((photo) => {
+    const key = photo.dayId || "other";
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(photo);
+  });
+  const order = tripRows().map((row) => row.day.id);
+  const dayIds = [...groups.keys()].sort((a, b) => {
+    const ai = order.indexOf(a);
+    const bi = order.indexOf(b);
+    return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+  });
+  finishStoryPhotos(host, dayIds.map((dayId) => {
+    const found = findDay(dayId);
+    const label = found ? `${found.day.short} · Day ${Number(dayId.replace("day", ""))}` : "Other days";
+    const cells = groups.get(dayId).map((photo) => {
+      const id = thumbKey(photo);
+      const src = journalThumbSrc(photo);
+      const open = found ? ` data-story-day="${escapeHtml(dayId)}"` : "";
+      const tag = found ? "button" : "span";
+      const image = src
+        ? `<img src="${src}" alt="${escapeHtml(photo.caption || `${photo.author || "Family"} photo`)}" loading="lazy" decoding="async">`
+        : `<span class="story-photo-wait"></span>`;
+      return `<${tag} type="button" class="story-photo" data-file-id="${escapeHtml(id)}"${open}>${image}</${tag}>`;
+    }).join("");
+    return `<section class="story-photo-day"><h3>${escapeHtml(label)}</h3><div class="story-photo-grid">${cells}</div></section>`;
+  }).join(""));
+  const missing = photos.filter((photo) => !photo.thumb && thumbKey(photo));
+  await mapPool(missing, JOURNAL_THUMB_CONCURRENCY, async (photo) => {
+    if (token !== storyPhotosToken || !host.isConnected) return;
+    try {
+      const thumb = await fetchJournalThumb(photo);
+      if (!thumb || token !== storyPhotosToken || !host.isConnected) return;
+      photo.thumb = thumb;
+      paintStoryThumb(host, photo);
+    } catch {
+      /* this thumbnail stays blank */
+    }
+  });
+  if (token === storyPhotosToken && host.isConnected) await flushThumbMemory();
 }
 
 function renderStoryMap() {
@@ -9720,6 +9838,7 @@ function markJournalSynced() {
 }
 
 const JOURNAL_ITEM_MS = 40000;
+const JOURNAL_HEIC_EXTRA_MS = 60000;
 const JOURNAL_RUN_MS = 180000;
 
 function withDeadline(work, ms, signal) {
@@ -9870,7 +9989,9 @@ async function photoForQueueItem(item) {
 }
 
 async function journalImagePayload(dataUrl, signal) {
-  let image = await downscaleJpeg(dataUrl, 1600, 0.72, signal);
+  let source = dataUrl;
+  if (dataUrlIsHeic(dataUrl)) source = await heicBytesToJpeg(bytesFromDataUrl(dataUrl), 2048, 0.82);
+  let image = await downscaleJpeg(source, 1600, 0.72, signal);
   if (image.length > 900000) image = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 1280, 0.6, signal);
   if (image.length > 1500000) throw new Error("Photo too large");
   const thumb = await downscaleJpeg(`data:image/jpeg;base64,${image}`, 320, 0.6, signal);
@@ -10050,8 +10171,18 @@ async function flushJournalQueue(options = {}) {
       if (token !== journalSyncToken) return;
       const epoch = journalWriteEpoch;
       const signal = journalItemSignal();
+      let itemMs = JOURNAL_ITEM_MS;
+      if (needsUpload) {
+        const stored = await withDeadline(photoForQueueItem(item), Math.min(8000, left), signal).catch(() => null);
+        if (dataUrlIsHeic(stored?.dataUrl)) itemMs += JOURNAL_HEIC_EXTRA_MS;
+      }
+      const budget = Math.min(itemMs, runDeadlineAt - Date.now());
+      if (budget <= 0) {
+        failure = "Timed out";
+        break;
+      }
       try {
-        const outcome = await withDeadline(runQueueItem(item, prefs, signal, epoch), Math.min(JOURNAL_ITEM_MS, left), signal);
+        const outcome = await withDeadline(runQueueItem(item, prefs, signal, epoch), budget, signal);
         if (token !== journalSyncToken) return;
         if (outcome === "uploaded") uploaded += 1;
       } catch (error) {
@@ -10138,13 +10269,108 @@ function renderDailyRecap(list, notes) {
   list.appendChild(card);
 }
 
+const JOURNAL_THUMB_CONCURRENCY = 3;
+const thumbMemory = new Map();
+let thumbMemoryLoaded = false;
+let thumbFlushTimer = 0;
+
+function thumbKey(photo) {
+  return photo?.thumbFileId || photo?.fileId || "";
+}
+
+function withCachedThumb(photo, map) {
+  if (!photo || photo.thumb) return photo;
+  const key = thumbKey(photo);
+  const saved = key && map?.get(key);
+  return saved ? { ...photo, thumb: saved } : photo;
+}
+
+async function cachedThumbMap() {
+  if (thumbMemoryLoaded) return thumbMemory;
+  const rows = await withStore(JOURNAL_CACHE_STORE, "readonly", (store) => storeRequest(store.getAll())).catch(() => []);
+  (rows || []).forEach((row) => {
+    if (row?.dayId === "thumbs" && row.map) {
+      Object.entries(row.map).forEach(([key, value]) => {
+        if (key && value) thumbMemory.set(key, value);
+      });
+    }
+    (row?.photos || []).forEach((photo) => {
+      const key = thumbKey(photo);
+      if (key && photo.thumb) thumbMemory.set(key, photo.thumb);
+    });
+  });
+  thumbMemoryLoaded = true;
+  return thumbMemory;
+}
+
+function rememberThumb(fileId, thumb) {
+  if (!fileId || !thumb) return;
+  thumbMemory.set(fileId, thumb);
+  clearTimeout(thumbFlushTimer);
+  thumbFlushTimer = setTimeout(() => { void flushThumbMemory(); }, 300);
+}
+
+async function flushThumbMemory() {
+  clearTimeout(thumbFlushTimer);
+  thumbFlushTimer = 0;
+  await writeJournalCache({ dayId: "thumbs", map: Object.fromEntries(thumbMemory), fetchedAt: new Date().toISOString() }).catch(() => {});
+}
+
+async function unsyncedLocalKeys() {
+  const items = await journalQueueAll().catch(() => []);
+  const clientIds = new Set();
+  const fileIds = new Set();
+  items.forEach((item) => {
+    if (!item || item.status === "synced" || item.pendingDelete) return;
+    if (item.clientId) clientIds.add(item.clientId);
+    if (item.fileId) fileIds.add(item.fileId);
+  });
+  return { clientIds, fileIds };
+}
+
+function isShownLocallyUnsynced(photo, keys) {
+  if (!photo || !keys) return false;
+  if (photo.clientId && keys.clientIds.has(photo.clientId)) return true;
+  if (photo.fileId && keys.fileIds.has(photo.fileId)) return true;
+  if (photo.thumbFileId && keys.fileIds.has(photo.thumbFileId)) return true;
+  return false;
+}
+
+function familyPhotos(record, keys) {
+  return (record?.photos || []).filter((photo) => photo && !isShownLocallyUnsynced(photo, keys) && (photo.thumb || photo.fileId || photo.thumbFileId));
+}
+
+async function mapPool(items, limit, worker) {
+  let cursor = 0;
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const index = cursor;
+      cursor += 1;
+      await worker(items[index], index);
+    }
+  });
+  await Promise.all(runners);
+}
+
+async function fetchJournalThumb(photo) {
+  if (photo?.thumb) return photo.thumb;
+  const key = thumbKey(photo);
+  if (!key) return "";
+  if (thumbMemory.has(key)) return thumbMemory.get(key);
+  const data = await withDeadline(journalPost({ action: "thumb", fileId: key }), 20000);
+  const thumb = data?.thumb || "";
+  if (thumb) rememberThumb(key, thumb);
+  return thumb;
+}
+
 function renderFamilyJournal(host, day, record) {
   const list = host.querySelector(".family-journal-list");
   if (!list) return;
   const author = readJournalPrefs().author;
+  const keys = host.__unsyncedKeys;
   const recapNotes = (record?.notes || []).filter((note) => note.author === TRIP_GUIDE_AUTHOR && note.note);
   const notes = (record?.notes || []).filter((note) => note.author !== author && note.author !== TRIP_GUIDE_AUTHOR && note.note);
-  const photos = (record?.photos || []).filter((photo) => photo.author !== author);
+  const photos = familyPhotos(record, keys);
   list.replaceChildren();
   renderDailyRecap(list, recapNotes);
   if (!notes.length && !photos.length) {
@@ -10169,16 +10395,15 @@ function renderFamilyJournal(host, day, record) {
   photos.forEach((photo) => {
     const block = document.createElement("article");
     block.className = "family-photo";
+    const id = thumbKey(photo);
+    if (id) block.dataset.fileId = id;
     const name = document.createElement("strong");
-    name.textContent = photo.author;
-    block.appendChild(name);
+    name.textContent = photo.author || "Family";
+    const frame = document.createElement("div");
+    frame.className = "family-photo-frame";
     const src = journalThumbSrc(photo);
-    if (src) {
-      const image = document.createElement("img");
-      image.alt = photo.caption || `${photo.author} photo`;
-      image.src = src;
-      block.appendChild(image);
-    }
+    if (src) frame.appendChild(familyThumbImage(photo, src));
+    block.append(name, frame);
     if (photo.caption) {
       const caption = document.createElement("p");
       caption.textContent = photo.caption;
@@ -10186,6 +10411,27 @@ function renderFamilyJournal(host, day, record) {
     }
     list.appendChild(block);
   });
+}
+
+function familyThumbImage(photo, src) {
+  const image = document.createElement("img");
+  image.alt = photo.caption || `${photo.author || "Family"} photo`;
+  image.loading = "lazy";
+  image.decoding = "async";
+  image.src = src;
+  return image;
+}
+
+function paintFamilyThumb(host, photo) {
+  const id = thumbKey(photo);
+  if (!id) return;
+  const block = [...host.querySelectorAll(".family-photo")].find((node) => node.dataset.fileId === id);
+  const frame = block?.querySelector(".family-photo-frame");
+  const src = journalThumbSrc(photo);
+  if (!frame || !src) return;
+  let image = frame.querySelector("img");
+  if (!image) frame.appendChild(familyThumbImage(photo, src));
+  else if (image.getAttribute("src") !== src) image.src = src;
 }
 
 function authorServerNote(record) {
@@ -10219,11 +10465,38 @@ function flushVisibleJournalNotes(options = {}) {
   });
 }
 
+async function fillFamilyThumbs(host, record, token, fill) {
+  const missing = familyPhotos(record, host.__unsyncedKeys).filter((photo) => !photo.thumb && thumbKey(photo));
+  await mapPool(missing, JOURNAL_THUMB_CONCURRENCY, async (photo) => {
+    if (!host.isConnected || token !== host.__journalPhotoToken || fill !== host.__thumbFill) return;
+    try {
+      const thumb = await fetchJournalThumb(photo);
+      if (!thumb || !host.isConnected || token !== host.__journalPhotoToken || fill !== host.__thumbFill) return;
+      photo.thumb = thumb;
+      paintFamilyThumb(host, photo);
+    } catch {
+      /* this thumbnail stays blank */
+    }
+  });
+  if (host.isConnected && token === host.__journalPhotoToken && fill === host.__thumbFill) await flushThumbMemory();
+}
+
 async function refreshDayJournal(day, host) {
   const entry = host.__journalNote;
+  const token = (host.__journalPhotoToken = (host.__journalPhotoToken || 0) + 1);
+  host.__unsyncedKeys = await unsyncedLocalKeys();
+  const map = await cachedThumbMap();
   const cached = await readJournalCache(day.id).catch(() => null);
-  if (host.isConnected && cached) {
-    renderFamilyJournal(host, day, cached);
+  const show = (record) => {
+    if (!host.isConnected || token !== host.__journalPhotoToken || !record || record.dayId === "thumbs") return;
+    host.__thumbFill = (host.__thumbFill || 0) + 1;
+    const photos = (record.photos || []).map((photo) => withCachedThumb(photo, map));
+    const next = { ...record, photos };
+    renderFamilyJournal(host, day, next);
+    void fillFamilyThumbs(host, next, token, host.__thumbFill);
+  };
+  if (host.isConnected && cached && cached.dayId !== "thumbs") {
+    show(cached);
     entry?.applyRemote(authorServerNote(cached), { authoritative: false });
   }
   if (!journalConfigured() || !readJournalPrefs().passcode) {
@@ -10232,13 +10505,18 @@ async function refreshDayJournal(day, host) {
   }
   try {
     const data = await journalPost({ action: "list", dayId: day.id });
-    const record = { dayId: day.id, notes: data.notes || [], photos: data.photos || [], fetchedAt: new Date().toISOString() };
+    const record = {
+      dayId: day.id,
+      notes: data.notes || [],
+      photos: (data.photos || []).map((photo) => withCachedThumb(photo, map)),
+      fetchedAt: new Date().toISOString()
+    };
     await writeJournalCache(record);
-    if (host.isConnected) renderFamilyJournal(host, day, record);
+    show(record);
     entry?.applyRemote(authorServerNote(record), { authoritative: true });
     markJournalSynced();
   } catch {
-    if (host.isConnected && cached) renderFamilyJournal(host, day, cached);
+    if (host.isConnected && cached && cached.dayId !== "thumbs") show(cached);
     entry?.applyRemote("", { failed: true });
   }
 }
