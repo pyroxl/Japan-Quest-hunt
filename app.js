@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v233";
+const APP_VERSION = "japan-quest-v234";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -1587,15 +1587,7 @@ function isPhotoQuest(title, text) {
   return /\bphoto|picture|album|reflected\b/i.test(`${title} ${text}`);
 }
 
-const dailyPhotoSlots = [
-  ["thumbnail", "Day Thumbnail", "Optional image for the calendar and daily focus card. Does not appear in the album."],
-  ["food", "Food Photo", "A snack, meal, dessert, drink, or food hall treasure."],
-  ["scene", "Scene Photo", "A street, shrine, station, river, shopfront, skyline, or tiny atmosphere proof."],
-  ["us", "Us Photo", "A non-perfect couple photo from the day."],
-  ["extra", "Extra Photos", "Anything else that belongs in the album for this day."]
-];
-
-const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon"]);
+const albumPhotoSlots = new Set(["food", "scene", "us", "extra", "main", "melon", "thumbnail", "capstone"]);
 
 const planPhotoCredits = {
   day02: "N700 Shinkansen, resized. Photo by TC411-507, CC BY 3.0. https://commons.wikimedia.org/wiki/File:Shinkansen_N700_z15.jpg",
@@ -1972,6 +1964,10 @@ async function refreshPhotoSurfaces({ calendar = false } = {}) {
   for (const node of nodes) {
     if (!node.isConnected) continue;
     await renderPhotosForTask(node.dataset.photoTask, node, photoSurfaceHooks.get(node.dataset.photoTask));
+  }
+  for (const node of document.querySelectorAll("[data-day-photos]")) {
+    if (!node.isConnected) continue;
+    await renderDayBulkPhotos(node.dataset.dayPhotos, node);
   }
   if (document.querySelector("#albumGrid")) await renderAlbum();
   syncPhotoMoveBar();
@@ -5320,7 +5316,7 @@ async function renderAlbum() {
   if (!photos.length) {
     const empty = document.createElement("p");
     empty.className = "album-empty";
-    empty.textContent = "Add photos from daily prompts and they will collect here for the whole trip.";
+    empty.textContent = "No photos on this phone yet.";
     grid.appendChild(empty);
     return;
   }
@@ -5360,11 +5356,6 @@ async function renderAlbum() {
       bindLocalPhoto(img, photo);
       const caption = document.createElement("div");
       caption.className = "album-caption";
-      if (photo.slot && photo.slot !== "quest") {
-        const slot = document.createElement("span");
-        slot.textContent = `${photo.slot[0].toUpperCase()}${photo.slot.slice(1)}`;
-        caption.appendChild(slot);
-      }
       appendPhotoCaption(caption, photo);
       appendPhotoDaySelect(caption, photo);
       appendPhotoTools(caption, photo);
@@ -5865,46 +5856,30 @@ function paintJournalSignIn() {
   });
 }
 
-function makeDayAddRow(journalFold) {
-  const row = document.createElement("div");
-  row.className = "day-add-row";
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "photo-button";
-  button.textContent = "Add photos";
-  button.addEventListener("click", () => {
-    journalFold.open = true;
-    journalFold.querySelector(".daily-photo-grid")?.scrollIntoView({ block: "start" });
+async function renderDayBulkPhotos(dayId, container) {
+  if (!container) return;
+  const photos = (await getAllPhotos().catch(() => []))
+    .filter((photo) => photo.dayId === dayId && isAlbumPhoto(photo))
+    .sort((a, b) => String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  container.replaceChildren();
+  photos.forEach((photo) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "quest-photo";
+    const img = document.createElement("img");
+    img.alt = photo.caption || "Journal photo";
+    img.src = photo.dataUrl;
+    bindLocalPhoto(img, photo);
+    wrapper.appendChild(img);
+    container.appendChild(wrapper);
   });
-  const signIn = document.createElement("p");
-  signIn.className = "journal-signin";
-  signIn.textContent = journalSyncText();
-  row.append(button, signIn);
-  return row;
 }
 
 function makeDailyPhotoCard(day) {
   const card = document.createElement("section");
   card.className = "daily-photo-card";
-  const content = card;
-  const grid = document.createElement("div");
-  grid.className = "daily-photo-grid";
-  dailyPhotoSlots.forEach(([slot, title, description]) => {
-    const slotCard = document.createElement("section");
-    const taskId = `${day.id}.photo.${slot}`;
-    const task = {
-      id: taskId,
-      text: title,
-      slot,
-      dayId: day.id,
-      dayTitle: day.title
-    };
-    const { controls, photos } = makePhotoControls(task, slot === "extra" ? "Add Extras" : slot === "thumbnail" ? "Add Thumbnail" : "Add Photo");
-    slotCard.className = "daily-photo-slot";
-    slotCard.innerHTML = `<h4>${title}</h4><p>${description}</p>`;
-    slotCard.append(controls, photos);
-    grid.appendChild(slotCard);
-  });
+  const photos = document.createElement("div");
+  photos.className = "quest-photos";
+  photos.dataset.dayPhotos = day.id;
   const journal = document.createElement("section");
   journal.className = "day-journal";
   const signIn = document.createElement("p");
@@ -5913,8 +5888,9 @@ function makeDailyPhotoCard(day) {
   const waitingLine = document.createElement("p");
   waitingLine.className = "journal-waiting-line";
   waitingLine.hidden = true;
-  content.append(signIn, waitingLine, grid, makeClearDayButton(day.id), journal);
+  card.append(signIn, waitingLine, photos, journal);
   mountDayJournal(journal, day);
+  void renderDayBulkPhotos(day.id, photos);
   return card;
 }
 
@@ -6516,7 +6492,6 @@ function mountDayView(host, day) {
     if (day.id !== "oct23") {
       const journalFold = foldSection("Journal", makeDailyPhotoCard(day), true);
       journalFold.classList.add("day-photo-fold");
-      parts.unshift(makeDayAddRow(journalFold));
       parts.push(
         foldSection("Quest", makeQuestPage(day)),
         makeMapCard(day),
