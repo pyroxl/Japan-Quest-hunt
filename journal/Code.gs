@@ -41,6 +41,7 @@ function doPost(e) {
     if (body.action === "saveNote") return respond(saveNote(body));
     if (body.action === "list") return respond(listJournal(body));
     if (body.action === "thumb") return respond({ ok: true, thumb: thumbBase64(body.fileId) });
+    if (body.action === "full") return respond(fullPhoto(body));
     return respond({ ok: false, error: "Unknown action." });
   } catch (err) {
     return respond({ ok: false, error: String(err && err.message || err) });
@@ -317,6 +318,14 @@ function thumbBase64(fileId) {
   var blob = DriveApp.getFileById(fileId).getBlob();
   if (blob.getBytes().length > 250000) return "";
   return Utilities.base64Encode(blob.getBytes());
+}
+
+function fullPhoto(body) {
+  if (!body.fileId) return { ok: false, error: "Photo data is incomplete." };
+  var bytes = DriveApp.getFileById(body.fileId).getBlob().getBytes();
+  if (!bytes || !bytes.length) return { ok: false, error: "Photo not found." };
+  if (bytes.length > 8000000) return { ok: false, error: "Photo too large" };
+  return { ok: true, image: Utilities.base64Encode(bytes) };
 }
 
 function listJournal(body) {
