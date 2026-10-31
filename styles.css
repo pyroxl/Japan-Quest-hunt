@@ -5200,7 +5200,14 @@ button.trip-date {
   font-size: 0.86rem;
 }
 
-.family-photo img {
+.family-photo-frame {
+  min-height: 96px;
+  border-radius: 8px;
+  background: #f3ecef;
+}
+
+.family-photo img,
+.family-photo-frame img {
   width: 100%;
   max-height: 220px;
   object-fit: cover;
