@@ -28,7 +28,7 @@ const APP_FILES = [
   "./capstones/day07-kiyomizu.webp?v227",
   "./capstones/day08-kinkakuji.webp?v229",
   "./capstones/day09-nijo.webp?v229",
-  "./capstones/day10-enryakuji.webp?v229",
+  "./capstones/day10-kitano.webp?v235",
   "./capstones/day11.jpg",
   "./capstones/day12.webp",
   "./capstones/day13.jpg",
