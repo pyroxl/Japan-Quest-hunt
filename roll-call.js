@@ -132,7 +132,11 @@
     "2026-11-03",
     "2026-11-04",
     "2026-11-06",
-    "2026-11-07"
+    "2026-11-07",
+    "2026-11-08",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11"
   ];
   const ARRIVE_NIGHTS = ["2026-10-24", "2026-10-28", "2026-11-02", "2026-11-05"];
   const PACK_BACK_NIGHTS = ["2026-10-27", "2026-11-01", "2026-11-04", "2026-11-11"];
@@ -141,14 +145,12 @@
     "2026-10-28",
     "2026-11-02",
     "2026-11-05",
-    "2026-11-08",
-    "2026-11-11",
     "2026-11-12",
     "2026-11-13"
   ];
   const PULSE_EVENING = ["2026-10-27", "2026-11-01", "2026-11-04", "2026-11-07"];
   const CARRY_ON = new Set(["Kroser", "Travel Flame money belt", "Mai's pink backpack"]);
-  const LIST_LABELS = { transit: "Transit", day: "Day-to-day", hakone: "Hakone" };
+  const LIST_LABELS = { transit: "Transit", day: "Day-to-day", hakone: "Old Hakone list" };
 
   function slug(name) {
     return String(name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "item";
@@ -224,7 +226,6 @@
 
   function rollAutoList(iso) {
     if (TRANSIT_DATES.includes(iso)) return "transit";
-    if (iso >= "2026-11-08" && iso <= "2026-11-11") return "hakone";
     if (DAY_DATES.includes(iso)) return "day";
     return "transit";
   }
@@ -240,7 +241,6 @@
   function rollSwapLine(iso) {
     if (ARRIVE_NIGHTS.includes(iso)) return "Move Kroser day items to Lemuvet";
     if (PACK_BACK_NIGHTS.includes(iso)) return "Move them back to Kroser";
-    if (iso === "2026-11-07") return "Pack Hakone cube + hand suitcases to Akko";
     return "";
   }
 
