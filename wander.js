@@ -28,9 +28,9 @@ const WANDER_DAY = {
   day14: { city: "tokyo", areas: ["nishi-shinjuku"], energy: "low", window: "evening", count: 1 },
   day15: { city: "tokyo", areas: ["kichijoji"], energy: "medium", window: "day", count: 2 },
   day16: { city: "tokyo", areas: ["nishi-shinjuku"], energy: "low", window: "evening", count: 2 },
-  day17: { city: "hakone", areas: ["gora"], energy: "low", window: "afternoon", count: 1 },
-  day18: { city: "hakone", areas: ["gora"], energy: "high", window: "day", count: 0 },
-  day19: { city: "hakone", areas: ["gora"], energy: "high", window: "day", count: 0 },
+  day17: { city: "tokyo", areas: ["rest"], energy: "low", window: "day", count: 0 },
+  day18: { city: "tokyo", areas: ["rest"], energy: "low", window: "day", count: 0 },
+  day19: { city: "tokyo", areas: ["rest"], energy: "low", window: "day", count: 0 },
   day20: { city: "tokyo", areas: ["nishi-shinjuku"], energy: "low", window: "evening", count: 1 },
   day21: { city: "tokyo", areas: ["ginza"], energy: "medium", window: "afternoon", count: 0 }
 };
@@ -76,7 +76,7 @@ const EVENING_OPTIONS = {
   day07: { mode: "after", anchor: "Tempura Endo", note: "stay around Gion" },
   day14: { mode: "after", anchor: "check-in", note: "short walk, then dinner" },
   day16: { mode: "after", anchor: "Shibuya", note: "if Akko's evening falls through" },
-  day20: { mode: "later", note: "if the Romancecar is early" }
+  day20: { mode: "later", note: "only after you are back at the hotel, and only if you still want a short walk" }
 };
 
 const DINNER_NOTE = "A walk-in does not guarantee a table.";
