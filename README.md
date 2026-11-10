@@ -1,6 +1,6 @@
 # Running Japan Trip Hunt
 
-The itinerary data reflects Brian and Mai staying at APA Nishishinjuku through the morning of Nov 12. The Hakone hotel, Romancecars, sunrise taxi, and suitcase handoff for Nov 8–11 are cancelled. Nov 8–9 are rest days. Nov 10 and Nov 11 outings are optional. Parents keep their own Tokyo days and Nov 10 flight. There is no hotel on the night of Nov 12.
+The itinerary data reflects Brian and Mai staying at APA Nishishinjuku through the morning of Nov 12. The Hakone hotel, Romancecars, sunrise taxi, and suitcase handoff for Nov 8–11 are cancelled. Nov 8–9 are rest days. Nov 10 is an optional outing. Nov 11 morning is teamLab Planets in Toyosu for Brian, Mai, and Mom Cindy. Parents did not take UA804 on Nov 10 and are still in Tokyo through Nov 13. Their return flight and hotel after the morning of Nov 10 need confirmation. There is no hotel on the night of Nov 12 for Brian and Mai.
 
 From the trip-planning folder, run:
 
@@ -36,7 +36,7 @@ Daily maps use **Leaflet 1.9.4** (`leaflet.js` and `leaflet.css`) with OpenStree
 
 ## Seeing an older cached version
 
-The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v236`. The menu shows `v236` so you can see which copy is open. The app checks for updates on every launch. Document loads, including the manifest start address, and the shell files (`index.html`, `app.js`, and `styles.css`, with or without a version query) load from the network first and fall back to saved files when offline. An open tab reloads once when the new service worker takes control. If the screen is still old:
+The app works offline and therefore uses a network-first service-worker cache. This update uses cache `japan-quest-v237`. The menu shows `v237` so you can see which copy is open. The app checks for updates on every launch. Document loads, including the manifest start address, and the shell files (`index.html`, `app.js`, and `styles.css`, with or without a version query) load from the network first and fall back to saved files when offline. An open tab reloads once when the new service worker takes control. If the screen is still old:
 
 1. Open `https://pyroxl.github.io/Japan-Quest-hunt/reset.html` once, or close all Japan Trip Hunt tabs.
 2. Start the server again.

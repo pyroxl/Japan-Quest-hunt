@@ -210,10 +210,10 @@ function loopNest(loop) {
 
 function parentNest() {
   const ideas = PARENT_IDEAS.map((idea) => wanderLine(idea.name, idea.line, idea.maps) + wanderNest("Route", `<p class="wander-line">${escapeHtml(idea.route)}</p>`)).join("");
-  const haneda = wanderLine("Haneda", "UA804 leaves at 16:50", mapsQuery("Haneda Airport Terminal 3"));
-  const route = wanderNest("Route", `<p class="wander-line">Leave by 13:30. Oedo to Daimon, then Asakusa. About 50 min.</p>`);
-  const base = `<p class="wander-line"><strong>Base</strong> · APA Nishi-Shinjuku Gochome</p>`;
-  return wanderNest("Parents · Nov 8–10", `${base}${ideas}${haneda}${route}${dinnerNest("", WALK_IN_DINNERS.tokyo)}`, "wander-parents");
+  const haneda = wanderLine("UA804", "Not taken. Dad got sick. Do not go to Haneda for this flight.", mapsQuery("Haneda Airport Terminal 3"));
+  const route = wanderNest("Was the airport ride", `<p class="wander-line">The old plan was to leave by 13:30. That ride is not the plan. The return flight needs confirmation.</p>`);
+  const base = `<p class="wander-line"><strong>Base</strong> · APA through the morning of Nov 10. The hotel after that needs confirmation. It may still be APA.</p>`;
+  return wanderNest("Parents · still in Tokyo", `${base}${ideas}${haneda}${route}${dinnerNest("", WALK_IN_DINNERS.tokyo)}`, "wander-parents");
 }
 
 function parentsWanderView() {
@@ -226,6 +226,7 @@ function coupleWanderView() {
 
 function wanderSummary(day) {
   const bits = [];
+  if (day.id === "day19" && parentsWanderView()) return "Still in Tokyo · UA804 not taken";
   if (PARENT_DAYS.has(day.id) && parentsWanderView()) return "Shinjuku Gyoen · Tocho";
   if (PARENT_DAYS.has(day.id) && !coupleWanderView()) bits.push("Parents' Tokyo ideas");
   const loop = wanderLoop(day.id);

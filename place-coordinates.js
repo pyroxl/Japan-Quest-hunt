@@ -448,6 +448,10 @@ window.PLACE_COORDINATES = {
     35.6616023,
     139.7412674
   ],
+  "teamLab Planets TOKYO": [
+    35.64912,
+    139.78977
+  ],
   "Tokyo Melonpan": [
     35.681236,
     139.767125

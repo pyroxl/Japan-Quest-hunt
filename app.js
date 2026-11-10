@@ -1,5 +1,5 @@
 const STORAGE_KEY = "tokyoQuestHunt.v4";
-const APP_VERSION = "japan-quest-v236";
+const APP_VERSION = "japan-quest-v237";
 const TRAVELER_KEY = "japanQuestTraveler";
 
 function travelerView() {
@@ -27,7 +27,6 @@ function sees(who) {
 function awayLine(iso) {
   const view = travelerView();
   if (coupleView() && iso === "2026-10-23") return "Not in Japan yet.";
-  if (view === "parents" && iso >= "2026-11-11" && iso <= "2026-11-13") return "Flown home.";
   return "";
 }
 
@@ -36,12 +35,14 @@ function tripStartIso() {
 }
 
 function tripEndIso() {
-  return travelerView() === "parents" ? "2026-11-10" : "2026-11-13";
+  return "2026-11-13";
 }
 // Apps Script web app. The family passcode stays in Script Properties, not in this file.
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const TEAMLAB_GUIDE_URL = "https://tlba.teamlab.art/tyob10";
 const TEAMLAB_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo")}`;
+const TEAMLAB_PLANETS_TICKET_URL = "https://teamlabplanets.dmm.com/en/mytickets/aa08f6af2f31948acc";
+const TEAMLAB_PLANETS_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("teamLab Planets TOKYO, 6-1-16 Toyosu, Koto-ku, Tokyo")}`;
 const FUJITAYA_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Fujitaya+Miyajima";
 const UENO_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Anagomeshi+Ueno+Miyajimaguchi";
 const SETSUGETSUKA_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Gora 1300-34, Hakone, Kanagawa")}`;
@@ -85,8 +86,19 @@ const SHINKANSEN_OCT24 = `Booked. Nozomi 261 leaves Tokyo Station at 14:00 and r
 const SHINKANSEN_NOV2 = `Booked. Hikari 733 leaves Kyoto at 08:01 and reaches Himeji at 08:49, car 6, seats 17-D, 17-E, 18-D, and 18-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥20,280. Confirmation in Gmail. ${SHINKANSEN_BOARDING}`;
 const SHINKANSEN_HIMEJI = `Booked. Nozomi 69 leaves Himeji at 14:46 and reaches Hiroshima at 15:42, car 14, seats 6-D, 6-E, 7-D, and 7-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥35,080. Confirmation in Gmail. ${SHINKANSEN_BOARDING}`;
 const SHINKANSEN_NOV5 = `Booked. Nozomi 90 starts at Hiroshima, leaves at 10:03, and reaches Tokyo at 13:57, car 6, seats 5-D, 5-E, 6-D, and 6-E. The party is 4 people. Brian, Mai, Mom Cynthia, and Dad ride together. The price is ¥78,240. Confirmation in Gmail. ${SHINKANSEN_BOARDING}`;
-const PARENTS_HANEDA_NOTE = "Parents fly home on Nov 10 on UA804. It leaves Haneda at 16:50. They stay at APA Nishi-Shinjuku Gochome through that morning. Leave the hotel by about 13:30. Take the Toei Oedo line to Daimon, then the Asakusa line to Haneda. Allow about 50 minutes.";
+const PARENTS_STAY_OPEN = "[return flight — needs confirmation]. [hotel for Nov 10–13 — needs confirmation]. It may still be APA Nishi-Shinjuku Gochome. [whether Dad joins any activity — needs confirmation].";
+const PARENTS_HANEDA_NOTE = `Not taken. Dad David got sick, so Mom Cindy and Dad David did not fly UA804 on Tue Nov 10. The flight was booked to leave Haneda at 16:50. Do not board. They are still in Tokyo through Fri Nov 13. ${PARENTS_STAY_OPEN}`;
 const TEAMLAB_NOTE = `BOOKED. Confirmation in Gmail. The ticket is an Entrance Pass for 2 adults. The price is JPY 10,800. Enter between 12:30 and 13:00. The address is Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo. {{link:${TEAMLAB_MAP_URL}|Open the map}} You can change the date or the time up to 3 times. Make the change no later than 2 hours before entry. {{link:${TEAMLAB_GUIDE_URL}|Open the guide app}} For inquiries, call +81-3-6230-9666. The line is open from 10:00 to 18:00. EN TEA HOUSE is inside the museum.`;
+const TEAMLAB_PLANETS_NOTE = `BOOKED. Paid ¥16,800 via DMM. The party is 3 adults: Brian, Mai, and Mom Cindy. Dad David is not included. The inquiry number is {{copy:aa08f6af2f31948acc}}. Enter between 09:00 and 09:30. The address is teamLab Planets TOKYO, 6-1-16 Toyosu, Koto-ku, Tokyo. {{link:${TEAMLAB_PLANETS_MAP_URL}|Open the map}} {{link:${TEAMLAB_PLANETS_TICKET_URL}|Open the ticket}} The entry code appears on that page after midnight on Nov 11. There is no refund. You can change the time up to 3 times. Make the change no later than 2 hours before entry.`;
+const PLANETS_DEPARTURE_TIMELINE = [
+  ["By 7:45", `Leave ${APA_HOTEL_NAME}.`],
+  ["7:53", "Take the Toei Oedo line from Nishi-shinjuku-gochome, Platform 1, toward Tochomae/Roppongi."],
+  ["8:24", "Arrive Tsukishima, then transfer to the Tokyo Metro Yurakucho line toward Shin-kiba at 8:30."],
+  ["8:32", "Arrive Toyosu, walk about 10 minutes from Exit 7, and reach the entrance around 8:45."],
+  ["Fare", "The IC fare is ¥317 per adult, and the morning trains will be crowded."],
+  ["Taxi", "If you take a taxi instead, leave about 7:50, allow about 30–45 minutes, and expect roughly ¥7,000–9,000, which is an estimate."]
+];
+const PLANETS_DEPARTURE_NOTE = PLANETS_DEPARTURE_TIMELINE.map((row) => `${row[0]} ${row[1]}`).join(" ");
 const FUJITAYA_LUNCH_NOTE = `Eat anago-meshi at Fujitaya on Miyajima. The shop is open from 11:00 to 17:00. Arrive early. Lines form. {{link:${FUJITAYA_MAP_URL}|Open the Fujitaya map}} If you cannot eat at Fujitaya, go to Anagomeshi Ueno at Miyajimaguchi. Ueno is by the ferry pier on the mainland. Ueno is open from 10:00 to 19:00. On Wednesdays it closes at 18:00. Nov 4 is a Wednesday. You can reserve a bento by phone at 0829-56-0006. {{link:${UENO_MAP_URL}|Open the Ueno map}}`;
 const MIYAJIMA_RETURN_DINNER = "Eat a light dinner on the way back. Walk in. Do not make a reservation. Use one of these three places at or next to Hiroshima Station. 1. Tsukemen Karabu is the first choice. It serves dipping noodles in ekie at Hiroshima Station. Walk in. 2. Suishin ekie is on Hiroshima Station 1F. Order a la carte. Anago kamameshi is JPY 2,700. Anago-meshi is JPY 3,300. The shop is open from 11:00 to 21:30. Last order is 20:30. It is mostly walk-in. Call 082-567-5519. 3. Hikariya is on minamoa 6F. The shop is casual. The anago tempura bowl is JPY 1,738. The shop is open from 11:00 to 22:00. Last order is 21:30. Call 082-569-7027.";
 const MIYAJIMA_TIPS = "Do not feed the deer. Lockers are at the ferry terminals. Bring cash for the street stalls. The fall leaves are mostly still green. They peak around Nov 18.";
@@ -128,7 +140,7 @@ const LOCKED_HOTELS = [
   { dates: "Osaka · Oct 24–28", note: "After Nozomi 261.", name: "Royal Park Hotel ICONIC Osaka Midosuji", url: ROYAL_PARK_MAP, who: "parents" },
   { dates: "Kyoto · Oct 28–Nov 2", note: "Booked separately.", name: "Kyoto room", url: "", who: "parents" },
   { dates: "Hiroshima · Nov 2–5", note: "Booked separately.", name: "Hiroshima room", url: "", who: "parents" },
-  { dates: "Tokyo · Nov 5–10", note: "Your room at APA Nishi-Shinjuku Gochome. Leave for Haneda on Nov 10 by about 13:30.", name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL, who: "parents" }
+  { dates: "Tokyo · Nov 5–10", note: `Your room at APA Nishi-Shinjuku Gochome was booked through the morning of Nov 10. UA804 was not taken. ${PARENTS_STAY_OPEN}`, name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL, who: "parents" }
 ];
 
 const LOCKED_HOTEL_WEBSITES = Object.fromEntries(LOCKED_HOTELS.map((hotel) => [hotel.name, hotel.url]));
@@ -146,9 +158,10 @@ const HOTEL_SITE_BY_BOOKING = {
 };
 
 const RESERVATION_COUNTDOWN = [
-  { id: "parent-rooms", name: "Parent rooms", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 23–Nov 10", who: "parents", note: "Parents stay at Shinagawa Prince Hotel on Oct 23, Royal Park Hotel ICONIC Osaka Midosuji on Oct 24–28, and APA Nishi-Shinjuku Gochome on Nov 5–10. Their Kyoto and Hiroshima rooms are booked. Brian and Mai stay at Hotel Cordia Osaka Hommachi on Oct 24–28." },
+  { id: "parent-rooms", name: "Parent rooms", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 23–Nov 10", who: "parents", note: `Parents stay at Shinagawa Prince Hotel on Oct 23, Royal Park Hotel ICONIC Osaka Midosuji on Oct 24–28, and APA Nishi-Shinjuku Gochome on Nov 5–10. Their Kyoto and Hiroshima rooms are booked. Brian and Mai stay at Hotel Cordia Osaka Hommachi on Oct 24–28. The APA room was booked through the morning of Nov 10. ${PARENTS_STAY_OPEN}` },
   { id: "flight-locators", name: "Record ticketed flight details", done: true, attention: "done", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", who: "brianMai", note: FLIGHT_NOTE },
   { id: "teamlab", name: "teamLab Borderless", done: true, attention: "booked", recommendedOn: "2026-09-01", target: "Nov 12 · 12:30–13:00", who: "brianMai", note: TEAMLAB_NOTE, url: TEAMLAB_GUIDE_URL },
+  { id: "teamlab-planets", name: "teamLab Planets", done: true, attention: "booked", recommendedOn: "2026-11-11", target: "Nov 11 · 09:00–09:30", note: TEAMLAB_PLANETS_NOTE, url: TEAMLAB_PLANETS_TICKET_URL },
   { id: "shinkansen-oct24", name: "Nozomi 261 Tokyo to Shin-Osaka", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Sat Oct 24 · 14:00", note: SHINKANSEN_OCT24 },
   { id: "shinkansen-nov2", name: "Hikari 733 Kyoto to Himeji", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 08:01", note: SHINKANSEN_NOV2 },
   { id: "shinkansen-himeji", name: "Nozomi 69 Himeji to Hiroshima", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 14:46", note: SHINKANSEN_HIMEJI },
@@ -161,7 +174,7 @@ const RESERVATION_COUNTDOWN = [
   { id: "hiroshima-dinner", name: "Hiroshima arrival dinner at Reichan", done: true, attention: "done", recommendedOn: "2026-10-07", target: "Mon Nov 2 · party of 4", note: `Decided. ${REICHAN_DINNER_NOTE}` },
   { id: "koko-return", name: "APA Nishishinjuku", done: true, attention: "booked", recommendedOn: "2026-08-18", target: "Nov 5–12 morning", who: "brianMai", note: APA_NOTE },
   { id: "ua803", name: "UA803 to Haneda", done: true, attention: "booked", recommendedOn: "2026-10-23", target: "Fri Oct 23 · 15:55", who: "parents", note: "UA803 lands at Haneda at 15:55. Take the Keikyu line to Shinagawa, about 15 minutes." },
-  { id: "ua804", name: "UA804 from Haneda", done: true, attention: "booked", recommendedOn: "2026-11-10", target: "Tue Nov 10 · 16:50", who: "parents", note: PARENTS_HANEDA_NOTE }
+  { id: "ua804", name: "UA804 from Haneda", done: true, attention: "cancelled", recommendedOn: "2026-11-10", target: "Not taken · was Tue Nov 10 · 16:50", who: "parents", note: PARENTS_HANEDA_NOTE }
 ];
 
 const WALK_IN_REMINDERS = [
@@ -331,13 +344,14 @@ const roadmapGoals = [
   { id: "matcha", goal: "Matcha and cafe time", days: ["day07", "day08", "day09", "day10"], status: "Ready", why: "Several Kyoto days provide natural, unhurried chances.", blocker: "", fallback: "Use a station, depachika, or hotel-nearby tea stop." },
   { id: "mt-hiei", goal: "Slow Sunday in Kyoto", days: ["day10"], status: "Ready", why: "Mt Hiei is cancelled. Sleep in, Mai's morning, lunch together, then Uzumasa and the YOKAI festival.", blocker: "", fallback: "Skip Kōryū-ji if anyone is tired. Keep the 17:00 festival." },
   { id: "mountain-chapter", goal: "Hakone retreat cancelled", days: ["day17", "day18", "day19"], status: "Cancelled", why: "Setsugetsuka, both Romancecars, the never-booked sunrise taxi, and the suitcase handoff are no longer the plan. Nov 8–9 are rest days at APA.", blocker: "", fallback: "Stay at APA. Skip every outing." },
-  { id: "hakone-return", goal: "Hakone return cancelled", days: ["day20"], status: "Cancelled", why: "Hakone 30 was cancelled and the refund is complete. Nov 11 is an optional Kichijoji day at most, then packing at APA.", blocker: "", fallback: "Stay at APA and pack." },
+  { id: "hakone-return", goal: "Hakone return cancelled", days: ["day20"], status: "Cancelled", why: "Hakone 30 was cancelled and the refund is complete. Nov 11 morning is teamLab Planets. Kichijoji stays optional after that, then packing at APA.", blocker: "", fallback: "Stay at APA and pack after teamLab Planets." },
   { id: "west-chapter", goal: "Himeji, Hiroshima, and Miyajima chapter", days: ["day11", "day12", "day13"], status: "Ready", why: "The westward chapter makes the longer trip feel meaningfully broader.", blocker: "", fallback: "Use castle exterior and garden, central Peace Park, and Miyajima waterfront routes." },
-  { id: "tokyo-story", goal: "Tokyo at APA, then teamLab and the flight", days: ["day14", "day15", "day16", "day17", "day18", "day19", "day20", "day21"], status: "Ready", why: "After Hiroshima the stay is APA Nishishinjuku through the morning of Nov 12. Nov 8–9 are rest. Nov 10 and Nov 11 outings are optional and easy to skip.", blocker: "", fallback: "Rest at APA. Skip Shibuya and Kichijoji. Keep teamLab and the flight." },
+  { id: "tokyo-story", goal: "Tokyo at APA, then teamLab and the flight", days: ["day14", "day15", "day16", "day17", "day18", "day19", "day20", "day21"], status: "Ready", why: "After Hiroshima the stay is APA Nishishinjuku through the morning of Nov 12. Nov 8–9 are rest. Nov 10 is optional. Nov 11 morning is teamLab Planets. Kichijoji is optional after that.", blocker: "", fallback: "Rest at APA. Skip Shibuya. Keep teamLab Planets, teamLab Borderless, and the flight." },
   { id: "shibuya-crossing", goal: "Dad's Shibuya Crossing", days: ["day16"], status: "Ready", why: "It gives Dad's Tokyo request a clear morning anchor without jeopardizing the evening meetup.", blocker: "", fallback: "Cross once, take the Hachiko photo, and skip the mall stop." },
   { id: "friends-day", goal: "Evening with Akko", days: ["day16"], status: "Needs Confirmation", why: "The social evening is the protected capstone, so the Shibuya day ends early enough to travel wherever Akko chooses.", blocker: "Confirm meeting point, time, and whether Yoshi is joining.", fallback: "Leave Shibuya by 15:30 and keep dinner seated and unhurried." },
-  { id: "asakusa-hall", goal: "Asakusa Engei Hall not on Nov 11", days: ["day20"], status: "Cancelled", why: "Do not stack Asakusa theatre on the optional Kichijoji day.", blocker: "", fallback: "Skip Asakusa." },
+  { id: "asakusa-hall", goal: "Asakusa Engei Hall not on Nov 11", days: ["day20"], status: "Cancelled", why: "Do not stack Asakusa theatre on the teamLab Planets day.", blocker: "", fallback: "Skip Asakusa." },
   { id: "anime", goal: "Manga or anime culture beyond shopping", days: ["day08", "day15", "day16"], status: "Ready", why: "The Friday Manga Museum and Kichijoji provide imaginative culture without relying on shopping.", blocker: "", fallback: "Skip the Manga Museum and rest at the hotel. Keep Kichijoji." },
+  { id: "teamlab-planets", goal: "teamLab Planets", days: ["day20"], status: "Ready", why: "The Toyosu entry is booked for 09:00–09:30. The party is Brian, Mai, and Mom Cindy. Dad David is not included.", blocker: "", fallback: "The time can be changed up to 3 times, no later than 2 hours before entry. There is no refund." },
   { id: "teamlab", goal: "teamLab Borderless", days: ["day21"], status: "Ready", why: "Mai already responded strongly to the visual experience. The Entrance Pass is booked for 12:30–13:00.", blocker: "", fallback: "Protect the chosen melon-bread store and final meal, then use another modern-art experience if desired." },
   { id: "melon-finale", goal: "Mai's specific special melon-bread shop", days: ["day21"], status: "Needs Name", why: "This is now a protected final-day food anchor.", blocker: "Exact shop and branch have not been confirmed.", fallback: "Use the best confirmed Tokyo Melonpan branch or repeat the passport champion." },
 ];
@@ -536,7 +550,7 @@ const calendarThumbnailIdeas = {
   day17: "Idea: rest at the hotel",
   day18: "Idea: another rest day",
   day19: "Idea: optional Shibuya, easy to skip",
-  day20: "Idea: optional Kichijoji, then pack"
+  day20: "Booked: teamLab Planets, 09:00"
 };
 
 const calendarReferenceLinks = {
@@ -735,11 +749,11 @@ const tripData = {
       questDay("day14", "2026-11-05", "Ekiben Eastbound", "The long Shinkansen becomes the experience: browse, choose, reveal, share, score, then settle into Tokyo.", ["Hiroshima Station", "Tokyo Station", APA_HOTEL_NAME], "Turn Hiroshima-to-Tokyo into the main ekiben tasting and a calm move into the Tokyo neighborhood.", ["Arrive early enough to browse", "Choose different regional boxes", "Photograph closed packages and open trays", "Trade tastes after departure", "Learn the Nishi-shinjuku-gochome Station exit, the nearest konbini, and the easiest dinner"], ["An unexpected bento ingredient", "A beautiful wrapper or clever compartment", "A train-window scene worth pausing lunch for"], "Train food becomes one of the day's actual memories and Tokyo begins gently.", "No Tokyo sightseeing is required after arrival."),
       questDay("day15", "2026-11-06", "Inokashira and Kichijoji", "A soft imaginative Tokyo day built around the park, cafes and compact neighborhood streets.", [APA_HOTEL_NAME, "Inokashira Park", "Kichijoji Sunroad Shopping District"], "Make the park, cafes and Kichijoji the complete quest, with no timed attraction controlling the day.", ["Walk by the pond", "Find a cafe that belongs in this day", "Browse one shotengai", "Choose a snack or object animated in spirit", "Check bakeries for a new melon-bread style"], ["A duck, bridge, or pond reflection", "A handmade-looking display", "A detail that rewards looking closely"], "Mai gets why Tokyo is not just skyscrapers.", "Keep the day spacious rather than adding another western-Tokyo district."),
       questDay("day16", "2026-11-07", "Scramble Into Their Tokyo", "Give Dad his Shibuya moment, one Mai-friendly pop-culture stop, then protect the evening with Akko.", [APA_HOTEL_NAME, "Shibuya Crossing", "Hachiko Statue", "Shibuya PARCO", "Akko meetup · provisional Chofu Station"], "Cross the Scramble, take the Hachiko photo, eat lunch nearby, choose one compact Mai stop, and leave Shibuya by 15:30 for Akko's evening plan.", ["Cross Shibuya Crossing together", "Take Dad's Hachiko or crossing photo", "Choose one rooftop, cafe, or people-watching view", "Give Mai one focused PARCO or character-culture stop", "Bring a small consumable thank-you gift for Akko"], ["Dad in the crossing", "Hachiko or Shibuya street texture", "The relaxed group dinner with Akko"], "Dad gets his Tokyo icon and Mai gets one playful stop without exhausting the social evening.", "Cross once, take the photo, and skip PARCO if the meetup requires an earlier departure."),
-      questDay("day17", "2026-11-08", "Rest at APA", "A flexible rest day at APA Nishishinjuku. No timed outing and no new reservation.", [APA_HOTEL_NAME], "Stay at the hotel and rest. Skip every outing. Nothing is booked today.", ["Rest at APA", "Eat when you are hungry. Do not book a meal", "Skip Shibuya, Kichijoji, Hakone, and every other outing"], ["A quiet hotel moment, only if you want a photo"], "Mai gets an unscheduled rest day.", "Parents stay on their own Tokyo plan and fly home Nov 10."),
+      questDay("day17", "2026-11-08", "Rest at APA", "A flexible rest day at APA Nishishinjuku. No timed outing and no new reservation.", [APA_HOTEL_NAME], "Stay at the hotel and rest. Skip every outing. Nothing is booked today.", ["Rest at APA", "Eat when you are hungry. Do not book a meal", "Skip Shibuya, Kichijoji, Hakone, and every other outing"], ["A quiet hotel moment, only if you want a photo"], "Mai gets an unscheduled rest day.", "Parents stay on their own Tokyo plan. UA804 on Nov 10 was not taken."),
       questDay("day18", "2026-11-09", "Rest at APA", "Another flexible rest day at APA. No timed outing and no new reservation.", [APA_HOTEL_NAME], "Stay at the hotel and rest. There is no sunrise plan and no taxi.", ["Rest at APA", "Eat when you are hungry. Do not book a meal", "Skip every outing"], ["A quiet hotel moment, only if you want a photo"], "Mai gets another unscheduled rest day.", "Parents stay on their own Tokyo plan."),
-      questDay("day19", "2026-11-10", "Optional Shibuya, or rest", "Only if you have recovered enough: Hachiko, the crossing, and at most one shop. Easy to skip. Not booked.", [APA_HOTEL_NAME, "Shibuya Crossing", "Hachiko Statue"], "Rest at APA unless you feel well enough for one short Shibuya stop. If you only have energy for one neighborhood, choose Kichijoji on Nov 11 instead. Do not add Asakusa.", ["Default: stay at APA and rest", "Only if recovered enough: Hachiko and Shibuya Crossing", "At most one shop, then go back to the hotel", "Skip this outing freely. It is not a booking"], ["Hachiko or the crossing, only if you go"], "Mai can skip the whole outing.", "Parents fly home from Haneda on Nov 10 on UA804 at 16:50."),
-      questDay("day20", "2026-11-11", "Optional Kichijoji, then pack", "If you want one neighborhood, choose Kichijoji over Shibuya. The pond, Sunroad, and a bakery takeaway are optional. Then pack. No Asakusa theatre.", [APA_HOTEL_NAME, "Inokashira Park", "Kichijoji Sunroad Shopping District"], "Rest at APA is a complete day. If you go out, keep it to Kichijoji (吉祥寺): the Inokashira Park pond, a browse on Sunroad, and a bakery takeaway. No branch is chosen. Then pack. Do not add Asakusa.", ["Default: stay at APA", "Optional: Inokashira Park pond", "Optional: browse Kichijoji Sunroad", "Optional: a bakery takeaway. Do not treat a placeholder name as a real branch", "Pack at the hotel", "Do not add Shibuya or Asakusa Engei Hall"], ["The pond, only if you go", "Something from Sunroad, only if you go"], "Mai can skip Kichijoji and just pack.", "Mom and Dad have flown home. This day is Brian and Mai only."),
-      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", [APA_HOTEL_NAME, "Shimbashi Station", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner"], "Check out of APA by 10:00. Put the bags in Shimbashi coin lockers. Enter teamLab Borderless between 12:30 and 13:00. Then visit Mai's melon-bread shop. Walk in at Kaiten Toyama Sushi Ginza at 17:00. There is no hotel on the night of Nov 12.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Mom and Dad departed from Haneda on Nov 10; this is a couple-only final day.")
+      questDay("day19", "2026-11-10", "Optional Shibuya, or rest", "Only if you have recovered enough: Hachiko, the crossing, and at most one shop. Easy to skip. Not booked. Nov 11 morning is teamLab Planets.", [APA_HOTEL_NAME, "Shibuya Crossing", "Hachiko Statue"], "Rest at APA unless you feel well enough for one short Shibuya stop. Do not save this for a Nov 11 morning outing. Do not add Asakusa.", ["Default: stay at APA and rest", "Only if recovered enough: Hachiko and Shibuya Crossing", "At most one shop, then go back to the hotel", "Skip this outing freely. It is not a booking"], ["Hachiko or the crossing, only if you go"], "Mai can skip the whole outing.", "Parents did not take UA804. They are still in Tokyo."),
+      questDay("day20", "2026-11-11", "teamLab Planets, then pack", "Booked entry at teamLab Planets TOKYO in Toyosu, 09:00–09:30, for Brian, Mai, and Mom Cindy. Dad David is not included. Kichijoji stays optional after that.", [APA_HOTEL_NAME, "teamLab Planets TOKYO", "Inokashira Park", "Kichijoji Sunroad Shopping District"], "Leave the hotel by 7:45. Enter teamLab Planets between 09:00 and 09:30. After that, Kichijoji is optional, then pack. Do not add Asakusa.", ["Leave APA by 7:45", "Enter teamLab Planets between 09:00 and 09:30", "After Planets, only if you still want it: Inokashira Park pond", "After Planets, only if you still want it: browse Kichijoji Sunroad", "After Planets, only if you still want it: a bakery takeaway. Do not treat a placeholder name as a real branch", "Pack at the hotel", "Do not add Shibuya or Asakusa Engei Hall"], ["The pond, only if you go after Planets", "Something from Sunroad, only if you go after Planets"], "Mai goes to teamLab Planets with Brian and Mom Cindy.", "Dad David is not on this ticket. Kichijoji is optional after Planets, not the morning."),
+      questDay("day21", "2026-11-12", "Light, Melon Bread, Goodbye", "Immersive art, Mai's chosen bakery, final food and a fully packed suitcase.", [APA_HOTEL_NAME, "Shimbashi Station", "teamLab Borderless Azabudai Hills", "Tokyo Melonpan", "Final Tokyo Dinner"], "Check out of APA by 10:00. Put the bags in Shimbashi coin lockers. Enter teamLab Borderless between 12:30 and 13:00. Then visit Mai's melon-bread shop. Walk in at Kaiten Toyama Sushi Ginza at 17:00. There is no hotel on the night of Nov 12.", ["Find the teamLab room we most want to remember", "Take one abstract photo", "Confirm the exact bakery branch and stock", "Score the special melon bread in the passport", "Buy only the souvenirs still genuinely wanted", "Eat the final this-is-Tokyo meal", "Pack with airport margin", "Name the champion ekiben and melon bread"], ["A reflection that changes the room", "The first crackle of the special melon-bread crust", "One tiny goodbye photo"], "Mai chooses the sweet and emotional ending of the trip.", "Mom and Dad are still in Tokyo. teamLab Borderless stays Brian and Mai. Their return flight and hotel need confirmation.")
     ]
   }
 };
@@ -836,9 +850,9 @@ const dayGoals = {
     photoHint: "Only if you go: Hachiko or the crossing."
   },
   day20: {
-    clearPath: "Optional Kichijoji, the pond, and Sunroad, then pack. Skip the outing if you need rest.",
-    mainGoal: "If you go out, keep it to Kichijoji, then pack. Rest at APA is a complete day.",
-    photoHint: "Only if you go: the Inokashira pond."
+    clearPath: "Leave APA by 7:45. Oedo 7:53 to Tsukishima, Yurakucho to Toyosu, walk from Exit 7. Enter teamLab Planets from 09:00 to 09:30.",
+    mainGoal: "Enter teamLab Planets with Mai and Mom Cindy between 09:00 and 09:30.",
+    photoHint: "A teamLab Planets room, if you want one photo."
   },
   day21: {
     clearPath: "Check out of APA by 10:00 → Shimbashi lockers → teamLab 12:30–13:00 → Toyama walk-in at 17:00 → Haneda Terminal 3 for the 01:00 flight.",
@@ -1071,15 +1085,15 @@ const dayContext = {
   },
   day19: {
     timelineWho: "brianMai",
-    summary: "Rest at APA unless you have recovered enough for one short optional stop: Hachiko, Shibuya Crossing, and at most one shop. It is not booked and it has no agreed time. If you only have energy for one neighborhood, save it for Kichijoji on Nov 11. Do not add Asakusa.",
-    timeline: [["Default", "Stay at APA and rest, because skipping this outing is a complete day."], ["Only if recovered", "If you have recovered enough, see Hachiko and Shibuya Crossing, then at most one shop, and go back, with no agreed time."], ["One neighborhood", "If you want only one neighborhood, choose Kichijoji on Nov 11 instead of Shibuya, and do not add Asakusa."]],
-    history: [HAKONE_CANCELLED_NOTE, "Mount Kintoki was the earlier idea for this date. That hike is not the plan. Parents fly home from Haneda today on their own flight."]
+    summary: "Rest at APA unless you have recovered enough for one short optional stop: Hachiko, Shibuya Crossing, and at most one shop. It is not booked and it has no agreed time. Nov 11 morning is teamLab Planets, so do not save this for a morning outing. Do not add Asakusa. Mom and Dad did not take UA804. They are still in Tokyo.",
+    timeline: [["Default", "Stay at APA and rest, because skipping this outing is a complete day."], ["Only if recovered", "If you have recovered enough, see Hachiko and Shibuya Crossing, then at most one shop, and go back, with no agreed time."], ["Nov 11", "Do not use Nov 11 morning for this outing or for Kichijoji. That morning is teamLab Planets. Do not add Asakusa."]],
+    history: [HAKONE_CANCELLED_NOTE, "Mount Kintoki was the earlier idea for this date. That hike is not the plan. Parents did not take UA804. They are still in Tokyo through Nov 13."]
   },
   day20: {
     timelineWho: "brianMai",
-    summary: "Rest at APA is a complete day. If you go out, choose Kichijoji (吉祥寺) over Shibuya: the Inokashira Park pond, a browse on Sunroad, and a bakery takeaway. No bakery branch is chosen. Then pack. Do not add Shibuya or Asakusa Engei Hall. Nothing is booked and no time is agreed.",
-    timeline: [["Default", "Stay at APA and pack when you are ready, because the outing is optional and has no agreed time."], ["If you go", "If you go, walk by the Inokashira Park pond in Kichijoji (吉祥寺), browse Sunroad, and pick up a bakery takeaway without treating any placeholder name as a real branch."], ["Then", "Return to APA and pack for Thu Nov 12."], ["Do not stack", "Do not add Shibuya if Kichijoji is the one neighborhood, and do not add Asakusa Engei Hall."]],
-    history: [HAKONE_CANCELLED_NOTE, "The earlier plan was a rail return from Hakone and a short stop at Asakusa Engei Hall. Both are off this day. Packing at APA is the only task that matters."]
+    summary: "teamLab Planets TOKYO in Toyosu is booked for 09:00–09:30. The party is Brian, Mai, and Mom Cindy. Dad David is not included. Leave APA by 7:45. After Planets, Kichijoji (吉祥寺) is still optional: the Inokashira Park pond, a browse on Sunroad, and a bakery takeaway. No bakery branch is chosen. Then pack. Do not add Shibuya or Asakusa Engei Hall.",
+    timeline: [...PLANETS_DEPARTURE_TIMELINE, ["09:00–09:30", TEAMLAB_PLANETS_NOTE], ["After Planets", "Only if you still want it: Kichijoji (吉祥寺), the Inokashira Park pond, a browse on Sunroad, and a bakery takeaway. No bakery branch is chosen. This is not the morning plan."], ["Then", "Return to APA and pack for Thu Nov 12. Checkout is still Thu Nov 12 by 10:00."], ["Do not stack", "Do not add Shibuya or Asakusa Engei Hall."]],
+    history: [HAKONE_CANCELLED_NOTE, "The earlier plan was a rail return from Hakone and a short stop at Asakusa Engei Hall. Both are off this day. The optional Kichijoji stop stays available after teamLab Planets. Packing at APA is still on this day."]
   },
     day21: {
     timelineWho: "brianMai",
@@ -1211,14 +1225,38 @@ const DAY_VIEWS = {
   },
   day19: {
     parents: {
-      title: "Fly home",
-      theme: "UA804 leaves Haneda at 16:50.",
-      summary: "Leave APA Nishi-Shinjuku Gochome by about 13:30. UA804 leaves Haneda at 16:50.",
-      clearPath: "Leave the hotel by about 13:30.",
-      mainGoal: "Make the 16:50 Haneda flight.",
-      places: [APA_HOTEL_NAME, "Haneda Airport"],
+      title: "Still in Tokyo",
+      theme: "UA804 was not taken. You are still in Tokyo.",
+      summary: PARENTS_HANEDA_NOTE,
+      clearPath: "Stay in Tokyo. Do not board UA804.",
+      mainGoal: "Rest. The Nov 10 flight was not taken.",
+      places: [APA_HOTEL_NAME],
       hotel: { name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL },
-      timeline: [["By 13:30", "Leave APA Nishi-Shinjuku Gochome."], ["To Haneda", "Oedo line to Daimon, then the Asakusa line. About 50 minutes."], ["Before bag drop", TAX_REFUND_STEP], ["16:50", "UA804 leaves Haneda."]]
+      timeline: [["UA804", "Not taken. It was booked to leave Haneda at 16:50. Dad David got sick. Do not board."], ["Hotel", `The booked room was through the morning of Nov 10. ${PARENTS_STAY_OPEN}`], ["Through Nov 13", "You are still in Tokyo. Do not go to Haneda for UA804."]]
+    }
+  },
+  day20: {
+    parents: {
+      title: "teamLab Planets for Mom",
+      theme: "Mom Cindy enters teamLab Planets with Brian and Mai at 09:00–09:30. Dad David is not on this ticket.",
+      summary: `Mom Cindy goes to teamLab Planets TOKYO with Brian and Mai. Enter between 09:00 and 09:30. Dad David is not included. ${PARENTS_STAY_OPEN}`,
+      clearPath: "Leave by 7:45 if Mom is going. Enter teamLab Planets from 09:00 to 09:30. Dad is not on this ticket.",
+      mainGoal: "Mom enters teamLab Planets between 09:00 and 09:30. Dad is not on this ticket.",
+      places: [APA_HOTEL_NAME, "teamLab Planets TOKYO"],
+      hotel: { name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL },
+      timeline: [...PLANETS_DEPARTURE_TIMELINE, ["09:00–09:30", TEAMLAB_PLANETS_NOTE], ["Dad", PARENTS_STAY_OPEN]]
+    }
+  },
+  day21: {
+    parents: {
+      title: "Still in Tokyo",
+      theme: "You are still in Tokyo. Brian and Mai have their own Nov 12 plan.",
+      summary: `You are still in Tokyo on Thu Nov 12. ${PARENTS_STAY_OPEN} Brian and Mai check out of their room by 10:00. This page does not add you to their teamLab Borderless ticket.`,
+      clearPath: "Stay in Tokyo. Do not treat Brian and Mai's Nov 12 ticket as yours.",
+      mainGoal: "Confirm the return flight and the hotel.",
+      places: [APA_HOTEL_NAME],
+      hotel: { name: "APA Nishi-Shinjuku Gochome", url: APA_MAP_URL },
+      timeline: [["Hotel", PARENTS_STAY_OPEN], ["Nov 12", "Brian and Mai have their own plan. You are not added to it."]]
     }
   }
 };
@@ -2640,6 +2678,11 @@ function bookingMatchesStep(item, timeLabel, activity) {
   return Boolean(clock && start.padStart(5, "0") === clock);
 }
 
+function ticketPageLink(item) {
+  if (!item?.url || item.cancelled) return "";
+  return `<p><a class="day-ticket-open" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a></p>`;
+}
+
 function inlineTicketHtml(item) {
   const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
   const code = item.code ? copyCodeButton(item.code) : "";
@@ -2649,6 +2692,7 @@ function inlineTicketHtml(item) {
     <h3>${escapeHtml(item.title)}</h3>
     <p class="ticket-meta">${escapeHtml(bookingClock(item))}${item.route ? ` · ${escapeHtml(item.route)}` : ""}</p>
     ${code ? `<div class="ticket-links">${code}</div>` : ""}
+    ${ticketPageLink(item)}
     ${note}
     ${dayTicketOpenHtml(item)}
     ${mealAskHtml(bookingForWallet(item))}
@@ -3517,9 +3561,9 @@ const DAY_PARTY = {
   day16: "6 in the daytime. The evening headcount is separate.",
   day17: "2 at APA. Parents are on their own Tokyo plan.",
   day18: "2 at APA.",
-  day19: "2 if you go out. Parents depart Haneda today.",
-  day20: "2.",
-  day21: "2. Mom and Dad left Haneda on Nov 10."
+  day19: "2 if you go out. Parents are still in Tokyo. UA804 was not taken.",
+  day20: "3 at teamLab Planets: Brian, Mai, and Mom Cindy. Dad David is not included. [whether Dad joins any activity — needs confirmation].",
+  day21: "2 at teamLab Borderless: Brian and Mai. Parents are still in Tokyo. [return flight — needs confirmation]. [hotel for Nov 10–13 — needs confirmation]. [whether Dad joins any activity — needs confirmation]."
 };
 
 const DAY_MUST_DOS = {
@@ -3577,7 +3621,7 @@ const DAY_MUST_DOS = {
   day14: [
     { marker: "booked", label: "Nozomi 90 Hiroshima to Tokyo", detail: SHINKANSEN_NOV5 },
     { marker: "booked", label: "APA Nishishinjuku", detail: APA_NOTE, who: "brianMai" },
-    { marker: "info", label: "APA Nishi-Shinjuku Gochome", detail: "Your room is booked through the morning of Nov 10.", who: "parents" },
+    { marker: "info", label: "APA Nishi-Shinjuku Gochome", detail: `Your room is booked through the morning of Nov 10. ${PARENTS_STAY_OPEN}`, who: "parents" },
     { marker: "info", label: "Ekiben scores", detail: "Score each box on packaging, regional character, variety, flavor, and train happiness. Write the scores in today's note." }
   ],
   day15: [
@@ -3594,11 +3638,14 @@ const DAY_MUST_DOS = {
     { marker: "info", label: "Rest day", detail: "Stay at APA Nishishinjuku. No timed outing, no taxi, and no new reservation.", who: "brianMai" }
   ],
   day19: [
-    { marker: "info", label: "Optional Shibuya", detail: "Only if you have recovered enough: Hachiko, the crossing, and at most one shop. Easy to skip. Not booked. If you only do one neighborhood, choose Kichijoji on Nov 11.", who: "brianMai" },
-    { marker: "info", label: "Haneda flight", detail: PARENTS_HANEDA_NOTE, who: "parents" }
+    { marker: "info", label: "Optional Shibuya", detail: "Only if you have recovered enough: Hachiko, the crossing, and at most one shop. Easy to skip. Not booked. Nov 11 morning is teamLab Planets.", who: "brianMai" },
+    { marker: "info", label: "UA804 not taken", detail: PARENTS_HANEDA_NOTE, who: "parents" }
   ],
   day20: [
-    { marker: "info", label: "Optional Kichijoji", detail: "If you go out, choose Kichijoji over Shibuya: Inokashira Park pond, Sunroad, and a bakery takeaway. No branch is chosen. Then pack. Do not add Asakusa. Easy to skip.", who: "brianMai" }
+    { marker: "booked", label: "teamLab Planets", detail: TEAMLAB_PLANETS_NOTE },
+    { marker: "info", label: "Morning departure", detail: PLANETS_DEPARTURE_NOTE },
+    { marker: "info", label: "Optional Kichijoji", detail: "After teamLab Planets, only if you still want it: Inokashira Park pond, Sunroad, and a bakery takeaway. No branch is chosen. Do not put this in the morning. Do not add Asakusa. Easy to skip.", who: "brianMai" },
+    { marker: "needs-confirmation", label: "Parents still in Tokyo", detail: `Dad David got sick. UA804 was not taken. ${PARENTS_STAY_OPEN}`, who: "parents" }
   ],
   day21: [
     { marker: "booked", label: "teamLab Borderless", detail: TEAMLAB_NOTE, who: "brianMai" },
@@ -3617,6 +3664,15 @@ const TRIP_OPEN_ITEMS = [
     detail: "Tentative. The day and the place are not chosen yet.",
     who: "parents",
     dayIds: []
+  },
+  {
+    id: "parents-stay-open",
+    marker: "needs-confirmation",
+    label: "Parents still in Tokyo",
+    scope: "Nov 10–13",
+    detail: `Dad David got sick. UA804 was not taken. ${PARENTS_STAY_OPEN}`,
+    who: "parents",
+    dayIds: ["day19", "day20", "day21"]
   }
 ];
 
@@ -4719,7 +4775,7 @@ function renderLockedHotelsPanel() {
     }).map((item) => {
       const days = Math.ceil((Date.parse(`${item.recommendedOn}T00:00:00Z`) - today) / 86400000);
       const attention = item.attention || (item.done ? "done" : "needs-confirmation");
-      const countdown = attention === "booked" ? "BOOKED" : attention === "cancelled" ? "Cancelled" : item.done ? "Done" : days < 0 ? "Still open" : days === 0 ? "Do now" : `${days} days`;
+      const countdown = attention === "booked" ? "BOOKED" : attention === "cancelled" ? (String(item.target).startsWith("Not taken") ? "Not taken" : "Cancelled") : item.done ? "Done" : days < 0 ? "Still open" : days === 0 ? "Do now" : `${days} days`;
       const dateObject = new Date(`${item.recommendedOn}T00:00:00Z`);
       const monthLabel = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" }).format(dateObject);
       const dayLabel = new Intl.DateTimeFormat("en", { day: "2-digit", timeZone: "UTC" }).format(dateObject);
@@ -5591,6 +5647,7 @@ const placeBackground = {
   "Mount Kintoki": "Not on this trip. The Hakone hike was cancelled.",
   "Pola Museum of Art": "Not on this trip. It was only a backup for the cancelled Hakone hike.",
   "teamLab Borderless Azabudai Hills": "teamLab Borderless uses moving images you walk through. The Entrance Pass is booked. Enter between 12:30 and 13:00. The address is Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo. Open the ticket QR code from the teamLab email. EN TEA HOUSE is inside the museum.",
+  "teamLab Planets TOKYO": "teamLab Planets TOKYO is booked for 09:00–09:30. The party is Brian, Mai, and Mom Cindy. Dad David is not included. The address is 6-1-16 Toyosu, Koto-ku, Tokyo. Walk about 10 minutes from Toyosu Station Exit 7.",
   "Tokyo Melonpan": "This pin is a placeholder. [melon-bread shop and branch — needs confirmation]. Do not treat Tokyo Melonpan Asakusabashi as the confirmed stop until Mai names the branch.",
   "Final Tokyo Dinner": "The Nov 12 dinner is a walk-in at Kaiten Toyama Sushi Ginza at 17:00. Do not book it. Online booking is for a course only. If Toyama is full, go to Ichiban Kaiten Sushi, then Heiroku Sushi Ginza, then Sushiro aune Yurakucho.",
   "Fushimi Inari Taisha": "The head shrine of the Inari network, associated with rice, prosperity and enterprise. The thousands of torii are private donations; fox statues represent Inari's messengers rather than the deity itself.",
@@ -6596,6 +6653,7 @@ const COUNTDOWN_DAY_IDS = {
   "romancecar-out": ["day17"],
   "romancecar-back": ["day20"],
   teamlab: ["day21"],
+  "teamlab-planets": ["day20"],
   "setsugetsuka-record": ["day17", "day18", "day19"],
   kyoya: ["day09"],
   "koko-return": ["day14", "day15", "day16", "day17", "day20", "day21"],
@@ -6792,12 +6850,13 @@ function walletBookings() {
     { id: "suishin-main", kind: "meal", at: "2026-11-03T18:00:00+09:00", title: "Suishin", when: "Tue Nov 3 · 18:00", route: "Tatemachi, Hiroshima", detail: "4 guests · table only", code: "", how: "Confirmation in Gmail." },
     { id: "shinkansen-nov5", kind: "train", at: "2026-11-05T10:03:00+09:00", title: "Nozomi 90", when: "Thu Nov 5 · 10:03", route: "Hiroshima → Tokyo", detail: "Car 6 · seats 5-D, 5-E, 6-D, 6-E · 4 people", code: "", how: SHINKANSEN_BOARDING },
     { id: "apa-nov5", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishishinjuku", when: "Thu Nov 5–Thu Nov 12", route: "Nishi-shinjuku, Tokyo", detail: "Brian and Mai · through the morning of Nov 12", code: "", how: "Already at the hotel. Checkout is Thu Nov 12 by 10:00. Booking number, price, same-room continuity, and any hotel refund are not shown.", who: "brianMai" },
-    { id: "parents-apa", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishi-Shinjuku Gochome", when: "Thu Nov 5–Tue Nov 10", route: "Nishi-shinjuku, Tokyo", detail: "Your room", code: "", how: "Stay through the morning of Nov 10.", who: "parents" },
+    { id: "parents-apa", kind: "hotel", at: "2026-11-05T15:00:00+09:00", title: "APA Nishi-Shinjuku Gochome", when: "Thu Nov 5–Tue Nov 10", route: "Nishi-shinjuku, Tokyo", detail: "Your room", code: "", how: `Booked through the morning of Nov 10. ${PARENTS_STAY_OPEN}`, who: "parents" },
     { id: "takeshima-dinner", kind: "meal", at: "2026-11-07T23:59:00+09:00", title: "Dinner with Akiko & Yoshi Takeshima", when: "Sat Nov 7", route: "", detail: "", code: "", how: "Hiroki and Yushin may join. Time and place TBD.", note: "Hiroki and Yushin may join. Time and place TBD.", untimed: true, who: "parents" },
     { id: "romancecar-out", kind: "train", at: "2026-11-08T10:00:00+09:00", title: "Super Hakone 9", when: "Sun Nov 8 · was 10:00", route: "Shinjuku → Hakone-Yumoto", detail: "Cancelled", code: "", how: ROMANCECAR_OUT_NOTE, cancelled: true, who: "brianMai" },
     { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Was Sun Nov 8–Wed Nov 11", route: "Gora, Hakone", detail: "Cancelled", code: "", how: "Cancelled. Do not go. Hotel refund is not shown.", cancelled: true, who: "brianMai" },
-    { id: "ua804", kind: "flight", at: "2026-11-10T16:50:00+09:00", title: "UA804 home", when: "Tue Nov 10 · 16:50", route: "Haneda", detail: "Leaves at 4:50 PM.", code: "", how: "Leave APA by about 13:30.", who: "parents" },
+    { id: "ua804", kind: "flight", at: "2026-11-10T16:50:00+09:00", title: "UA804 home", when: "Tue Nov 10 · was 16:50", route: "Haneda", detail: "Not taken", code: "", how: PARENTS_HANEDA_NOTE, cancelled: true, notTaken: true, who: "parents" },
     { id: "romancecar-back", kind: "train", at: "2026-11-11T10:10:00+09:00", title: "Hakone 30", when: "Wed Nov 11 · was 10:10", route: "Hakone-Yumoto → Shinjuku", detail: "Cancelled", code: "", how: ROMANCECAR_BACK_NOTE, cancelled: true, who: "brianMai" },
+    { id: "teamlab-planets", kind: "ticket", at: "2026-11-11T09:00:00+09:00", title: "teamLab Planets", when: "Wed Nov 11 · 09:00", route: "Toyosu, Tokyo", detail: "3 adults · Brian, Mai, and Mom Cindy. Dad is not included.", code: "aa08f6af2f31948acc", url: TEAMLAB_PLANETS_TICKET_URL, how: "Paid ¥16,800 via DMM. No refund. Change the time up to 3 times, no later than 2 hours before entry. The entry code appears on the ticket page after midnight on Nov 11." },
     { id: "teamlab", kind: "ticket", at: "2026-11-12T12:30:00+09:00", title: "teamLab Borderless", when: "Thu Nov 12 · 12:30", route: "Azabudai Hills, Tokyo", detail: "2 adults", code: "", how: "Confirmation in Gmail.", who: "brianMai" },
     { id: "flight-back", kind: "flight", at: "2026-11-13T01:00:00+09:00", title: "BA4609 to London", when: "Fri Nov 13 · 01:00", route: "Haneda Terminal 3 → London", detail: "Then IB3645 leaves London at 08:45.", code: "", how: "Show the boarding pass in the airline app. Check live airport guidance for when to arrive.", who: "brianMai" }
   ];
@@ -6831,6 +6890,7 @@ const QR_TICKET_IDS = new Set([
   "shinkansen-nov2",
   "shinkansen-himeji",
   "shinkansen-nov5",
+  "teamlab-planets",
   "teamlab"
 ]);
 
@@ -6884,8 +6944,10 @@ function ticketOpenControl(ticket) {
 function walletPhoneStatusHtml(item) {
   if (item.cancelled) {
     const saved = savedTicketsForBooking(item.id);
-    if (!saved.length) return `<p class="wallet-missing">Cancelled. Do not board.</p>`;
-    return `<p class="wallet-saved">Cancelled. Saved on this phone. Not for boarding.</p>${saved.map(ticketOpenControl).join("")}`;
+    const line = item.notTaken ? "Not taken. Do not board." : "Cancelled. Do not board.";
+    if (!saved.length) return `<p class="wallet-missing">${line}</p>`;
+    const savedLine = item.notTaken ? "Not taken. Saved on this phone. Not for boarding." : "Cancelled. Saved on this phone. Not for boarding.";
+    return `<p class="wallet-saved">${savedLine}</p>${saved.map(ticketOpenControl).join("")}`;
   }
   if (!QR_TICKET_IDS.has(item.id)) return "";
   const tickets = savedTicketsForBooking(item.id);
@@ -7020,6 +7082,7 @@ function walletCardHtml(item, featured) {
         ${item.route ? `<p class="wallet-route">${escapeHtml(item.route)}</p>` : ""}
         ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
         ${code ? `<div class="ticket-links">${code}</div>` : ""}
+        ${ticketPageLink(item)}
         <p class="wallet-how">${escapeHtml(item.how)}</p>
         ${mealAskHtml(bookingForWallet(item))}
         ${hotelLink}
@@ -7900,7 +7963,11 @@ function stillToBookHtml() {
 function cancelledPlanHtml() {
   const items = walletBookings().filter((item) => item.cancelled && sees(item.who));
   if (!items.length) return "";
-  return `<details class="day-fold"><summary>Cancelled Hakone plans</summary>${items.map((item) => walletCardHtml(item, false)).join("")}</details>`;
+  const groups = [
+    { summary: "Not taken", items: items.filter((item) => item.notTaken) },
+    { summary: "Cancelled Hakone plans", items: items.filter((item) => !item.notTaken) }
+  ].filter((group) => group.items.length);
+  return groups.map((group) => `<details class="day-fold"><summary>${group.summary}</summary>${group.items.map((item) => walletCardHtml(item, false)).join("")}</details>`).join("");
 }
 
 function renderTickets() {
@@ -8322,7 +8389,7 @@ function storyMarks(dayId) {
   if (trains.some((id) => countdownVisible(id) && (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("train");
   const meal = RESTAURANT_BOOKINGS.some((booking) => sees(booking.who) && booking.id !== "setsugetsuka-meals" && booking.dayIds.includes(dayId) && reservationRecord(booking).status === "booked");
   if (meal) marks.push("meal");
-  const tickets = ["himeji-tickets", "teamlab"];
+  const tickets = ["himeji-tickets", "teamlab", "teamlab-planets"];
   if ((dayId === "day02" && sees("brianMai")) || tickets.some((id) => countdownVisible(id) && (COUNTDOWN_DAY_IDS[id] || []).includes(dayId))) marks.push("ticket");
   return marks;
 }
@@ -8389,7 +8456,12 @@ function storyDaysHtml(snippets) {
     ? `${storyDayCard(parentDepartureDay(), today, "")}${storyDayCard(parentArrivalDay(), today, "")}`
     : `<p class="away-line">Oct 23 · Not in Japan yet.</p>`;
   const travelHome = travelerView() === "parents"
-    ? `<p class="away-line">Nov 13 · Flown home.</p>`
+    ? storyTravelCard({
+      when: "Fri Nov 13",
+      title: "Still in Tokyo",
+      summary: "The return flight needs confirmation. The hotel needs confirmation. It may still be APA. Whether Dad joins any activity needs confirmation.",
+      marks: []
+    })
     : storyTravelCard({
       when: "Fri Nov 13",
       title: "Fly home",
@@ -8405,7 +8477,8 @@ function storyDaysHtml(snippets) {
     chapters.push(storyChapterHtml(name, city, cards));
     if (index === 3 && tentative) chapters.push(storyChapterHtml("Tentative", "tokyo", tentative));
   });
-  return `${storyChapterHtml("To Japan", "travel", travelOut)}${chapters.join("")}${storyChapterHtml("Home", "travel", travelHome)}`;
+  const homeTitle = travelerView() === "parents" ? "Still in Tokyo" : "Home";
+  return `${storyChapterHtml("To Japan", "travel", travelOut)}${chapters.join("")}${storyChapterHtml(homeTitle, "travel", travelHome)}`;
 }
 
 async function storyJournalSnippets() {
@@ -8902,11 +8975,10 @@ function renderStoryMap() {
       <button type="button" data-story-city-day="day07">Kyoto</button>
       <button type="button" data-story-city-day="day11">Hiroshima</button>
       <button type="button" data-story-city-day="day14">Tokyo</button>
-      <button type="button" data-story-city-day="day20" aria-label="Nov 11, optional Kichijoji">Nov 11</button>
+      <button type="button" data-story-city-day="day20" aria-label="Nov 11, teamLab Planets">Nov 11</button>
     </div>`;
   if (travelerView() === "parents") {
     host.querySelector("[data-story-city-day='day17']")?.remove();
-    host.querySelector("[data-story-city-day='day20']")?.remove();
   }
 }
 
