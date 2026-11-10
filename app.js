@@ -41,8 +41,6 @@ function tripEndIso() {
 var JOURNAL_ENDPOINT = "https://script.google.com/macros/s/AKfycby47Weon2uOWIzhy2hTM9NpogrZSxWhQZ5_mCMqyLS_YN60claov6CoScrJ49ofPby2/exec";
 const TEAMLAB_GUIDE_URL = "https://tlba.teamlab.art/tyob10";
 const TEAMLAB_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo")}`;
-const TEAMLAB_PLANETS_TICKET_URL = "https://teamlabplanets.dmm.com/en/mytickets/aa08f6af2f31948acc";
-const TEAMLAB_PLANETS_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("teamLab Planets TOKYO, 6-1-16 Toyosu, Koto-ku, Tokyo")}`;
 const FUJITAYA_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Fujitaya+Miyajima";
 const UENO_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Anagomeshi+Ueno+Miyajimaguchi";
 const SETSUGETSUKA_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Gora 1300-34, Hakone, Kanagawa")}`;
@@ -89,7 +87,7 @@ const SHINKANSEN_NOV5 = `Booked. Nozomi 90 starts at Hiroshima, leaves at 10:03,
 const PARENTS_STAY_OPEN = "[return flight — needs confirmation]. [hotel for Nov 10–13 — needs confirmation]. It may still be APA Nishi-Shinjuku Gochome. [whether Dad joins any activity — needs confirmation].";
 const PARENTS_HANEDA_NOTE = `Not taken. Dad David got sick, so Mom Cindy and Dad David did not fly UA804 on Tue Nov 10. The flight was booked to leave Haneda at 16:50. Do not board. They are still in Tokyo through Fri Nov 13. ${PARENTS_STAY_OPEN}`;
 const TEAMLAB_NOTE = `BOOKED. Confirmation in Gmail. The ticket is an Entrance Pass for 2 adults. The price is JPY 10,800. Enter between 12:30 and 13:00. The address is Azabudai Hills Garden Plaza B B1, 5-9 Toranomon, Minato-ku, Tokyo. {{link:${TEAMLAB_MAP_URL}|Open the map}} You can change the date or the time up to 3 times. Make the change no later than 2 hours before entry. {{link:${TEAMLAB_GUIDE_URL}|Open the guide app}} For inquiries, call +81-3-6230-9666. The line is open from 10:00 to 18:00. EN TEA HOUSE is inside the museum.`;
-const TEAMLAB_PLANETS_NOTE = `BOOKED. Paid ¥16,800 via DMM. The party is 3 adults: Brian, Mai, and Mom Cindy. Dad David is not included. The inquiry number is {{copy:aa08f6af2f31948acc}}. Enter between 09:00 and 09:30. The address is teamLab Planets TOKYO, 6-1-16 Toyosu, Koto-ku, Tokyo. {{link:${TEAMLAB_PLANETS_MAP_URL}|Open the map}} {{link:${TEAMLAB_PLANETS_TICKET_URL}|Open the ticket}} The entry code appears on that page after midnight on Nov 11. There is no refund. You can change the time up to 3 times. Make the change no later than 2 hours before entry.`;
+const TEAMLAB_PLANETS_NOTE = "teamLab Planets TOKYO, 09:00–09:30, 3 adults (Brian, Mai, Mom), paid; QR in DMM account; time changeable up to 3x until 2h before entry; no refunds.";
 const PLANETS_DEPARTURE_TIMELINE = [
   ["By 7:45", `Leave ${APA_HOTEL_NAME}.`],
   ["7:53", "Take the Toei Oedo line from Nishi-shinjuku-gochome, Platform 1, toward Tochomae/Roppongi."],
@@ -161,7 +159,7 @@ const RESERVATION_COUNTDOWN = [
   { id: "parent-rooms", name: "Parent rooms", done: true, attention: "done", recommendedOn: "2026-07-14", target: "Oct 23–Nov 10", who: "parents", note: `Parents stay at Shinagawa Prince Hotel on Oct 23, Royal Park Hotel ICONIC Osaka Midosuji on Oct 24–28, and APA Nishi-Shinjuku Gochome on Nov 5–10. Their Kyoto and Hiroshima rooms are booked. Brian and Mai stay at Hotel Cordia Osaka Hommachi on Oct 24–28. The APA room was booked through the morning of Nov 10. ${PARENTS_STAY_OPEN}` },
   { id: "flight-locators", name: "Record ticketed flight details", done: true, attention: "done", recommendedOn: "2026-08-03", target: "Oct 23 & Nov 13", who: "brianMai", note: FLIGHT_NOTE },
   { id: "teamlab", name: "teamLab Borderless", done: true, attention: "booked", recommendedOn: "2026-09-01", target: "Nov 12 · 12:30–13:00", who: "brianMai", note: TEAMLAB_NOTE, url: TEAMLAB_GUIDE_URL },
-  { id: "teamlab-planets", name: "teamLab Planets", done: true, attention: "booked", recommendedOn: "2026-11-11", target: "Nov 11 · 09:00–09:30", note: TEAMLAB_PLANETS_NOTE, url: TEAMLAB_PLANETS_TICKET_URL },
+  { id: "teamlab-planets", name: "teamLab Planets", done: true, attention: "booked", recommendedOn: "2026-11-11", target: "Nov 11 · 09:00–09:30", note: TEAMLAB_PLANETS_NOTE },
   { id: "shinkansen-oct24", name: "Nozomi 261 Tokyo to Shin-Osaka", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Sat Oct 24 · 14:00", note: SHINKANSEN_OCT24 },
   { id: "shinkansen-nov2", name: "Hikari 733 Kyoto to Himeji", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 08:01", note: SHINKANSEN_NOV2 },
   { id: "shinkansen-himeji", name: "Nozomi 69 Himeji to Hiroshima", done: true, attention: "booked", recommendedOn: "2026-10-02", target: "Mon Nov 2 · 14:46", note: SHINKANSEN_HIMEJI },
@@ -2678,11 +2676,6 @@ function bookingMatchesStep(item, timeLabel, activity) {
   return Boolean(clock && start.padStart(5, "0") === clock);
 }
 
-function ticketPageLink(item) {
-  if (!item?.url || item.cancelled) return "";
-  return `<p><a class="day-ticket-open" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">Open ticket</a></p>`;
-}
-
 function inlineTicketHtml(item) {
   const type = WALLET_TYPE_LABEL[item.kind] || "Ticket";
   const code = item.code ? copyCodeButton(item.code) : "";
@@ -2692,7 +2685,6 @@ function inlineTicketHtml(item) {
     <h3>${escapeHtml(item.title)}</h3>
     <p class="ticket-meta">${escapeHtml(bookingClock(item))}${item.route ? ` · ${escapeHtml(item.route)}` : ""}</p>
     ${code ? `<div class="ticket-links">${code}</div>` : ""}
-    ${ticketPageLink(item)}
     ${note}
     ${dayTicketOpenHtml(item)}
     ${mealAskHtml(bookingForWallet(item))}
@@ -6856,7 +6848,7 @@ function walletBookings() {
     { id: "setsugetsuka", kind: "hotel", at: "2026-11-08T15:00:00+09:00", title: "Tokinoyu Setsugetsuka", when: "Was Sun Nov 8–Wed Nov 11", route: "Gora, Hakone", detail: "Cancelled", code: "", how: "Cancelled. Do not go. Hotel refund is not shown.", cancelled: true, who: "brianMai" },
     { id: "ua804", kind: "flight", at: "2026-11-10T16:50:00+09:00", title: "UA804 home", when: "Tue Nov 10 · was 16:50", route: "Haneda", detail: "Not taken", code: "", how: PARENTS_HANEDA_NOTE, cancelled: true, notTaken: true, who: "parents" },
     { id: "romancecar-back", kind: "train", at: "2026-11-11T10:10:00+09:00", title: "Hakone 30", when: "Wed Nov 11 · was 10:10", route: "Hakone-Yumoto → Shinjuku", detail: "Cancelled", code: "", how: ROMANCECAR_BACK_NOTE, cancelled: true, who: "brianMai" },
-    { id: "teamlab-planets", kind: "ticket", at: "2026-11-11T09:00:00+09:00", title: "teamLab Planets", when: "Wed Nov 11 · 09:00", route: "Toyosu, Tokyo", detail: "3 adults · Brian, Mai, and Mom Cindy. Dad is not included.", code: "aa08f6af2f31948acc", url: TEAMLAB_PLANETS_TICKET_URL, how: "Paid ¥16,800 via DMM. No refund. Change the time up to 3 times, no later than 2 hours before entry. The entry code appears on the ticket page after midnight on Nov 11." },
+    { id: "teamlab-planets", kind: "ticket", at: "2026-11-11T09:00:00+09:00", title: "teamLab Planets", when: "Wed Nov 11 · 09:00", route: "Toyosu, Tokyo", detail: "Dad is not included.", code: "", how: TEAMLAB_PLANETS_NOTE },
     { id: "teamlab", kind: "ticket", at: "2026-11-12T12:30:00+09:00", title: "teamLab Borderless", when: "Thu Nov 12 · 12:30", route: "Azabudai Hills, Tokyo", detail: "2 adults", code: "", how: "Confirmation in Gmail.", who: "brianMai" },
     { id: "flight-back", kind: "flight", at: "2026-11-13T01:00:00+09:00", title: "BA4609 to London", when: "Fri Nov 13 · 01:00", route: "Haneda Terminal 3 → London", detail: "Then IB3645 leaves London at 08:45.", code: "", how: "Show the boarding pass in the airline app. Check live airport guidance for when to arrive.", who: "brianMai" }
   ];
@@ -6890,7 +6882,6 @@ const QR_TICKET_IDS = new Set([
   "shinkansen-nov2",
   "shinkansen-himeji",
   "shinkansen-nov5",
-  "teamlab-planets",
   "teamlab"
 ]);
 
@@ -7082,7 +7073,6 @@ function walletCardHtml(item, featured) {
         ${item.route ? `<p class="wallet-route">${escapeHtml(item.route)}</p>` : ""}
         ${item.detail ? `<p class="ticket-meta">${escapeHtml(item.detail)}</p>` : ""}
         ${code ? `<div class="ticket-links">${code}</div>` : ""}
-        ${ticketPageLink(item)}
         <p class="wallet-how">${escapeHtml(item.how)}</p>
         ${mealAskHtml(bookingForWallet(item))}
         ${hotelLink}
